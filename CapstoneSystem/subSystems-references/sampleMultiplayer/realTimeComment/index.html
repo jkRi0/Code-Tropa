@@ -1,0 +1,131 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Chat</title>
+</head>
+<body>
+    <h2>Firebase Realtime Chat</h2>
+    
+    <input type="text" id="msgInput" placeholder="Type a message">
+    <button id="sendBtn">Send</button>
+
+    <div id="chat"></div>
+
+    <script type="module">
+        if (!window.fetch) {
+            console.log('Fetch not supported on this browser!');
+        }
+
+        import { api } from "./config.js";
+    
+        import { 
+            initializeApp 
+        } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+    
+        import { 
+            getDatabase, ref, push, onChildAdded, remove, update 
+        } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
+    
+        function getCurrentTime() {
+            let now = new Date();
+            return now.toLocaleString();
+        }
+    
+        const firebaseConfig = {
+            apiKey: api,
+            authDomain: "sample1-e7506.firebaseapp.com",
+            databaseURL: "https://sample1-e7506-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "sample1-e7506",
+            storageBucket: "sample1-e7506.appspot.com",
+            messagingSenderId: "246896326854",
+            appId: "1:246896326854:web:bc58a827f5d67e5f9cbfc7",
+            measurementId: "G-YEGYPFZQYS"
+        };
+    
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const messagesRef = ref(db, "messages");
+    
+        // Send Message
+        document.getElementById("sendBtn").addEventListener("click", function () {
+            const messageInput = document.getElementById("msgInput");
+            const message = getCurrentTime() + " >>> " + messageInput.value.trim();
+    
+            if (message !== "") {
+                push(messagesRef, { 
+                    text: message
+                });
+                messageInput.value = "";
+            }
+        });
+    
+        // Display Messages
+        onChildAdded(messagesRef, (snapshot) => {
+            const messageData = snapshot.val();
+            const messageKey = snapshot.key;
+    
+            const messageElement = document.createElement("div");
+            messageElement.id = `message-${messageKey}`;
+            messageElement.innerHTML = `
+                <p id="text-${messageKey}">${messageData.text}</p>
+                <input type="text" id="editInput-${messageKey}" style="display:none;" />
+                <button onclick="editMessage('${messageKey}')">Edit</button>
+                <button onclick="saveMessage('${messageKey}')" style="display:none;" id="saveBtn-${messageKey}">Save</button>
+                <button onclick="deleteMessage('${messageKey}')">Delete</button>
+                <hr>
+            `;
+    
+            // document.getElementById("chat").appendChild(messageElement);
+            document.getElementById("chat").prepend(messageElement);
+        });
+    
+        // Delete Message
+        window.deleteMessage = function (messageKey) {
+            const messageRef = ref(db, "messages/" + messageKey);
+            remove(messageRef)
+                .then(() => {
+                    document.getElementById(`message-${messageKey}`).remove();
+                })
+                .catch((error) => console.error("Error deleting:", error));
+        };
+    
+        // Start Editing Message
+        window.editMessage = function (messageKey) {
+            const textElement = document.getElementById(`text-${messageKey}`);
+            const editInput = document.getElementById(`editInput-${messageKey}`);
+            const saveBtn = document.getElementById(`saveBtn-${messageKey}`);
+    
+            editInput.style.display = "inline-block";
+            saveBtn.style.display = "inline-block";
+            editInput.value = textElement.innerText;
+            textElement.style.display = "none";
+        };
+    
+        // Save Edited Message
+        window.saveMessage = function (messageKey) {
+            const newText = document.getElementById(`editInput-${messageKey}`).value.trim();
+            const messageRef = ref(db, "messages/" + messageKey);
+    
+            if (newText !== "") {
+                update(messageRef, { text: getCurrentTime() + " >>> " + newText })
+                    .then(() => {
+                        const textElement = document.getElementById(`text-${messageKey}`);
+                        const editInput = document.getElementById(`editInput-${messageKey}`);
+                        const saveBtn = document.getElementById(`saveBtn-${messageKey}`);
+    
+                        textElement.innerText = getCurrentTime() + " >>> " + newText;
+                        textElement.style.display = "block";
+                        editInput.style.display = "none";
+                        saveBtn.style.display = "none";
+                    })
+                    .catch((error) => console.error("Error updating:", error));
+            }
+        };
+    </script>
+    
+</body>
+</html>
