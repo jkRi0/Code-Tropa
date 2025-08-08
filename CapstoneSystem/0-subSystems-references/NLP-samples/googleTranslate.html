@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English ↔ Tagalog Translator</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        textarea { width: 80%; height: 100px; margin: 10px 0; }
+        button { padding: 10px 15px; cursor: pointer; }
+        #result { margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>🇬🇧 English ↔ 🇵🇭 Tagalog Translator</h2>
+    <textarea id="textInput" placeholder="Type text here..."></textarea><br>
+    <button onclick="translateText('en', 'tl')">Translate to Tagalog</button>
+    <button onclick="translateText('tl', 'en')">Translate to English</button>
+    <div id="result"></div>
+
+    <script>
+        async function translateText(sourceLang, targetLang) {
+            const text = document.getElementById("textInput").value;
+            document.getElementById("result").innerHTML = "🔄 Translating...";
+
+            if (!text) {
+                document.getElementById("result").innerHTML = "⚠️ Please enter text!";
+                return;
+            }
+
+            const apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                document.getElementById("result").innerHTML = `✅ Translation: ${data[0][0][0]}`;
+            } catch (error) {
+                console.error(error);
+                document.getElementById("result").innerHTML = "❌ Translation failed!";
+            }
+        }
+    </script>
+</body>
+</html>

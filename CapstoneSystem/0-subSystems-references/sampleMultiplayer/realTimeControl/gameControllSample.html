@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+          margin: 0;
+          overflow: hidden;
+          background: #e0e0e0;
+        }
+    
+        .world {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 3000px; /* Big world width */
+          height: 100vh;
+
+          background-color: aquamarine;
+        }
+    
+        .bg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 3000px;
+          height: 100%;
+          z-index: 0;
+        }
+    
+        .bg img {
+          width: 100%;
+          height: 1000px;
+          bottom: 0;
+          position: absolute;
+        }
+    
+        .floor {
+          position: absolute;
+          bottom: 0;
+          width: 3000px;
+          height: 100px;
+          background: #444;
+          z-index: 1;
+        }
+    
+        .box {
+            position: absolute;
+            bottom: 100px;
+            width: 100px;
+            height: 300px;
+            background: transparent; /* Or remove this line */
+            z-index: 2;
+        }
+
+        .img1, .img2 {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            object-fit: cover;
+        }
+
+        
+        .img2 {
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="world" id="world">
+        
+        <div class="bg" id="bg">
+            <img src="bg.jpg" alt="background">
+        </div>
+        <div class="floor"></div>
+        <div class="box" id="box">
+            <img class="img1" id="img1" src="steady.gif">
+            <img class="img2" id="img2" src="running.gif">
+        </div>
+    </div>
+  
+    <script>
+
+        const box = document.getElementById('box');
+        const bg = document.getElementById('bg');
+        const worldWidth = document.getElementById('world').getBoundingClientRect().width;
+        const img1 = document.getElementById('img1');
+        const img2 = document.getElementById('img2');
+      
+        const step = 15;
+        const screenWidth = window.innerWidth;
+        const boxWidth = document.getElementById('box').getBoundingClientRect().width;
+      
+        let boxX = 150;
+        let bgX = 0;
+      
+        let intervalId = null;
+      
+        if(boxX<worldWidth){
+            
+        }
+        const updatePositions = () => {
+          box.style.left = `${boxX}px`;
+          bg.style.left = `${bgX}px`;
+
+          console.log(boxX+"   "+bgX);
+        };
+      
+        const move = (dir) => {
+            if (dir === 'left') {
+                if (boxX > 100) {
+                boxX -= step;
+                } else if (bgX < 0) {
+                bgX += step;
+                } else {
+                boxX = Math.max(0, boxX - step);
+                }
+
+                // Flip both images when moving left
+                img1.style.transform = 'scaleX(-1)';
+                img2.style.transform = 'scaleX(-1)';
+            }
+
+            if (dir === 'right') {
+                console.log(screenWidth);
+
+
+                if (boxX < screenWidth - 150) {
+                boxX += step;
+                } else if (Math.abs(bgX) < worldWidth - screenWidth) {
+                bgX -= step;
+                } else {
+                boxX = Math.min(screenWidth - boxWidth, boxX + step);
+                }
+
+                // Reset both images when moving right
+                img1.style.transform = 'scaleX(1)';
+                img2.style.transform = 'scaleX(1)';
+            }
+
+            box.style.backgroundColor = 'red';
+            img1.style.visibility = "hidden";
+            img2.style.visibility = "visible";
+
+            updatePositions();
+        };
+      
+        document.addEventListener('keydown', (e) => {
+
+          if (intervalId) return;
+      
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            const dir = e.key === 'ArrowLeft' ? 'left' : 'right';
+            move(dir);
+            intervalId = setInterval(() => move(dir), 16);
+          }
+        });
+      
+        document.addEventListener('keyup', () => {
+          clearInterval(intervalId);
+          intervalId = null;
+      
+          box.style.backgroundColor = 'green';
+          img1.style.visibility="visible";
+          img2.style.visibility="hidden";
+        });
+      
+        updatePositions();
+
+
+
+
+
+        //using firebase
+        
+      </script>
+  </body>
+</html>
