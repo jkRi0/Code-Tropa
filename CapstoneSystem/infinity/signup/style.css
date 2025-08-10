@@ -82,20 +82,20 @@ button {
     transition: 0.3s ease;
 }
 
-.login-btn {
+.signup-btn {
     background: #667eea;
     color: white;
 }
 
-.signup-btn {
+.cancel-btn {
     background: #f3f3f3;
     color: #333;
 }
 
-.login-btn:hover {
+.signup-btn:hover {
     background: #5563d6;
 }
 
-.signup-btn:hover {
+.login-btn:hover {
     background: #e2e2e2;
 }

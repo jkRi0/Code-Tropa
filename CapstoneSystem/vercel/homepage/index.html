@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>samplee</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <h1>HOME</h1>   
+    
+    <form id="urlForm" onsubmit="sendData(event)">
+        <input type="text" name="comment" id="commentInput" placeholder="Enter your comment">
+        <button type="submit">Send</button>
+    </form>
+
+    
+</body>
+<!-- SEND TO MIDDLE FILE -->
+<!-- <script>
+    function sendData(event) {
+        event.preventDefault();
+        const var1 = document.getElementById('var1').value;
+        const var2 = document.getElementById('var2').value;
+        const encodedComment = encodeURIComponent(var1);
+        const encodedComment1 = encodeURIComponent(var2);
+        const targetUrl = `http://localhost/Code-Tropa/CapstoneSystem/infinity/auth/mid.html?1=${encodedComment}&2=${encodedComment1}`;
+        window.location.href = targetUrl;
+    }
+</script> -->
+</html>
