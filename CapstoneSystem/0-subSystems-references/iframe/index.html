@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Main Page with Stopwatch Control</title>
+</head>
+<body>
+  <h1>Main Page</h1>
+
+  <!-- Controls -->
+  <button onclick="sendCommand('start')">Start</button>
+  <button onclick="sendCommand('stop')">Stop</button>
+  <button onclick="sendCommand('reset')">Reset</button>
+
+  <!-- Embed the stopwatch -->
+  <iframe id="stopwatchFrame" src="stopwatch.html" width="300" height="200" style="border:1px solid black;"></iframe>
+
+  <script>
+    function sendCommand(command) {
+      const iframe = document.getElementById('stopwatchFrame');
+      iframe.contentWindow.postMessage({ action: command }, '*');
+    }
+
+    // setInterval(() => {
+    //   location.reload();
+    //   console.log("Page reloaded");
+    // }, 1000);
+  </script>
+</body>
+</html>

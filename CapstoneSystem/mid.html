@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Comment</title>
+
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+</head>
+<body>
+    <form id="autoPostForm" action="auth.php" method="post" style="display: none;">
+        <input type="hidden" name="hid1" id="hid1">
+        <input type="hidden" name="hid2" id="hid2">
+        <input type="hidden" name="hid3" id="hid3">
+    </form>
+
+    <script>
+        //GET PARAMETERS
+        const params = new URLSearchParams(window.location.search);
+        const var1 = params.get("1");
+        const var2 = params.get("2");
+        const var3 = params.get("3");
+        //SET HIDDEN VALUES
+        if (var1 && var2) {
+            const decoded = decodeURIComponent(var1);
+            const decoded1 = decodeURIComponent(var2);
+            const decoded2 = decodeURIComponent(var3);
+
+            
+            // document.getElementById("hid1").value = decoded;
+            // document.getElementById("hid2").value = decoded1;
+            // document.getElementById("hid3").value = decoded2;
+
+            // // Automatically submit the form
+            // document.getElementById("autoPostForm").submit();
+        } else {
+            console.log("No comment found in URL.");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>polygons</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="normal"></div>
+    <br><br>
+    <div class="modal1"></div>
+    <br><br>
+    <div class="distort-box"></div>
+    <br><br>
+    <div class="notched-pill">HEY</div>
+    <br><br><br><br><br><br>
+
+
+    <!-- using image -->
+    <div class="poly1">
+        <img src="../../assets/poly1.png">
+    </div>
+
+    <br><br><br><br>
+    <div class="poly2">
+        <img src="../../assets/poly-button-black.png">
+    </div>
+
+
+
+
+    <!-- buttons with arrows, transparent white -->
+    <br><br><br>
+    <script>
+        function process(){
+            window.location.href='/target-page.html'
+        }
+
+        //FOR WHITE BUTTONS
+        function process(clickedDiv) {
+        // Reset all .outer2 divs
+            document.querySelectorAll('.outer2').forEach(div => {
+                // Reset their inner1 styles too (optional)
+                const inner = div.querySelector('.inner1');
+                if (inner) {
+                inner.style.backgroundColor = ""; // reset style
+                }
+            });
+            // Change style of clicked div's inner1
+            const targetInner = clickedDiv.querySelector('.inner1');
+            if (targetInner) {
+                targetInner.style.backgroundColor = "hotpink"; // or any other style
+            }
+        }
+
+        //FOR BLACK BUTTONS
+        function process1(clickedDiv) {
+        // Reset all .outer2 divs
+            document.querySelectorAll('.outer2-2').forEach(div => {
+                // Reset their inner1 styles too (optional)
+                const inner = div.querySelector('.inner1-2');
+                if (inner) {
+                inner.style.backgroundColor = ""; // reset style
+                }
+            });
+            // Change style of clicked div's inner1
+            const targetInner = clickedDiv.querySelector('.inner1-2');
+            if (targetInner) {
+                targetInner.style.backgroundColor = "rgb(65, 62, 62)"; // or any other style
+            }
+        }
+        
+
+    </script>
+
+    <div class="outer2" onclick="process(this)">
+        <img src="../../assets/arrow-l.png">
+        <div class="outer1">
+            <div class="top-border"></div>
+            <div class="inner1">HEY</div>
+            <div class="bottom-border"></div>
+        </div>
+        <img src="../../assets/arrow-r.png">
+    </div>  
+
+    <div class="outer2" onclick="process(this)">
+        <img src="../../assets/arrow-l.png">
+        <div class="outer1">
+            <div class="top-border"></div>
+            <div class="inner1">HEY</div>
+            <div class="bottom-border"></div>
+        </div>
+        <img src="../../assets/arrow-r.png">
+    </div>
+    
+    <div class="outer2" onclick="process(this)">
+        <img src="../../assets/arrow-l.png">
+        <div class="outer1">
+            <div class="top-border"></div>
+            <div class="inner1">HEY</div>
+            <div class="bottom-border"></div>
+        </div>
+        <img src="../../assets/arrow-r.png">
+    </div>
+
+
+    <!-- buttons with arrows, black -->
+
+    <br><br><br>
+    <div class="outer2-2" onclick="process1(this)">
+        <img src="../../assets/arrow-l-b.png">
+        <div class="outer1-2">
+            <div class="top-border-2"></div>
+            <div class="inner1-2">HEY</div>
+            <div class="bottom-border-2"></div>
+        </div>
+        <img src="../../assets/arrow-r-b.png">
+    </div>  
+
+    <div class="outer2-2" onclick="process1(this)">
+        <img src="../../assets/arrow-l-b.png">
+        <div class="outer1-2">
+            <div class="top-border-2"></div>
+            <div class="inner1-2">HEY</div>
+            <div class="bottom-border-2"></div>
+        </div>
+        <img src="../../assets/arrow-r-b.png">
+    </div>  
+
+    <div class="outer2-2" onclick="process1(this)">
+        <img src="../../assets/arrow-l-b.png">
+        <div class="outer1-2">
+            <div class="top-border-2"></div>
+            <div class="inner1-2">HEY</div>
+            <div class="bottom-border-2"></div>
+        </div>
+        <img src="../../assets/arrow-r-b.png">
+    </div>  
+</body>
+</html>

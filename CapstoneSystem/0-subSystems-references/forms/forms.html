@@ -1,0 +1,207 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>forms</title>
+    </head>
+    <body>
+        <style>
+        .floating-label {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .floating-label input {
+            width: 100%;
+            padding: 10px 10px 10px 5px;
+            font-size: 16px;
+            border: none;
+            border-bottom: 2px solid gray;
+            background: transparent;
+            outline: none;
+        }
+        
+        .floating-label label {
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            color: gray;
+            font-size: 16px;
+            pointer-events: none;
+            transition: 0.2s ease all;
+        }
+        
+        .floating-label input:focus ~ label,
+        .floating-label input:not(:placeholder-shown) ~ label {
+            top: -15px;
+            font-size: 12px;
+            color: dodgerblue;
+        }
+        
+        .floating-label input:focus {
+            border-bottom: 2px solid dodgerblue;
+        }
+        </style>
+        
+        <div class="floating-label">
+            <input type="text" placeholder=" " required />
+            <label>Your Name</label>
+        </div>
+
+
+
+
+
+
+        <style>
+        .underline-input {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .underline-input input {
+            border: none;
+            border-bottom: 2px solid #ccc;
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+            outline: none;
+            background: transparent;
+        }
+        
+        .underline-input input:focus {
+            border-bottom: 2px solid #00bcd4;
+        }
+        
+        .underline-input::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0%;
+            height: 2px;
+            background-color: #00bcd4;
+            transition: 0.4s ease;
+        }
+        
+        .underline-input input:focus + ::after {
+            width: 100%;
+        }
+        </style>
+        
+        <div class="underline-input">
+            <input type="text" placeholder="Enter text" />
+        </div>
+
+            
+
+
+        <style>
+        .rounded-input input {
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 30px;
+            outline: none;
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+        
+        .rounded-input input:focus {
+            border-color: #5e9cff;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+        }
+        </style>
+        
+        <div class="rounded-input">
+            <input type="text" placeholder="Search..." />
+        </div>
+            
+
+        <br><br><br>
+        <style>
+        body {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-family: sans-serif;
+            padding: 40px;
+            color: white;
+        }
+        
+        .glass-input {
+            position: relative;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        
+        .glass-input input {
+            width: 100%;
+            padding: 16px 20px 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            outline: none;
+            font-size: 16px;
+        }
+        
+        .glass-input input::placeholder {
+            color: transparent; /* Hide default placeholder */
+        }
+        
+        .glass-input label {
+            position: absolute;
+            top: 16px;
+            left: 20px;
+            color: rgba(255,255,255,0.6);
+            pointer-events: none;
+            font-size: 16px;
+            transition: 0.2s ease all;
+            padding: 0 5px;
+        }
+        
+        .glass-input input:focus {
+            border-color: rgba(255,255,255,0.6);
+        }
+        
+        .glass-input input:focus + label,
+        .glass-input input:not(:placeholder-shown) + label {
+            top: -16px;
+            left: 14px;
+            font-size: 13px;
+            color: #fff;
+        }
+        </style>
+        
+        <div class="glass-input">
+            <input type="text" id="email" placeholder="Your Email" required />
+            <label for="email">Your Email</label>
+        </div>
+            
+
+
+
+        <style>
+        .glow-input input {
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            transition: 0.3s;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        .glow-input input:focus {
+            border-color: #6200ea;
+            box-shadow: 0 0 8px rgba(98, 0, 234, 0.6);
+        }
+        </style>
+        
+        <div class="glow-input">
+            <input type="text" placeholder="Username" />
+        </div>
+            
+    </body>
+    </html>

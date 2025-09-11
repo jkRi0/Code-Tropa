@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Integration Sample</title>
+</head>
+<body>
+    <h1>Simple Audio Player</h1>
+    <div id="audioPlayerContainer" style="border: 2px solid blue; padding: 20px; margin: 20px; display: none;">
+        <audio id="myAudio">
+            <source src="sample.mp3" type="audio/mpeg">
+            <source src="sample.ogg" type="audio/ogg">
+            Your browser does not support the audio element.
+        </audio>
+        <p>This audio will only play when this div is visible.</p>
+    </div>
+    <button onclick="toggleAudioPlayer()">Toggle Audio Player</button>
+
+    <script>
+        const audioPlayerContainer = document.getElementById('audioPlayerContainer');
+        const myAudio = document.getElementById('myAudio');
+
+        function toggleAudioPlayer() {
+            if (audioPlayerContainer.style.display === 'none') {
+                audioPlayerContainer.style.display = 'block';
+                myAudio.play();
+            } else {
+                audioPlayerContainer.style.display = 'none';
+                myAudio.pause();
+                myAudio.currentTime = 0; // Rewind to the beginning
+            }
+        }
+    </script>
+</body>
+</html>

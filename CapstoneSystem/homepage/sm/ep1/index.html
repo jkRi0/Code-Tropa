@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Intro</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+            background-color: black; /* Full black background */
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Hide scrollbars */
+        }
+
+        /* Intro Screen Styles */
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top */
+            color: white;
+            font-family: Arial, sans-serif;
+            transition: opacity 1s ease-out;
+        }
+
+        .intro-text-container {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .intro-main-text {
+            font-size: 3em; /* Adjust as needed for impact */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .intro-main-text.show {
+            opacity: 1;
+        }
+
+        .intro-next-text {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            font-size: 1.2em;
+            opacity: 0;
+            transition: opacity 0.1s ease-in-out;
+        }
+
+        .intro-next-text.show {
+            opacity: 1;
+        }
+
+
+
+        .startBG{
+            background-color: wheat;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="intro-screen" id="introScreen">
+        <div class="intro-text-container">
+            <p class="intro-main-text" id="introMainText"></p>
+        </div>
+        <p class="intro-next-text" id="introNextText"></p>
+    </div>
+
+    <script>
+        const introScreen = document.getElementById('introScreen');
+        const introMainText = document.getElementById('introMainText');
+        const introNextText = document.getElementById('introNextText');
+
+        const introTexts = [
+            "In a land where old legends meet modern minds...",
+            "Where the spirit of Filipinos echoes through every line of code...",
+            "A new generation rises not with blades, but with logic, syntax, and heart.",
+            "You are one of them...",
+            "A Code-Tropa.",
+            "Guided by the algorithms of wisdom, the rhythm of real-world problems, and the fire of your curiosity...",
+            "Your mission: Learn. Solve. Build.",
+            "The digital realm is stirring... and only those who understand the code can restore the balance.",
+            "Handa ka na ba?",
+        ];
+        let currentIntroTextIndex = 0;
+
+        function showIntroText() {
+            if (currentIntroTextIndex < introTexts.length) {
+                introMainText.classList.remove('show');
+                introNextText.classList.remove('show');
+
+                setTimeout(() => {
+                    introMainText.textContent = introTexts[currentIntroTextIndex];
+                    introMainText.classList.add('show');
+                    if (currentIntroTextIndex < introTexts.length - 1) {
+                        introNextText.textContent = "Click to Next";
+                        introNextText.classList.add('show');
+                    } else {
+                        introNextText.textContent = "Click to Start"; // Last message
+                        introNextText.classList.add('show');
+                    }
+                }, 500);
+            } else {
+                // All texts shown, hide intro screen
+                introScreen.style.opacity = '0';
+                introScreen.style.visibility = 'hidden';
+                // You might want to redirect or start the game here
+            }
+        }
+
+        introScreen.addEventListener('click', () => {
+            currentIntroTextIndex++;
+            showIntroText();
+        });
+
+        // Initial call to display the first intro text
+        document.addEventListener('DOMContentLoaded', showIntroText);
+    </script>
+
+
+
+
+    <div class="startBG">
+
+        <h2>welcome</h2><br><br>
+        <button onclick="location.href='../../'">exit</button>
+
+    </div>
+
+    
+</body>
+</html>

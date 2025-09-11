@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mobile Detection Demo</title>
+  <style>
+    #mobileDiv {
+      padding: 20px;
+      background-color: lightgreen;
+      font-size: 1.5rem;
+      text-align: center;
+      margin: 20px;
+      border-radius: 8px;
+    }
+    /*TABLET*/
+@media (min-width: 700px) {
+    #mobileDiv {
+      padding: 20px;
+      background-color: rgb(213, 237, 95);
+      font-size: 1.5rem;
+      text-align: center;
+      margin: 20px;
+      border-radius: 8px;
+    }
+}
+
+/*DESKTOP*/
+@media (min-width: 1200px) {
+    #mobileDiv {
+      padding: 20px;
+      background-color: rgb(215, 95, 62);
+      font-size: 1.5rem;
+      text-align: center;
+      margin: 20px;
+      border-radius: 8px;
+    }
+}
+  </style>
+</head>
+<body>
+
+  <div id="mobileDiv">You are on a mobile device!</div>
+
+  <script>
+    function isMobileDevice() {
+      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
+    window.addEventListener("load", function() {
+      if (isMobileDevice()) {
+        document.getElementById("mobileDiv").style.display = "block";
+      }
+    });
+  </script>
+  
+</body>
+</html>

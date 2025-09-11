@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="../globalStyles/body.css">
+    <link rel="stylesheet" href="../globalStyles/poly1-div.css">
+    <link rel="stylesheet" href="../globalStyles/log-n-sign.css">
+</head>
+<body>
+    <img src="../assets/samplebg.jpg" class="bg-image" 
+    style="display: flex; 
+    height: 100vh; 
+    width: 100vw; 
+    position: absolute;
+    object-fit: cover;
+    ">
+
+    <div class="left-container">
+        <div class="logo">
+            <img src="../assets/capstone-logo.png" alt="Code-Tropa Logo">
+        </div>
+    </div>
+
+    <div class="right-container">
+
+        
+        
+        <div class="login-container">
+            <div class="backblur"></div>
+            <div class="poly1">
+                <img src="../assets/poly1.png">
+                <p>LOGIN</p>
+            </div>
+            
+            <form action="../auth.php" method="post">
+                <div class="input-group">
+                    <input type="text" name="username" id="username" placeholder="" required>
+                    <label for="username">Username</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="pass1" id="password" placeholder="" required>
+                    <label for="password">Password</label>
+                    <span class="show-password-toggle" onclick="togglePasswordVisibility()">👁️</span>
+                </div>
+                
+                <div class="buttons">
+                    <button type="submit" name="submit" value="log" class="login-btn">
+                        <!-- <img src="../assets/poly-button-black.png"> -->
+                        <p>Play</p>
+                    </button>
+
+                    <button type="submit" name="submit" value="" class="signup-btn">
+                        <!-- <img src="../assets/poly-button-brown.png"> -->
+                        <p>Sign Up</p>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    
+    <script>
+        document.querySelector('.signup-btn').addEventListener('click', function() {
+            window.location.href = '../signup/';
+        });
+
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const toggleIcon = document.querySelector('.show-password-toggle');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.textContent = '🔒'; // Change icon to a locked padlock
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.textContent = '👁️'; // Change icon back to an eye
+            }
+        }
+    </script>
+</body>
+</html>
