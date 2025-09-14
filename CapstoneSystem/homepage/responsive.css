@@ -1,0 +1,128 @@
+@media (max-width: 1200px) {
+    aside {
+        width: 300px;
+    }
+
+    .outer1 {
+        width: 60%;
+    }
+
+    .pl-selection {
+        width: 400px;
+        left: calc(50% - 200px);
+    }
+
+    .poly1 {
+        width: 80%;
+        left: 10%;
+    }
+
+    .poly1-2 {
+        width: 250px;
+    }
+
+    .sm-selection, .ch-selection, .lb-selection, .se-selection {
+        max-width: 800px;
+    }
+
+    .chap-selection {
+        width: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    aside {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .backblur {
+        display: none;
+    }
+
+    .logo {
+        height: 150px;
+    }
+
+    .outer2 {
+        height: 60px;
+    }
+
+    .inner1 {
+        font-size: 1rem;
+    }
+
+    .pl-selection {
+        width: 90%;
+        left: 5%;
+        height: auto;
+        top: 50px;
+    }
+
+    .pl-selection .poly1 {
+        top: -50px;
+    }
+
+    .sm-selection, .ch-selection, .lb-selection, .se-selection {
+        flex-direction: column;
+        max-width: 90%;
+        height: auto;
+        margin: 20px auto;
+    }
+
+    .chap-selection-outer {
+        flex-direction: column;
+    }
+
+    .chap-selection {
+        width: 90%;
+        border-right: none;
+        border-bottom: 3px solid black;
+        max-height: 300px;
+        margin: 10px auto;
+    }
+
+    .epi-selection {
+        margin: 10px auto;
+        width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .pl-selection p {
+        font-size: 1.2rem;
+    }
+
+    .outer1-2, .outer1-3 {
+        width: 70%;
+    }
+
+    .inner1-2, .inner1-3 {
+        font-size: 1.2rem;
+    }
+
+    .poly1-2 p {
+        font-size: 1.5rem;
+    }
+
+    .back-btn {
+        margin: 10px;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+
+    .epi-option h2 {
+        font-size: 1.2em;
+    }
+
+    .epi-option p {
+        font-size: 0.9rem;
+    }
+
+    .epi-option button {
+        width: 80px;
+        height: 25px;
+        font-size: 0.9rem;
+    }
+}

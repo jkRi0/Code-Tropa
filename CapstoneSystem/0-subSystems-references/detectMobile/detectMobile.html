@@ -7,51 +7,91 @@
   <style>
     #mobileDiv {
       padding: 20px;
-      background-color: lightgreen;
+      background-color: lightcoral; /* Changed to a different color */
       font-size: 1.5rem;
       text-align: center;
       margin: 20px;
       border-radius: 8px;
     }
     /*TABLET*/
-@media (min-width: 700px) {
-    #mobileDiv {
-      padding: 20px;
-      background-color: rgb(213, 237, 95);
-      font-size: 1.5rem;
-      text-align: center;
-      margin: 20px;
-      border-radius: 8px;
+    @media (min-width: 700px) {
+        #mobileDiv {
+          padding: 20px;
+          background-color: lightgoldenrodyellow; /* Changed to a different color */
+          font-size: 1.5rem;
+          text-align: center;
+          margin: 20px;
+          border-radius: 8px;
+        }
     }
-}
 
-/*DESKTOP*/
-@media (min-width: 1200px) {
-    #mobileDiv {
-      padding: 20px;
-      background-color: rgb(215, 95, 62);
-      font-size: 1.5rem;
-      text-align: center;
-      margin: 20px;
-      border-radius: 8px;
+    /*DESKTOP*/
+    @media (min-width: 1200px) {
+        #mobileDiv {
+          padding: 20px;
+          background-color: lightskyblue; /* Changed to a different color */
+          font-size: 1.5rem;
+          text-align: center;
+          margin: 20px;
+          border-radius: 8px;
+        }
     }
-}
+
+    @media (orientation: portrait) {
+        #portraitDiv {
+            display: block !important;
+            padding: 20px;
+            background-color: lightgreen;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px;
+            border-radius: 8px;
+        }
+    }
   </style>
 </head>
 <body>
 
-  <div id="mobileDiv">You are on a mobile device!</div>
+  <div id="mobileDiv"></div>
+
+  <div id="portraitDiv" style="display: none;">
+    <h2>This div is visible only in Portrait Mode!</h2>
+  </div>
 
   <script>
-    function isMobileDevice() {
-      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    function getDeviceType() {
+      const userAgent = navigator.userAgent;
+      if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(userAgent)) {
+        return "Tablet";
+      }
+      if (/Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Kindle|NetFront|PSP|Sailfish|Seamonkey|Opera Mini|Mobi/i.test(userAgent)) {
+        return "Mobile";
+      }
+      return "Desktop";
     }
 
-    window.addEventListener("load", function() {
-      if (isMobileDevice()) {
-        document.getElementById("mobileDiv").style.display = "block";
+    function getOrientationType() {
+      if (window.matchMedia("(orientation: portrait)").matches) {
+        return "Portrait";
+      } else if (window.matchMedia("(orientation: landscape)").matches) {
+        return "Landscape";
       }
-    });
+      return "Unknown";
+    }
+
+    function displayDeviceType() {
+      const mobileDiv = document.getElementById("mobileDiv");
+      const deviceType = getDeviceType();
+      const orientationType = getOrientationType();
+      mobileDiv.textContent = `You are on a ${deviceType} device!`;
+      if (deviceType !== "Desktop") {
+        mobileDiv.textContent += ` Your device is in ${orientationType} mode.`;
+      }
+    }
+
+    // Call displayDeviceType initially and on window resize
+    window.addEventListener("load", displayDeviceType);
+    window.addEventListener("resize", displayDeviceType);
   </script>
   
 </body>
