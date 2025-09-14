@@ -196,3 +196,17 @@ function difActions(action){
         }
     }
 }
+
+// Hamburger menu functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const menuContainer = document.querySelector('.menu-container');
+    const mainContentWrapper = document.querySelector('.main-content-wrapper');
+
+    if (hamburgerMenu && menuContainer) {
+        hamburgerMenu.addEventListener('click', () => {
+            menuContainer.classList.toggle('open');
+            mainContentWrapper.classList.toggle('menu-open');
+        });
+    }
+});
