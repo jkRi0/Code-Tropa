@@ -7,6 +7,10 @@
         text-align: center;
         margin: 20px;
         border-radius: 8px;
-        z-index: 1000;
+        z-index: 2000;
+        position: absolute;
+        height: 95%;
+        width: 95%;
+        align-content: center;
     }
 }
