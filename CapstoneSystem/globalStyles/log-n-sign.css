@@ -1,31 +1,33 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+}
+
+
+
+
+
 .login-container, .signup-container {
     background: #8c7b6e00;
     padding: 2rem;
     border-radius: 10px;
     border:rgb(127, 127, 127) 2px solid;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    width: 330px;
     position: relative;
     padding-top: 60px;
+    margin-top: 50px;
+    width: 90%;
+    max-width: 700px;
 }
-
-
-@media (min-width: 1200px) {
-    .login-container, .signup-container  {
-        width: 600px;
-        height: auto;
-        position: relative;
-        padding-top: 60px;
-        padding: 80px 80px 30px 80px;
-    }
-}
-
-
 
 .input-group {
     position: relative;
     margin-bottom: 30px;
-    width: 100%;
 }
 
 .input-group input {
@@ -90,7 +92,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 10p;
 }
 button {
     height: 50px;
@@ -99,7 +100,7 @@ button {
     cursor: pointer;
     transition: 0.3s ease;
     margin: 10px;
-    font-size: 20px;
+    font-size: 1rem;
     color: white;
 }
 .login-btn, .create-btn {
@@ -136,26 +137,53 @@ button {
 }
 
 
+ 
+@media (min-width: 1200px) {
+    .outerContainer{
+        display: flex;
+        width: 100vw;
+        height: 100%;
+        background-color: #eaa866;
+        flex-direction: row;
+    }
+}
 
+.bg-image-landscape{
+    display: flex; 
+    height: 100%; 
+    width: 100%; 
+    position: fixed;
+    object-fit: cover;
+    z-index: -1;
+    overflow: auto;
+}
 
-
-.left-container{
-    width: 50%;
-    height: 100%;
-    background-color: rgba(188, 143, 143, 0);
-    position: absolute;
-    left: 0;
-    justify-items: center;
+.outerContainer{
+    width: 100vw;
+    height: auto;
+    background-color: #eaa86600;
+    justify-content: center;
     align-content: center;
+    position: relative;
+}
+.left-container{
+    width: 100%;
+    height: auto;
+    /* height: 100%; */
+    background-color: rgba(255, 0, 0, 0);
+    left: 0;
+    display: flex;
+    
 }
 .right-container{
+    width: 100%;
+    height: auto;
     display: flex;
-    width: 50%;
-    background-color: rgba(0, 0, 0, 0);
+    /* width: 50%;
+    height: 100%; */
+    background-color: rgba(255, 114, 114, 0);
     z-index: 100;
-    position: absolute;
     right: 0;
-    height: 100%;
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -175,14 +203,15 @@ button {
 
 
 
-
 .logo{
-    background-color: rgba(46, 139, 86, 0);
+    display: flex;
+    background-color: rgba(52, 255, 140, 0);
+    height: 100%;
+    display: flex;
+    justify-content: center;
     width: 100%;
-    height: 500px;
 }
 .logo img{
-    width: 100%;
-    height: 100%;
+    width: 60%;
     object-fit: contain;
 }

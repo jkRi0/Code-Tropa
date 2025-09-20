@@ -64,6 +64,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (password_verify($hid2, $hashedPassword)) {
                 session_start();
                 $_SESSION['username'] = $hid1; //SAVE USERNAME IN SESSION
+                
+                // Get PHP session ID
+                $phpSessionId = session_id();
+
+                // Save it to DB
+                $update = $conn->prepare("UPDATE users SET session = ? WHERE username = ?");
+                $update->bind_param("ss", $phpSessionId, $hid1);
+                $update->execute();
+
+
                 echo "<script>alert('Logged in successfully'); window.location.href='homepage/'; </script>";
             } else {
                 echo "<script>alert('Invalid password'); window.location.href='login/'; </script>";

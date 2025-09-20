@@ -1,15 +1,56 @@
 <?php
 
 include '../db.php';
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', 1);
+
 session_start();
 
+// Prevent browser from caching this page
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
+// echo "<script>console.log('Session ID: " . session_id() . "');</script>"; // For testing
+// echo "<script>console.log('User: " . $_SESSION['username'] . "');</script>";
+
+// Check session
 if (!isset($_SESSION['username'])) {
     header("Location: ../login/");
     exit();
 }
+
+//RELOAD TO RE-VALIDATE USER'S SESSION
+echo '<script>
+        // reload the page, to re-validate the logged user
+        window.addEventListener("pageshow", function(event) {
+            if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+                window.location.reload();
+            }
+        });
+    </script>';
+
+// $username = $_SESSION['username'];
+// $currentSessionId = session_id();
+
+// $stmt = $conn->prepare("SELECT session FROM users WHERE username = ?");
+// $stmt->bind_param("s", $username);
+// $stmt->execute();
+// $stmt->bind_result($storedSessionId);
+// $stmt->fetch();
+// $stmt->close();
+
+// if ($currentSessionId !== $storedSessionId || empty($storedSessionId)) {
+//     session_unset();
+//     session_destroy();
+//     header("Location: ../login/");
+//     exit();
+// }
+
+// echo "<script>console.log('User: " . $_SESSION['username'] . "'); location.reload();</script>";
+
 ?>
-
-
+    
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,16 +65,15 @@ if (!isset($_SESSION['username'])) {
     <link rel="icon" type="image/x-icon" href="../assets/favicon.png">
 </head>
 <body>
+    
     <div id="portraitDiv" style="display: none;">
         <h2>Rotate your phone for a better experience!</h2>
         <p style="font-size: 3em;">&#x21BA;</p> <!-- Unicode for a rotating arrow -->
     </div>
 
-    <img src="../assets/samplebg.jpg" 
-        class="bg-image responsive-bg-image"
-        srcset="../assets/samplebg-small.jpg 480w, ../assets/samplebg.jpg 800w"
-        sizes="(max-width: 600px) 480px, 800px"
-        alt="Background Image">
+    <video autoplay loop muted playsinline class="bg-video responsive-bg-image">
+        <source src="../assets/bg.mp4" type="video/mp4">
+    </video>
 
     <div class="hamburger-menu">
         <div class="bar"></div>
@@ -96,7 +136,7 @@ if (!isset($_SESSION['username'])) {
             </div>
 
             <a href="../logout.php" style="text-decoration: none;">
-            <div class="outer2" onclick="process(this, 'logout')">
+            <div class="outer2">
                 <img src="../assets/arrow-l.png">
                 <div class="outer1">
                     <div class="top-border"></div>
@@ -166,7 +206,7 @@ if (!isset($_SESSION['username'])) {
             </div>
 
             <a href="../logout.php" style="text-decoration: none;">
-            <div class="outer2" onclick="process(this, 'logout')">
+            <div class="outer2">
                 <img src="../assets/arrow-l.png">
                 <div class="outer1">
                     <div class="top-border"></div>
@@ -1117,11 +1157,11 @@ if (!isset($_SESSION['username'])) {
                             <div class="profile-badges">
                                 <h3>Badges Achieved:</h3>
                                 <div class="badges-container">
-                                    <img src="../assets/badge1.png" alt="Badge 1">
-                                    <img src="../assets/badge2.png" alt="Badge 2">
-                                    <img src="../assets/badge3.png" alt="Badge 3">
-                                    <img src="../assets/badge4.png" alt="Badge 4">
-                                    <img src="../assets/badge5.png" alt="Badge 5">
+                                    <img src="" alt="Badge 1">
+                                    <img src="" alt="Badge 2">
+                                    <img src="" alt="Badge 3">
+                                    <img src="" alt="Badge 4">
+                                    <img src="" alt="Badge 5">
                                 </div>
                             </div>
                             <div class="profile-performance">

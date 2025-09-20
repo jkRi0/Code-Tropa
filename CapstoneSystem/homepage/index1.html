@@ -17,11 +17,9 @@
         <p style="font-size: 3em;">&#x21BA;</p> <!-- Unicode for a rotating arrow -->
     </div>
 
-    <img src="../assets/samplebg.jpg" 
-        class="bg-image responsive-bg-image"
-        srcset="../assets/samplebg-small.jpg 480w, ../assets/samplebg.jpg 800w"
-        sizes="(max-width: 600px) 480px, 800px"
-        alt="Background Image">
+    <video autoplay loop muted playsinline class="bg-video responsive-bg-image">
+        <source src="../assets/bg.mp4" type="video/mp4">
+    </video>
 
     <div class="hamburger-menu">
         <div class="bar"></div>
@@ -84,7 +82,7 @@
             </div>
 
             <a href="../logout.php" style="text-decoration: none;">
-            <div class="outer2" onclick="process(this, 'logout')">
+            <div class="outer2">
                 <img src="../assets/arrow-l.png">
                 <div class="outer1">
                     <div class="top-border"></div>
@@ -154,7 +152,7 @@
             </div>
 
             <a href="../logout.php" style="text-decoration: none;">
-            <div class="outer2" onclick="process(this, 'logout')">
+            <div class="outer2">
                 <img src="../assets/arrow-l.png">
                 <div class="outer1">
                     <div class="top-border"></div>

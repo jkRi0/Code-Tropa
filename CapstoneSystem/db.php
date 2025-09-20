@@ -3,12 +3,13 @@ $host = "localhost";
 $user = "root";
 $pass = "";
 $dbname = "code_tropa";
-try{
-    $conn = mysqli_connect($host,$user,$pass,$dbname);
 
-    echo '<script>console.log("Connected")</script>';
+$conn = mysqli_connect($host, $user, $pass, $dbname);
+
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
-catch(mysqli_sql_exception){
-    echo '<script>console.log("Could not connect!")</script>';
-}
+
+// echo '<script>console.log("Connected")</script>'; // Removed for cleaner output in production
+
 ?>
