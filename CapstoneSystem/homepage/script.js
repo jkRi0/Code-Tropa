@@ -98,7 +98,7 @@ function process(clickedDiv, type) {
     }
 }
 
-//FOR BLACK BUTTONS
+// FOR BLACK BUTTONS
 function process1(clickedDiv) {
 // Reset all .outer2 divs
     document.querySelectorAll('.outer2-2').forEach(div => {
@@ -124,9 +124,10 @@ function process1(clickedDiv) {
         }
     });
     // Change style of clicked div's inner1
-    const targetInner1 = clickedDiv.querySelector('.inner1-3');
+    const targetInner1 = clickedDiv.querySelector('.inner1-2');
     if (targetInner1) {
         targetInner1.style.backgroundColor = "rgb(65, 62, 62)"; // or any other style
+        document.getElementById('selectedLanguageInput').value = targetInner1.textContent.trim();
     }
 }
 

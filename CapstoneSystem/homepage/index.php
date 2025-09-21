@@ -6,6 +6,23 @@ ini_set('session.cookie_secure', 1);
 
 session_start();
 
+$user_id = $_SESSION['userID']; // Assuming userID is stored in session
+
+$sql = "SELECT programmingLanguage FROM users WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user_programming_language = "";
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $user_programming_language = $row['programmingLanguage'];
+}
+$stmt->close();
+// $conn->close(); // Keep connection open if other parts of the page use it.
+
+echo "<script>console.log('User Programming Language: " . $user_programming_language . "');</script>";
+
 // Prevent browser from caching this page
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
@@ -51,6 +68,27 @@ echo '<script>
 
 ?>
     
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_language'])) {
+    $newLanguage = $_POST['selected_language'];
+    $userId = $_SESSION['userID']; 
+
+    $updateSql = "UPDATE users SET programmingLanguage = ? WHERE id = ?";
+    $updateStmt = $conn->prepare($updateSql);
+    $updateStmt->bind_param("si", $newLanguage, $userId);
+    
+    if ($updateStmt->execute()) {
+        $_SESSION['user_programming_language'] = $newLanguage; // Update session variable
+        echo "<script>console.log('Programming language updated to: ' + '$newLanguage');</script>";
+    } else {
+        echo "<script>console.error('Error updating programming language: ' + '$updateStmt->error');</script>";
+    }
+    $updateStmt->close();
+    // Redirect to prevent form resubmission on refresh
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -235,7 +273,8 @@ echo '<script>
                         <img src="../assets/arrow-l-b.png">
                         <div class="outer1-2">
                             <div class="top-border-2"></div>
-                            <div class="inner1-2">JAVA</div>
+                            <div class="inner1-2-1"></div>
+                            <div class="inner1-2 <?php echo (strtolower($user_programming_language) == 'java') ? 'selected-language' : ''; ?>">JAVA</div>
                             <div class="bottom-border-2"></div>
                         </div>
                         <img src="../assets/arrow-r-b.png">
@@ -245,7 +284,8 @@ echo '<script>
                         <img src="../assets/arrow-l-b.png">
                         <div class="outer1-2">
                             <div class="top-border-2"></div>
-                            <div class="inner1-2">C++</div>
+                            <div class="inner1-2-1"></div>
+                            <div class="inner1-2 <?php echo (strtolower($user_programming_language) == 'c++') ? 'selected-language' : ''; ?>">C++</div>
                             <div class="bottom-border-2"></div>
                         </div>
                         <img src="../assets/arrow-r-b.png">
@@ -255,22 +295,23 @@ echo '<script>
                         <img src="../assets/arrow-l-b.png">
                         <div class="outer1-2">
                             <div class="top-border-2"></div>
-                            <div class="inner1-2">C#</div>
-                            <div class="bottom-border-2"></div>
+                            <div class="inner1-2-1"></div>
+                            <div class="inner1-2 <?php echo (strtolower($user_programming_language) == 'c#') ? 'selected-language' : ''; ?>">C#</div>
+                            <div class="bottom-border-2"></div> 
                         </div>
                         <img src="../assets/arrow-r-b.png">
-                    </div>  
-                    
+                    </div> 
+
                     <div class="outer-button">
                         <div class="act-button" onclick="hideModal('back')">Back</div>
-                        <div class="act-button" onclick="hideModal('ok')">Ok</div>
+                        <div class="act-button" onclick="document.getElementById('languageForm').submit();">Ok</div>
                     </div>
                 </div>
             </div>
 
-
-            
-
+            <form id="languageForm" method="POST" style="display: none;">
+                <input type="hidden" name="selected_language" id="selectedLanguageInput">
+            </form>
 
 
             <!-- MODAL FOR STORY MODE -->

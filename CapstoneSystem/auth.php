@@ -51,19 +51,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hid1 = mysqli_real_escape_string($conn, $hid1);
         
         // Query to get the hashed password from the database
-        $stmt = $conn->prepare("SELECT password FROM users WHERE username = ?");
+        $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
         $stmt->bind_param("s", $hid1);
         $stmt->execute();
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($hashedPassword);
+            $stmt->bind_result($userID, $hashedPassword);
             $stmt->fetch();
 
             // Verify the password
             if (password_verify($hid2, $hashedPassword)) {
                 session_start();
                 $_SESSION['username'] = $hid1; //SAVE USERNAME IN SESSION
+                $_SESSION['userID'] = $userID; //SAVE USERID IN SESSION
                 
                 // Get PHP session ID
                 $phpSessionId = session_id();
