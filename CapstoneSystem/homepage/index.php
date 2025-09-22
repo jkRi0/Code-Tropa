@@ -8,20 +8,6 @@ session_start();
 
 $user_id = $_SESSION['userID']; // Assuming userID is stored in session
 
-$sql = "SELECT programmingLanguage FROM users WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user_programming_language = "";
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $user_programming_language = $row['programmingLanguage'];
-}
-$stmt->close();
-// $conn->close(); // Keep connection open if other parts of the page use it.
-
-echo "<script>console.log('User Programming Language: " . $user_programming_language . "');</script>";
 
 // Prevent browser from caching this page
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
@@ -66,12 +52,14 @@ echo '<script>
 
 // echo "<script>console.log('User: " . $_SESSION['username'] . "'); location.reload();</script>";
 
-?>
-    
-<?php
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_language'])) {
     $newLanguage = $_POST['selected_language'];
     $userId = $_SESSION['userID']; 
+
+
+    echo "<script>console.log('Selected Language from POST: ' + '$newLanguage');</script>";
+    echo "<script>console.log('User ID from Session: ' + '$userId');</script>";
 
     $updateSql = "UPDATE users SET programmingLanguage = ? WHERE id = ?";
     $updateStmt = $conn->prepare($updateSql);
@@ -88,6 +76,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_language']))
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
 }
+
+
+$sql = "SELECT programmingLanguage FROM users WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user_programming_language = "";
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $user_programming_language = $row['programmingLanguage'];
+}
+$stmt->close();
+// $conn->close(); // Keep connection open if other parts of the page use it.
+
+echo "<script>console.log('User Programming Language: " . $user_programming_language . "');</script>";
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -304,7 +309,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_language']))
 
                     <div class="outer-button">
                         <div class="act-button" onclick="hideModal('back')">Back</div>
-                        <div class="act-button" onclick="document.getElementById('languageForm').submit();">Ok</div>
+                        <div class="act-button" onclick="submitLanguageSelection();">Ok</div>
                     </div>
                 </div>
             </div>
@@ -1292,6 +1297,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_language']))
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script src="scripts/script.js"></script>
+    <script src="scripts/storyModeProgress.php"></script>
+    <script src="scripts/challengeModeProgress.php"></script>
 </body>
 </html>

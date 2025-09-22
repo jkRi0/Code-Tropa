@@ -99,6 +99,8 @@ function process(clickedDiv, type) {
 }
 
 // FOR BLACK BUTTONS
+let currentSelectedLanguage = ''; // New variable to track the selected language
+
 function process1(clickedDiv) {
 // Reset all .outer2 divs
     document.querySelectorAll('.outer2-2').forEach(div => {
@@ -127,12 +129,32 @@ function process1(clickedDiv) {
     const targetInner1 = clickedDiv.querySelector('.inner1-2');
     if (targetInner1) {
         targetInner1.style.backgroundColor = "rgb(65, 62, 62)"; // or any other style
-        document.getElementById('selectedLanguageInput').value = targetInner1.textContent.trim();
+        currentSelectedLanguage = targetInner1.textContent.trim(); // Update the variable
+        document.getElementById('selectedLanguageInput').value = currentSelectedLanguage;
     }
 }
 
+// Add a new function to handle form submission with validation
+function submitLanguageSelection() {
+    const selectedLanguageInput = document.getElementById('selectedLanguageInput');
+    // Only submit if a language has been selected
+    if (currentSelectedLanguage) {
+        selectedLanguageInput.value = currentSelectedLanguage;
+        document.getElementById('languageForm').submit();
+        hideModal(); // Hide modal after submission
+    } else {
+        alert('Please select a programming language.'); // Or provide other feedback
+    }
+}
 
 function hideModal() {
+    // When the modal is hidden, clear the selected language
+    currentSelectedLanguage = '';
+    const selectedLanguageInput = document.getElementById('selectedLanguageInput');
+    if (selectedLanguageInput) {
+        selectedLanguageInput.value = '';
+    }
+
     const plSelection = document.querySelector('.pl-selection-back1');
     if (plSelection) {
         plSelection.style.visibility = 'hidden';
@@ -281,6 +303,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
+
 
 
 //FOR CHALLENGES MODAL

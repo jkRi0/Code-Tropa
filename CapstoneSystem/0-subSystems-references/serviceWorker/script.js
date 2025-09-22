@@ -45,3 +45,13 @@ function createConnectionMonitor() {
 
 // Start monitoring
 createConnectionMonitor();
+
+
+
+const isOnline = window.navigator.onLine;
+
+if (isOnline) {
+  console.log("The browser is online.");
+} else {
+  console.log("The browser is offline.");
+}

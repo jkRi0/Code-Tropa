@@ -34,6 +34,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if ($stmt->execute()) {
                     echo "<script>alert('Account Added Successfully'); window.location.href='login/';</script>";
+                    
+                    // Get the ID of the newly inserted user
+                    $newUserId = $conn->insert_id;
+
+                    // Insert default values into rewards table
+                    $stmtRewards = $conn->prepare("INSERT INTO rewards (userId, tier, badges) VALUES (?, ?, ?)");
+                    $defaultTier = '[""]';
+                    $defaultBadges = '["java",""]';
+                    $stmtRewards->bind_param("iss", $newUserId, $defaultTier, $defaultBadges);
+                    $stmtRewards->execute();
+                    $stmtRewards->close();
+
+                    // Insert default values into saving table
+                    $stmtSaving = $conn->prepare("INSERT INTO saving (userId, sceneNum) VALUES (?, ?)");
+                    $defaultSceneNum = '["java","","",""]';
+                    $stmtSaving->bind_param("is", $newUserId, $defaultSceneNum);
+                    $stmtSaving->execute();
+                    $stmtSaving->close();
+
+                    // Insert default values into progress table
+                    $stmtProgress = $conn->prepare("INSERT INTO progress (userId, storymode, challenges) VALUES (?, ?, ?)");
+                    $defaultProgressJson = '[0,0,0,"java",""]';
+                    $stmtProgress->bind_param("iss", $newUserId, $defaultProgressJson, $defaultProgressJson);
+                    $stmtProgress->execute();
+                    $newProgressId = $conn->insert_id; // Get the ID of the newly inserted progress
+                    $stmtProgress->close();
+
+                    // Insert default values into performance table
+                    $stmtPerformance = $conn->prepare("INSERT INTO performance (userId, progressId, accuracy, efficiency, readability, time, success, failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                    $defaultJsonArray = '[0,0,0]';
+                    $stmtPerformance->bind_param("isssssss", $newUserId, $newProgressId, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray);
+                    $stmtPerformance->execute();
+                    $stmtPerformance->close();
+
+                    // Insert default values into settings table
+                    $stmtSettings = $conn->prepare("INSERT INTO settings (userId, controls, volume) VALUES (?, ?, ?)");
+                    $defaultControls = '["w","a","s","d","click"]';
+                    $defaultVolume = 50;
+                    $stmtSettings->bind_param("isi", $newUserId, $defaultControls, $defaultVolume);
+                    $stmtSettings->execute();
+                    $stmtSettings->close();
                 } else {
                     echo "<script>alert('Failed to add account, please try again later'); window.location.href='signup/'; </script>";
                 }
@@ -51,13 +92,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hid1 = mysqli_real_escape_string($conn, $hid1);
         
         // Query to get the hashed password from the database
-        $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
+        $stmt = $conn->prepare("SELECT id, password, programmingLanguage FROM users WHERE username = ?");
         $stmt->bind_param("s", $hid1);
         $stmt->execute();
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($userID, $hashedPassword);
+            $stmt->bind_result($userID, $hashedPassword, $userProgrammingLanguage);
             $stmt->fetch();
 
             // Verify the password
@@ -65,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 session_start();
                 $_SESSION['username'] = $hid1; //SAVE USERNAME IN SESSION
                 $_SESSION['userID'] = $userID; //SAVE USERID IN SESSION
+                $_SESSION['user_programming_language'] = $userProgrammingLanguage; // SAVE PROGRAMMING LANGUAGE IN SESSION
                 
                 // Get PHP session ID
                 $phpSessionId = session_id();
