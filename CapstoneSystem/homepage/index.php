@@ -1297,8 +1297,6 @@ echo "<script>console.log('User Programming Language: " . $user_programming_lang
         </main>
     </div>
 
-    <script src="scripts/script.js"></script>
-    <script src="scripts/storyModeProgress.php"></script>
-    <script src="scripts/challengeModeProgress.php"></script>
+    <script type="module" src="scripts/script.js"></script>
 </body>
 </html>
