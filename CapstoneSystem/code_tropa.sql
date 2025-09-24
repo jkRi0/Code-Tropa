@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 21, 2025 at 11:28 AM
+-- Generation Time: Sep 24, 2025 at 02:47 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,6 +39,13 @@ CREATE TABLE `performance` (
   `failed` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '[0,0,0]' CHECK (json_valid(`failed`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `performance`
+--
+
+INSERT INTO `performance` (`id`, `userId`, `progressId`, `accuracy`, `efficiency`, `readability`, `time`, `success`, `failed`) VALUES
+(3, 4, 2, '[0,0,0]', '[0,0,0]', '[0,0,0]', '[0,0,0]', '[0,0,0]', '[0,0,0]');
+
 -- --------------------------------------------------------
 
 --
@@ -51,6 +58,13 @@ CREATE TABLE `progress` (
   `storymode` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '[0,0,0,"java",""]' CHECK (json_valid(`storymode`)),
   `challenges` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '[0,0,0,"java",""]' CHECK (json_valid(`challenges`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `progress`
+--
+
+INSERT INTO `progress` (`id`, `userId`, `storymode`, `challenges`) VALUES
+(2, 4, '[0,0,0,\"java\",\"\"]', '[0,0,0,\"java\",\"\"]');
 
 -- --------------------------------------------------------
 
@@ -65,6 +79,13 @@ CREATE TABLE `rewards` (
   `badges` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '["java",""]' CHECK (json_valid(`badges`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `rewards`
+--
+
+INSERT INTO `rewards` (`id`, `userId`, `tier`, `badges`) VALUES
+(3, 4, '[\"\"]', '[\"java\",\"\"]');
+
 -- --------------------------------------------------------
 
 --
@@ -76,6 +97,13 @@ CREATE TABLE `saving` (
   `userId` int(11) NOT NULL,
   `sceneNum` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '["java","","",""]' CHECK (json_valid(`sceneNum`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `saving`
+--
+
+INSERT INTO `saving` (`id`, `userId`, `sceneNum`) VALUES
+(3, 4, '[\"java\",\"\",\"\",\"\"]');
 
 -- --------------------------------------------------------
 
@@ -89,6 +117,13 @@ CREATE TABLE `settings` (
   `controls` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '["w","a","s","d","click"]' CHECK (json_valid(`controls`)),
   `volume` int(11) DEFAULT 50
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `settings`
+--
+
+INSERT INTO `settings` (`id`, `userId`, `controls`, `volume`) VALUES
+(2, 4, '[\"w\",\"a\",\"s\",\"d\",\"click\"]', 50);
 
 -- --------------------------------------------------------
 
@@ -110,7 +145,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `programmingLanguage`, `created_at`, `session`) VALUES
-(1, 'sample', '$2y$10$1HvyXeAyXpXRNeaqWS8v8uWBepVQykbCg55fc0McVhJQKtFU4axpu', '', '2025-09-18 23:42:16', '7ct4nh4uje1thmvha1rv4flhkq');
+(1, 'sample', '$2y$10$1HvyXeAyXpXRNeaqWS8v8uWBepVQykbCg55fc0McVhJQKtFU4axpu', '', '2025-09-18 23:42:16', NULL),
+(4, 'sample1', '$2y$10$vK/4V8i97Lx/yQAc9XJ2A.UqylT8NrSamYVTeaSE/5RS7vPYGUDHC', 'c++', '2025-09-21 09:48:15', '7ct4nh4uje1thmvha1rv4flhkq');
 
 --
 -- Indexes for dumped tables
@@ -167,37 +203,37 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `performance`
 --
 ALTER TABLE `performance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `progress`
 --
 ALTER TABLE `progress`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `rewards`
 --
 ALTER TABLE `rewards`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `saving`
 --
 ALTER TABLE `saving`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
