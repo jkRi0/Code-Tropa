@@ -2,14 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Offline Website</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Module with Service Worker</title>
 </head>
 <body>
-  <h1>Hello, this website works offline!</h1>
-  <p>Try disconnecting your internet and reloading the page.</p>
+  <h1>Module with Service Worker</h1>
+  <input type="text" id="myInput" placeholder="Enter a message">
+  <button id="myButton">Check Connection and Say Hello</button>
   <div id="connection-status" class="status-indicator"></div>
 
-  <script type="module" src="script.js"></script>
+  <script src="script.js"></script>
+  <script>
+
+    // if ('serviceWorker' in navigator) {
+    //   window.addEventListener('load', () => {
+    //     navigator.serviceWorker.register('./service-worker.js')
+    //       .then(registration => {
+    //         console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    //       })
+    //       .catch(error => {
+    //         console.error('ServiceWorker registration failed: ', error);
+    //       });
+    //   });
+    // }
+  </script>
 </body>
 </html>

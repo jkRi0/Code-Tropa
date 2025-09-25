@@ -1,9 +1,9 @@
-const CACHE_NAME = 'offline-cache-v1';
+const CACHE_NAME = 'offline-cache-v1-modulingXserviceworker';
 const FILES_TO_CACHE = [
   './',
   './index.html',
-  './offlineJS.js',
   './script.js',
+  './offlineJS.js',
   './service-worker.js'
 ];
 

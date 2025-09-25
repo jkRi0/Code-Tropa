@@ -48,6 +48,10 @@ createConnectionMonitor();
 
 
 
+
+
+
+
 const isOnline = window.navigator.onLine;
 
 if (isOnline) {

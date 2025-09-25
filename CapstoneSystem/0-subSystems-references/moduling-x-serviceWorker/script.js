@@ -1,16 +1,11 @@
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
-        .then(registration => {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        })
-        .catch(error => {
-            console.error('ServiceWorker registration failed: ', error);
-        });
-    });
-}
+// import { sayHello } from './offlineJS.js';
 
-function checkInternetConnection(){
+// document.getElementById('myButton').addEventListener('click', () => {
+//     const inputValue = document.getElementById('myInput').value;
+//     checkInternetConnection(inputValue);
+// });
+
+function checkInternetConnection(value){
     const isOnline = window.navigator.onLine;
     if (isOnline) {
         console.log("The browser is online.");
@@ -22,6 +17,9 @@ function checkInternetConnection(){
         let script = document.createElement("script");
         script.src = "offlineJS.js";
         document.body.appendChild(script);
+
+        // sayHello(value);
     }
 }
-// setInterval(checkInternetConnection, 2000);
+setInterval(() => checkInternetConnection(''), 3000);
+
