@@ -19,8 +19,12 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         // Append a unique timestamp to the service worker URL to force a fetch of the latest version
+
+        //EXAMPLE IF NOT ON ROOT FOLDER:   navigator.serviceWorker.register("/sw.js", { scope: "/" })
+
+
         const serviceWorkerUrl = './service-worker.js?v=' + new Date().getTime();
-        navigator.serviceWorker.register(serviceWorkerUrl)
+        navigator.serviceWorker.register(serviceWorkerUrl, { scope: "/" })
           .then(registration => {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           })
