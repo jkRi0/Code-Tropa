@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Module with Service Worker</title>
+  <link rel="icon" href="../../assets/favicon.ico">
 </head>
 <body>
   <h1>Module with Service Worker</h1>
@@ -10,20 +11,19 @@
   <button id="myButton">Check Connection and Say Hello</button>
   <div id="connection-status" class="status-indicator"></div>
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
   <script>
-
-    // if ('serviceWorker' in navigator) {
-    //   window.addEventListener('load', () => {
-    //     navigator.serviceWorker.register('./service-worker.js')
-    //       .then(registration => {
-    //         console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    //       })
-    //       .catch(error => {
-    //         console.error('ServiceWorker registration failed: ', error);
-    //       });
-    //   });
-    // }
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          })
+          .catch(error => {
+            console.error('ServiceWorker registration failed: ', error);
+          });
+      });
+    }
   </script>
 </body>
 </html>
