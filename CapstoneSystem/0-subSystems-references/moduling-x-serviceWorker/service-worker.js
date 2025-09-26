@@ -27,29 +27,36 @@ self.addEventListener('fetch', event => {
   if (event.request.url.includes('/online-check.txt')) {
     return;
   }
-  event.respondWith
-    // Check cache for offlineJS.js first when offline
-    (async () => {
-      if (!navigator.onLine && event.request.url.includes('offlineJS.js')) {
-        const cachedResponse = await caches.match(event.request);
-        if (cachedResponse) {
-          return cachedResponse;
-        }
+  event.respondWith(async function() {
+    // For offlineJS.js, try cache first when offline
+    if (event.request.url.includes('offlineJS.js')) {
+      const cachedResponse = await caches.match(event.request);
+      if (cachedResponse) {
+        return cachedResponse;
       }
-      // Otherwise, proceed with network-first strategy
-      return fetch(event.request)
-      .then(response => {
-        // If the request is for a cached asset, update the cache with the new response
-        if (event.request.method === 'GET' && FILES_TO_CACHE.includes(event.request.url.replace(self.location.origin, '.'))) {
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, response.clone());
-          });
-        }
-        return response;
-      })
-      .catch(() => {
-        // If network fails, try to serve from cache
-        return caches.match(event.request);
-      })
-});
+    }
+
+    // Try network first for all other requests
+    try {
+      const response = await fetch(event.request);
+      // If the request is for a cached asset, update the cache with the new response
+      if (event.request.method === 'GET' && FILES_TO_CACHE.includes(event.request.url.replace(self.location.origin, '.'))) {
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(event.request, response.clone());
+      }
+      return response;
+    } catch (error) {
+      // Network request failed, try cache
+      const cachedResponse = await caches.match(event.request);
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+
+      // If not in cache, and it's a navigation request, return cached index.html
+      if (event.request.mode === 'navigate') {
+        return caches.match('./index.html');
+      }
+      throw error; // Re-throw if nothing can be served
+    }
+  }());
 });
