@@ -7,11 +7,11 @@ if (myButton) {
       console.log(isOnline);
       if(isOnline){
           try {
-              const { sayHelloOnline } = await import('./onlineJS.php'); // Import from PHP file
+              const { sayHelloOnline } = await import('./onlineFunctions.js'); // Import from JS module
               sayHelloOnline(inputValue);
               console.log("The browser is online.123123");
           } catch (error) {
-              console.error("Failed to load onlineJS.php online:", error);
+              console.error("Failed to load onlineFunctions.js online:", error);
           }
       } else {
           try {

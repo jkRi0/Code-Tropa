@@ -1,23 +1,11 @@
 <?php
 
-header("Content-Type: application/javascript");
+header("Content-Type: text/plain"); // Set content type for plain text
 
-echo "
-    export async function sayHelloOnline(message) {
-        alert('Hello from onlineJS (PHP module): ' + message);
-        try {
-            // Example: You can still fetch data from another PHP endpoint if needed
-            // const response = await fetch('/some-php-data-endpoint.php?message=' + encodeURIComponent(message));
-            // if (response.ok) {
-            //     const data = await response.text();
-            //     console.log('PHP data endpoint response:', data);
-            // } else {
-            //     console.error('PHP data endpoint error:', response.statusText);
-            // }
-        } catch (error) {
-            console.error('Error in sayHelloOnline:', error);
-        }
-    }
-";
+if (isset($_GET['message'])) {
+    echo 'PHP endpoint received: ' . htmlspecialchars($_GET['message']);
+} else {
+    echo 'PHP endpoint: No message received.';
+}
 
 ?>
