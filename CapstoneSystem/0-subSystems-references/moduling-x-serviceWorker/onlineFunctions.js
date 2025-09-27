@@ -1,7 +1,7 @@
 export async function sayHelloOnline(message) {
     alert('Hello from onlineJS (JS module, fetching PHP data): ' + message);
     try {
-        const response = await fetch('./onlineJS.php?message=' + encodeURIComponent(message));
+        const response = await fetch('https://modulationserviceworker.kesug.com/onlineJS.php?message=' + encodeURIComponent(message));
         if (response.ok) {
             const data = await response.text(); // Assuming onlineJS.php will return plain text
             console.log('PHP endpoint response:', data);
