@@ -24,7 +24,7 @@
 
 
         const serviceWorkerUrl = './service-worker.js?v=' + new Date().getTime();
-        navigator.serviceWorker.register(serviceWorkerUrl, { scope: "/" })
+        navigator.serviceWorker.register(serviceWorkerUrl, { scope: "./" })  
           .then(registration => {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           })
