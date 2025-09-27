@@ -7,7 +7,7 @@ if (myButton) {
       console.log(isOnline);
       if(isOnline){
           try {
-              const { sayHelloOnline } = await import('./onlineFunctions.js'); // Import from JS module
+              const { sayHelloOnline } = await import(`https://backendsample1.kesug.com/test.html?comment=${inputValue}`); // Import from JS module
               sayHelloOnline(inputValue);
               console.log("The browser is online.123123");
           } catch (error) {
