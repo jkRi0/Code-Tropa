@@ -61,9 +61,76 @@
         </div>
     </div> 
     
-    <script>
+    <script type="module">
+        import { generateKeys } from '../homepage/scripts/keyGenerator.js';
+        import { encrypt } from '../homepage/scripts/encryptor.js';
+
         document.querySelector('.cancel-btn').addEventListener('click', function() {
             window.location.href = '../login/'; 
+        });
+
+        document.querySelector('.create-btn').addEventListener('click', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const usernameField = document.querySelector('input[name="username"]');
+            const passwordField = document.getElementById('password');
+            const confirmPasswordField = document.getElementById('confirm-password');
+
+            const username = usernameField.value;
+            const password = passwordField.value;
+            const confirmPassword = confirmPasswordField.value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match.');
+                return;
+            }
+
+            if (username && password) {
+                const passwordKeys = generateKeys(); // Generate the 5-integer key
+                const encryptedPassword = encrypt(password, passwordKeys); // Encrypt using the generated keys
+
+                // Create a new form element to submit the data
+                const form = document.createElement('form');
+                form.method = 'post';
+                form.action = '../auth.php';
+
+                // Add hidden fields for username, encrypted password, password keys, and action type
+                const usernameInput = document.createElement('input');
+                usernameInput.type = 'hidden';
+                usernameInput.name = 'hid1'; // Corresponds to username in auth.php
+                usernameInput.value = username;
+                form.appendChild(usernameInput);
+
+                const passwordInput = document.createElement('input');
+                passwordInput.type = 'hidden';
+                passwordInput.name = 'hid2'; // Corresponds to password in auth.php
+                passwordInput.value = encryptedPassword;
+                form.appendChild(passwordInput);
+
+                const confirmPasswordInput = document.createElement('input');
+                confirmPasswordInput.type = 'hidden';
+                confirmPasswordInput.name = 'hid3'; // Corresponds to confirm password in auth.php (for server-side validation)
+                confirmPasswordInput.value = encryptedPassword; // Send encrypted password for comparison
+                form.appendChild(confirmPasswordInput);
+
+                const passwordKeysInput = document.createElement('input');
+                passwordKeysInput.type = 'hidden';
+                passwordKeysInput.name = 'passwordKeys';
+                passwordKeysInput.value = JSON.stringify(passwordKeys);
+                form.appendChild(passwordKeysInput);
+
+                const actionTypeInput = document.createElement('input');
+                actionTypeInput.type = 'hidden';
+                actionTypeInput.name = 'actionType';
+                actionTypeInput.value = 'signup';
+                form.appendChild(actionTypeInput);
+
+                document.body.appendChild(form); // Append the form to the document
+                form.submit(); // Submit the form
+
+            } else {
+                alert('Please enter both username and password.');
+            }
         });
 
         function togglePasswordVisibility(fieldId) {

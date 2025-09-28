@@ -37,11 +37,11 @@
                     <div class="input-group">
                         <input type="password" name="pass1" id="password" placeholder="" required>
                         <label for="password">Password</label>
-                        <span class="show-password-toggle" onclick="togglePasswordVisibility()">👁️</span>
+                        <span class="show-password-toggle" id="toggle-password">👁️</span>
                     </div>
                     
                     <div class="buttons">
-                        <button type="submit" name="submit" value="log" class="login-btn">
+                        <button type="submit" name="submit" value="log" class="login-btn" id="login-play-btn">
                             <!-- <img src="../assets/poly-button-black.png"> -->
                             <p>Play</p>
                         </button>
@@ -59,14 +59,40 @@
     
 
     
-    <script>
+    <script type="module">
+        import { generateKeys } from '../homepage/scripts/keyGenerator.js';
+        import { encrypt } from '../homepage/scripts/encryptor.js';
+
+        document.getElementById('login-play-btn').addEventListener('click', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const usernameField = document.getElementById('username');
+            const passwordField = document.getElementById('password');
+
+            const username = usernameField.value;
+            const password = passwordField.value;
+
+            if (username && password) {
+                const usernameKeys = generateKeys();
+                const passwordKeys = generateKeys(); // Generate a separate key for password if needed, or use the same as username
+
+                const usernameHash = encrypt(username, usernameKeys);
+                const passwordHash = encrypt(password, passwordKeys);
+
+                // Redirect to mid.html with hashed values and keys
+                window.location.href = `../../2be/mid.html?u=${encodeURIComponent(usernameHash)}&uk=${encodeURIComponent(JSON.stringify(usernameKeys))}&p=${encodeURIComponent(passwordHash)}&pk=${encodeURIComponent(JSON.stringify(passwordKeys))}`;
+            } else {
+                alert('Please enter both username and password.');
+            }
+        });
+
         document.querySelector('.signup-btn').addEventListener('click', function() {
             window.location.href = '../signup/';
         });
 
         function togglePasswordVisibility() {
             const passwordField = document.getElementById('password');
-            const toggleIcon = document.querySelector('.show-password-toggle');
+            const toggleIcon = document.getElementById('toggle-password');
             if (passwordField.type === 'password') {
                 passwordField.type = 'text';
                 toggleIcon.textContent = '🔒'; // Change icon to a locked padlock
@@ -75,6 +101,8 @@
                 toggleIcon.textContent = '👁️'; // Change icon back to an eye
             }
         }
+
+        document.getElementById('toggle-password').addEventListener('click', togglePasswordVisibility);
 
     </script>
 </body>

@@ -12,29 +12,36 @@
         <input type="hidden" name="hid1" id="hid1">
         <input type="hidden" name="hid2" id="hid2">
         <input type="hidden" name="hid3" id="hid3">
+        <input type="hidden" name="actionType" id="submit-action">
+        <input type="hidden" name="usernameKeys" id="usernameKeys">
+        <input type="hidden" name="passwordKeys" id="passwordKeys">
     </form>
 
     <script>
         //GET PARAMETERS
         const params = new URLSearchParams(window.location.search);
-        const var1 = params.get("1");
-        const var2 = params.get("2");
-        const var3 = params.get("3");
-        //SET HIDDEN VALUES
-        if (var1 && var2) {
-            const decoded = decodeURIComponent(var1);
-            const decoded1 = decodeURIComponent(var2);
-            const decoded2 = decodeURIComponent(var3);
+        const logParam = params.get("log");
+        const userHashParam = params.get("u");
+        const usernameKeysParam = params.get("uk");
+        const passHashParam = params.get("p");
+        const passwordKeysParam = params.get("pk");
 
-            
-            // document.getElementById("hid1").value = decoded;
-            // document.getElementById("hid2").value = decoded1;
-            // document.getElementById("hid3").value = decoded2;
-
-            // // Automatically submit the form
-            // document.getElementById("autoPostForm").submit();
-        } else {
-            console.log("No comment found in URL.");
+        //SET HIDDEN VALUES and submit form if log=0 or if userHashParam and passHashParam are present
+        if (logParam === "0") {
+            document.getElementById("hid1").value = "0"; // Indicating a logout action
+            document.getElementById("autoPostForm").submit();
+        } else if (userHashParam && passHashParam) {
+            document.getElementById("hid1").value = userHashParam;
+            document.getElementById("hid2").value = passHashParam;
+            document.getElementById("usernameKeys").value = usernameKeysParam;
+            document.getElementById("passwordKeys").value = passwordKeysParam;
+            document.getElementById("submit-action").value = "log"; // Set submit action for login
+            // hid3 is not used in this context, so it remains empty or can be set to a default
+            document.getElementById("autoPostForm").submit();
+        } 
+        else {
+            console.log("No specific action parameter found or log is not 0.");
+            // Optionally, handle other parameters or redirect if needed
         }
     </script>
 </body>
