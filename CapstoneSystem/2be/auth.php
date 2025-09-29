@@ -135,17 +135,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_result($userID, $hashedPassword, $dbEncKey, $userProgrammingLanguage);
             $stmt->fetch();
 
-            $keysToUseForDecryption = null;
-            if (is_null($dbEncKey) || empty($dbEncKey)) {
-                // First time login, use the keys sent from the frontend
-                $keysToUseForDecryption = $passwordKeys;
-            } else {
-                // Subsequent login, use the keys stored in the database
-                $keysToUseForDecryption = json_decode($dbEncKey);
-            }
-
-            
-
+            $keysToUseForDecryption = $passwordKeys;
+            // Old logic to determine decryption keys:
+            // if (is_null($dbEncKey) || empty($dbEncKey)) {
+            //     // First time login, use the keys sent from the frontend
+            //     $keysToUseForDecryption = $passwordKeys;
+            // } else {
+            //     // Subsequent login, use the keys stored in the database
+            //     $keysToUseForDecryption = json_decode($dbEncKey);
+            // }
 
             // Verify the password
             if (password_verify($decryptedPassword, $hashedPassword)) {
@@ -268,8 +266,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Encode all user data into a JSON string and URL-encode it
                 $encryptedUserData = recursiveEncryptUserData($userData, $passwordKeys);
                 $encodedUserData = urlencode(json_encode($encryptedUserData));
+                $encodedDecryptionKeys = urlencode(json_encode($keysToUseForDecryption));
 
-                echo "<script>alert('Logged in successfully'); window.location.href='../1fe/homepage/index.html?userData=" . $encodedUserData . "'; </script>";
+                echo "<script>alert('Logged in successfully'); window.location.href='../1fe/homepage/index.html?userData=" . $encodedUserData . "&dk=" . $encodedDecryptionKeys . "'; </script>";
             } else {
                 echo "<script>alert('Invalid password'); window.location.href='../1fe/login/'; </script>";
             }

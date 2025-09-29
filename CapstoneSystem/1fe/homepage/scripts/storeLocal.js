@@ -6,19 +6,21 @@ import { decrypt } from './decryptor.js';
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const userDataEncoded = urlParams.get('userData');
+    const decryptionKeysEncoded = urlParams.get('dk');
 
-    if (userDataEncoded) {
+    if (userDataEncoded && decryptionKeysEncoded) {
         console.log('Raw userDataEncoded from URL:', userDataEncoded);
+        console.log('Raw decryptionKeysEncoded from URL:', decryptionKeysEncoded);
         try {
             const userData = JSON.parse(decodeURIComponent(userDataEncoded));
             console.log('User Data:', userData);
 
-            console.log('Value of localStorage.getItem("encryptionKeys") before parsing:', localStorage.getItem('encryptionKeys'));
-            const decryptionKeys = JSON.parse(localStorage.getItem('encryptionKeys')); // Example: retrieve from localStorage
+            // const decryptionKeys = JSON.parse(localStorage.getItem('encryptionKeys')); // Old: retrieve from localStorage
+            const decryptionKeys = JSON.parse(decodeURIComponent(decryptionKeysEncoded)); // New: retrieve from URL
             console.log('Parsed Decryption Keys:', decryptionKeys);
 
             if (!decryptionKeys) {
-                console.error('Encryption keys not found in localStorage. Cannot decrypt user data.');
+                console.error('Decryption keys not found in URL. Cannot decrypt user data.');
                 return;
             }
 
@@ -54,13 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Optionally, remove the userData parameter from the URL to keep it clean
             urlParams.delete('userData');
+            urlParams.delete('dk'); // Also remove decryption keys from URL
             const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
             window.history.replaceState(null, '', newUrl);
 
         } catch (e) {
-            console.error('Error parsing user data from URL:', e);
+            console.error('Error parsing user data or decryption keys from URL:', e);
         }
     } else {
-        console.log('No userData parameter found in URL. Cannot decrypt.');
+        console.log('Missing userData or decryptionKeys parameters in URL. Cannot decrypt.');
     }
 });
