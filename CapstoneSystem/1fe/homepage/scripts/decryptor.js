@@ -1,11 +1,12 @@
 export function decrypt(value, keys) {
     const shiftKeys = [];
     for (let i = 0; i < keys.length; i++) {
-        if ((i + 1) % 2 !== 0) { 
+        if ((i + 1) % 2 !== 0) {
             shiftKeys.push(keys[i]);
         }
     }
 
+    // Divide value into 3 sections
     const sectionLength = Math.ceil(value.length / 3);
     const sections = [
         value.substring(0, sectionLength),

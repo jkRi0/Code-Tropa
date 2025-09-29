@@ -158,13 +158,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $phpSessionId = session_id();
 
                 // If it was a first-time login, save the encKey to the database
-                if (is_null($dbEncKey) || empty($dbEncKey)) {
-                    $encKeyJson = json_encode($passwordKeys);
-                    $updateEncKeyStmt = $conn->prepare("UPDATE users SET encKey = ? WHERE username = ?");
-                    $updateEncKeyStmt->bind_param("ss", $encKeyJson, $decryptedUsername);
-                    $updateEncKeyStmt->execute();
-                    $updateEncKeyStmt->close();
-                }
+                $encKeyJson = json_encode($passwordKeys);
+                $updateEncKeyStmt = $conn->prepare("UPDATE users SET encKey = ? WHERE username = ?");
+                $updateEncKeyStmt->bind_param("ss", $encKeyJson, $decryptedUsername);
+                $updateEncKeyStmt->execute();
+                $updateEncKeyStmt->close();
 
                 // Save session ID to DB
                 $update = $conn->prepare("UPDATE users SET session = ? WHERE username = ?");

@@ -11,7 +11,7 @@ function customDecrypt($encryptedValue, $fullKeys) {
     $sectionLength = (int)ceil(strlen($encryptedValue) / 3);
     $sections = [
         substr($encryptedValue, 0, $sectionLength),
-        substr($encryptedValue, $sectionLength, 2 * $sectionLength - $sectionLength),
+        substr($encryptedValue, $sectionLength, $sectionLength),
         substr($encryptedValue, 2 * $sectionLength)
     ];
 

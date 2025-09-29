@@ -12,7 +12,7 @@ function customEncrypt($value, $keys) {
     $sectionLength = ceil(strlen($value) / 3);
     $sections = [
         substr($value, 0, $sectionLength),
-        substr($value, $sectionLength, 2 * $sectionLength),
+        substr($value, $sectionLength, $sectionLength),
         substr($value, 2 * $sectionLength)
     ];
 

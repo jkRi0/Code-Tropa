@@ -8,12 +8,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const userDataEncoded = urlParams.get('userData');
 
     if (userDataEncoded) {
+        console.log('Raw userDataEncoded from URL:', userDataEncoded);
         try {
             const userData = JSON.parse(decodeURIComponent(userDataEncoded));
+            console.log('User Data:', userData);
 
-            // You will need to get the decryption keys from a secure source.
-            // For demonstration, we'll use a placeholder. In a real application, ensure secure key management.
+            console.log('Value of localStorage.getItem("encryptionKeys") before parsing:', localStorage.getItem('encryptionKeys'));
             const decryptionKeys = JSON.parse(localStorage.getItem('encryptionKeys')); // Example: retrieve from localStorage
+            console.log('Parsed Decryption Keys:', decryptionKeys);
+
+            if (!decryptionKeys) {
+                console.error('Encryption keys not found in localStorage. Cannot decrypt user data.');
+                return;
+            }
 
             function recursiveDecryptUserData(data, keys) {
                 const decryptedData = {};
@@ -24,8 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
                         decryptedData[decryptedKey] = recursiveDecryptUserData(value, keys);
                     } else if (Array.isArray(value)) {
-                        // If it's an array, decrypt each string element
-                        decryptedData[decryptedKey] = value.map(item => typeof item === 'string' ? decrypt(item, keys) : item);
+                        decryptedData[decryptedKey] = value.map(item => {
+                            if (typeof item === 'object' && item !== null) {
+                                return recursiveDecryptUserData(item, keys);
+                            } else if (typeof item === 'string') {
+                                return decrypt(item, keys);
+                            } else {
+                                return item;
+                            }
+                        });
                     } else if (typeof value === 'string') {
                         decryptedData[decryptedKey] = decrypt(value, keys);
                     } else {
@@ -46,5 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.error('Error parsing user data from URL:', e);
         }
+    } else {
+        console.log('No userData parameter found in URL. Cannot decrypt.');
     }
 });

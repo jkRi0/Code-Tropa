@@ -1,4 +1,3 @@
-
 export function encrypt(value, keys) {
     const shiftKeys = [];
     for (let i = 0; i < keys.length; i++) {
