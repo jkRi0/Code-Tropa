@@ -5,22 +5,56 @@ import { decrypt } from './decryptor.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const userDataEncoded = urlParams.get('userData');
-    const decryptionKeysEncoded = urlParams.get('dk');
+    let userDataEncoded = urlParams.get('userData');
+    let decryptionKeysEncoded = urlParams.get('dk');
+
+    let userData = null;
+    let decryptionKeys = null;
 
     if (userDataEncoded && decryptionKeysEncoded) {
-        console.log('Raw userDataEncoded from URL:', userDataEncoded);
-        console.log('Raw decryptionKeysEncoded from URL:', decryptionKeysEncoded);
+        // Data present in URL, parse and store it
         try {
-            const userData = JSON.parse(decodeURIComponent(userDataEncoded));
-            console.log('User Data:', userData);
+            userData = JSON.parse(decodeURIComponent(userDataEncoded));
+            decryptionKeys = JSON.parse(decodeURIComponent(decryptionKeysEncoded));
 
-            // const decryptionKeys = JSON.parse(localStorage.getItem('encryptionKeys')); // Old: retrieve from localStorage
-            const decryptionKeys = JSON.parse(decodeURIComponent(decryptionKeysEncoded)); // New: retrieve from URL
+            // Store in localStorage for future use
+            localStorage.setItem('encryptedUserData', userDataEncoded);
+            localStorage.setItem('encryptionKeys', decryptionKeysEncoded);
+
+            // Clean URL parameters
+            urlParams.delete('userData');
+            urlParams.delete('dk');
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            window.history.replaceState(null, '', newUrl);
+
+        } catch (e) {
+            console.error('Error parsing user data or decryption keys from URL:', e);
+            // Fallback to localStorage if URL parsing fails
+            userDataEncoded = localStorage.getItem('encryptedUserData');
+            decryptionKeysEncoded = localStorage.getItem('encryptionKeys');
+        }
+    } else {
+        // Data not in URL, try to retrieve from localStorage
+        userDataEncoded = localStorage.getItem('encryptedUserData');
+        decryptionKeysEncoded = localStorage.getItem('encryptionKeys');
+    }
+
+    if (userDataEncoded && decryptionKeysEncoded) {
+        try {
+            // If data was not from URL (i.e., from localStorage), it needs to be parsed
+            if (!userData) {
+                userData = JSON.parse(decodeURIComponent(userDataEncoded));
+            }
+            if (!decryptionKeys) {
+                decryptionKeys = JSON.parse(decodeURIComponent(decryptionKeysEncoded));
+            }
+
+            console.log('User Data:', userData);
             console.log('Parsed Decryption Keys:', decryptionKeys);
 
             if (!decryptionKeys) {
-                console.error('Decryption keys not found in URL. Cannot decrypt user data.');
+                console.error('Decryption keys not found. Cannot decrypt user data.');
+                window.location.href = '../../1fe/login/'; // Redirect to login page
                 return;
             }
 
@@ -30,7 +64,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     const decryptedKey = decrypt(encryptedKey, keys);
                     const value = data[encryptedKey];
 
-                    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                    if (decryptedKey === 'username' && typeof value === 'string') {
+                        const [encryptedUsernameValue, jsonKeys] = value.split('---10---');
+                        if (encryptedUsernameValue && jsonKeys) {
+                            try {
+                                const usernameSpecificKeys = JSON.parse(jsonKeys);
+                                decryptedData[decryptedKey] = decrypt(encryptedUsernameValue, usernameSpecificKeys);
+                            } catch (e) {
+                                console.error('Error parsing username-specific decryption keys:', e);
+                                decryptedData[decryptedKey] = value; // Fallback to raw value if parsing fails
+                            }
+                        } else {
+                            decryptedData[decryptedKey] = decrypt(value, keys);
+                        }
+                    } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
                         decryptedData[decryptedKey] = recursiveDecryptUserData(value, keys);
                     } else if (Array.isArray(value)) {
                         decryptedData[decryptedKey] = value.map(item => {
@@ -54,16 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const decryptedUserData = recursiveDecryptUserData(userData, decryptionKeys);
             console.log('Decrypted User Data:', decryptedUserData);
 
-            // Optionally, remove the userData parameter from the URL to keep it clean
-            urlParams.delete('userData');
-            urlParams.delete('dk'); // Also remove decryption keys from URL
-            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
-            window.history.replaceState(null, '', newUrl);
+            // localStorage.setItem('decryptedUserData', JSON.stringify(decryptedUserData)); // Removed: Do not store decrypted user data
+            // The encryptionKeys are already in localStorage from initial processing or from retrieval attempt
 
         } catch (e) {
-            console.error('Error parsing user data or decryption keys from URL:', e);
+            console.error('Error processing user data or decryption keys:', e);
+            window.location.href = '../../1fe/login/'; // Redirect to login page on error
         }
     } else {
-        console.log('Missing userData or decryptionKeys parameters in URL. Cannot decrypt.');
+        console.log('No user data or decryption keys found in URL or localStorage. Redirecting to login.');
+        window.location.href = '../../1fe/login/'; // Redirect to login page
     }
 });

@@ -10,8 +10,7 @@
 </head>
 <body>
     <img src="../assets/samplebg.jpg" class="bg-image-landscape" 
-        style="
-        ">
+        >
 
     <div class="outerContainer">
 
@@ -29,7 +28,7 @@
                     <p>SIGN UP</p>
                 </div>
 
-                <form action="../auth.php" method="post">
+                <form action="../../2be/auth.php" method="post">
                     <div class="input-group">
                         <input type="text"  name="username" placeholder="" required>
                         <label>Username</label>
@@ -51,7 +50,7 @@
                             <p>Create Account</p>
                         </button>
 
-                        <button type="submit" name="submit" value="" class="cancel-btn">
+                        <button type="button" name="submit" value="" class="cancel-btn">
                             <!-- <img src="../assets/poly-button-brown.png"> -->
                             <p>Cancel</p>
                         </button>
@@ -92,7 +91,7 @@
                 // Create a new form element to submit the data
                 const form = document.createElement('form');
                 form.method = 'post';
-                form.action = '../auth.php';
+                form.action = '../../2be/auth.php';
 
                 // Add hidden fields for username, encrypted password, password keys, and action type
                 const usernameInput = document.createElement('input');
@@ -133,6 +132,9 @@
             }
         });
 
+    </script>
+
+    <script>
         function togglePasswordVisibility(fieldId) {
             const passwordField = document.getElementById(fieldId);
             const toggleIcon = passwordField.nextElementSibling.nextElementSibling; // Assuming the span is after label
@@ -144,8 +146,6 @@
                 toggleIcon.textContent = '👁️'; // Change icon back to an eye
             }
         }
-
-
     </script>
 </body>
 </html>

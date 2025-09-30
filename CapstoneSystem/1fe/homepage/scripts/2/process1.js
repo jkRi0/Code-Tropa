@@ -1,4 +1,5 @@
 import { currentSelectedLanguage } from './process.js';
+import { currentSelectedDifficulty } from '../routeModules.js'; // Import the new variable
 
 export function process1(clickedDiv) {
 // Reset all .outer2 divs
@@ -29,6 +30,8 @@ export function process1(clickedDiv) {
     if (targetInner1) {
         targetInner1.style.backgroundColor = "rgb(65, 62, 62)"; // or any other style
         // currentSelectedLanguage = targetInner1.textContent.trim(); // Update the variable
-        document.getElementById('selectedLanguageInput').value = currentSelectedLanguage;
+        // document.getElementById('selectedLanguageInput').value = currentSelectedLanguage;
+        // currentSelectedDifficulty = targetInner1.textContent.trim(); // Update selected difficulty
+        // console.log("Selected Difficulty: ", currentSelectedDifficulty);
     }
 }

@@ -6,3 +6,6 @@ export { hideModal } from './2/hideModal.js';
 export { process2 } from './2/process2.js';
 export { process3 } from './2/process3.js';
 export { difActions } from './2/difActions.js';
+export { selectDifficulty } from './2/processDifficulty.js';
+
+export let currentSelectedDifficulty = null;

@@ -900,7 +900,7 @@
                     
                     <img src="../assets/poly2.png" class="poly2">
 
-                    <div class="outer2-2" onclick="process1(this)">
+                    <div class="outer2-2" onclick="selectDifficulty(this)">
                         <img src="../assets/arrow-l-b.png">
                         <div class="outer1-2">
                             <div class="top-border-2"></div>
@@ -911,7 +911,7 @@
                         <img src="../assets/arrow-r-b.png">
                     </div>  
 
-                    <div class="outer2-2" onclick="process1(this)">
+                    <div class="outer2-2" onclick="selectDifficulty(this)">
                         <img src="../assets/arrow-l-b.png">
                         <div class="outer1-2">
                             <div class="top-border-2"></div>
@@ -922,7 +922,7 @@
                         <img src="../assets/arrow-r-b.png">
                     </div>  
 
-                    <div class="outer2-2" onclick="process1(this)">
+                    <div class="outer2-2" onclick="selectDifficulty(this)">
                         <img src="../assets/arrow-l-b.png">
                         <div class="outer1-2">
                             <div class="top-border-2"></div>
@@ -933,9 +933,11 @@
                         <img src="../assets/arrow-r-b.png">
                     </div>  
                     
+                    <!-- <p id="difficultyErrorMessage" class="error-message"></p> -->
+
                     <div class="outer-button">
                         <div class="act-button" onclick="difActions('back')">Back</div>
-                        <div class="act-button" onclick="difActions('back')">Ok</div>
+                        <div class="act-button" onclick="difActions('ok')">Ok</div>
                     </div>
                 </div>
             </div>
@@ -1111,11 +1113,11 @@
                             <div class="profile-badges">
                                 <h3>Badges Achieved:</h3>
                                 <div class="badges-container">
-                                    <img src="../assets/badge1.png" alt="Badge 1">
-                                    <img src="../assets/badge2.png" alt="Badge 2">
-                                    <img src="../assets/badge3.png" alt="Badge 3">
-                                    <img src="../assets/badge4.png" alt="Badge 4">
-                                    <img src="../assets/badge5.png" alt="Badge 5">
+                                    <img src="" alt="Badge 1">
+                                    <img src="" alt="Badge 2">
+                                    <img src="" alt="Badge 3">
+                                    <img src="" alt="Badge 4">
+                                    <img src="" alt="Badge 5">
                                 </div>
                             </div>
                             <div class="profile-performance">
@@ -1205,9 +1207,13 @@
         </main>
     </div>
 
+    <!-- <audio id="homepageBackgroundMusic" src="../assets/bgMusic.mp3" loop preload="auto" volume="0.5"></audio> -->
+
     <script type="module" src="scripts/script.js"></script>
     <script type="module" src="scripts/indexHandler.js"></script>
     <script type="module" src="scripts/storeLocal.js"></script>
     <script type="module" src="scripts/decryptor.js"></script>
+    <script type="module" src="scripts/routeModules.js"></script>
+    <script type="module" src="scripts/2/processDifficulty.js"></script>
 </body>
 </html>

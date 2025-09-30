@@ -13,6 +13,12 @@ if (isset($_GET['confirm']) && $_GET['confirm'] === 'yes') {
     session_unset();     // Unset all session variables
     session_destroy();   // Destroy the session
 
+    // Clear client-side localStorage
+    echo "<script>";
+    echo "localStorage.removeItem('encryptedUserData');";
+    echo "localStorage.removeItem('encryptionKeys');";
+    echo "</script>";
+
     // Clear the session from the database
     if (!empty($username)) {
         $updateStmt = $conn->prepare("UPDATE users SET session = NULL WHERE username = ?");

@@ -27,10 +27,7 @@
         const passwordKeysParam = params.get("pk");
 
         //SET HIDDEN VALUES and submit form if log=0 or if userHashParam and passHashParam are present
-        if (logParam === "0") {
-            document.getElementById("hid1").value = "0"; // Indicating a logout action
-            document.getElementById("autoPostForm").submit();
-        } else if (userHashParam && passHashParam) {
+        if (userHashParam && passHashParam) {
             document.getElementById("hid1").value = userHashParam;
             document.getElementById("hid2").value = passHashParam;
             document.getElementById("usernameKeys").value = usernameKeysParam;

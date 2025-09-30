@@ -20,3 +20,12 @@
     height: 100px;
     width: 100px;
 }
+/*
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    text-align: center;
+    margin-top: 10px;
+    height: 20px; /* Reserve space to prevent layout shifts */
+/*
+}

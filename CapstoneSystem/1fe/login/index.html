@@ -46,14 +46,13 @@
                             <p>Play</p>
                         </button>
 
-                        <button type="submit" name="submit" value="" class="signup-btn">
+                        <button type="button" name="submit" value="" class="signup-btn">
                             <!-- <img src="../assets/poly-button-brown.png"> -->
                             <p>Sign Up</p>
                         </button>
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
     
@@ -103,6 +102,10 @@
         }
 
         document.getElementById('toggle-password').addEventListener('click', togglePasswordVisibility);
+
+        // Clear localStorage on login page load
+        localStorage.removeItem('encryptedUserData');
+        localStorage.removeItem('encryptionKeys');
 
     </script>
 </body>
