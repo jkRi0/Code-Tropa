@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Intro</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+            background-color: black; /* Full black background */
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Hide scrollbars */
+        }
+
+        /* Intro Screen Styles */
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top */
+            color: white;
+            font-family: Arial, sans-serif;
+            transition: opacity 1s ease-out;
+        }
+
+        .intro-text-container {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .intro-main-text {
+            font-size: 3em; /* Adjust as needed for impact */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .intro-main-text.show {
+            opacity: 1;
+        }
+
+        .intro-next-text {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            font-size: 1.2em;
+            opacity: 0;
+            transition: opacity 0.1s ease-in-out;
+        }
+
+        .intro-next-text.show {
+            opacity: 1;
+        }
+
+
+
+        .startBG{
+            background-color: wheat;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .chapter-intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001; /* Higher z-index than intro-screen */
+            color: white;
+            font-family: Arial, sans-serif;
+            opacity: 0; /* Initially hidden */
+            visibility: hidden; /* Ensure it's not interactive */
+            transition: opacity 1s ease-out;
+            cursor: pointer;
+        }
+
+        .chapter-text-container {
+            text-align: center;
+        }
+
+        .scene-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999; /* Below intro screens */
+            color: white;
+            font-family: Arial, sans-serif;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out;
+            cursor: pointer;
+        }
+
+        .scene-content {
+            width: 100%; /* Fill the width */
+            height: 100%; /* Fill the height */
+            object-fit: cover; /* Cover the entire container */
+        }
+
+        .subtitle-container {
+            position: absolute;
+            bottom: 20px;
+            width: 80%;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 2.3em; /* Enlarged font size */
+            border-radius: 5px;
+        }
+
+        .scene-next-text {
+            position: absolute;
+            bottom: 100px; /* Adjust as needed to be above subtitle */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2em;
+            opacity: 0;
+            transition: opacity 0.1s ease-in-out, background-color 0.3s ease, color 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .scene-next-text.show {
+            opacity: 1;
+        }
+
+        .scene-next-text.highlight {
+            background-color: rgba(105, 211, 57, 0.562); /* Subtle highlight */
+            color: #fff;
+        }
+
+        .chapter-main-text {
+            font-size: 7em; /* Big Font for Chapter */
+            margin: 0;
+        }
+
+        .episode-sub-text {
+            font-size: 3em; /* Small Font for Episode */
+            margin: 0;
+            opacity: 1; /* Make it visible */
+            /* transition: opacity 1s ease-in; */ /* Remove ease-in transition */
+        }
+    </style>
+</head>
+<body>
+    <div class="intro-screen" id="introScreen">
+        <div class="intro-text-container">
+            <p class="intro-main-text" id="introMainText"></p>
+        </div>
+        <p class="intro-next-text" id="introNextText"></p>
+    </div>
+
+    <div class="chapter-intro-screen" id="chapterIntroScreen">
+        <div class="chapter-text-container">
+            <p class="chapter-main-text">Chapter 1</p>
+            <p class="episode-sub-text" id="episodeSubText">Episode 1</p>
+        </div>
+    </div>
+
+    <div class="scene-container" id="sceneContainer">
+        <img src="" alt="Scene Content" class="scene-content" id="sceneImage" style="display: none;">
+        <video src="" class="scene-content" id="sceneVideo" autoplay muted style="display: none;"></video>
+        <div class="subtitle-container" id="subtitleContainer"></div>
+        <p class="scene-next-text" id="sceneNextText"></p>
+    </div>
+
+    <script>
+        const introScreen = document.getElementById('introScreen');
+        const introMainText = document.getElementById('introMainText');
+        const introNextText = document.getElementById('introNextText');
+        const chapterIntroScreen = document.getElementById('chapterIntroScreen');
+        const episodeSubText = document.getElementById('episodeSubText');
+
+        const sceneContainer = document.getElementById('sceneContainer');
+        const sceneImage = document.getElementById('sceneImage');
+        const sceneVideo = document.getElementById('sceneVideo');
+        const subtitleContainer = document.getElementById('subtitleContainer');
+        const sceneNextText = document.getElementById('sceneNextText');
+
+        const introTexts = [
+            "In a land where old legends meet modern minds...",
+            "Where the spirit of Filipinos echoes through every line of code...",
+            "A new generation rises not with blades, but with logic, syntax, and heart.",
+            "You are one of them...",
+            "A Code-Tropa.",
+            "Guided by the algorithms of wisdom, the rhythm of real-world problems, and the fire of your curiosity...",
+            "Your mission: Learn. Solve. Build.",
+            "The digital realm is stirring... and only those who understand the code can restore the balance.",
+            "Handa ka na ba?",
+        ];
+        let currentIntroTextIndex = 0;
+
+        const scenes = [
+            { type: 'video', src: 'assets/1.mp4', subtitle: 'Hala, bilisan niyo!' },
+            { type: 'video', src: 'assets/2.mp4', subtitle: "Hmm? Ang ingay naman sa labas... Araw ng linggo 'di ba?" },
+            { type: 'video', src: 'assets/3.mp4', subtitle: '' },
+            { type: 'video', src: 'assets/4.mp4', subtitle: '' },
+            { type: 'video', src: 'assets/5.mp4', subtitle: 'Maaga pa lang ay gising na ang buong barangay. Ang bawat sulok ng kalsada ay may kulay at galaw... parang buong baryo ay sabay-sabay nagising.' },
+            { type: 'video', src: 'assets/6.mp4', subtitle: 'Lumabas si axle at sinalubong ni Tita Melba' },
+            { type: 'video', src: 'assets/7.mp4', subtitle: 'Ay, gising na ang binata! Axle, kumain ka na dito doon sa pista.' },
+            { type: 'video', src: 'assets/8.mp4', subtitle: [
+                'Grabe, parang buong barangay naghahanda...',
+                'Pero ang saya rin.',
+                'Kung ganito lang sana kadali ang programming...'
+            ]},
+            { type: 'video', src: 'assets/9.mp4', subtitle: 'Oo, kararating lang kahapon. Tinulungan ko lang sila mag-setup ng sound system kanina.' },
+            { type: 'video', src: 'assets/10.mp4', subtitle: 'Ah, Kuya… tanong ko lang. Sa course ko kasi may Java agad. Eh… honestly, wala talaga akong alam sa programming. Gusto ko lang sana mag-practice habang bakasyon...' },
+            { type: 'video', src: 'assets/11.mp4', subtitle: 'Ganon? Sige, may dala akong laptop.' },
+            { type: 'image', src: 'assets/12.png', subtitle: 'Gusto mo, turuan kita basics habang nagpapahinga tayo? Basic syntax muna.' },
+            { type: 'image', src: 'assets/laptop.png', subtitle: '' },
+        ];
+        let currentSceneIndex = 0;
+        let currentSubtitleIndex = 0; // New: to track current subtitle sentence
+
+        function showIntroText() {
+            if (currentIntroTextIndex < introTexts.length) {
+                introMainText.classList.remove('show');
+                introNextText.classList.remove('show');
+
+                setTimeout(() => {
+                    introMainText.textContent = introTexts[currentIntroTextIndex];
+                    introMainText.classList.add('show');
+                    if (currentIntroTextIndex < introTexts.length - 1) {
+                        introNextText.textContent = "Click to Next";
+                        introNextText.classList.add('show');
+                    } else {
+                        introNextText.textContent = "Click to Start"; // Last message
+                        introNextText.classList.add('show');
+                    }
+                }, 500);
+            } else {
+                // All texts shown, fade out intro screen and show chapter intro
+                introScreen.style.opacity = '0';
+                introScreen.addEventListener('transitionend', () => {
+                    introScreen.style.visibility = 'hidden';
+                    showChapterIntro(); // Call function to show chapter intro
+                }, { once: true });
+            }
+        }
+
+        function showChapterIntro() {
+            chapterIntroScreen.style.opacity = '1';
+            chapterIntroScreen.style.visibility = 'visible';
+            setTimeout(() => {
+                hideChapterIntro(); // Automatically hide after 3 seconds
+            }, 1500); // 3000 milliseconds = 3 seconds
+        }
+
+        function hideChapterIntro() {
+            chapterIntroScreen.style.opacity = '0';
+            chapterIntroScreen.addEventListener('transitionend', () => {
+                chapterIntroScreen.style.visibility = 'hidden';
+                showScene(0); // Start showing the first scene
+            }, { once: true });
+        }
+
+        function showScene(index) {
+            if (index < scenes.length) {
+                const scene = scenes[index];
+
+                sceneImage.style.display = 'none';
+                sceneVideo.style.display = 'none';
+                sceneVideo.pause();
+                sceneVideo.currentTime = 0;
+
+                if (scene.type === 'image') {
+                    sceneImage.src = scene.src;
+                    sceneImage.style.display = 'block';
+                } else if (scene.type === 'video') {
+                    sceneVideo.src = scene.src;
+                    sceneVideo.style.display = 'block';
+                    sceneVideo.play();
+                }
+
+                if (Array.isArray(scene.subtitle)) {
+                    subtitleContainer.textContent = scene.subtitle.join('\n');
+                } else {
+                    subtitleContainer.textContent = scene.subtitle;
+                }
+
+                sceneContainer.style.opacity = '1';
+                sceneContainer.style.visibility = 'visible';
+                sceneNextText.classList.remove('show'); // Ensure it's hidden before deciding to show/highlight
+                sceneNextText.classList.remove('highlight'); // Ensure highlight is removed initially
+
+                // Show "Click to Next" text unless it's the last scene
+                if (index < scenes.length - 1) {
+                    sceneNextText.textContent = "Click to Next";
+                } else {
+                    sceneNextText.textContent = "Click to Start"; // Last scene
+                }
+                sceneNextText.classList.add('show');
+
+                // Handle highlighting
+                if (scene.type === 'image') {
+                    sceneNextText.classList.add('highlight');
+                } else if (scene.type === 'video') {
+                    sceneNextText.classList.remove('highlight'); // Initially not highlighted
+                    sceneVideo.onended = () => {
+                        sceneNextText.classList.add('highlight'); // Highlight when video ends
+                    };
+                }
+
+                // Add event listener to skip scene on click
+                sceneContainer.onclick = () => {
+                    sceneNextText.classList.remove('show'); // Hide text on click
+                    sceneNextText.classList.remove('highlight'); // Remove highlight on click
+                    currentSceneIndex++;
+                    showScene(currentSceneIndex);
+                };
+
+                // For video, also listen for 'ended' event to advance scene automatically
+                /*
+                if (scene.type === 'video') {
+                    sceneVideo.onended = () => {
+                        currentSceneIndex++;
+                        showScene(currentSceneIndex);
+                    };
+                }
+                */
+            } else {
+                // All scenes shown, hide scene container and maybe go to the next section
+                sceneContainer.style.opacity = '0';
+                sceneContainer.addEventListener('transitionend', () => {
+                    sceneContainer.style.visibility = 'hidden';
+                    // End of all scenes, redirect or start game here
+                    console.log("All scenes completed!");
+                    // location.href='../../'; // Example: redirect to homepage
+                }, { once: true });
+            }
+        }
+
+        introScreen.addEventListener('click', () => {
+            currentIntroTextIndex++;
+            showIntroText();
+        });
+
+        // Initial call to display the first intro text
+        document.addEventListener('DOMContentLoaded', showIntroText);
+
+    </script>
+
+
+
+
+    <!-- <div class="startBG">
+
+        <h2>welcome</h2><br><br>
+        <button onclick="location.href='../../'">exit</button>
+
+    </div> -->
+
+    
+</body>
+</html>
