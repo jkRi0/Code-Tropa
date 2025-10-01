@@ -11,5 +11,5 @@ if (!$conn) {
 }
 
 // echo '<script>console.log("Connected")</script>'; // Removed for cleaner output in production
-
 ?>
+

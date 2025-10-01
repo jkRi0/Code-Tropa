@@ -98,6 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             session_start();
             
             $tokenPayload = [
+                'id' => $userID,
                 'user' => $hid1,
                 'pass' => $hid2,
                 'exp' => time() + 3600, // 1 hour expiration
