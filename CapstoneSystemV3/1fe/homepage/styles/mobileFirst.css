@@ -816,10 +816,8 @@ section{
     width: 40px;
     height: 40px;
     object-fit: contain;
-    border: 1px solid #ddd;
     border-radius: 4px;
     padding: 4px;
-    background-color: #fff;
 }
 
 .pie-chart-placeholder {

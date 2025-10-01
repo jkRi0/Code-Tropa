@@ -6,6 +6,7 @@ include 'db.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hid1 = $_POST['hid1'] ?? '';
     $hid2 = $_POST['hid2'] ?? '';
+    $programmingLanguage = $_POST['programmingLanguage'] ?? 'java'; // Default to 'java' if not provided
     
     // Check if the username already exists
     $checkStmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
@@ -27,9 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hid2_2 = password_hash($hid2, PASSWORD_DEFAULT);
 
         $stmt = $conn->prepare(
-            "INSERT INTO users (username, password, created_at) VALUES (?, ?, NOW())"
+            "INSERT INTO users (username, password, created_at, programmingLanguage) VALUES (?, ?, NOW(), ?)"
         );
-        $stmt->bind_param("ss", $hid1, $hid2_2);
+        $stmt->bind_param("sss", $hid1, $hid2_2, $programmingLanguage);
 
         if ($stmt->execute()) {
             // Get the ID of the newly inserted user
@@ -83,17 +84,96 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtPerformance->execute();
             $stmtPerformance->close();
 
-            // // Insert default values into settings table
-            // $stmtSettings = $conn->prepare(
-            //     "INSERT INTO settings (userId, controls, volume) VALUES (?, ?, ?)"
-            // );
-            // $defaultControls = '["w","a","s","d","click"]';
-            // $defaultVolume = 50;
-            // $stmtSettings->bind_param("isi", $newUserId, $defaultControls, $defaultVolume);
-            // $stmtSettings->execute();
-            // $stmtSettings->close();
+            // Insert default values into settings table
+            $stmtSettings = $conn->prepare(
+                "INSERT INTO settings (userId, controls, volume) VALUES (?, ?, ?)"
+            );
+            $defaultControls = '["w","a","s","d","click"]';
+            $defaultVolume = 50;
+            $stmtSettings->bind_param("isi", $newUserId, $defaultControls, $defaultVolume);
+            $stmtSettings->execute();
+            $stmtSettings->close();
 
+            // Fetch all user data for session storage
+            $userData = [];
 
+            // Fetch user details
+            $stmtUser = $conn->prepare("SELECT username, programmingLanguage FROM users WHERE id = ?");
+            $stmtUser->bind_param("i", $newUserId);
+            $stmtUser->execute();
+            $stmtUser->bind_result($username, $programmingLanguage); // Changed $userID to $username
+            $stmtUser->fetch();
+            $userData['USERS'] = [
+                'id' => $newUserId, // Add user ID here
+                'username' => $username,
+                'programmingLanguage' => $programmingLanguage,
+            ];
+            $stmtUser->close();
+
+            // Fetch rewards
+            $stmtRewards = $conn->prepare("SELECT tier, badges FROM rewards WHERE userId = ?");
+            $stmtRewards->bind_param("i", $newUserId);
+            $stmtRewards->execute();
+            $stmtRewards->bind_result($tier, $badges);
+            $stmtRewards->fetch();
+            $userData['REWARDS'] = [
+                'tier' => json_decode($tier),
+                'badges' => json_decode($badges),
+            ];
+            $stmtRewards->close();
+
+            // Fetch saving
+            $stmtSaving = $conn->prepare("SELECT sceneNum FROM saving WHERE userId = ?");
+            $stmtSaving->bind_param("i", $newUserId);
+            $stmtSaving->execute();
+            $stmtSaving->bind_result($sceneNum);
+            $stmtSaving->fetch();
+            $userData['SAVING'] = [
+                'sceneNum' => json_decode($sceneNum),
+            ];
+            $stmtSaving->close();
+
+            // Fetch progress
+            $stmtProgress = $conn->prepare("SELECT storymode, challenges FROM progress WHERE userId = ?");
+            $stmtProgress->bind_param("i", $newUserId);
+            $stmtProgress->execute();
+            $stmtProgress->bind_result($storymode, $challenges);
+            $stmtProgress->fetch();
+            $userData['PROGRESS'] = [
+                'storymode' => json_decode($storymode),
+                'challenges' => json_decode($challenges),
+            ];
+            $stmtProgress->close();
+
+            // Fetch settings
+            $stmtSettings = $conn->prepare("SELECT controls, volume FROM settings WHERE userId = ?");
+            $stmtSettings->bind_param("i", $newUserId);
+            $stmtSettings->execute();
+            $stmtSettings->bind_result($controls, $volume);
+            $stmtSettings->fetch();
+            $userData['SETTINGS'] = [
+                'controls' => json_decode($controls),
+                'volume' => $volume,
+            ];
+            $stmtSettings->close();
+
+            // Fetch performance
+            $stmtPerformance = $conn->prepare("SELECT accuracy, efficiency, readability, time, success, failed FROM performance WHERE userId = ?");
+            $stmtPerformance->bind_param("i", $newUserId);
+            $stmtPerformance->execute();
+            $stmtPerformance->bind_result($accuracy, $efficiency, $readability, $time, $success, $failed);
+            $stmtPerformance->fetch();
+            $userData['PERFORMANCE'] = [
+                'accuracy' => json_decode($accuracy),
+                'efficiency' => json_decode($efficiency),
+                'readability' => json_decode($readability),
+                'time' => json_decode($time),
+                'success' => json_decode($success),
+                'failed' => json_decode($failed),
+            ];
+            $stmtPerformance->close();
+
+            $_SESSION['userData'] = $userData; // Store all user data in session
 
             session_start();
             

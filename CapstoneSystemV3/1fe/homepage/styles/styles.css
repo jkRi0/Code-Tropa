@@ -20,6 +20,22 @@
     height: 100px;
     width: 100px;
 }
+
+.badges-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.badge-icon {
+    object-fit: contain;
+    /* border: 2px solid #ddd;   */
+    border-radius: 8px;
+    padding: 5px;
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+}
 /*
 .error-message {
     color: red;

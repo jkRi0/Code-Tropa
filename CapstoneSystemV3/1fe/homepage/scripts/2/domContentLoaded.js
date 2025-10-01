@@ -13,27 +13,23 @@ export function initializeDomContent() {
 
     // Function to set bar graph heights dynamically
     function setBarGraphHeights() {
-        const performanceData = {
-            accuracy: 85,
-            efficiency: 70,
-            readability: 60,
-            time: 90,
-            success: 95,
-            failed: 20
-        };
-
-        for (const key in performanceData) {
-            if (performanceData.hasOwnProperty(key)) {
-                const bar = document.querySelector(`.bar-wrapper .bar-${key}`);
-                const percentageLabel = bar ? bar.querySelector('.bar-percentage-label') : null;
-                if (bar) {
-                    bar.style.height = `${performanceData[key]}%`;
+        fetch('../../2be/get_performance_data.php')
+            .then(response => response.json())
+            .then(performanceData => {
+                for (const key in performanceData) {
+                    if (performanceData.hasOwnProperty(key)) {
+                        const bar = document.querySelector(`.bar-wrapper .bar-${key}`);
+                        const percentageLabel = bar ? bar.querySelector('.bar-percentage-label') : null;
+                        if (bar) {
+                            bar.style.height = `${performanceData[key]}%`;
+                        }
+                        if (percentageLabel) {
+                            percentageLabel.textContent = `${performanceData[key]}%`;
+                        }
+                    }
                 }
-                if (percentageLabel) {
-                    percentageLabel.textContent = `${performanceData[key]}%`;
-                }
-            }
-        }
+            })
+            .catch(error => console.error('Error fetching performance data:', error));
     }
 
     // Call the function to set bar graph heights and percentages when the DOM is loaded
