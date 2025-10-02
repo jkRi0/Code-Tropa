@@ -26,15 +26,15 @@ if (isset($_SESSION['userData']['USERS']['id']) && isset($_SESSION['userData']['
     }
 
     // Retrieve data directly from session
-    if (isset($_SESSION['userData']['PERFORMANCE'])) {
-        $performanceData = $_SESSION['userData']['PERFORMANCE'];
+    if (isset($_SESSION['userData']['PERFORMANCE']) && isset($_SESSION['userData']['PERFORMANCE'][0])) {
+        $performanceDataMain = $_SESSION['userData']['PERFORMANCE'][0];
 
-        $response['accuracy'] = ($performanceData['accuracy'][$langIndex] ?? 0);
-        $response['efficiency'] = ($performanceData['efficiency'][$langIndex] ?? 0);
-        $response['readability'] = ($performanceData['readability'][$langIndex] ?? 0);
-        $response['time'] = ($performanceData['time'][$langIndex] ?? 0);
-        $response['success'] = ($performanceData['success'][$langIndex] ?? 0);
-        $response['failed'] = ($performanceData['failed'][$langIndex] ?? 0);
+        $response['accuracy'] = (isset($performanceDataMain['accuracy'][$langIndex]) ? (float) $performanceDataMain['accuracy'][$langIndex] : 0);
+        $response['efficiency'] = (isset($performanceDataMain['efficiency'][$langIndex]) ? (float) $performanceDataMain['efficiency'][$langIndex] : 0);
+        $response['readability'] = (isset($performanceDataMain['readability'][$langIndex]) ? (float) $performanceDataMain['readability'][$langIndex] : 0);
+        $response['time'] = (isset($performanceDataMain['time'][$langIndex]) ? (float) $performanceDataMain['time'][$langIndex] : 0);
+        $response['success'] = (isset($performanceDataMain['success'][$langIndex]) ? (float) $performanceDataMain['success'][$langIndex] : 0);
+        $response['failed'] = (isset($performanceDataMain['failed'][$langIndex]) ? (float) $performanceDataMain['failed'][$langIndex] : 0);
     }
 }
 
