@@ -46,11 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtRewards->bind_param("i", $userID);
             $stmtRewards->execute();
             $stmtRewards->bind_result($tier, $badges);
-            $stmtRewards->fetch();
-            $userData['REWARDS'] = [
-                'tier' => json_decode($tier),
-                'badges' => json_decode($badges),
-            ];
+            $userData['REWARDS'] = [];
+            while ($stmtRewards->fetch()) {
+                $userData['REWARDS'][] = [
+                    'tier' => json_decode($tier),
+                    'badges' => json_decode($badges),
+                ];
+            }
             $stmtRewards->close();
 
             // Fetch saving
@@ -58,10 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtSaving->bind_param("i", $userID);
             $stmtSaving->execute();
             $stmtSaving->bind_result($sceneNum);
-            $stmtSaving->fetch();
-            $userData['SAVING'] = [
-                'sceneNum' => json_decode($sceneNum),
-            ];
+            $userData['SAVING'] = [];
+            while ($stmtSaving->fetch()) {
+                $userData['SAVING'][] = [
+                    'sceneNum' => json_decode($sceneNum),
+                ];
+            }
             $stmtSaving->close();
 
             // Fetch progress
@@ -69,11 +73,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtProgress->bind_param("i", $userID);
             $stmtProgress->execute();
             $stmtProgress->bind_result($storymode, $challenges);
-            $stmtProgress->fetch();
-            $userData['PROGRESS'] = [
-                'storymode' => json_decode($storymode),
-                'challenges' => json_decode($challenges),
-            ];
+            $userData['PROGRESS'] = [];
+            while ($stmtProgress->fetch()) {
+                $userData['PROGRESS'][] = [
+                    'storymode' => json_decode($storymode),
+                    'challenges' => json_decode($challenges),
+                ];
+            }
             $stmtProgress->close();
 
             // Fetch settings
@@ -93,15 +99,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtPerformance->bind_param("i", $userID);
             $stmtPerformance->execute();
             $stmtPerformance->bind_result($accuracy, $efficiency, $readability, $time, $success, $failed);
-            $stmtPerformance->fetch();
-            $userData['PERFORMANCE'] = [
-                'accuracy' => json_decode($accuracy),
-                'efficiency' => json_decode($efficiency),
-                'readability' => json_decode($readability),
-                'time' => json_decode($time),
-                'success' => json_decode($success),
-                'failed' => json_decode($failed),
-            ];
+            $userData['PERFORMANCE'] = [];
+            while ($stmtPerformance->fetch()) {
+                $userData['PERFORMANCE'][] = [
+                    'accuracy' => json_decode($accuracy),
+                    'efficiency' => json_decode($efficiency),
+                    'readability' => json_decode($readability),
+                    'time' => json_decode($time),
+                    'success' => json_decode($success),
+                    'failed' => json_decode($failed),
+                ];
+            }
             $stmtPerformance->close();
 
             $_SESSION['userData'] = $userData; // Store all user data in session

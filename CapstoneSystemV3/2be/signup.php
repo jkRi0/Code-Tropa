@@ -37,53 +37,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $newUserId = $conn->insert_id;
 
             // Insert default values into rewards table
-            $stmtRewards = $conn->prepare(
-                "INSERT INTO rewards (userId, tier, badges) VALUES (?, ?, ?)"
-            );
+            $languages = ['java', 'c++', 'c#'];
             $defaultTier = '[""]';
-            $defaultBadges = '["java",""]';
-            $stmtRewards->bind_param("iss", $newUserId, $defaultTier, $defaultBadges);
-            $stmtRewards->execute();
-            $stmtRewards->close();
+            $defaultJsonArray = '[]'; // Default empty JSON array for performance
 
-            // Insert default values into saving table
-            $stmtSaving = $conn->prepare(
-                "INSERT INTO saving (userId, sceneNum) VALUES (?, ?)"
-            );
-            $defaultSceneNum = '["java","","",""]';
-            $stmtSaving->bind_param("is", $newUserId, $defaultSceneNum);
-            $stmtSaving->execute();
-            $stmtSaving->close();
+            foreach ($languages as $lang) {
+                // REWARDS table insertion
+                $defaultBadges = '["' . $lang . '",""]';
+                $stmtRewards = $conn->prepare("INSERT INTO rewards (userId, tier, badges) VALUES (?, ?, ?)");
+                $stmtRewards->bind_param("iss", $newUserId, $defaultTier, $defaultBadges);
+                $stmtRewards->execute();
+                $stmtRewards->close();
 
-            // Insert default values into progress table
-            $stmtProgress = $conn->prepare(
-                "INSERT INTO progress (userId, storymode, challenges) VALUES (?, ?, ?)"
-            );
-            $defaultProgressJson = '[0,0,0,"java",""]';
-            $stmtProgress->bind_param("iss", $newUserId, $defaultProgressJson, $defaultProgressJson);
-            $stmtProgress->execute();
-            $newProgressId = $conn->insert_id; // Get the ID of the newly inserted progress
-            $stmtProgress->close();
+                // SAVING table insertion
+                $defaultSceneNum = '["' . $lang . '","","",""]';
+                $stmtSaving = $conn->prepare("INSERT INTO saving (userId, sceneNum) VALUES (?, ?)");
+                $stmtSaving->bind_param("is", $newUserId, $defaultSceneNum);
+                $stmtSaving->execute();
+                $stmtSaving->close();
 
-            // Insert default values into performance table
-            $stmtPerformance = $conn->prepare(
-                "INSERT INTO performance (userId, progressId, accuracy, efficiency, readability, time, success, failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-            );
-            $defaultJsonArray = '[0,0,0]';
-            $stmtPerformance->bind_param(
-                "isssssss", 
-                $newUserId, 
-                $newProgressId, 
-                $defaultJsonArray, 
-                $defaultJsonArray, 
-                $defaultJsonArray, 
-                $defaultJsonArray, 
-                $defaultJsonArray, 
-                $defaultJsonArray
-            );
+                // PROGRESS table insertion
+                $defaultStorymode = '[0,0,0,"' . $lang . '",""]';
+                $stmtProgressStorymode = $conn->prepare("INSERT INTO progress (userId, storymode, challenges) VALUES (?, ?, ?)");
+                $stmtProgressStorymode->bind_param("iss", $newUserId, $defaultStorymode, $defaultStorymode);
+                $stmtProgressStorymode->execute();
+                $newProgressId = $conn->insert_id; // Get the ID of the newly inserted progress
+                $stmtProgressStorymode->close();
+
+                
+            }
+            // PERFORMANCE table insertion
+            $stmtPerformance = $conn->prepare("INSERT INTO performance (userId, progressId, accuracy, efficiency, readability, time, success, failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $defaultJsonArray = '[0,0,0]'; // Correct default value for performance metrics
+            $stmtPerformance->bind_param("iissssss", $newUserId, $newProgressId, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray);
             $stmtPerformance->execute();
             $stmtPerformance->close();
-
+            
             // Insert default values into settings table
             $stmtSettings = $conn->prepare(
                 "INSERT INTO settings (userId, controls, volume) VALUES (?, ?, ?)"
@@ -111,15 +100,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtUser->close();
 
             // Fetch rewards
+            $userData['REWARDS'] = [];
             $stmtRewards = $conn->prepare("SELECT tier, badges FROM rewards WHERE userId = ?");
             $stmtRewards->bind_param("i", $newUserId);
             $stmtRewards->execute();
             $stmtRewards->bind_result($tier, $badges);
-            $stmtRewards->fetch();
-            $userData['REWARDS'] = [
-                'tier' => json_decode($tier),
-                'badges' => json_decode($badges),
-            ];
+            while ($stmtRewards->fetch()) {
+                $userData['REWARDS'][$lang] = [
+                    'tier' => json_decode($tier),
+                    'badges' => json_decode($badges),
+                ];
+            }
             $stmtRewards->close();
 
             // Fetch saving
