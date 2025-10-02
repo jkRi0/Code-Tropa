@@ -1,5 +1,9 @@
 export let currentSelectedLanguage = ''; // New variable to track the selected language
 
+export function setCurrentSelectedLanguage(language) {
+    currentSelectedLanguage = language;
+}
+
 export function process(clickedDiv, type) {
     const menuContainer = document.querySelector('.menu-container');
     const mainContentWrapper = document.querySelector('.main-content-wrapper');
@@ -29,6 +33,25 @@ export function process(clickedDiv, type) {
         if (plSelection) {
             plSelection.style.visibility = 'visible';
             plSelection.style.opacity = '1';
+
+            // Fetch and highlight the currently saved language (green highlight)
+            fetch('../../2be/get_current_language.php')
+                .then(response => response.json())
+                .then(data => {
+                    const currentLanguage = data.currentLanguage.toLowerCase();
+                    console.log('Current Language from session (process.js):', currentLanguage); // Debug log
+                    document.querySelectorAll('.outer2-2').forEach(div => {
+                        div.classList.remove('active-language'); // Remove persistent highlight
+                        div.classList.remove('temporary-selected'); // Remove temporary highlight
+                        const langText = div.querySelector('.inner1-2').textContent.trim().toLowerCase();
+                        // console.log('Comparing ', langText, ' with ', currentLanguage); // Debug log
+                        if (langText === currentLanguage) {
+                            div.classList.add('active-language'); // Add persistent green highlight
+                            console.log('Added active-language to:', langText); // Debug log
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching current language:', error));
         }
     }else if(type === 'storyMode'){
         const difSelection = document.querySelector('.sm-back1');

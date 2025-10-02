@@ -1,6 +1,7 @@
 import { currentSelectedLanguage } from './process.js';
+import { submitLanguageSelection } from './submitLanguageSelection.js';
 
-export function hideModal() {
+export function hideModal(buttonType) {
     // When the modal is hidden, clear the selected language
     // currentSelectedLanguage = '';
     const selectedLanguageInput = document.getElementById('selectedLanguageInput');
@@ -12,6 +13,10 @@ export function hideModal() {
     if (plSelection) {
         plSelection.style.visibility = 'hidden';
         plSelection.style.opacity = '0';
+    }
+
+    if (buttonType === 'ok') {
+        submitLanguageSelection();
     }
 
 
