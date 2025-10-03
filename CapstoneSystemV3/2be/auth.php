@@ -1,6 +1,12 @@
 <?php
 // protected.php
 
+include 'db.php'; // Include the database connection
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Check if token cookie exists
 if (!isset($_COOKIE['auth_token'])) {
     http_response_code(401);
@@ -24,8 +30,98 @@ if (!$payload || !isset($payload['exp']) || $payload['exp'] < time()) {
 
 // Token valid - user is authenticated
 header('Content-Type: application/json');
-// The original code was echoing user and pass from payload, but it's not ideal for security.
-// Since we are reverting to mysqli, I'll keep the previous behavior for now but note it's not ideal.
-// For proper mysqli, you'd fetch user data from DB here using the user_id from the token.
-echo json_encode(['status' => 'success', 'message' => 'Access granted', 'user' => $payload['user'], 'pass' => $payload['pass']]);
+
+// Fetch user data from the database using the user_id from the token
+$userID = $payload['id'];
+
+$userData = [];
+
+// Fetch user details
+$stmtUser = mysqli_prepare($conn, "SELECT username, programmingLanguage FROM users WHERE id = ?");
+mysqli_stmt_bind_param($stmtUser, "i", $userID);
+mysqli_stmt_execute($stmtUser);
+mysqli_stmt_bind_result($stmtUser, $username, $programmingLanguage);
+mysqli_stmt_fetch($stmtUser);
+$userData['USERS'] = [
+    'id' => $userID,
+    'username' => $username,
+    'programmingLanguage' => $programmingLanguage,
+];
+mysqli_stmt_close($stmtUser);
+
+// Fetch rewards
+$userData['REWARDS'] = [];
+$stmtRewards = mysqli_prepare($conn, "SELECT language, tier, badgeName FROM rewards WHERE userId = ?");
+mysqli_stmt_bind_param($stmtRewards, "i", $userID);
+mysqli_stmt_execute($stmtRewards);
+mysqli_stmt_bind_result($stmtRewards, $language, $tier, $badgeName);
+while (mysqli_stmt_fetch($stmtRewards)) {
+    $userData['REWARDS'][] = [
+        'language' => $language,
+        'tier' => $tier,
+        'badgeName' => $badgeName,
+    ];
+}
+mysqli_stmt_close($stmtRewards);
+
+// Fetch saving
+$userData['SAVING'] = [];
+$stmtSaving = mysqli_prepare($conn, "SELECT language, chapter, episode, scene FROM saving WHERE userId = ?");
+mysqli_stmt_bind_param($stmtSaving, "i", $userID);
+mysqli_stmt_execute($stmtSaving);
+mysqli_stmt_bind_result($stmtSaving, $language, $chapter, $episode, $scene);
+while (mysqli_stmt_fetch($stmtSaving)) {
+    $userData['SAVING'][] = [
+        'language' => $language,
+        'chapter' => $chapter,
+        'episode' => $episode,
+        'scene' => $scene,
+    ];
+}
+mysqli_stmt_close($stmtSaving);
+
+// Fetch progress
+$userData['PROGRESS'] = [];
+$stmtProgress = mysqli_prepare($conn, "SELECT type, language, chapter, episode, difficulty, level, points, code FROM progress WHERE userId = ?");
+mysqli_stmt_bind_param($stmtProgress, "i", $userID);
+mysqli_stmt_execute($stmtProgress);
+mysqli_stmt_bind_result($stmtProgress, $type, $language, $chapter, $episode, $difficulty, $level, $points, $code);
+while (mysqli_stmt_fetch($stmtProgress)) {
+    $userData['PROGRESS'][] = [
+        'type' => $type,
+        'language' => $language,
+        'chapter' => $chapter,
+        'episode' => $episode,
+        'difficulty' => $difficulty,
+        'level' => $level,
+        'points' => $points,
+        'code' => $code,
+    ];
+}
+mysqli_stmt_close($stmtProgress);
+
+// Fetch performance
+$userData['PERFORMANCE'] = [];
+$stmtPerformance = mysqli_prepare($conn, "SELECT progressId, accuracy, efficiency, readability, timeTaken, success, failed FROM performance WHERE userId = ?");
+mysqli_stmt_bind_param($stmtPerformance, "i", $userID);
+mysqli_stmt_execute($stmtPerformance);
+mysqli_stmt_bind_result($stmtPerformance, $progressId, $accuracy, $efficiency, $readability, $timeTaken, $success, $failed);
+while (mysqli_stmt_fetch($stmtPerformance)) {
+    $userData['PERFORMANCE'][] = [
+        'progressId' => $progressId,
+        'accuracy' => $accuracy,
+        'efficiency' => $efficiency,
+        'readability' => $readability,
+        'timeTaken' => $timeTaken,
+        'success' => $success,
+        'failed' => $failed,
+    ];
+}
+mysqli_stmt_close($stmtPerformance);
+
+$_SESSION['userData'] = $userData; // Store all user data in session
+$_SESSION['user_id'] = $userID;
+$_SESSION['username'] = $username;
+
+echo json_encode(['status' => 'success', 'message' => 'Access granted', 'user' => $username]);
 ?>

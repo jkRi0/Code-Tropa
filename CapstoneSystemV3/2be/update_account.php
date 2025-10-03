@@ -130,18 +130,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // If any changes were successfully made, regenerate and set a new auth_token
     if ($userUpdated || $passwordUpdated) {
-        // Fetch the latest username and password for the token
-        $stmt = mysqli_prepare($conn, "SELECT username, password FROM users WHERE id = ?");
+        // Fetch the latest username for the token
+        $stmt = mysqli_prepare($conn, "SELECT username FROM users WHERE id = ?"); // Changed to only select username
         mysqli_stmt_bind_param($stmt, "i", $userId);
         mysqli_stmt_execute($stmt);
-        mysqli_stmt_bind_result($stmt, $latestUsername, $latestPassword);
+        mysqli_stmt_bind_result($stmt, $latestUsername); // Only bind latestUsername
         mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
 
         $tokenPayload = [
             'id' => $userId,
             'user' => $latestUsername,
-            'pass' => $latestPassword, // Note: storing hashed password in token for mysqli auth, not ideal but for consistency
+            // 'pass' => $latestPassword, // Removed for security and consistency with auth.php
             'exp' => time() + 3600, // 1 hour expiration
         ];
         $newToken = base64_encode(json_encode($tokenPayload));

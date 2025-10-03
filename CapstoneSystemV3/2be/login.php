@@ -40,68 +40,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_stmt_close($stmtUser);
 
             // Fetch rewards
-            $stmtRewards = mysqli_prepare($conn, "SELECT tier, badges FROM rewards WHERE userId = ?");
+            $stmtRewards = mysqli_prepare($conn, "SELECT language, tier, badgeName FROM rewards WHERE userId = ?");
             mysqli_stmt_bind_param($stmtRewards, "i", $userID);
             mysqli_stmt_execute($stmtRewards);
-            mysqli_stmt_bind_result($stmtRewards, $tier, $badges);
+            mysqli_stmt_bind_result($stmtRewards, $language, $tier, $badgeName);
             $userData['REWARDS'] = [];
             while (mysqli_stmt_fetch($stmtRewards)) {
                 $userData['REWARDS'][] = [
-                    'tier' => json_decode($tier),
-                    'badges' => json_decode($badges),
+                    'language' => $language,
+                    'tier' => $tier,
+                    'badgeName' => $badgeName,
                 ];
             }
             mysqli_stmt_close($stmtRewards);
 
             // Fetch saving
-            $stmtSaving = mysqli_prepare($conn, "SELECT sceneNum FROM saving WHERE userId = ?");
+            $userData['SAVING'] = [];
+            $stmtSaving = mysqli_prepare($conn, "SELECT language, chapter, episode, scene FROM saving WHERE userId = ?");
             mysqli_stmt_bind_param($stmtSaving, "i", $userID);
             mysqli_stmt_execute($stmtSaving);
-            mysqli_stmt_bind_result($stmtSaving, $sceneNum);
-            mysqli_stmt_fetch($stmtSaving);
-            $userData['SAVING'] = [
-                'sceneNum' => json_decode($sceneNum),
-            ];
+            mysqli_stmt_bind_result($stmtSaving, $language, $chapter, $episode, $scene);
+            while (mysqli_stmt_fetch($stmtSaving)) {
+                $userData['SAVING'][] = [
+                    'language' => $language,
+                    'chapter' => $chapter,
+                    'episode' => $episode,
+                    'scene' => $scene,
+                ];
+            }
             mysqli_stmt_close($stmtSaving);
 
             // Fetch progress
-            $stmtProgress = mysqli_prepare($conn, "SELECT storymode, challenges FROM progress WHERE userId = ?");
+            $userData['PROGRESS'] = [];
+            $stmtProgress = mysqli_prepare($conn, "SELECT id, type, language, chapter, episode, difficulty, level, points, code FROM progress WHERE userId = ?");
             mysqli_stmt_bind_param($stmtProgress, "i", $userID);
             mysqli_stmt_execute($stmtProgress);
-            mysqli_stmt_bind_result($stmtProgress, $storymode, $challenges);
-            mysqli_stmt_fetch($stmtProgress);
-            $userData['PROGRESS'] = [
-                'storymode' => json_decode($storymode),
-                'challenges' => json_decode($challenges),
-            ];
+            mysqli_stmt_bind_result($stmtProgress, $id, $type, $language, $chapter, $episode, $difficulty, $level, $points, $code);
+            while (mysqli_stmt_fetch($stmtProgress)) {
+                $userData['PROGRESS'][] = [
+                    'id' => $id,
+                    'type' => $type,
+                    'language' => $language,
+                    'chapter' => $chapter,
+                    'episode' => $episode,
+                    'difficulty' => $difficulty,
+                    'level' => $level,
+                    'points' => $points,
+                    'code' => $code,
+                ];
+            }
             mysqli_stmt_close($stmtProgress);
 
-            // Fetch settings
-            $stmtSettings = mysqli_prepare($conn, "SELECT controls, volume FROM settings WHERE userId = ?");
-            mysqli_stmt_bind_param($stmtSettings, "i", $userID);
-            mysqli_stmt_execute($stmtSettings);
-            mysqli_stmt_bind_result($stmtSettings, $controls, $volume);
-            mysqli_stmt_fetch($stmtSettings);
-            $userData['SETTINGS'] = [
-                'controls' => json_decode($controls),
-                'volume' => $volume,
-            ];
-            mysqli_stmt_close($stmtSettings);
-
             // Fetch performance
-            $stmtPerformance = mysqli_prepare($conn, "SELECT accuracy, efficiency, readability, time, success, failed FROM performance WHERE userId = ?");
+            $userData['PERFORMANCE'] = [];
+            $stmtPerformance = mysqli_prepare($conn, "SELECT progressId, accuracy, efficiency, readability, timeTaken, success, failed FROM performance WHERE userId = ?");
             mysqli_stmt_bind_param($stmtPerformance, "i", $userID);
             mysqli_stmt_execute($stmtPerformance);
-            mysqli_stmt_bind_result($stmtPerformance, $accuracy, $efficiency, $readability, $time, $success, $failed);
-            mysqli_stmt_fetch($stmtPerformance);
-            $userData['PERFORMANCE'] = [
-                'accuracy' => json_decode($accuracy),
-                'efficiency' => json_decode($efficiency),
-                'readability' => json_decode($readability),
-                'time' => json_decode($time),
-                'success' => json_decode($success),
-                'failed' => json_decode($failed),
-            ];
+            mysqli_stmt_bind_result($stmtPerformance, $progressId, $accuracy, $efficiency, $readability, $timeTaken, $success, $failed);
+            while (mysqli_stmt_fetch($stmtPerformance)) {
+                $userData['PERFORMANCE'][] = [
+                    'progressId' => $progressId,
+                    'accuracy' => $accuracy,
+                    'efficiency' => $efficiency,
+                    'readability' => $readability,
+                    'timeTaken' => $timeTaken,
+                    'success' => $success,
+                    'failed' => $failed,
+                ];
+            }
             mysqli_stmt_close($stmtPerformance);
 
             $_SESSION['userData'] = $userData; // Store all user data in session

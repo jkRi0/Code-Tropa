@@ -22,47 +22,28 @@ $totalPoints = 0;
 $tier = 'N/A';
 
 // Fetch total points from the 'progress' table
-$stmt_progress = $conn->prepare("SELECT storymode, challenges FROM progress WHERE userId = ?");
+$stmt_progress = $conn->prepare("SELECT SUM(points) AS totalPoints FROM progress WHERE userId = ? AND language = ?");
 if ($stmt_progress) {
-    $stmt_progress->bind_param("i", $userId);
+    $stmt_progress->bind_param("is", $userId, $programmingLanguage);
     $stmt_progress->execute();
     $result_progress = $stmt_progress->get_result();
 
     if ($row_progress = $result_progress->fetch_assoc()) {
-        $decodedStorymode = json_decode($row_progress['storymode']);
-        $decodedChallenges = json_decode($row_progress['challenges']);
-
-        $storymodePoints = 0;
-        if (is_array($decodedStorymode) && count($decodedStorymode) >= 3) {
-            $storymodePoints = array_sum(array_slice($decodedStorymode, 0, 3));
-        }
-
-        $challengePoints = 0;
-        if (is_array($decodedChallenges) && count($decodedChallenges) >= 3) {
-            $challengePoints = array_sum(array_slice($decodedChallenges, 0, 3));
-        }
-
-        $totalPoints = $storymodePoints + $challengePoints;
+        $totalPoints = $row_progress['totalPoints'] ?? 0;
     }
     $stmt_progress->close();
 }
 
 // Fetch tier from the 'rewards' table
-$stmt_rewards = $conn->prepare("SELECT tier, badges FROM rewards WHERE userId = ?");
+// Assuming we want the highest tier achieved for the selected language
+$stmt_rewards = $conn->prepare("SELECT tier FROM rewards WHERE userId = ? AND language = ? ORDER BY tier DESC LIMIT 1");
 if ($stmt_rewards) {
-    $stmt_rewards->bind_param("i", $userId);
+    $stmt_rewards->bind_param("is", $userId, $programmingLanguage);
     $stmt_rewards->execute();
     $result_rewards = $stmt_rewards->get_result();
 
-    while ($row_rewards = $result_rewards->fetch_assoc()) {
-        $decodedBadges = json_decode($row_rewards['badges']);
-        if (is_array($decodedBadges) && !empty($decodedBadges) && $decodedBadges[0] === $programmingLanguage) {
-            $decodedTier = json_decode($row_rewards['tier']);
-            if (is_array($decodedTier) && !empty($decodedTier) && !empty($decodedTier[0])) {
-                $tier = $decodedTier[0];
-                break; // Found the tier for the selected language, no need to continue
-            }
-        }
+    if ($row_rewards = $result_rewards->fetch_assoc()) {
+        $tier = $row_rewards['tier'];
     }
     $stmt_rewards->close();
 }

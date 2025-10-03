@@ -20,36 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Start a transaction
     mysqli_begin_transaction($conn);
     try {
-        // Delete from performance table
-        $stmt = mysqli_prepare($conn, "DELETE FROM performance WHERE userId = ?");
-        mysqli_stmt_bind_param($stmt, "i", $userId);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-
-        // Delete from progress table
-        $stmt = mysqli_prepare($conn, "DELETE FROM progress WHERE userId = ?");
-        mysqli_stmt_bind_param($stmt, "i", $userId);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-
-        // Delete from saving table
-        $stmt = mysqli_prepare($conn, "DELETE FROM saving WHERE userId = ?");
-        mysqli_stmt_bind_param($stmt, "i", $userId);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-
-        // Delete from rewards table
-        $stmt = mysqli_prepare($conn, "DELETE FROM rewards WHERE userId = ?");
-        mysqli_stmt_bind_param($stmt, "i", $userId);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-
-        // Delete from settings table
-        $stmt = mysqli_prepare($conn, "DELETE FROM settings WHERE userId = ?");
-        mysqli_stmt_bind_param($stmt, "i", $userId);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-
         // Finally, delete from users table
         $stmt = mysqli_prepare($conn, "DELETE FROM users WHERE id = ?");
         mysqli_stmt_bind_param($stmt, "i", $userId);

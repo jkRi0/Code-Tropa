@@ -7,12 +7,9 @@ $badgesForSelectedLanguage = [];
 
 if (isset($_SESSION['userData']['REWARDS']) && $selectedLanguage !== null) {
     foreach ($_SESSION['userData']['REWARDS'] as $rewardEntry) {
-        if (isset($rewardEntry['badges']) && is_array($rewardEntry['badges']) && !empty($rewardEntry['badges'])) {
-            // Compare the selected programming language with the first element of the badges array
-            if ($rewardEntry['badges'][0] === $selectedLanguage) {
-                $badgesForSelectedLanguage = $rewardEntry['badges'];
-                break; // Found the badges for the selected language, no need to continue
-            }
+        // Now, rewardEntry directly contains 'language' and 'badgeName'
+        if (isset($rewardEntry['language']) && $rewardEntry['language'] === $selectedLanguage) {
+            $badgesForSelectedLanguage[] = $rewardEntry['badgeName'];
         }
     }
 }
