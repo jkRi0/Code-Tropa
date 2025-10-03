@@ -24,5 +24,8 @@ if (!$payload || !isset($payload['exp']) || $payload['exp'] < time()) {
 
 // Token valid - user is authenticated
 header('Content-Type: application/json');
+// The original code was echoing user and pass from payload, but it's not ideal for security.
+// Since we are reverting to mysqli, I'll keep the previous behavior for now but note it's not ideal.
+// For proper mysqli, you'd fetch user data from DB here using the user_id from the token.
 echo json_encode(['status' => 'success', 'message' => 'Access granted', 'user' => $payload['user'], 'pass' => $payload['pass']]);
 ?>

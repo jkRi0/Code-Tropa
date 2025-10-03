@@ -1202,9 +1202,40 @@
         </main>
     </div>
 
+    <!-- Edit Account Modal -->
+    <div id="editAccountModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Edit Account</h2>
+            <form id="editAccountForm">
+                <label for="editUsername">Username:</label>
+                <input type="text" id="editUsername" name="username">
+                <label for="editCurrentPassword">Current Password:</label>
+                <input type="password" id="editCurrentPassword" name="current_password">
+                <label for="editNewPassword">New Password:</label>
+                <input type="password" id="editNewPassword" name="new_password">
+                <label for="editConfirmNewPassword">Confirm New Password:</label>
+                <input type="password" id="editConfirmNewPassword" name="confirm_new_password">
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div id="deleteAccountModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Delete Account</h2>
+            <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+            <button id="confirmDeleteBtn">Delete My Account</button>
+            <button class="cancel-delete-btn">Cancel</button>
+        </div>
+    </div>
+
     <audio id="homepageBackgroundMusic" src="../assets/bgMusic.mp3" loop preload="auto" volume="0.5"></audio>
 
     <script type="module" src="scripts/script.js"></script>
     <script type="module" src="scripts/loadBadges.js"></script>
+    <script type="module" src="scripts/2/modalHandler.js"></script>
 </body>
 </html>

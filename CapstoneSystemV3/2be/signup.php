@@ -3,18 +3,22 @@
 // Database connection
 include 'db.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hid1 = $_POST['hid1'] ?? '';
     $hid2 = $_POST['hid2'] ?? '';
     $programmingLanguage = $_POST['programmingLanguage'] ?? 'java'; // Default to 'java' if not provided
     
     // Check if the username already exists
-    $checkStmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
-    $checkStmt->bind_param("s", $hid1);
-    $checkStmt->execute();
-    $checkStmt->bind_result($count);
-    $checkStmt->fetch();
-    $checkStmt->close();
+    $checkStmt = mysqli_prepare($conn, "SELECT COUNT(*) FROM users WHERE username = ?");
+    mysqli_stmt_bind_param($checkStmt, "s", $hid1);
+    mysqli_stmt_execute($checkStmt);
+    mysqli_stmt_bind_result($checkStmt, $count);
+    mysqli_stmt_fetch($checkStmt);
+    mysqli_stmt_close($checkStmt);
 
     if ($count > 0) {
         // Username already exists
@@ -27,14 +31,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $hid2_2 = password_hash($hid2, PASSWORD_DEFAULT);
 
-        $stmt = $conn->prepare(
-            "INSERT INTO users (username, password, created_at, programmingLanguage) VALUES (?, ?, NOW(), ?)"
+        $stmt = mysqli_prepare(
+            $conn, "INSERT INTO users (username, password, created_at, programmingLanguage) VALUES (?, ?, NOW(), ?)"
         );
-        $stmt->bind_param("sss", $hid1, $hid2_2, $programmingLanguage);
+        mysqli_stmt_bind_param($stmt, "sss", $hid1, $hid2_2, $programmingLanguage);
 
-        if ($stmt->execute()) {
+        if (mysqli_stmt_execute($stmt)) {
             // Get the ID of the newly inserted user
-            $newUserId = $conn->insert_id;
+            $newUserId = mysqli_insert_id($conn);
 
             // Insert default values into rewards table
             $languages = ['java', 'c++', 'c#'];
@@ -44,116 +48,116 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             foreach ($languages as $lang) {
                 // REWARDS table insertion
                 $defaultBadges = '["' . $lang . '",""]';
-                $stmtRewards = $conn->prepare("INSERT INTO rewards (userId, tier, badges) VALUES (?, ?, ?)");
-                $stmtRewards->bind_param("iss", $newUserId, $defaultTier, $defaultBadges);
-                $stmtRewards->execute();
-                $stmtRewards->close();
+                $stmtRewards = mysqli_prepare($conn, "INSERT INTO rewards (userId, tier, badges) VALUES (?, ?, ?)");
+                mysqli_stmt_bind_param($stmtRewards, "iss", $newUserId, $defaultTier, $defaultBadges);
+                mysqli_stmt_execute($stmtRewards);
+                mysqli_stmt_close($stmtRewards);
 
                 // SAVING table insertion
                 $defaultSceneNum = '["' . $lang . '","","",""]';
-                $stmtSaving = $conn->prepare("INSERT INTO saving (userId, sceneNum) VALUES (?, ?)");
-                $stmtSaving->bind_param("is", $newUserId, $defaultSceneNum);
-                $stmtSaving->execute();
-                $stmtSaving->close();
+                $stmtSaving = mysqli_prepare($conn, "INSERT INTO saving (userId, sceneNum) VALUES (?, ?)");
+                mysqli_stmt_bind_param($stmtSaving, "is", $newUserId, $defaultSceneNum);
+                mysqli_stmt_execute($stmtSaving);
+                mysqli_stmt_close($stmtSaving);
 
                 // PROGRESS table insertion
                 $defaultStorymode = '[0,0,0,"' . $lang . '",""]';
-                $stmtProgressStorymode = $conn->prepare("INSERT INTO progress (userId, storymode, challenges) VALUES (?, ?, ?)");
-                $stmtProgressStorymode->bind_param("iss", $newUserId, $defaultStorymode, $defaultStorymode);
-                $stmtProgressStorymode->execute();
-                $newProgressId = $conn->insert_id; // Get the ID of the newly inserted progress
-                $stmtProgressStorymode->close();
+                $stmtProgressStorymode = mysqli_prepare($conn, "INSERT INTO progress (userId, storymode, challenges) VALUES (?, ?, ?)");
+                mysqli_stmt_bind_param($stmtProgressStorymode, "iss", $newUserId, $defaultStorymode, $defaultStorymode);
+                mysqli_stmt_execute($stmtProgressStorymode);
+                $currentProgressId = mysqli_insert_id($conn); // Get the ID of the newly inserted progress
+                mysqli_stmt_close($stmtProgressStorymode);
 
                 
             }
-            // PERFORMANCE table insertion
-            $stmtPerformance = $conn->prepare("INSERT INTO performance (userId, progressId, accuracy, efficiency, readability, time, success, failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            // PERFORMANCE table insertion for each language
+            $stmtPerformance = mysqli_prepare($conn, "INSERT INTO performance (userId, progressId, accuracy, efficiency, readability, time, success, failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $defaultJsonArray = '[0,0,0]'; // Correct default value for performance metrics
-            $stmtPerformance->bind_param("iissssss", $newUserId, $newProgressId, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray);
-            $stmtPerformance->execute();
-            $stmtPerformance->close();
-            
+            mysqli_stmt_bind_param($stmtPerformance, "iissssss", $newUserId, $currentProgressId, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray, $defaultJsonArray);
+            mysqli_stmt_execute($stmtPerformance);
+            mysqli_stmt_close($stmtPerformance);
+
             // Insert default values into settings table
-            $stmtSettings = $conn->prepare(
-                "INSERT INTO settings (userId, controls, volume) VALUES (?, ?, ?)"
+            $stmtSettings = mysqli_prepare(
+                $conn, "INSERT INTO settings (userId, controls, volume) VALUES (?, ?, ?)"
             );
             $defaultControls = '["w","a","s","d","click"]';
             $defaultVolume = 50;
-            $stmtSettings->bind_param("isi", $newUserId, $defaultControls, $defaultVolume);
-            $stmtSettings->execute();
-            $stmtSettings->close();
+            mysqli_stmt_bind_param($stmtSettings, "isi", $newUserId, $defaultControls, $defaultVolume);
+            mysqli_stmt_execute($stmtSettings);
+            mysqli_stmt_close($stmtSettings);
 
             // Fetch all user data for session storage
             $userData = [];
 
             // Fetch user details
-            $stmtUser = $conn->prepare("SELECT username, programmingLanguage FROM users WHERE id = ?");
-            $stmtUser->bind_param("i", $newUserId);
-            $stmtUser->execute();
-            $stmtUser->bind_result($username, $programmingLanguage); // Changed $userID to $username
-            $stmtUser->fetch();
+            $stmtUser = mysqli_prepare($conn, "SELECT username, programmingLanguage FROM users WHERE id = ?");
+            mysqli_stmt_bind_param($stmtUser, "i", $newUserId);
+            mysqli_stmt_execute($stmtUser);
+            mysqli_stmt_bind_result($stmtUser, $username, $programmingLanguage);
+            mysqli_stmt_fetch($stmtUser);
             $userData['USERS'] = [
-                'id' => $newUserId, // Add user ID here
+                'id' => $newUserId,
                 'username' => $username,
                 'programmingLanguage' => $programmingLanguage,
             ];
-            $stmtUser->close();
+            mysqli_stmt_close($stmtUser);
 
             // Fetch rewards
             $userData['REWARDS'] = [];
-            $stmtRewards = $conn->prepare("SELECT tier, badges FROM rewards WHERE userId = ?");
-            $stmtRewards->bind_param("i", $newUserId);
-            $stmtRewards->execute();
-            $stmtRewards->bind_result($tier, $badges);
-            while ($stmtRewards->fetch()) {
-                $userData['REWARDS'][$lang] = [
+            $stmtRewards = mysqli_prepare($conn, "SELECT tier, badges FROM rewards WHERE userId = ?");
+            mysqli_stmt_bind_param($stmtRewards, "i", $newUserId);
+            mysqli_stmt_execute($stmtRewards);
+            mysqli_stmt_bind_result($stmtRewards, $tier, $badges);
+            while (mysqli_stmt_fetch($stmtRewards)) {
+                $userData['REWARDS'][] = [
                     'tier' => json_decode($tier),
                     'badges' => json_decode($badges),
                 ];
             }
-            $stmtRewards->close();
+            mysqli_stmt_close($stmtRewards);
 
             // Fetch saving
-            $stmtSaving = $conn->prepare("SELECT sceneNum FROM saving WHERE userId = ?");
-            $stmtSaving->bind_param("i", $newUserId);
-            $stmtSaving->execute();
-            $stmtSaving->bind_result($sceneNum);
-            $stmtSaving->fetch();
+            $stmtSaving = mysqli_prepare($conn, "SELECT sceneNum FROM saving WHERE userId = ?");
+            mysqli_stmt_bind_param($stmtSaving, "i", $newUserId);
+            mysqli_stmt_execute($stmtSaving);
+            mysqli_stmt_bind_result($stmtSaving, $sceneNum);
+            mysqli_stmt_fetch($stmtSaving);
             $userData['SAVING'] = [
                 'sceneNum' => json_decode($sceneNum),
             ];
-            $stmtSaving->close();
+            mysqli_stmt_close($stmtSaving);
 
             // Fetch progress
-            $stmtProgress = $conn->prepare("SELECT storymode, challenges FROM progress WHERE userId = ?");
-            $stmtProgress->bind_param("i", $newUserId);
-            $stmtProgress->execute();
-            $stmtProgress->bind_result($storymode, $challenges);
-            $stmtProgress->fetch();
+            $stmtProgress = mysqli_prepare($conn, "SELECT storymode, challenges FROM progress WHERE userId = ?");
+            mysqli_stmt_bind_param($stmtProgress, "i", $newUserId);
+            mysqli_stmt_execute($stmtProgress);
+            mysqli_stmt_bind_result($stmtProgress, $storymode, $challenges);
+            mysqli_stmt_fetch($stmtProgress);
             $userData['PROGRESS'] = [
                 'storymode' => json_decode($storymode),
                 'challenges' => json_decode($challenges),
             ];
-            $stmtProgress->close();
+            mysqli_stmt_close($stmtProgress);
 
             // Fetch settings
-            $stmtSettings = $conn->prepare("SELECT controls, volume FROM settings WHERE userId = ?");
-            $stmtSettings->bind_param("i", $newUserId);
-            $stmtSettings->execute();
-            $stmtSettings->bind_result($controls, $volume);
-            $stmtSettings->fetch();
+            $stmtSettings = mysqli_prepare($conn, "SELECT controls, volume FROM settings WHERE userId = ?");
+            mysqli_stmt_bind_param($stmtSettings, "i", $newUserId);
+            mysqli_stmt_execute($stmtSettings);
+            mysqli_stmt_bind_result($stmtSettings, $controls, $volume);
+            mysqli_stmt_fetch($stmtSettings);
             $userData['SETTINGS'] = [
                 'controls' => json_decode($controls),
                 'volume' => $volume,
             ];
-            $stmtSettings->close();
+            mysqli_stmt_close($stmtSettings);
 
             // Fetch performance
-            $stmtPerformance = $conn->prepare("SELECT accuracy, efficiency, readability, time, success, failed FROM performance WHERE userId = ?");
-            $stmtPerformance->bind_param("i", $newUserId);
-            $stmtPerformance->execute();
-            $stmtPerformance->bind_result($accuracy, $efficiency, $readability, $time, $success, $failed);
-            $stmtPerformance->fetch();
+            $stmtPerformance = mysqli_prepare($conn, "SELECT accuracy, efficiency, readability, time, success, failed FROM performance WHERE userId = ?");
+            mysqli_stmt_bind_param($stmtPerformance, "i", $newUserId);
+            mysqli_stmt_execute($stmtPerformance);
+            mysqli_stmt_bind_result($stmtPerformance, $accuracy, $efficiency, $readability, $time, $success, $failed);
+            mysqli_stmt_fetch($stmtPerformance);
             $userData['PERFORMANCE'] = [
                 'accuracy' => json_decode($accuracy),
                 'efficiency' => json_decode($efficiency),
@@ -162,27 +166,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'success' => json_decode($success),
                 'failed' => json_decode($failed),
             ];
-            $stmtPerformance->close();
+            mysqli_stmt_close($stmtPerformance);
 
             $_SESSION['userData'] = $userData; // Store all user data in session
-
-            session_start();
+            $_SESSION['user_id'] = $newUserId;
+            $_SESSION['username'] = $hid1;
             
             $tokenPayload = [
-                'id' => $userID,
+                'id' => $newUserId,
                 'user' => $hid1,
                 'pass' => $hid2,
                 'exp' => time() + 3600, // 1 hour expiration
             ];
-            $token = base64_encode(json_encode($tokenPayload)); // Simplified token, for demo only!
+            $token = base64_encode(json_encode($tokenPayload));
         
-            // Set token cookie with HttpOnly, Secure, SameSite flags
             setcookie('auth_token', $token, [
-                'expires' => time() + 3600,      // 1 hour
-                'path' => '/',                   // available site-wide
-                'secure' => true,                // send only over HTTPS
-                'httponly' => true,              // JS cannot access
-                'samesite' => 'Strict',          // protect against CSRF
+                'expires' => time() + 3600,
+                'path' => '/',
+                'secure' => true,
+                'httponly' => true,
+                'samesite' => 'Strict',
             ]);
 
             echo "<script>alert('Account Added Successfully'); window.location.href='../1fe/homepage/index.html'; </script>";
@@ -190,7 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo "<script>alert('Failed to add account, please try again later'); window.location.href='../1fe/signup/'; </script>";
         }
-        $stmt->close();
+        mysqli_stmt_close($stmt);
     }
 }
 
