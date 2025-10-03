@@ -5,6 +5,7 @@ import { hideModal } from './hideModal.js';
 import { initializeDomContent } from './domContentLoaded.js'; // For refreshing performance graphs
 // Assuming there's a function to refresh badges, or we can add it later if needed
 import { refreshBadges } from '../loadBadges.js'; 
+import { fetchProfileData } from '../fetchProfileData.js';
 
 export function submitLanguageSelection() {
     // const selectedLanguageInput = document.getElementById('selectedLanguageInput'); // No longer needed
@@ -32,6 +33,9 @@ export function submitLanguageSelection() {
                 initializeDomContent(); // Re-run DOM content initialization to refresh performance graphs
                 if (typeof refreshBadges === 'function') {
                     refreshBadges(); // Call function to refresh badges if it exists
+                }
+                if (typeof fetchProfileData === 'function') {
+                    fetchProfileData(); // Call function to refresh profile data (including tier)
                 }
             } else {
                 alert(`Error: ${data.message}`);

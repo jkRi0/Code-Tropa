@@ -144,3 +144,12 @@
         font-size: 0.9em;
     }
 }
+
+/* Tier display colors */
+.tier-color-low {
+    color: #fff2aa; /* Gold-like color for lower tiers */
+}
+
+.tier-color-high {
+    color: #afebff; /* Deep sky blue for higher tiers */
+}
