@@ -740,8 +740,38 @@ section{
     font-size: 0.8em;
 }
 .leaderboard-content {
-    max-height: 150px; /* Adjust as needed for mobile */
+    max-height: 80%; /* Increased height for better mobile visibility */
     overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth; /* Smooth scrolling */
+}
+
+/* Scrollbar styling for mobile leaderboard */
+.leaderboard-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.leaderboard-content::-webkit-scrollbar-track {
+    background: #e0e0e0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.leaderboard-content::-webkit-scrollbar-thumb {
+    background: #666;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+    transition: background 0.3s ease;
+}
+
+.leaderboard-content::-webkit-scrollbar-thumb:hover {
+    background: #333;
+}
+
+/* Firefox scrollbar styling */
+.leaderboard-content {
+    scrollbar-width: thin;
+    scrollbar-color: #666 #e0e0e0;
 }
 
 .header-item{
@@ -1023,4 +1053,46 @@ section{
     font-size: 0.9em;
     color: #555;
     font-weight: bold;
+}
+
+/* Language Filter Styles for Mobile */
+.language-filter-section {
+    margin: 8px auto;
+    text-align: center;
+    width: 90%;
+}
+
+.language-filter-section h3 {
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 1em;
+}
+
+.language-filter-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.language-filter-btn {
+    padding: 6px 12px;
+    border: 2px solid #555;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: all 0.3s ease;
+}
+
+.language-filter-btn:hover {
+    background-color: #555;
+    border-color: #777;
+}
+
+.language-filter-btn.active {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+    color: #fff;
 }

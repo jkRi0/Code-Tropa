@@ -666,8 +666,38 @@
     
 
     .leaderboard-content {
-        max-height: 300px; /* Adjust as needed */
-        overflow-y: scroll; /* Always show scrollbar to reserve space */
+        max-height: 80%; /* Increased height for better visibility */
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-behavior: smooth; /* Smooth scrolling */
+    }
+
+    /* Scrollbar styling for desktop leaderboard */
+    .leaderboard-content::-webkit-scrollbar {
+        width: 14px;
+    }
+
+    .leaderboard-content::-webkit-scrollbar-track {
+        background: #e0e0e0;
+        border-radius: 7px;
+        border: 1px solid #ccc;
+    }
+
+    .leaderboard-content::-webkit-scrollbar-thumb {
+        background: #666;
+        border-radius: 7px;
+        border: 2px solid #e0e0e0;
+        transition: background 0.3s ease;
+    }
+
+    .leaderboard-content::-webkit-scrollbar-thumb:hover {
+        background: #333;
+    }
+
+    /* Firefox scrollbar styling */
+    .leaderboard-content {
+        scrollbar-width: thin;
+        scrollbar-color: #666 #e0e0e0;
     }
 
 
@@ -702,6 +732,48 @@
         background-color: #ffeb3b; /* Highlight color */
         font-weight: bold;
         color: #333;
+    }
+
+    /* Language Filter Styles */
+    .language-filter-section {
+        /* margin: 20px auto; */
+        text-align: center;
+        width: 80%;
+    }
+
+    .language-filter-section h3 {
+        color: #fff;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+    }
+
+    .language-filter-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .language-filter-btn {
+        padding: 8px 16px;
+        border: 2px solid #555;
+        background-color: #333;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: all 0.3s ease;
+    }
+
+    .language-filter-btn:hover {
+        background-color: #555;
+        border-color: #777;
+    }
+
+    .language-filter-btn.active {
+        background-color: #4CAF50;
+        border-color: #4CAF50;
+        color: #fff;
     }
 
     /* Profile Section Styles */

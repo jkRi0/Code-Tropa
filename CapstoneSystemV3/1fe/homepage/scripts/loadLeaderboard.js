@@ -7,9 +7,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentSortColumn = 'totalPoints'; // Default sort column
     let currentSortDirection = 'desc'; // Default sort direction
 
-    async function fetchLeaderboard() {
+    async function fetchLeaderboard(language = 'all') {
         try {
-            const response = await fetch('../../2be/get_leaderboard_data.php'); // Adjust path as needed
+            const url = `../../2be/get_leaderboard_data.php?language=${encodeURIComponent(language)}`;
+            const response = await fetch(url);
             const data = await response.json();
 
             if (data.success) {
@@ -113,9 +114,161 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+    // Function to fetch total points for each language
+    async function fetchLanguageTotals() {
+        const languages = ['all', 'java', 'c++', 'c#'];
+        const languageTotals = {};
+        
+        for (const language of languages) {
+            try {
+                const url = `../../2be/get_leaderboard_data.php?language=${encodeURIComponent(language)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success && data.leaderboard.length > 0) {
+                    // Calculate total points for this language
+                    const totalPoints = data.leaderboard.reduce((sum, player) => sum + parseInt(player.totalPoints), 0);
+                    languageTotals[language] = totalPoints;
+                } else {
+                    languageTotals[language] = 0;
+                }
+            } catch (error) {
+                console.error(`Error fetching totals for ${language}:`, error);
+                languageTotals[language] = 0;
+            }
+        }
+        
+        return languageTotals;
+    }
+
+    // Function to sort and reorder language filter buttons by total points
+    async function sortLanguageButtonsByPoints() {
+        try {
+            const languageTotals = await fetchLanguageTotals();
+            
+            // Create array of language objects with their totals
+            const languageData = [
+                { language: 'all', total: languageTotals['all'], label: 'All Languages' },
+                { language: 'java', total: languageTotals['java'], label: 'Java Points' },
+                { language: 'c++', total: languageTotals['c++'], label: 'C++ Points' },
+                { language: 'c#', total: languageTotals['c#'], label: 'C# Points' }
+            ];
+            
+            // Sort by total points in descending order (highest to lowest)
+            languageData.sort((a, b) => b.total - a.total);
+            
+            // Get the container for language filter buttons
+            const buttonsContainer = document.querySelector('.language-filter-buttons');
+            if (!buttonsContainer) return;
+            
+            // Clear existing buttons
+            buttonsContainer.innerHTML = '';
+            
+            // Create and append buttons in the new order
+            languageData.forEach((langData, index) => {
+                const button = document.createElement('button');
+                button.className = 'language-filter-btn';
+                button.setAttribute('data-language', langData.language);
+                button.textContent = langData.label;
+                
+                // Set the first button (highest points) as active by default
+                if (index === 0) {
+                    button.classList.add('active');
+                }
+                
+                buttonsContainer.appendChild(button);
+            });
+            
+            // Re-setup event listeners for the new buttons
+            setupLanguageFilterButtons();
+            
+        } catch (error) {
+            console.error('Error sorting language buttons:', error);
+        }
+    }
+
+    // Function to initialize leaderboard with default settings
+    async function initializeLeaderboard() {
+        try {
+            // First sort the language buttons by points
+            await sortLanguageButtonsByPoints();
+            
+            // Set the first button (highest points) as active by default
+            const firstButton = document.querySelector('.language-filter-btn');
+            if (firstButton) {
+                const selectedLanguage = firstButton.getAttribute('data-language');
+                setActiveLanguageButton(selectedLanguage);
+                
+                // Fetch leaderboard with the language that has highest points
+                await fetchLeaderboard(selectedLanguage);
+                sortLeaderboard('Total Points'); // Sort by total points descending by default on load
+            } else {
+                // Fallback to original behavior
+                setActiveLanguageButton('all');
+                await fetchLeaderboard('all');
+                sortLeaderboard('Total Points');
+            }
+        } catch (error) {
+            console.error('Error initializing leaderboard:', error);
+            // Fallback to fetch all languages if initialization fails
+            setActiveLanguageButton('all');
+            await fetchLeaderboard('all');
+            sortLeaderboard('Total Points');
+        }
+    }
+
+    // Function to set the active language filter button
+    function setActiveLanguageButton(language) {
+        const languageFilterButtons = document.querySelectorAll('.language-filter-btn');
+        
+        // Remove active class from all buttons
+        languageFilterButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to the button matching the language
+        const targetButton = document.querySelector(`[data-language="${language}"]`);
+        if (targetButton) {
+            targetButton.classList.add('active');
+        } else {
+            // Fallback to "All Languages" if language not found
+            const allButton = document.querySelector('[data-language="all"]');
+            if (allButton) {
+                allButton.classList.add('active');
+            }
+        }
+    }
+
+    // Function to manually filter leaderboard by language (can be called from other scripts)
+    window.filterLeaderboardByLanguage = async function(language) {
+        await fetchLeaderboard(language);
+        sortLeaderboard('Total Points'); // Re-sort after filtering
+    };
+
+    // Function to handle language filter button clicks
+    function setupLanguageFilterButtons() {
+        const languageFilterButtons = document.querySelectorAll('.language-filter-btn');
+        
+        languageFilterButtons.forEach(button => {
+            button.addEventListener('click', async () => {
+                // Remove active class from all buttons
+                languageFilterButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Get the language from data attribute
+                const selectedLanguage = button.getAttribute('data-language');
+                
+                // Fetch leaderboard with selected language
+                await fetchLeaderboard(selectedLanguage);
+                sortLeaderboard('Total Points'); // Re-sort after filtering
+            });
+        });
+    }
+
     // Initial fetch and display with default sorting
     await fetchProfileData(); // Ensure user data is fetched before loading leaderboard
-    fetchLeaderboard().then(() => {
-        sortLeaderboard('Total Points'); // Sort by total points descending by default on load
-    });
+    await initializeLeaderboard();
+    
+    // Setup language filter button event listeners
+    setupLanguageFilterButtons();
 });
