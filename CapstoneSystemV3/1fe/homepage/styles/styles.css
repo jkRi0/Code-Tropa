@@ -153,3 +153,129 @@
 .tier-color-high {
     color: #afebff; /* Deep sky blue for higher tiers */
 }
+
+.leaderboard-section {
+    background-color: #333; /* Dark background for the leaderboard section */
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow-x: auto; /* Enable horizontal scrolling on small screens */
+}
+
+.leaderboard-header,
+.leaderboard-entry {
+    display: grid;
+    grid-template-columns: 0.5fr 2fr 1fr 1fr; /* Adjust column widths as needed */
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #555;
+    align-items: center;
+}
+
+.leaderboard-header {
+    background-color: #444;
+    color: #fff;
+    font-weight: bold;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    cursor: pointer; /* Indicate sortable headers */
+    position: sticky; /* Make headers sticky for better UX on scroll */
+    top: 0; /* Stick to the top */
+    z-index: 10; /* Ensure headers are above content */
+}
+
+.leaderboard-header .header-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px; /* Space between text and sort icon */
+    padding: 5px;
+}
+
+.leaderboard-header .header-item.sortable::after {
+    content: '\2195'; /* Up-down arrow for sortable indicator */
+    font-size: 0.8em;
+    margin-left: 5px;
+    transition: transform 0.2s;
+}
+
+.leaderboard-header .header-item.sort-asc::after {
+    content: '\2191'; /* Up arrow for ascending sort */
+}
+
+.leaderboard-header .header-item.sort-desc::after {
+    content: '\2193'; /* Down arrow for descending sort */
+}
+
+.leaderboard-header .header-item:hover {
+    background-color: #555; /* Hover effect for sortable headers */
+}
+
+.leaderboard-entry {
+    color: #464646;
+}
+
+.leaderboard-entry:nth-child(even) {
+    background-color: #3a3a3a; /* Zebra stripping for readability */
+}
+
+.leaderboard-entry:hover, .leaderboard-entry:nth-child(even):hover {
+    background-color: #acacac; /* Enhanced hover effect for leaderboard entries */
+    /* transform: scale(1.01);  Slightly enlarge on hover */
+    transition: background-color 0.2s ease; /* Smooth transition */
+}
+
+.entry-item {
+    padding: 10px 5px; /* Increased vertical padding for better spacing */
+    text-align: center;
+}
+
+.leaderboard-entry.current-player {
+    background-color: #ffb300; /* Distinct orange/gold highlight for the current player */
+    font-weight: bold;
+    color: #333; /* Darker text for better contrast on orange background */
+    box-shadow: 0 0 15px rgba(255, 179, 0, 0.8); /* Stronger glow for current player */
+    border: 2px solid #ffd700; /* Gold border for emphasis */
+}
+
+/* Tier specific colors */
+.tier-bronze { color: #cd7f32; }
+.tier-silver { color: #c0c0c0; }
+.tier-gold { color: #ffd700; }
+.tier-platinum { color: #e5e4e2; }
+.tier-diamond { color: #b9f2ff; }
+.tier-unranked { color: #888; }
+
+/* Responsive adjustments for leaderboard */
+@media (max-width: 768px) {
+    .leaderboard-header,
+    .leaderboard-entry {
+        grid-template-columns: 0.5fr 2fr 1fr 1fr; /* Adjusted for tablet screens */
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    .leaderboard-header,
+    .leaderboard-entry {
+        grid-template-columns: 0.7fr 2.5fr 1.5fr; /* Rank, Player Name, Total Points for phone screens */
+        font-size: 0.8em;
+    }
+    .leaderboard-header .header-item:nth-child(3),
+    .leaderboard-entry .entry-item:nth-child(3) {
+        display: none; /* Hide tier level on very small screens */
+    }
+    .leaderboard-header .header-item:nth-child(1),
+    .leaderboard-entry .entry-item:nth-child(1) {
+        text-align: center; /* Center rank on small screens */
+    }
+    .leaderboard-header .header-item:nth-child(2),
+    .leaderboard-entry .entry-item:nth-child(2) {
+        text-align: left; /* Align player name to left */
+    }
+    .leaderboard-header .header-item:nth-child(4),
+    .leaderboard-entry .entry-item:nth-child(4) {
+        text-align: right; /* Align total points to right */
+    }
+}

@@ -12,11 +12,13 @@ export function fetchProfileData() {
                 document.getElementById('playerName').textContent = data.username;
                 document.getElementById('currentPoints').textContent = data.totalPoints;
                 document.getElementById('currentTier').innerHTML = data.tier;
+                window.currentUser = data.username; // Store current username globally
             } else {
                 console.error('Error fetching profile data:', data.message);
                 document.getElementById('playerName').textContent = 'Guest';
                 document.getElementById('currentPoints').textContent = 'N/A';
                 document.getElementById('currentTier').textContent = 'N/A';
+                window.currentUser = null; // No user logged in
             }
         })
         .catch(error => {
@@ -24,6 +26,7 @@ export function fetchProfileData() {
             document.getElementById('playerName').textContent = 'Error';
             document.getElementById('currentPoints').textContent = 'Error';
             document.getElementById('currentTier').textContent = 'Error';
+            window.currentUser = null; // Error, no user logged in
         });
 
     fetchPerformanceData(); // Call this function after fetching profile data
