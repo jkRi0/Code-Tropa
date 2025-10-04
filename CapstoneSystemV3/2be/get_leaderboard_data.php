@@ -36,6 +36,59 @@ try {
 
     $leaderboardData = [];
     while ($row = $result->fetch_assoc()) {
+        $tier = $row['tier'];
+        $displayTier = 'N/A';
+        $tierClass = '';
+
+        switch ($tier) {
+            case 't1':
+                $displayTier = 'Tier 1: Syntax Novice';
+                $tierClass = 'tier-bronze';
+                break;
+            case 't2':
+                $displayTier = 'Tier 2: Data Handler';
+                $tierClass = 'tier-silver';
+                break;
+            case 't3':
+                $displayTier = 'Tier 3: Algorithm Apprentice';
+                $tierClass = 'tier-gold';
+                break;
+            case 't4':
+                $displayTier = 'Tier 4: Logic Controller';
+                $tierClass = 'tier-platinum';
+                break;
+            case 't5':
+                $displayTier = 'Tier 5: Data Manipulator';
+                $tierClass = 'tier-diamond';
+                break;
+            case 't6':
+                $displayTier = 'Tier 6: Function Master';
+                $tierClass = 'tier-diamond';
+                break;
+            case 't7':
+                $displayTier = 'Tier 7: Logic Legend';
+                $tierClass = 'tier-diamond';
+                break;
+            case 't8':
+                $displayTier = 'Tier 8: Syntax Sage';
+                $tierClass = 'tier-diamond';
+                break;
+            case 't9':
+                $displayTier = 'Tier 9: Code Virtuoso';
+                $tierClass = 'tier-diamond';
+                break;
+            case 't10':
+                $displayTier = 'Tier 10: Code-Tropa Champion';
+                $tierClass = 'tier-diamond';
+                break;
+            default:
+                $displayTier = 'Unranked';
+                $tierClass = 'tier-unranked';
+                break;
+        }
+
+        $row['displayTier'] = $displayTier;
+        $row['tierClass'] = $tierClass;
         $leaderboardData[] = $row;
     }
 

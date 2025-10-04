@@ -30,24 +30,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         leaderboardData.forEach((player, index) => {
             const entry = document.createElement('div');
             entry.classList.add('leaderboard-entry');
-            // Add a class for the current player if their username matches the logged-in user
-            // This would require fetching the current user's username as well.
-            // For now, let's assume we don't have that info and just display.
+            // Highlight the current player's entry if logged in
+            if (window.currentUser && player.username === window.currentUser) {
+                entry.classList.add('current-player');
+            }
 
-            const tierClass = player.tier ? `tier-${player.tier.toLowerCase()}` : 'tier-unranked';
+            // const tierClass = player.tier ? `tier-${player.tier.toLowerCase()}` : 'tier-unranked';
 
             entry.innerHTML = `
                 <div class="entry-item">${index + 1}</div>
                 <div class="entry-item">${player.username}</div>
-                <div class="entry-item ${tierClass}">${player.tier || 'Unranked'}</div> <!-- Display tier or 'Unranked' -->
+                <div class="entry-item ${player.tierClass}">${player.displayTier || 'Unranked'}</div> <!-- Display formatted tier -->
                 <div class="entry-item">${player.totalPoints}</div>
             `;
             leaderboardContent.appendChild(entry);
 
             // Highlight the current player's entry if logged in
-            if (window.currentUser && player.username === window.currentUser) {
-                entry.classList.add('current-player');
-            }
         });
     }
 

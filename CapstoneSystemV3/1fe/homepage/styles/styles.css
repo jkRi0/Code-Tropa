@@ -240,12 +240,12 @@
 }
 
 /* Tier specific colors */
-.tier-bronze { color: #cd7f32; }
+/* .tier-bronze { color: #cd7f32; }
 .tier-silver { color: #c0c0c0; }
 .tier-gold { color: #ffd700; }
 .tier-platinum { color: #e5e4e2; }
 .tier-diamond { color: #b9f2ff; }
-.tier-unranked { color: #888; }
+.tier-unranked { color: #888; } */
 
 /* Responsive adjustments for leaderboard */
 @media (max-width: 768px) {
