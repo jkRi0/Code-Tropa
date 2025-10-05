@@ -11,7 +11,7 @@ function loadSelectedChallengeData() {
             document.getElementById('splashDifficulty').textContent = data.difficulty || 'Unknown Difficulty';
             
             // Update verification panel
-    document.getElementById('selectedLevel').textContent = data.level || 'Not available';
+    document.getElementById('selectedLevel').textContent = splashLevelNumber || 'Not available';
             document.getElementById('selectedDifficulty').textContent = data.difficulty || 'Not available';
             
             if (data.timestamp) {
@@ -84,3 +84,7 @@ function loadSelectedChallengeData() {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', loadSelectedChallengeData);
+
+document.getElementById('backButton').addEventListener('click', function() {
+    window.location.href = '../index.html'; // Redirects to homepage
+});
