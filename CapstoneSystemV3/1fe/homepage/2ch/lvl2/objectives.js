@@ -1,6 +1,6 @@
 const objectivesData = {
     easy: {
-        title: "Level 1 - Taho Time! (Easy)",
+        title: "Level 2 - Taho Time! (Easy)",
         objectives: [
             "Create a Java class named 'TahoVendor'",
             "Add a main method to start your program",
@@ -9,7 +9,7 @@ const objectivesData = {
         ]
     },
     average: {
-        title: "Level 1 - Taho Time! (Average)",
+        title: "Level 2 - Taho Time! (Average)",
         objectives: [
             "Create a formatted price menu using tabs and newlines",
             "Add single-line comments (//) to explain the vendor's call",
@@ -18,7 +18,7 @@ const objectivesData = {
         ]
     },
     difficult: {
-        title: "Level 1 - Taho Time! (Difficult)",
+        title: "Level 2 - Taho Time! (Difficult)",
         objectives: [
             "Fix the syntax errors in the provided code:",
             "- Missing quotation marks in print statements",
@@ -82,4 +82,4 @@ function displayObjectives(difficulty) {
 }
 
 // Initialize objectives based on selected difficulty
-displayObjectives(data.difficulty);
+displayObjectives(data.difficulty);// objectives for level 2

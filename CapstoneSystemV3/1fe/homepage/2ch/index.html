@@ -76,9 +76,17 @@
     <script src="codeAnalyzer.js"></script>
     <script src="monacoEditor.js"></script>
     <script src="challengeData.js"></script>
-    <script src="lvl1/objectives.js"></script>
-    <script src="lvl1/solutions.js"></script>
     <script src="rubrics.js"></script>
     <script src="mobileControls.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSelectedChallengeData();
+            const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
+            if (selectedData && selectedData.level) {
+                const levelNumber = selectedData.level.replace('lev', ''); // Extract only the number
+                loadLevelScripts(levelNumber);
+            }
+        });
+    </script>
 </body>
 </html>
