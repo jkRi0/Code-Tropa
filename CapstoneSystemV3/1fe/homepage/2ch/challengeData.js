@@ -82,6 +82,27 @@ function loadSelectedChallengeData() {
     }
 }
 
+// Add this function to handle dynamic script loading
+function loadLevelScripts(level) {
+    // Remove existing level scripts if any
+    removeExistingScripts();
+    
+    // Create and append new script elements
+    const objectivesScript = document.createElement('script');
+    const solutionsScript = document.createElement('script');
+    
+    objectivesScript.src = `lvl${level}/objectives.js`;
+    solutionsScript.src = `lvl${level}/solutions.js`;
+    
+    document.body.appendChild(objectivesScript);
+    document.body.appendChild(solutionsScript);
+}
+
+function removeExistingScripts() {
+    const scripts = document.querySelectorAll('script[src*="lvl"]');
+    scripts.forEach(script => script.remove());
+}
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', loadSelectedChallengeData);
 

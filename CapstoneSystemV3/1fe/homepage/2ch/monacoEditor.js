@@ -1,5 +1,5 @@
 // Monaco Editor initialization and Java compilation functionality
-require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.29.1/min/vs' }});
+require.config({ paths: { 'vs': '../../../../node_modules/monaco-editor/min/vs' }});
 require(['vs/editor/editor.main'], function() {
     var editor = monaco.editor.create(document.getElementById('monaco-container'), {
         value: [
