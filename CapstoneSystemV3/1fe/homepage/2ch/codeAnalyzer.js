@@ -1,83 +1,73 @@
 function compileJavaCode(code) {
-    const errors = [];
+    let allIssues = [];
+
+    function getLineOfIndex(entire, idx) {
+        return entire.substring(0, idx).split('\n').length;
+    }
 
     // ================================
-    // PHASE 1: LEXICAL ANALYSIS
+    // PHASE 1: LEXICAL ANALYSIS (simplified for now, main focus on higher phases)
     // ================================
     function lexicalAnalysis(code) {
-        const tokens = [];
-        const tokenRegex = /\b(int|double|float|char|boolean|String|if|else|for|while|do|switch|case|break|continue|return|void|class|static|public|private|protected|final|abstract|interface|extends|implements|try|catch|throw|throws|new)\b|[A-Za-z_]\w*|\d+(\.\d+)?|==|!=|<=|>=|&&|\|\||[+\-*/=<>!%&|^~]|\+\+|--|->|<<|>>|>>>|\+=|-=|\*=|\/=|&=|\|=|\^=|%=|<<=|>>=|>>>=|"[^"]*"|'[^']*'|\/\/[^\n]*|\/\*[\s\S]*?\*\/|[{}()\[\];,.]/g;
-        
-        const lines = code.split("\n");
-        lines.forEach((line, lineNum) => {
-            let match;
-            while ((match = tokenRegex.exec(line)) !== null) {
-                tokens.push({ value: match[0], line: lineNum + 1 });
-            }
+        // Basic check for unclosed strings
+        const lines = code.split('\n');
+        lines.forEach((line, i) => {
+            try {
+                const cleaned = line.replace(/\\"/g, '');
+                const count = (cleaned.match(/"/g) || []).length;
+                if (count % 2 === 1) {
+                    allIssues.push({
+                        id: 'unclosed-string',
+                        severity: 'error',
+                        title: 'Unclosed string literal',
+                        desc: 'Double-quoted string not terminated.',
+                        line: i + 1,
+                        excerpt: line.trim()
+                    });
+                }
+            } catch (e) { /* ignore */ }
         });
-
-        if (tokens.length === 0) {
-            errors.push("Lexical Error: No recognizable tokens found.");
-        }
-
-        return tokens;
     }
 
     // ================================
     // PHASE 2: SYNTAX ANALYSIS
     // ================================
     function syntaxAnalysis(code) {
-        if (!/class\s+\w+(\s+extends\s+\w+)?(\s+implements\s+\w+(\s*,\s*\w+)*)?/.test(code)) {
-            errors.push("Syntax Error: Invalid or missing class declaration.");
-        }
-
-        if (!/public\s+static\s+void\s+main\s*\(\s*String\s*(\[\s*\]|\[\])\s*\w+\s*\)/.test(code)) {
-            errors.push("Syntax Error: Missing or malformed main method.");
-        }
-
-        // Bracket Matching
-        const brackets = { '{': '}', '(': ')', '[': ']' };
-        const stack = [];
         const lines = code.split('\n');
-        lines.forEach((line, lineNum) => {
-            for (const char of line) {
-                if (brackets[char]) {
-                    stack.push({ char, line: lineNum + 1 });
-                } else if (Object.values(brackets).includes(char)) {
-                    if (stack.length === 0) {
-                        errors.push(`Syntax Error: Unexpected closing '${char}' at line ${lineNum + 1}`);
-                    } else {
-                        const last = stack.pop();
-                        if (brackets[last.char] !== char) {
-                            errors.push(`Syntax Error: Mismatched brackets at line ${lineNum + 1}. Expected '${brackets[last.char]}' but found '${char}'`);
-                        }
-                    }
+        const syntaxRules = window.SYNTAX_RULES_V2 || [];
+
+        syntaxRules.forEach(rule => {
+            if (typeof rule.match.test === 'function') {
+                // Function-based test (e.g., for reserved words, unclosed strings)
+                if (rule.id === 'unclosed-string') {
+                    // Handled in lexicalAnalysis, avoid re-running
+                    return;
                 }
-            }
-        });
-        if (stack.length > 0) {
-            const last = stack.pop();
-            errors.push(`Syntax Error: Unclosed bracket '${last.char}' from line ${last.line}`);
-        }
+                // Some function-based rules (like 'reserved-word-identifier') might need the whole code
+                if (rule.id === 'reserved-word-identifier') {
+                    if (rule.match.test(code)) {
+                         // This rule does not provide specific line numbers easily, so we add it as a general issue.
+                        allIssues.push(Object.assign({ line: 1, excerpt: code.substring(0, 100) + '...' }, rule));
+                    }
+                } else {
+                     lines.forEach((line, i) => {
+                        try {
+                            if (rule.match.test(line)) {
+                                allIssues.push(Object.assign({ line: i + 1, excerpt: line.trim() }, rule));
+                            }
+                        } catch (e) { /* ignore */ }
+                    });
+                }
 
-        // System.out.println check
-        const systemOutPattern = /System\.out\.(\w+)\s*\(/g;
-        let match;
-        while ((match = systemOutPattern.exec(code)) !== null) {
-            if (!["println", "print"].includes(match[1])) {
-                errors.push(`Syntax Error: Invalid System.out call '${match[1]}'. Use println() or print()`);
-            }
-        }
-
-        // Common mistakes
-        const commonMistakes = [
-            { pattern: /System\.out[^.]/, message: "Syntax Error: Missing dot after 'System.out'" },
-            { pattern: /System\s+\./, message: "Syntax Error: Unexpected space between 'System' and '.'" },
-            { pattern: /println\s+\(/, message: "Syntax Error: Unexpected space between 'println' and '('." }
-        ];
-        commonMistakes.forEach(({ pattern, message }) => {
-            if (pattern.test(code)) {
-                errors.push(message);
+            } else if (rule.match instanceof RegExp) {
+                // Regex-based test
+                lines.forEach((line, i) => {
+                    try {
+                        if (rule.match.test(line)) {
+                            allIssues.push(Object.assign({ line: i + 1, excerpt: line.trim() }, rule));
+                        }
+                    } catch (e) { /* ignore */ }
+                });
             }
         });
     }
@@ -86,99 +76,197 @@ function compileJavaCode(code) {
     // PHASE 3: SEMANTIC ANALYSIS
     // ================================
     function semanticAnalysis(code) {
-        const declared = new Map(); // varName -> { type, line, used }
-        const varDeclRegex = /\b(int|double|String|boolean|char)\s+(\w+)\s*=?\s*([^;]*)?;/g;
-        let match;
+        const lines = code.split('\n');
+        const semanticRules = window.SEMANTIC_RULES_V2 || [];
 
-        while ((match = varDeclRegex.exec(code)) !== null) {
-            const [_, type, name, value] = match;
-            const line = getLineOfMatch(code, match.index);
-
-            // Redeclaration check
-            if (declared.has(name)) {
-                errors.push(`Semantic Error: Variable '${name}' redeclared at line ${line}`);
-            } else {
-                declared.set(name, { type, used: false, line });
-            }
-
-            // Type checking on initialization
-            if (value) {
-                const v = value.trim();
-                switch (type) {
-                    case "int":
-                        if (!/^\d+$/.test(v)) {
-                            errors.push(`Semantic Error: Invalid int value for '${name}' at line ${line}`);
-                        }
-                        break;
-                    case "double":
-                        if (!/^\d*\.?\d+$/.test(v)) {
-                            errors.push(`Semantic Error: Invalid double value for '${name}' at line ${line}`);
-                        }
-                        break;
-                    case "boolean":
-                        if (!/^(true|false)$/.test(v)) {
-                            errors.push(`Semantic Error: Invalid boolean value for '${name}' at line ${line}`);
-                        }
-                        break;
-                    case "String":
-                        if (!/^".*"$/.test(v)) {
-                            errors.push(`Semantic Error: Invalid String value for '${name}' at line ${line}`);
-                        }
-                        break;
-                    case "char":
-                        if (!/^'.'$/.test(v)) {
-                            errors.push(`Semantic Error: Invalid char value for '${name}' at line ${line}`);
-                        }
-                        break;
-                }
-            }
-        }
-
-        // Usage check
-        declared.forEach((info, name) => {
-            const regex = new RegExp(`\\b${name}\\b`, "g");
-            let count = 0;
-            while (regex.exec(code)) count++;
-            if (count <= 1) {
-                errors.push(`Warning: Variable '${name}' declared at line ${info.line} but never used.`);
-            }
+        semanticRules.forEach(rule => {
+            lines.forEach((line, i) => {
+                try {
+                    if (rule.match.test(line)) {
+                        allIssues.push(Object.assign({ line: i + 1, excerpt: line.trim() }, rule));
+                    }
+                } catch (e) { /* ignore */ }
+            });
         });
-
-        // Undefined variable usage
-        const usageRegex = /\b([a-zA-Z_]\w*)\b/g;
-        let usageMatch;
-        while ((usageMatch = usageRegex.exec(code)) !== null) {
-            const name = usageMatch[1];
-            if (!declared.has(name) && !["System", "out", "print", "println", "main"].includes(name)) {
-                const line = getLineOfMatch(code, usageMatch.index);
-                errors.push(`Semantic Error: Variable '${name}' used before declaration at line ${line}`);
-            }
-        }
-    }
-
-    function getLineOfMatch(code, index) {
-        return code.substring(0, index).split("\n").length;
     }
 
     // ================================
-    // PHASE 4: RUNTIME SIMULATION
+    // PHASE 4: STRUCTURE ANALYSIS
+    // ================================
+    function structureAnalysis(code) {
+        const structureHelpers = window.STRUCTURE_HELPERS_V2 || {};
+        if (structureHelpers.checkBalancedChars) {
+            allIssues = allIssues.concat(structureHelpers.checkBalancedChars(code));
+        }
+        if (structureHelpers.findMultiplePublicClasses) {
+            allIssues = allIssues.concat(structureHelpers.findMultiplePublicClasses(code));
+        }
+        if (structureHelpers.findMethodNesting) {
+            allIssues = allIssues.concat(structureHelpers.findMethodNesting(code));
+        }
+        // Advanced heuristics from main.js (if not already covered by rules)
+        allIssues = allIssues.concat(detectMissingReturn(code));
+        allIssues = allIssues.concat(detectUnreachableAfterReturn(code));
+        allIssues = allIssues.concat(detectDuplicateCaseLabels(code));
+    }
+
+    // detect missing return in non-void methods (heuristic) - adapted from main.js
+    function detectMissingReturn(code) {
+        const issues = [];
+        const methodRegex = /\b(public|protected|private)?\s*(static\s+)?([\w<>\[\]]+)\s+(\w+)\s*\(([^)]*)\)\s*\{/g;
+        let m;
+        while ((m = methodRegex.exec(code)) !== null) {
+            const returnType = m[3];
+            const name = m[4];
+            const start = m.index;
+            if (returnType === 'void') continue;
+
+            let depth = 0;
+            let found = false;
+            for (let i = start; i < code.length; i++) {
+                if (code[i] === '{') depth++;
+                else if (code[i] === '}') depth--;
+                if (code.substring(i, i + 6) === 'return') found = true;
+                if (depth === 0 && i > start) break;
+            }
+            if (!found) issues.push({
+                id: 'missing-return',
+                severity: 'error',
+                title: 'Missing return in method',
+                desc: `Method '${name}' declares return type '${returnType}' but no return found (heuristic).`,
+                line: getLineOfIndex(code, start)
+            });
+        }
+        return issues;
+    }
+
+    // detect statements after return in same block (unreachable) - adapted from main.js
+    function detectUnreachableAfterReturn(code) {
+        const issues = [];
+        const lines = code.split('\n');
+        for (let i = 0; i < lines.length; i++) {
+            if (/\breturn\b/.test(lines[i])) {
+                // scan until next closing brace on same indentation level
+                for (let j = i + 1; j < lines.length && j < i + 6; j++) {
+                    if (lines[j].trim() !== '' && !/^\s*\/\//.test(lines[j])) issues.push({
+                        id: 'unreachable-code',
+                        severity: 'warn',
+                        title: 'Code after return',
+                        desc: 'Code after return is unreachable (within nearby lines).',
+                        line: j + 1,
+                        excerpt: lines[j].trim()
+                    });
+                }
+            }
+        }
+        return issues;
+    }
+
+    // detect duplicate case labels inside switches (heuristic) - adapted from main.js
+    function detectDuplicateCaseLabels(code) {
+        const issues = [];
+        const switchRegex = /switch\s*\(([^)]+)\)\s*\{/g;
+        let m;
+        while ((m = switchRegex.exec(code)) !== null) {
+            const start = m.index;
+            const bodyStart = code.indexOf('{', start);
+            if (bodyStart < 0) continue;
+            let depth = 0;
+            let i = bodyStart;
+            const labels = {};
+            for (; i < code.length; i++) {
+                if (code[i] === '{') depth++;
+                else if (code[i] === '}') depth--;
+                if (depth === 0) break;
+                const sub = code.substring(i);
+                const caseMatch = sub.match(/case\s+([^:]+)\s*:/);
+                if (caseMatch) {
+                    const lbl = caseMatch[1].trim();
+                    if (labels[lbl]) issues.push({
+                        id: 'duplicate-case',
+                        severity: 'error',
+                        title: 'Duplicate case label',
+                        desc: `Case label ${lbl} repeated in same switch.`,
+                        line: getLineOfIndex(code, i)
+                    });
+                    labels[lbl] = true;
+                }
+            }
+        }
+        return issues;
+    }
+
+    // ================================
+    // PHASE 5: RUNTIME SIMULATION (kept as is)
     // ================================
     function simulateRuntime(code) {
         const printRegex = /System\.out\.(println|print)\s*\((.*?)\)\s*;/g;
         let output = "";
         let match;
+        const symbolTable = {}; // Initialize symbol table
+
+        // Regex to find variable declarations like 'int okay=1;'
+        const varDeclRegex = /(\b(public|protected|private)?\s*(static\s+)?([\w<>\[\]]+)\s+(\w+)\s*=\s*([^;]+);)/g;
+        while ((match = varDeclRegex.exec(code)) !== null) {
+            const [_, accessModifier, staticModifier, type, name, value] = match;
+            const start = match.index;
+            const end = start + match[0].length;
+            const line = getLineOfIndex(code, start);
+            const excerpt = match[0].trim();
+
+            try {
+                let evaluatedValue = value.trim();
+                if (evaluatedValue.startsWith('"') && evaluatedValue.endsWith('"')) {
+                    evaluatedValue = evaluatedValue.substring(1, evaluatedValue.length - 1);
+                } else if (evaluatedValue.startsWith("'") && evaluatedValue.endsWith("'")) {
+                    evaluatedValue = evaluatedValue.substring(1, evaluatedValue.length - 1);
+                }
+                symbolTable[name] = { type, value: evaluatedValue, line, excerpt };
+            } catch (e) {
+                allIssues.push({
+                    id: 'runtime-var-decl-error',
+                    severity: 'error',
+                    title: 'Runtime Variable Declaration Error',
+                    desc: `Cannot evaluate value for variable '${name}' during simulation: ${e.message}`,
+                    line: line,
+                    excerpt: excerpt
+                });
+            }
+        }
 
         while ((match = printRegex.exec(code)) !== null) {
             const [_, method, expr] = match;
 
             try {
-                const cleanExpr = expr
-                    .replace(/["']/g, "")              // remove quotes
-                    .replace(/[A-Za-z_]\w*/g, v => `"${v}"`);  // replace vars with names
-                const result = eval(cleanExpr); // Caution: eval is mocked here for output simulation only
+                // Basic evaluation for string literals and simple variables
+                let evaluatedExpr = expr.trim();
+
+                // Handle string concatenations with variables
+                const parts = evaluatedExpr.split(/\+/);
+                let result = "";
+                for (const part of parts) {
+                    const trimmedPart = part.trim();
+                    if (trimmedPart.startsWith('"') && trimmedPart.endsWith('"')) {
+                        result += trimmedPart.substring(1, trimmedPart.length - 1);
+                    } else if (trimmedPart.startsWith("'") && trimmedPart.endsWith("'")) {
+                        result += trimmedPart.substring(1, trimmedPart.length - 1);
+                    } else if (symbolTable[trimmedPart]) {
+                        result += symbolTable[trimmedPart].value;
+                    } else {
+                        // If it's not a string and not in symbol table, treat as literal for now
+                        result += trimmedPart;
+                    }
+                }
                 output += result + (method === "println" ? "\n" : "");
-            } catch {
-                errors.push(`Runtime Error: Cannot evaluate expression '${expr}'`);
+            } catch (e) {
+                allIssues.push({
+                    id: 'runtime-eval-error',
+                    severity: 'error',
+                    title: 'Runtime Evaluation Error',
+                    desc: `Cannot evaluate expression '${expr}' during simulation: ${e.message}`,
+                    line: getLineOfIndex(code, match.index),
+                    excerpt: match[0].trim()
+                });
             }
         }
         return output;
@@ -187,23 +275,29 @@ function compileJavaCode(code) {
     // ================================
     // EXECUTION PIPELINE
     // ================================
-    const tokens = lexicalAnalysis(code);
+    lexicalAnalysis(code);
     syntaxAnalysis(code);
     semanticAnalysis(code);
+    structureAnalysis(code);
 
-    if (errors.length > 0) {
-        return {
-            success: false,
-            output: "",
-            errors
-        };
+    // Deduplicate issues (logic from main.js)
+    const seen = {};
+    allIssues = allIssues.filter(it => {
+        const k = [it.id, it.line, it.excerpt || ''].join('|');
+        if (seen[k]) return false;
+        seen[k] = true;
+        return true;
+    }).sort((a, b) => a.line - b.line || (a.severity === 'error' ? -1 : 1));
+
+    let programOutput = "";
+    if (allIssues.length === 0) {
+        programOutput = simulateRuntime(code);
     }
 
-    const output = simulateRuntime(code);
     return {
-        success: true,
-        output: output || "Program compiled successfully but had no output.",
-        errors: []
+        success: allIssues.length === 0,
+        output: programOutput || (allIssues.length === 0 ? "Program compiled successfully but had no output." : ""),
+        errors: allIssues
     };
 }
 
