@@ -393,44 +393,142 @@ body {
     color: #000;
 }
 
-.rubrics-grid {
-    margin-top: 20px;
+/* Tips Modal Styles */
+.tips-modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 2000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+    backdrop-filter: blur(5px);
 }
 
-.rubrics-header {
-    display: grid;
-    grid-template-columns: 2fr 1fr 3fr;
-    gap: 10px;
-    padding: 10px;
-    background-color: #f8f9fa;
+.tips-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 5% from the top and centered */
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.close-tips {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
     font-weight: bold;
+    cursor: pointer;
+}
+
+.close-tips:hover,
+.close-tips:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.tip-question p {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.tip-options div {
+    margin-bottom: 10px;
+}
+
+.tip-options input[type="radio"] {
+    margin-right: 10px;
+}
+
+.tip-options label {
+    font-size: 1em;
+    color: #555;
+    cursor: pointer;
+}
+
+.btn-submit-answer {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
     border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 1em;
 }
 
-.rubrics-body {
-    margin-top: 10px;
+.btn-submit-answer:hover {
+    background-color: #0056b3;
 }
 
-.rubrics-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr 3fr;
-    gap: 10px;
-    padding: 10px;
-    border-bottom: 1px solid #dee2e6;
+.tip-feedback p {
+    margin-top: 15px;
+    font-weight: bold;
 }
 
-.rubrics-row:hover {
-    background-color: #f8f9fa;
-}
-
-.total-score {
+.tip-content p {
     margin-top: 20px;
     padding: 15px;
     background-color: #e9ecef;
     border-radius: 5px;
-    text-align: right;
-    font-weight: bold;
+    font-size: 1.05em;
 }
+
+/* Styling for tips.html page */
+.tip-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background-color: #f0f2f5;
+    color: #333;
+    padding: 20px;
+}
+
+.tip-page-container h1 {
+    color: #007bff;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+#displayedTipContent {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+    max-width: 700px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+#backToChallengeBtn {
+    background-color: #6c757d;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
+
+#backToChallengeBtn:hover {
+    background-color: #5a6268;
+}
+
 
 /* Update image container styles */
 /* .image-container {

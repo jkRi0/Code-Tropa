@@ -24,6 +24,7 @@ const objectivesData = {
             "- Missing quotation marks in print statements",
             "- Incorrect semicolon placement",
             "- Improper string concatenation",
+            "<pre class=\"code-to-debug\">\npublic class TahoVendor; { \n    public static void main(String[] args) {\n        try {\n            System.out.println(\" MANILA TAHO STORE ; \n            System.out.println(\"=====================\");\n\n            System.out.println(\"Menu:\");\n            System.out.printf(\"%d. Regular Taho    ₱%d%n\", 1, 20);\n            System.out.printf(\"%d. Large Taho      ₱%d%n\", 2, 25);\n            System.out.println(\"Extra Syrup: \" + 5 + \"₱\");\n\n            System.out.println(\"=====================\");\n            System.out.println(\"Salamat po!\");\n        } catch (Exception e) {\n            System.out.println(\"Error printing menu: \" + e.getMessage());\n        }\n    }\n}</pre>",
             "Create a well-formatted receipt-style output with:\n  - Store name\n  - Price list\n  - Total amount\n  - Thank you message"
         ]
     }

@@ -176,7 +176,7 @@ require(['vs/editor/editor.main'], function() {
 
         return {
             success: false,
-            output: "",
+        output: "",
             errors: errors
         };
     }

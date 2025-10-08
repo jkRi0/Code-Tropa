@@ -36,6 +36,7 @@
             <button id="runCodeBtn" class="control-btn">Run Code</button>
             <button id="submitCodeBtn" class="control-btn">Submit Code</button>
             <button id="showRubricsBtn" class="control-btn">Show Rubrics</button>
+            <button id="showTipsBtn" class="control-btn">Show Tips</button>
         </div>
     </div>
     <div class="code-editor-div">
@@ -72,11 +73,25 @@
         </div>
     </div>
 
+    <!-- Tips Modal -->
+    <div id="tipsModal" class="tips-modal">
+        <div class="tips-content">
+            <span class="close-tips">&times;</span>
+            <h2>Challenge Tip</h2>
+            <div id="tipQuestion" class="tip-question"></div>
+            <div id="tipOptions" class="tip-options"></div>
+            <button id="submitAnswerBtn" class="btn-submit-answer">Submit Answer</button>
+            <div id="tipFeedback" class="tip-feedback"></div>
+            <div id="tipContent" class="tip-content"></div>
+        </div>
+    </div>
+
     <!-- External JavaScript Files -->
     <script src="codeAnalyzer.js"></script>
     <script src="monacoEditor.js"></script>
     <script src="challengeData.js"></script>
     <script src="rubrics.js"></script>
+    <script src="tips.js"></script>
     <script src="mobileControls.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
