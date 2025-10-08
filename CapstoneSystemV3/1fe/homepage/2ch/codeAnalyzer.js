@@ -30,46 +30,35 @@ function compileJavaCode(code) {
     }
 
     // ================================
-    // PHASE 2: SYNTAX ANALYSIS
+    // PHASE 2: SYNTAX ANALYSIS (ANTLR-based)
     // ================================
-    function syntaxAnalysis(code) {
-        const lines = code.split('\n');
-        const syntaxRules = window.SYNTAX_RULES_V2 || [];
+    function grammarAnalysis(code) {
+        const chars = new antlr4.InputStream(code);
+        const lexer = new JavaLexer(chars);
+        const tokens = new antlr4.CommonTokenStream(lexer);
+        const parser = new JavaParser(tokens);
+        parser.buildParseTrees = true;
 
-        syntaxRules.forEach(rule => {
-            if (typeof rule.match.test === 'function') {
-                // Function-based test (e.g., for reserved words, unclosed strings)
-                if (rule.id === 'unclosed-string') {
-                    // Handled in lexicalAnalysis, avoid re-running
-                    return;
-                }
-                // Some function-based rules (like 'reserved-word-identifier') might need the whole code
-                if (rule.id === 'reserved-word-identifier') {
-                    if (rule.match.test(code)) {
-                         // This rule does not provide specific line numbers easily, so we add it as a general issue.
-                        allIssues.push(Object.assign({ line: 1, excerpt: code.substring(0, 100) + '...' }, rule));
-                    }
-                } else {
-                     lines.forEach((line, i) => {
-                        try {
-                            if (rule.match.test(line)) {
-                                allIssues.push(Object.assign({ line: i + 1, excerpt: line.trim() }, rule));
-                            }
-                        } catch (e) { /* ignore */ }
-                    });
-                }
+        // Custom error listener to capture syntax errors
+        const errorListener = new antlr4.error.ErrorListener();
+        errorListener.syntaxError = (recognizer, offendingSymbol, line, column, msg, e) => {
+            allIssues.push({
+                id: 'syntax-error',
+                severity: 'error',
+                title: 'Syntax Error',
+                desc: msg,
+                line: line,
+                excerpt: offendingSymbol ? offendingSymbol.text : code.split('\n')[line - 1].trim()
+            });
+        };
 
-            } else if (rule.match instanceof RegExp) {
-                // Regex-based test
-                lines.forEach((line, i) => {
-                    try {
-                        if (rule.match.test(line)) {
-                            allIssues.push(Object.assign({ line: i + 1, excerpt: line.trim() }, rule));
-                        }
-                    } catch (e) { /* ignore */ }
-                });
-            }
-        });
+        parser.removeErrorListeners(); // Remove default console error listener
+        parser.addErrorListener(errorListener); // Add custom error listener
+
+        lexer.removeErrorListeners(); // Remove default console error listener
+        lexer.addErrorListener(errorListener); // Add custom error listener for lexical errors
+
+        parser.compilationUnit();
     }
 
     // ================================
@@ -276,7 +265,7 @@ function compileJavaCode(code) {
     // EXECUTION PIPELINE
     // ================================
     lexicalAnalysis(code);
-    syntaxAnalysis(code);
+    grammarAnalysis(code); // Use the new grammarAnalysis function
     semanticAnalysis(code);
     structureAnalysis(code);
 

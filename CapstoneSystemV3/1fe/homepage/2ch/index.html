@@ -87,15 +87,13 @@
     </div>
 
     <!-- External JavaScript Files -->
-    <script src="analysis/syntaxRules.js"></script>
-    <script src="analysis/semanticRules.js"></script>
-    <script src="analysis/structureRules.js"></script>
     <script src="codeAnalyzer.js"></script>
     <script src="monacoEditor.js"></script>
     <script src="challengeData.js"></script>
     <script src="rubrics.js"></script>
     <script src="tips.js"></script>
     <script src="mobileControls.js"></script>
+    <script type="module" src="./analysis_grammars/grammarLoader.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             loadSelectedChallengeData();
