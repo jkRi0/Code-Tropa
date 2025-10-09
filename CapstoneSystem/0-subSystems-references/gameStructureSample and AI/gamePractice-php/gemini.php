@@ -2,14 +2,14 @@
 header("Content-Type: application/json");
 
 // Set your Gemini API key
-$api_key = "AIzaSyC-hhUhb-q1Y8GQn0vNh9rld8honW3bMe8"; // Replace with your actual API key
+$api_key = "AIzaSyB34RNQAx1CxGgjt6FJ6apeKSnsj2GJtf0"; // Replace with your actual API key
 
 // Get user input from frontend
 $data = json_decode(file_get_contents("php://input"), true);
 $user_message = $data['message'] ?? "Hello!";
 
 // Gemini API URL
-$url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=$api_key";
+$url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=$api_key";
 
 
 // Request payload

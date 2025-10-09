@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.rubricsCriteria = rubricsCriteria; // Keep this for codeAnalyzer.js
 
     // Placeholder for Gemini API Key (User should replace this with their actual key)
-    const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
+    const GEMINI_API_KEY = "AIzaSyB34RNQAx1CxGgjt6FJ6apeKSnsj2GJtf0";
 
     async function getGeminiFeedback(submittedCode, solutionCode, difficulty, scoringResult) {
         if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
@@ -183,11 +183,11 @@ document.addEventListener('DOMContentLoaded', function() {
         Their current score for each criterion is: ${JSON.stringify(scoringResult.criteriaScores, null, 2)}
         Their total score is: ${scoringResult.totalScore}%
         
-        Please provide constructive feedback to the student based on their submitted code, comparing it to the solution and considering their scores. Focus on explaining *why* certain aspects received the score they did and how they can improve. Provide actionable advice for improving their code in terms of accuracy, efficiency, and readability. Keep the feedback concise and encouraging, around 3-5 paragraphs.
+        Please provide constructive feedback to the student based on their submitted code, comparing it to the solution and considering their scores. Focus on explaining *why* certain aspects received the score they did and how they can improve. Provide actionable advice for improving their code in terms of accuracy, efficiency, and readability. Keep the feedback concise and encouraging, around 2-3 sentences.
         `;
 
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${GEMINI_API_KEY}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
