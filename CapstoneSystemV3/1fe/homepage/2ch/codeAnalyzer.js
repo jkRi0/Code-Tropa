@@ -58,7 +58,10 @@ function compileJavaCode(code) {
         lexer.removeErrorListeners(); // Remove default console error listener
         lexer.addErrorListener(errorListener); // Add custom error listener for lexical errors
 
-        parser.compilationUnit();
+        const tree = parser.compilationUnit(); // Get the parse tree (AST)
+        if (allIssues.length === 0) {
+            console.log("AST (Parse Tree):", tree.toStringTree(parser.ruleNames));
+        }
     }
 
     // ================================
