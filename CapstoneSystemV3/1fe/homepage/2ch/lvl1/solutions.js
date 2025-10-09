@@ -61,3 +61,4 @@ public class TahoVendor {
 
 // Export solutions
 // window.tahoSolutions = tahoSolutions;
+window.tahoSolutions = tahoSolutions;

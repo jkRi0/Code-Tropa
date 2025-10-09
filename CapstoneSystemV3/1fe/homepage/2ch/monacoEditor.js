@@ -15,6 +15,7 @@ require(['vs/editor/editor.main'], function() {
         fontSize: 16,
         minimap: { enabled: false }
     });
+    window.editor = editor; // Make editor globally accessible
 
     const outputTerminal = document.getElementById('outputTerminal');
 
@@ -35,11 +36,13 @@ require(['vs/editor/editor.main'], function() {
     document.getElementById('runCodeBtn').addEventListener('click', function() {
         const code = editor.getValue();
         const outputTerminal = document.getElementById('outputTerminal');
-        outputTerminal.textContent = ''; // Clear terminal
+        // outputTerminal.textContent = ''; // Clear terminal
 
         console.log('Running code:', code); // Debug log
         
-        const result = window.compileJavaCode(code);
+        const selectedDifficultySpan = document.getElementById('selectedDifficulty');
+        const difficulty = selectedDifficultySpan ? selectedDifficultySpan.textContent.toLowerCase() : 'easy';
+        const result = window.compileJavaCode(code, difficulty);
         console.log('Compilation result:', result); // Debug log
         
         if (result.success) {

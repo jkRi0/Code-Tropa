@@ -109,3 +109,40 @@ document.addEventListener('DOMContentLoaded', loadSelectedChallengeData);
 document.getElementById('backButton').addEventListener('click', function() {
     window.location.href = '../index.html'; // Redirects to homepage
 });
+
+document.getElementById('submitCodeBtn').addEventListener('click', async function() {
+    const code = window.editor.getValue(); // Assuming 'editor' is the global Monaco editor instance
+    const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
+    const difficulty = selectedData ? selectedData.difficulty.toLowerCase() : 'easy'; // Default to 'easy' if not found
+
+    window.showLoadingAnimation(); // Show loading animation
+
+    // Simulate a delay for analysis and then hide loading and show results
+    setTimeout(() => {
+        const result = window.compileJavaCode(code, difficulty); // Pass difficulty
+        window.hideLoadingAnimation(); // Hide loading animation
+
+        if (result.scoring) {
+            window.showScoringModal(result.scoring);
+            
+            // Get solution code for AI feedback
+            const solutionCode = window.tahoSolutions[difficulty];
+            
+            // Get AI Feedback
+            window.getGeminiFeedback(code, solutionCode, difficulty, result.scoring).then(feedback => {
+                document.getElementById('geminiAiFeedback').textContent = feedback;
+            }).catch(error => {
+                console.error("Error getting Gemini feedback:", error);
+                document.getElementById('geminiAiFeedback').textContent = "Failed to load AI feedback.";
+            });
+        } else {
+            // Handle cases where scoring might not be available (e.g., compile errors)
+            // For now, we can just show a message in the output terminal
+            const outputTerminal = document.getElementById('outputTerminal');
+            outputTerminal.textContent = "Scoring not available due to compilation issues or missing solution.";
+            if (result.errors && result.errors.length > 0) {
+                outputTerminal.textContent += "\nErrors: " + result.errors.map(err => err.title + " at line " + err.line).join("; ");
+            }
+        }
+    }, 1500); // Simulate 1.5 seconds of analysis time
+});

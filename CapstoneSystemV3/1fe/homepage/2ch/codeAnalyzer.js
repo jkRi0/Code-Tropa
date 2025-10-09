@@ -1,4 +1,4 @@
-function compileJavaCode(code) {
+function compileJavaCode(code, difficulty) {
     let allIssues = [];
 
     function getLineOfIndex(entire, idx) {
@@ -62,6 +62,7 @@ function compileJavaCode(code) {
         if (allIssues.length === 0) {
             console.log("AST (Parse Tree):", tree.toStringTree(parser.ruleNames));
         }
+        return tree; // Return the parse tree
     }
 
     // ================================
@@ -268,7 +269,7 @@ function compileJavaCode(code) {
     // EXECUTION PIPELINE
     // ================================
     lexicalAnalysis(code);
-    grammarAnalysis(code); // Use the new grammarAnalysis function
+    const submittedAST = grammarAnalysis(code); // Get the AST from grammar analysis
     semanticAnalysis(code);
     structureAnalysis(code);
 
@@ -282,16 +283,98 @@ function compileJavaCode(code) {
     }).sort((a, b) => a.line - b.line || (a.severity === 'error' ? -1 : 1));
 
     let programOutput = "";
+    let scoringResult = null;
+
     if (allIssues.length === 0) {
         programOutput = simulateRuntime(code);
+        if (difficulty && window.tahoSolutions && window.tahoSolutions[difficulty]) {
+            const solutionCode = window.tahoSolutions[difficulty];
+            // For now, let's re-parse the solution code to get its AST for comparison.
+            // In a real scenario, solutions might have pre-computed ASTs.
+            const solutionAST = grammarAnalysis(solutionCode); // This will also log the solution AST
+            scoringResult = calculateScore(code, solutionCode, difficulty);
+        }
     }
 
     return {
         success: allIssues.length === 0,
         output: programOutput || (allIssues.length === 0 ? "Program compiled successfully but had no output." : ""),
-        errors: allIssues
+        errors: allIssues,
+        scoring: scoringResult
     };
 }
 
 // Export to window (browser environment)
 window.compileJavaCode = compileJavaCode;
+
+// ================================
+// SCORING FUNCTIONS
+// ================================
+function normalizeCode(code) {
+    return code.replace(/\s+/g, ' ').trim();
+}
+
+function compareASTs(submittedTree, solutionTree) {
+    // Placeholder for actual AST comparison logic
+    // This would involve traversing both trees and comparing nodes.
+    // For now, a simple heuristic or a more advanced diffing algorithm can be used.
+    // For a basic implementation, we can convert ASTs to a simplified string representation
+    // and compare those. A proper implementation would involve a recursive comparison.
+    const submittedString = submittedTree.toStringTree();
+    const solutionString = solutionTree.toStringTree();
+    return submittedString === solutionString;
+}
+
+function containsKeyword(code, keyword) {
+    const regex = new RegExp(`\\b${keyword}\\b`);
+    return regex.test(code);
+}
+
+function containsPrintStatement(code, expectedOutput) {
+    // This is a very basic check. A more robust check would involve runtime simulation
+    // or AST analysis of print statements.
+    return code.includes(`System.out.println("${expectedOutput}")`) || code.includes(`System.out.print("${expectedOutput}")`);
+}
+
+function calculateScore(submittedCode, solutionCode, difficulty) {
+    const rubrics = window.rubricsCriteria[difficulty];
+    let score = 0;
+    let criteriaScores = {};
+
+    // Accuracy
+    let accuracyScore = 0;
+    // For now, a very simple accuracy check: exact match of normalized code
+    if (normalizeCode(submittedCode) === normalizeCode(solutionCode)) {
+        accuracyScore = rubrics.accuracy.weight;
+    }
+    // More sophisticated accuracy checks would involve AST comparison, output comparison, etc.
+    criteriaScores.accuracy = accuracyScore;
+    score += accuracyScore;
+
+    // Efficiency (placeholder - needs AST analysis or performance metrics)
+    // For now, let's assume maximum efficiency if accuracy is 100% for simplicity.
+    let efficiencyScore = 0;
+    if (accuracyScore === rubrics.accuracy.weight) {
+        efficiencyScore = rubrics.efficiency.weight;
+    }
+    criteriaScores.efficiency = efficiencyScore;
+    score += efficiencyScore;
+
+    // Readability (placeholder - needs static analysis or linting-like checks)
+    // For now, let's assume maximum readability if accuracy is 100% for simplicity.
+    let readabilityScore = 0;
+    if (accuracyScore === rubrics.accuracy.weight) {
+        readabilityScore = rubrics.readability.weight;
+    }
+    criteriaScores.readability = readabilityScore;
+    score += readabilityScore;
+
+    // Time (placeholder - for now, assuming 100% if submitted, this will be handled by UI later)
+    let timeScore = rubrics.time.weight;
+    criteriaScores.time = timeScore;
+    score += timeScore;
+
+    return { totalScore: score, criteriaScores: criteriaScores };
+}
+
+window.calculateScore = calculateScore;

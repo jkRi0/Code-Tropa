@@ -90,7 +90,7 @@
     <script src="codeAnalyzer.js"></script>
     <script src="monacoEditor.js"></script>
     <script src="challengeData.js"></script>
-    <script src="rubrics.js"></script>
+    <script src="modalManager.js"></script>
     <script src="tips.js"></script>
     <script src="mobileControls.js"></script>
     <script type="module" src="./analysis_grammars/grammarLoader.js"></script>
@@ -106,3 +106,27 @@
     </script>
 </body>
 </html>
+
+<!-- Scoring Modal -->
+<div id="scoringModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeScoringModal">&times;</span>
+        <h2>Scoring Results</h2>
+        <div class="score-details">
+            <p>Total Score: <span id="finalTotalScore"></span>%</p>
+            <div id="criteriaScoresDisplay">
+                <!-- Individual criteria scores will be displayed here -->
+            </div>
+        </div>
+        <div class="ai-feedback-container">
+            <h3>AI Feedback</h3>
+            <div id="geminiAiFeedback">Loading AI Feedback...</div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Animation -->
+<div id="loadingAnimation" class="loading-animation">
+    <div class="spinner"></div>
+    <p>Analyzing code...</p>
+</div>
