@@ -11,7 +11,7 @@ $user_message = $data['message'] ?? "Hello!";
 // Gemini API URL
 $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=$api_key";
 
-
+    
 // Request payload
 $request_data = json_encode([
     "contents" => [[
