@@ -1,4 +1,4 @@
-import { initializeDomContent, process, process1, submitLanguageSelection, hideModal, process2, process3, difActions, selectDifficulty, currentSelectedDifficulty } from './routeModules.js';
+import { initializeDomContent, process, process1, submitLanguageSelection, hideModal, process2, process3, difActions, selectDifficulty, currentSelectedDifficulty, getLanguageBasedPath, redirectToEpisode } from './routeModules.js';
 
 import {} from './serverAuth.js';
 import {} from './logout.js';
@@ -27,4 +27,6 @@ window.process3 = process3;
 window.difActions = difActions;
 window.selectDifficulty = selectDifficulty;
 window.currentSelectedDifficulty = currentSelectedDifficulty; // Expose globally
+window.getLanguageBasedPath = getLanguageBasedPath;
+window.redirectToEpisode = redirectToEpisode;
 

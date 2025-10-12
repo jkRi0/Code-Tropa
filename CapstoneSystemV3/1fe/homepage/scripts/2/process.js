@@ -2,6 +2,9 @@ export let currentSelectedLanguage = ''; // New variable to track the selected l
 
 export function setCurrentSelectedLanguage(language) {
     currentSelectedLanguage = language;
+    // Also set it globally for easy access
+    window.currentSelectedLanguage = language;
+    console.log('Language selected:', language);
 }
 
 export function process(clickedDiv, type) {
@@ -45,6 +48,10 @@ export function process(clickedDiv, type) {
                 .then(data => {
                     const currentLanguage = data.currentLanguage.toLowerCase();
                     console.log('Current Language from session (process.js):', currentLanguage); // Debug log
+                    
+                    // Set the global language variable
+                    setCurrentSelectedLanguage(currentLanguage);
+                    
                     document.querySelectorAll('.outer2-2').forEach(div => {
                         div.classList.remove('active-language'); // Remove persistent highlight
                         div.classList.remove('temporary-selected'); // Remove temporary highlight
