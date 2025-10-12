@@ -1,22 +1,16 @@
-// C# Grammar Loader - Placeholder for now
-// This would load C# specific grammar analysis tools
+import antlr4 from './antlr/antlr4.web.js';
+import CSharpLexer from './antlr/CSharpLexer.js';
+import CSharpParser from './antlr/CSharpParser.js';
 
-console.log('C# Grammar Loader loaded');
+// Make sure the classes are properly loaded
+window.antlr4 = antlr4;
+window.CSharpLexer = CSharpLexer;
+window.CSharpParser = CSharpParser;
 
-// For now, we'll use a simplified approach
-// In a full implementation, you would load C# specific ANTLR grammars here
-
-// Placeholder C# analysis functions
-window.csharpAnalysis = {
-    analyze: function(code) {
-        console.log('C# analysis placeholder');
-        return {
-            success: true,
-            errors: [],
-            output: 'C# analysis not yet implemented'
-        };
-    }
-};
-
-// Signal that C# analysis is ready
-window.csharpAnalysisReady = true;
+// Signal that ANTLR4 is ready
+window.antlr4Ready = true;
+console.log('ANTLR4 C# modules loaded successfully:', {
+    antlr4: typeof window.antlr4,
+    CSharpLexer: typeof window.CSharpLexer,
+    CSharpParser: typeof window.CSharpParser
+});

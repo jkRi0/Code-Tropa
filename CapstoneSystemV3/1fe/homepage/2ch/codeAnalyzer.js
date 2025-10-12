@@ -58,6 +58,8 @@ function compileJavaCode(code, difficulty) {
         
         if (language.toLowerCase() === 'c++' || language.toLowerCase() === 'cpp') {
             return analyzeCppGrammar(code);
+        } else if (language.toLowerCase() === 'c#' || language.toLowerCase() === 'csharp') {
+            return analyzeCsharpGrammar(code);
         } else {
             return analyzeJavaGrammar(code);
         }
@@ -192,6 +194,75 @@ function compileJavaCode(code, difficulty) {
             return tree; // Return the parse tree
         } catch (error) {
             console.error('Exception during C++ grammar analysis:', error);
+            allIssues.push({
+                id: 'grammar-exception',
+                severity: 'error',
+                title: 'Grammar Analysis Exception',
+                desc: error.message,
+                line: 1,
+                excerpt: code.split('\n')[0].trim()
+            });
+            return null;
+        }
+    }
+    
+    function analyzeCsharpGrammar(code) {
+        if (typeof window.CSharpLexer === 'undefined' || typeof window.CSharpParser === 'undefined') {
+            console.warn('C# ANTLR modules not loaded');
+            return null;
+        }
+        
+        console.log('Starting C# grammar analysis for code:', code.substring(0, 100) + '...');
+        console.log('Available C# modules:', {
+            CSharpLexer: typeof window.CSharpLexer,
+            CSharpParser: typeof window.CSharpParser
+        });
+        
+        const chars = new window.antlr4.InputStream(code);
+        const lexer = new window.CSharpLexer(chars);
+        const tokens = new window.antlr4.CommonTokenStream(lexer);
+        const parser = new window.CSharpParser(tokens);
+        parser.buildParseTrees = true;
+
+        // Custom error listener to capture syntax errors
+        const errorListener = new window.antlr4.error.ErrorListener();
+        errorListener.syntaxError = (recognizer, offendingSymbol, line, column, msg, e) => {
+            console.log('C# ANTLR4 Syntax Error detected:', { line, column, msg, offendingSymbol: offendingSymbol ? offendingSymbol.text : 'null' });
+            allIssues.push({
+                id: 'syntax-error',
+                severity: 'error',
+                title: 'Syntax Error',
+                desc: msg,
+                line: line,
+                excerpt: offendingSymbol ? offendingSymbol.text : code.split('\n')[line - 1].trim()
+            });
+        };
+
+        // Also add a reportAttemptingFullContext method to catch more errors
+        errorListener.reportAttemptingFullContext = (recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs) => {
+            console.log('C# ANTLR4 Full Context Error:', { startIndex, stopIndex, conflictingAlts });
+        };
+
+        // Add reportContextSensitivity method
+        errorListener.reportContextSensitivity = (recognizer, dfa, startIndex, stopIndex, prediction, configs) => {
+            console.log('C# ANTLR4 Context Sensitivity:', { startIndex, stopIndex, prediction });
+        };
+
+        parser.removeErrorListeners(); // Remove default console error listener
+        parser.addErrorListener(errorListener); // Add custom error listener
+
+        lexer.removeErrorListeners(); // Remove default console error listener
+        lexer.addErrorListener(errorListener); // Add custom error listener for lexical errors
+
+        try {
+            const tree = parser.compilation_unit(); // Get the parse tree (AST) for C#
+            console.log('C# grammar analysis completed. Issues found:', allIssues.length);
+            if (allIssues.length === 0) {
+                console.log("C# AST (Parse Tree):", tree.toStringTree(parser.ruleNames));
+            }
+            return tree; // Return the parse tree
+        } catch (error) {
+            console.error('Exception during C# grammar analysis:', error);
             allIssues.push({
                 id: 'grammar-exception',
                 severity: 'error',
@@ -629,11 +700,108 @@ function compileCppCode(code, difficulty) {
 // C# Compilation function
 function compileCsharpCode(code, difficulty) {
     console.log('Compiling C# code...');
-    
-    // For now, use basic analysis similar to Java but with C# specific rules
     let allIssues = [];
     
-    // Basic C# syntax checks
+    // ================================
+    // PHASE 1: LEXICAL ANALYSIS
+    // ================================
+    function lexicalAnalysis(code) {
+        // Basic check for unclosed strings
+        const lines = code.split('\n');
+        lines.forEach((line, i) => {
+            try {
+                const cleaned = line.replace(/\\"/g, '');
+                const count = (cleaned.match(/"/g) || []).length;
+                if (count % 2 === 1) {
+                    allIssues.push({
+                        id: 'unclosed-string',
+                        severity: 'error',
+                        title: 'Unclosed string literal',
+                        desc: 'Double-quoted string not terminated.',
+                        line: i + 1,
+                        excerpt: line.trim()
+                    });
+                }
+            } catch (e) { /* ignore */ }
+        });
+    }
+
+    // ================================
+    // PHASE 2: SYNTAX ANALYSIS (ANTLR-based)
+    // ================================
+    function analyzeCsharpGrammar(code) {
+        if (typeof window.CSharpLexer === 'undefined' || typeof window.CSharpParser === 'undefined') {
+            console.warn('C# ANTLR modules not loaded');
+            return null;
+        }
+        
+        console.log('Starting C# grammar analysis for code:', code.substring(0, 100) + '...');
+        
+        const chars = new window.antlr4.InputStream(code);
+        const lexer = new window.CSharpLexer(chars);
+        const tokens = new window.antlr4.CommonTokenStream(lexer);
+        const parser = new window.CSharpParser(tokens);
+        parser.buildParseTrees = true;
+
+        // Custom error listener to capture syntax errors
+        const errorListener = new window.antlr4.error.ErrorListener();
+        errorListener.syntaxError = (recognizer, offendingSymbol, line, column, msg, e) => {
+            console.log('C# ANTLR4 Syntax Error detected:', { line, column, msg, offendingSymbol: offendingSymbol ? offendingSymbol.text : 'null' });
+            allIssues.push({
+                id: 'syntax-error',
+                severity: 'error',
+                title: 'Syntax Error',
+                desc: msg,
+                line: line,
+                excerpt: offendingSymbol ? offendingSymbol.text : code.split('\n')[line - 1].trim()
+            });
+        };
+
+        parser.removeErrorListeners();
+        parser.addErrorListener(errorListener);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(errorListener);
+
+        try {
+            const tree = parser.compilation_unit();
+            console.log('C# grammar analysis completed. Issues found:', allIssues.length);
+            return tree;
+        } catch (error) {
+            console.error('Exception during C# grammar analysis:', error);
+            allIssues.push({
+                id: 'grammar-exception',
+                severity: 'error',
+                title: 'Grammar Analysis Exception',
+                desc: error.message,
+                line: 1,
+                excerpt: code.split('\n')[0].trim()
+            });
+            return null;
+        }
+    }
+
+    // ================================
+    // EXECUTION PIPELINE
+    // ================================
+    lexicalAnalysis(code);
+    
+    // Check if antlr4 is available and ready
+    if (window.antlr4Ready && typeof window.antlr4 !== 'undefined') {
+        const submittedAST = analyzeCsharpGrammar(code); // Get the AST from grammar analysis
+        if (submittedAST === null) {
+            console.error('C# grammar analysis failed - ANTLR4 dependencies not available');
+            allIssues.push({
+                id: 'antlr4-missing',
+                severity: 'error',
+                title: 'Analysis System Error',
+                desc: 'C# grammar analysis system is not available. Please refresh the page and try again.',
+                line: 1,
+                excerpt: code.split('\n')[0].trim()
+            });
+        }
+    }
+    
+    // Basic C# syntax checks (fallback)
     const lines = code.split('\n');
     lines.forEach((line, i) => {
         // Check for missing semicolons (basic check)
@@ -651,14 +819,33 @@ function compileCsharpCode(code, difficulty) {
         }
     });
     
-    // Simulate runtime execution
-    const programOutput = simulateCsharpRuntime(code);
+    // Simulate runtime execution and calculate scoring
+    let programOutput = "";
+    let scoringResult = null;
+    
+    if (allIssues.length === 0) {
+        programOutput = simulateCsharpRuntime(code);
+        console.log('C# scoring check:', { difficulty, tahoSolutions: window.tahoSolutions, hasSolutions: !!(window.tahoSolutions && window.tahoSolutions[difficulty]) });
+        if (difficulty && window.tahoSolutions && window.tahoSolutions[difficulty]) {
+            const solutionCode = window.tahoSolutions[difficulty];
+            console.log('C# solution found, calculating score...');
+            // Re-parse the solution code to get its AST for comparison
+            const solutionAST = analyzeCsharpGrammar(solutionCode);
+            if (solutionAST === null) {
+                console.warn('C# solution grammar analysis skipped due to missing ANTLR4 dependencies');
+            }
+            scoringResult = calculateScore(code, solutionCode, difficulty);
+            console.log('C# scoring result:', scoringResult);
+        } else {
+            console.log('C# scoring not available - no solutions found for difficulty:', difficulty);
+        }
+    }
     
     return {
         success: allIssues.length === 0,
         output: programOutput || (allIssues.length === 0 ? "Program compiled successfully but had no output." : ""),
         errors: allIssues,
-        scoring: null // Will be calculated if solutions are available
+        scoring: scoringResult
     };
 }
 
