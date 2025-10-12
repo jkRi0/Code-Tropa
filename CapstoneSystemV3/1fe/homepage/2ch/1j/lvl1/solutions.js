@@ -4,8 +4,8 @@ window.tahoSolutions = window.tahoSolutions || {
 public class TahoVendor {
     public static void main(String[] args) {
         System.out.println("Tahooo!");
-        System.out.println("Regular Taho: ₱20");
-        System.out.println("Large Taho: ₱25");
+        System.out.println("Taho: ₱15");
+        System.out.println("Syrup: ₱5");
     }
 }`,
 
@@ -23,9 +23,8 @@ public class TahoVendor {
         System.out.println("================");
         
         // Print menu items with proper formatting
-        System.out.println("Regular Taho\t₱20");
-        System.out.println("Large Taho\t₱25");
-        System.out.println("Extra Syrup\t₱5");
+        System.out.println("Taho:\t\t₱15");
+        System.out.println("Syrup:\t\t₱5");
         
         // Print footer
         System.out.println("================");
@@ -34,28 +33,17 @@ public class TahoVendor {
 
     difficult: `
 /**
- * TahoVendor class simulates a traditional Filipino taho vendor's receipt
- * This program demonstrates proper string formatting and error handling
+ * TahoVendor class simulates a traditional Filipino taho vendor
+ * This program demonstrates proper string formatting and debugging
  */
 public class TahoVendor {
     public static void main(String[] args) {
-        try {
-            // Store header with emojis
-            System.out.println(" MANILA TAHO STORE ");
-            System.out.println("=====================");
-            
-            // Menu section
-            System.out.println("Menu:");
-            System.out.printf("%d. Regular Taho    ₱%d%n", 1, 20);
-            System.out.printf("%d. Large Taho      ₱%d%n", 2, 25);
-            System.out.printf("%d. Extra Syrup     ₱%d%n", 3, 5);
-            
-            // Footer
-            System.out.println("=====================");
-            System.out.println("Salamat po!");
-        } catch (Exception e) {
-            System.out.println("Error printing menu: " + e.getMessage());
-        }
+        // Fixed: Added quotes around string literal
+        System.out.println("Tahooo!");
+        System.out.println("Taho: ₱15");
+        System.out.println("Syrup: ₱5");
+        // Fixed: Proper string concatenation with parentheses
+        System.out.println("Total: " + (15 + 5) + "₱");
     }
 }`
 };

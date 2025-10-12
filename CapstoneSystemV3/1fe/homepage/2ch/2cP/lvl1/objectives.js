@@ -6,28 +6,28 @@ window.objectivesData = window.objectivesData || {
             "Create a C++ program with main function",
             "Include necessary headers (iostream)",
             "Print 'Tahooo!' as the vendor's call",
-            "Print a simple price list with two items:\n  - Regular Taho: ₱20\n  - Large Taho: ₱25"
+            "Print a simple price list with two items:\n  - Taho: ₱15\n  - Syrup: ₱5"
         ]
     },
     average: {
         title: "Level 1 - Taho Time! (Average) - C++",
         objectives: [
-            "Create a formatted price menu using escape sequences",
-            "Add single-line comments (//) to explain the vendor's call",
-            "Add a multi-line comment (/* */) to describe the Filipino taho tradition",
-            "Print a complete menu with prices and sizes using proper spacing",
+            "Format the printed output with newlines and tabs for better readability",
+            "Add single-line comments (//) explaining each line of code",
+            "Add a multi-line comment (/* */) describing the taho vendor tradition",
+            "Print a complete menu with proper spacing and formatting",
             "Use std::cout and std::endl for output"
         ]
     },
     difficult: {
         title: "Level 1 - Taho Time! (Difficult) - C++",
         objectives: [
-            "Fix the syntax errors in the provided code:",
-            "- Missing semicolons in statements",
-            "- Incorrect header includes",
-            "- Improper string literals",
-            "<pre class=\"code-to-debug\">\n#include <iostream>\n\nint main() {\n    std::cout << \" MANILA TAHO STORE ; \n    std::cout << \"=====================\" << std::endl;\n\n    std::cout << \"Menu:\" << std::endl;\n    std::cout << \"1. Regular Taho    ₱20\" << std::endl;\n    std::cout << \"2. Large Taho      ₱25\" << std::endl;\n    std::cout << \"Extra Syrup: \" + 5 + \"₱\" << std::endl;\n\n    std::cout << \"=====================\" << std::endl;\n    std::cout << \"Salamat po!\" << std::endl;\n    \n    return 0;\n}</pre>",
-            "Create a well-formatted receipt-style output with:\n  - Store name\n  - Price list\n  - Total amount\n  - Thank you message"
+            "Debug a provided set of print statements with various syntax errors:",
+            "- Missing quotes in string literals",
+            "- Misplaced semicolons",
+            "- Incorrect string concatenation",
+            "<pre class=\"code-to-debug\">\n#include <iostream>\n\nint main() {\n    std::cout << Tahooo! << std::endl;\n    std::cout << \"Taho: ₱15\" << std::endl;\n    std::cout << \"Syrup: ₱5\" << std::endl;\n    std::cout << \"Total: \" + 15 + 5 + \"₱\" << std::endl;\n    \n    return 0;\n}</pre>",
+            "Ensure correct output formatting and proper syntax"
         ]
     }
 };
@@ -38,29 +38,24 @@ window.examples = window.examples || {
     easy: `
 // Expected output:
 Tahooo!
-Regular Taho: ₱20
-Large Taho: ₱25`,
+Taho: ₱15
+Syrup: ₱5`,
     
     average: `
 // Expected output:
 ================
    TAHO MENU
 ================
-Regular Taho    ₱20
-Large Taho      ₱25
-Extra Syrup     ₱5
+Taho:     ₱15
+Syrup:    ₱5
 ================`,
     
     difficult: `
 // Expected output:
-MANILA TAHO STORE
-=====================
-Menu:
-1. Regular Taho    ₱20
-2. Large Taho      ₱25
-3. Extra Syrup     ₱5
-=====================
-Salamat po! 
+Tahooo!
+Taho: ₱15
+Syrup: ₱5
+Total: 20₱
 `
 };
 

@@ -214,11 +214,12 @@ function loadSelectedChallengeData() {
             const imgContainer = document.querySelector('.image-container img');
             if (data.difficulty && data.level) {
                 const difficultyUpper = data.difficulty.toUpperCase();
-                const levelNumber = data.level.replace('lev', 'lvl');
+                const levelNumber = data.level.replace('lev', '');
                 console.log(data.level+" "+difficultyUpper+" "+levelNumber);
-                imgContainer.src = `1j/${levelNumber}/assets/${difficultyUpper}.png`;
+                
+                imgContainer.src = `./assets/${levelNumber}/${difficultyUpper}.png`;
                 imgContainer.alt = `${data.level} - ${data.difficulty}`;
-                console.log(`Updated image to: ${levelNumber}/assets/${difficultyUpper}.png`);
+                console.log(`Updated image to: assets/${levelNumber}/${difficultyUpper}.png`);
             }
             
             // Start splash screen fade out after 2 seconds

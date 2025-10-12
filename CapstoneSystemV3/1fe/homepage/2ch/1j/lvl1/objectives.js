@@ -1,32 +1,32 @@
 // Use namespace to avoid conflicts
 window.objectivesData = window.objectivesData || {
     easy: {
-        title: "Level 1 - Taho Time! (Easy)",
+        title: "Level 1 - Taho Time! (Easy) - Java",
         objectives: [
             "Create a Java class named 'TahoVendor'",
             "Add a main method to start your program",
             "Print 'Tahooo!' as the vendor's call",
-            "Print a simple price list with two items:\n  - Regular Taho: ₱20\n  - Large Taho: ₱25"
+            "Print a simple price list with two items:\n  - Taho: ₱15\n  - Syrup: ₱5"
         ]
     },
     average: {
-        title: "Level 1 - Taho Time! (Average)",
+        title: "Level 1 - Taho Time! (Average) - Java",
         objectives: [
-            "Create a formatted price menu using tabs and newlines",
-            "Add single-line comments (//) to explain the vendor's call",
-            "Add a multi-line comment (/* */) to describe the Filipino taho tradition",
-            "Print a complete menu with prices and sizes using proper spacing"
+            "Format the printed output with newlines and tabs for better readability",
+            "Add single-line comments (//) explaining each line of code",
+            "Add a multi-line comment (/* */) describing the taho vendor tradition",
+            "Print a complete menu with proper spacing and formatting"
         ]
     },
     difficult: {
-        title: "Level 1 - Taho Time! (Difficult)",
+        title: "Level 1 - Taho Time! (Difficult) - Java",
         objectives: [
-            "Fix the syntax errors in the provided code:",
-            "- Missing quotation marks in print statements",
-            "- Incorrect semicolon placement",
-            "- Improper string concatenation",
-            "<pre class=\"code-to-debug\">\npublic class TahoVendor; { \n    public static void main(String[] args) {\n        try {\n            System.out.println(\" MANILA TAHO STORE ; \n            System.out.println(\"=====================\");\n\n            System.out.println(\"Menu:\");\n            System.out.printf(\"%d. Regular Taho    ₱%d%n\", 1, 20);\n            System.out.printf(\"%d. Large Taho      ₱%d%n\", 2, 25);\n            System.out.println(\"Extra Syrup: \" + 5 + \"₱\");\n\n            System.out.println(\"=====================\");\n            System.out.println(\"Salamat po!\");\n        } catch (Exception e) {\n            System.out.println(\"Error printing menu: \" + e.getMessage());\n        }\n    }\n}</pre>",
-            "Create a well-formatted receipt-style output with:\n  - Store name\n  - Price list\n  - Total amount\n  - Thank you message"
+            "Debug a provided set of print statements with various syntax errors:",
+            "- Missing quotes in string literals",
+            "- Misplaced semicolons",
+            "- Incorrect string concatenation",
+            "<pre class=\"code-to-debug\">\npublic class TahoVendor {\n    public static void main(String[] args) {\n        System.out.println(Tahooo!);\n        System.out.println(\"Taho: ₱15\");\n        System.out.println(\"Syrup: ₱5\");\n        System.out.println(\"Total: \" + 15 + 5 + \"₱\");\n    }\n}</pre>",
+            "Ensure correct output formatting and proper syntax"
         ]
     }
 };
@@ -37,29 +37,24 @@ window.examples = window.examples || {
     easy: `
 // Expected output:
 Tahooo!
-Regular Taho: ₱20
-Large Taho: ₱25`,
+Taho: ₱15
+Syrup: ₱5`,
     
     average: `
 // Expected output:
 ================
    TAHO MENU
 ================
-Regular Taho    ₱20
-Large Taho      ₱25
-Extra Syrup     ₱5
+Taho:     ₱15
+Syrup:    ₱5
 ================`,
     
     difficult: `
 // Expected output:
-MANILA TAHO STORE
-=====================
-Menu:
-1. Regular Taho    ₱20
-2. Large Taho      ₱25
-3. Extra Syrup     ₱5
-=====================
-Salamat po! 
+Tahooo!
+Taho: ₱15
+Syrup: ₱5
+Total: 20₱
 `
 };
 

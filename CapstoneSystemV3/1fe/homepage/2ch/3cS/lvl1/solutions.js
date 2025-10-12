@@ -6,8 +6,8 @@ using System;
 class Program {
     static void Main() {
         Console.WriteLine("Tahooo!");
-        Console.WriteLine("Regular Taho: ₱20");
-        Console.WriteLine("Large Taho: ₱25");
+        Console.WriteLine("Taho: ₱15");
+        Console.WriteLine("Syrup: ₱5");
     }
 }`,
 
@@ -27,9 +27,8 @@ class Program {
         Console.WriteLine("================");
         
         // Print menu items with proper formatting
-        Console.WriteLine("Regular Taho\\t₱20");
-        Console.WriteLine("Large Taho\\t₱25");
-        Console.WriteLine("Extra Syrup\\t₱5");
+        Console.WriteLine("Taho:\\t\\t₱15");
+        Console.WriteLine("Syrup:\\t\\t₱5");
         
         // Print footer
         Console.WriteLine("================");
@@ -38,30 +37,19 @@ class Program {
 
     difficult: `
 /**
- * TahoVendor program simulates a traditional Filipino taho vendor's receipt
- * This program demonstrates proper string formatting and error handling
+ * TahoVendor program simulates a traditional Filipino taho vendor
+ * This program demonstrates proper string formatting and debugging
  */
 using System;
 
 class Program {
     static void Main() {
-        try {
-            // Store header with emojis
-            Console.WriteLine(" MANILA TAHO STORE ");
-            Console.WriteLine("=====================");
-            
-            // Menu section
-            Console.WriteLine("Menu:");
-            Console.WriteLine("1. Regular Taho    ₱20");
-            Console.WriteLine("2. Large Taho      ₱25");
-            Console.WriteLine("3. Extra Syrup     ₱5");
-            
-            // Footer
-            Console.WriteLine("=====================");
-            Console.WriteLine("Salamat po!");
-        } catch (Exception e) {
-            Console.WriteLine("Error printing menu: " + e.Message);
-        }
+        // Fixed: Added quotes around string literal
+        Console.WriteLine("Tahooo!");
+        Console.WriteLine("Taho: ₱15");
+        Console.WriteLine("Syrup: ₱5");
+        // Fixed: Proper arithmetic operation
+        Console.WriteLine("Total: " + (15 + 5) + "₱");
     }
 }`
 };

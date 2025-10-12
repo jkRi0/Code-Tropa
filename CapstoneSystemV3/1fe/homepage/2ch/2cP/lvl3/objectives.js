@@ -1,40 +1,81 @@
-// C++ Level 3 Objectives - Template
 // Use namespace to avoid conflicts
 window.objectivesData = window.objectivesData || {
     easy: {
-        title: "Level 3 - C++ Challenge (Easy)",
+        title: "Level 3 - Fiesta Budget Planner (Easy) - C++",
         objectives: [
             "Create a C++ program with main function",
-            "Include necessary headers",
-            "Implement basic C++ syntax",
-            "Print output using std::cout"
+            "Include necessary headers (iostream)",
+            "Calculate the total cost of three fixed items:\n  - Banderitas: ₱500\n  - Lechon: ₱3000\n  - Sound System: ₱2000",
+            "Print the total cost using arithmetic operators and std::cout"
         ]
     },
     average: {
-        title: "Level 3 - C++ Challenge (Average)",
+        title: "Level 3 - Fiesta Budget Planner (Average) - C++",
         objectives: [
-            "Use C++ specific features",
-            "Implement proper error handling",
-            "Use standard library functions",
-            "Create formatted output"
+            "Add optional items and apply discount logic",
+            "Use variables to store item prices and quantities",
+            "Apply 10% discount when total items exceed 5",
+            "Calculate and display:\n  - Individual item costs\n  - Subtotal before discount\n  - Discount amount (if applicable)\n  - Final total cost",
+            "Use std::cout and std::endl for output"
         ]
     },
     difficult: {
-        title: "Level 3 - C++ Challenge (Difficult)",
+        title: "Level 3 - Fiesta Budget Planner (Difficult) - C++",
         objectives: [
-            "Implement advanced C++ concepts",
-            "Use object-oriented programming",
-            "Handle complex data structures",
-            "Optimize code performance"
+            "Given a ₱5,000 budget and a list of item prices, use decision logic to determine which items to include",
+            "Implement a greedy approach to maximize items within budget",
+            "Create a system that:\n  - Lists available items with prices\n  - Sorts items by value (price per item)\n  - Selects items to fit within ₱5,000 budget\n  - Displays selected items and remaining budget",
+            "Use conditional statements and loops to optimize selection"
         ]
     }
 };
 
+// Example solutions to show in comments
 // Use namespace to avoid conflicts
 window.examples = window.examples || {
-    easy: "// C++ Level 3 Easy Example",
-    average: "// C++ Level 3 Average Example", 
-    difficult: "// C++ Level 3 Difficult Example"
+    easy: `
+// Expected output:
+Fiesta Budget Calculator
+=======================
+Banderitas: ₱500
+Lechon: ₱3,000
+Sound System: ₱2,000
+=======================
+Total Cost: ₱5,500`,
+    
+    average: `
+// Expected output:
+Fiesta Budget Calculator
+=======================
+Banderitas: ₱500
+Lechon: ₱3,000
+Sound System: ₱2,000
+Balloons: ₱300
+Candles: ₱200
+Subtotal: ₱6,000
+Discount (10%): ₱600
+=======================
+Final Total: ₱5,400`,
+    
+    difficult: `
+// Expected output:
+Fiesta Budget Optimizer (₱5,000 Budget)
+=====================================
+Available Items:
+1. Banderitas - ₱500
+2. Lechon - ₱3,000
+3. Sound System - ₱2,000
+4. Balloons - ₱300
+5. Candles - ₱200
+
+Selected Items:
+- Balloons: ₱300
+- Candles: ₱200
+- Banderitas: ₱500
+- Sound System: ₱2,000
+Total Selected: ₱3,000
+Remaining Budget: ₱2,000
+`
 };
 
 // Use namespace to avoid conflicts
@@ -58,6 +99,7 @@ window.displayObjectives = window.displayObjectives || function(difficulty) {
     }
 };
 
+// Initialize objectives based on selected difficulty
 (function() {
     const selectedData = localStorage.getItem('selectedChallenge');
     const data = JSON.parse(selectedData);
