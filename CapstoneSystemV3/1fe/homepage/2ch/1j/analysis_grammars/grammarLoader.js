@@ -9,7 +9,7 @@ window.JavaParser = JavaParser;
 
 // Signal that ANTLR4 is ready
 window.antlr4Ready = true;
-console.log('ANTLR4 modules loaded successfully:', {
+console.log('ANTLR4 java modules loaded successfully:', {
     antlr4: typeof window.antlr4,
     JavaLexer: typeof window.JavaLexer,
     JavaParser: typeof window.JavaParser

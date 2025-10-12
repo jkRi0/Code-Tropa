@@ -1,10 +1,11 @@
 // Generated from CPP14Parser.g4 by ANTLR 4.13.2
 // jshint ignore: start
-import antlr4 from 'antlr4';
+import antlr4 from './antlr4.web.js';
+import { Parser } from './antlr4.web.js';
 import CPP14ParserListener from './CPP14ParserListener.js';
 import CPP14ParserVisitor from './CPP14ParserVisitor.js';
 
-import CPP14ParserBase from './CPP14ParserBase.js';
+// import CPP14ParserBase from './CPP14ParserBase.js';
 
 const serializedATN = [4,1,145,2062,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,
 7,4,2,5,7,5,2,6,7,6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,
@@ -785,7 +786,7 @@ const decisionsToDFA = atn.decisionToState.map( (ds, index) => new antlr4.dfa.DF
 
 const sharedContextCache = new antlr4.atn.PredictionContextCache();
 
-export default class CPP14Parser extends CPP14ParserBase {
+export default class CPP14Parser extends Parser {
 
     static grammarFileName = "CPP14Parser.g4";
     static literalNames = [ null, null, null, null, null, null, null, null, 

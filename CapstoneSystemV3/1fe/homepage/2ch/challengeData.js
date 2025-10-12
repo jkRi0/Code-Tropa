@@ -195,7 +195,7 @@ function loadSelectedChallengeData() {
             document.getElementById('splashDifficulty').textContent = data.difficulty || 'Unknown Difficulty';
             
             // Update verification panel
-            document.getElementById('selectedLevel').textContent = splashLevelNumber || 'Not available';
+    document.getElementById('selectedLevel').textContent = splashLevelNumber || 'Not available';
             document.getElementById('selectedDifficulty').textContent = data.difficulty || 'Not available';
             
             if (data.timestamp) {

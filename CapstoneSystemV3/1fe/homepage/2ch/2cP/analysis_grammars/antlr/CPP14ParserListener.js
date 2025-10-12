@@ -1,6 +1,6 @@
 // Generated from CPP14Parser.g4 by ANTLR 4.13.2
 // jshint ignore: start
-import antlr4 from 'antlr4';
+import antlr4 from './antlr4.web.js';
 
 // This class defines a complete listener for a parse tree produced by CPP14Parser.
 export default class CPP14ParserListener extends antlr4.tree.ParseTreeListener {

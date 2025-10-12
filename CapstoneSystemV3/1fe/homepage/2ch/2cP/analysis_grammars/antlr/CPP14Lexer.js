@@ -1,6 +1,6 @@
 // Generated from CPP14Lexer.g4 by ANTLR 4.13.2
 // jshint ignore: start
-import antlr4 from 'antlr4';
+import antlr4 from './antlr4.web.js';
 
 
 const serializedATN = [4,0,145,1460,6,-1,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,
