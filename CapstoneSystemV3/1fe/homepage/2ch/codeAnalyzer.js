@@ -1,3 +1,20 @@
+function compileCode(code, difficulty, language = 'java') {
+    let allIssues = [];
+    
+    // Route to appropriate analysis based on language
+    switch(language.toLowerCase()) {
+        case 'c++':
+        case 'cpp':
+            return compileCppCode(code, difficulty);
+        case 'c#':
+        case 'csharp':
+            return compileCsharpCode(code, difficulty);
+        case 'java':
+        default:
+            return compileJavaCode(code, difficulty);
+    }
+}
+
 function compileJavaCode(code, difficulty) {
     let allIssues = [];
 
@@ -375,8 +392,129 @@ function waitForANTLR4(timeout = 5000) {
     });
 }
 
+// C++ Compilation function
+function compileCppCode(code, difficulty) {
+    console.log('Compiling C++ code...');
+    
+    // For now, use basic analysis similar to Java but with C++ specific rules
+    let allIssues = [];
+    
+    // Basic C++ syntax checks
+    const lines = code.split('\n');
+    lines.forEach((line, i) => {
+        // Check for missing semicolons (basic check)
+        if (line.trim() && !line.trim().startsWith('//') && !line.trim().startsWith('/*') && 
+            !line.trim().startsWith('#') && !line.trim().endsWith('{') && !line.trim().endsWith('}') &&
+            !line.trim().endsWith(';') && !line.includes('int main') && !line.includes('return')) {
+            allIssues.push({
+                id: 'missing-semicolon-cpp',
+                severity: 'warn',
+                title: 'Possible missing semicolon',
+                desc: 'C++ statements typically end with semicolons',
+                line: i + 1,
+                excerpt: line.trim()
+            });
+        }
+    });
+    
+    // Simulate runtime execution
+    const programOutput = simulateCppRuntime(code);
+    
+    return {
+        success: allIssues.length === 0,
+        output: programOutput || (allIssues.length === 0 ? "Program compiled successfully but had no output." : ""),
+        errors: allIssues,
+        scoring: null // Will be calculated if solutions are available
+    };
+}
+
+// C# Compilation function
+function compileCsharpCode(code, difficulty) {
+    console.log('Compiling C# code...');
+    
+    // For now, use basic analysis similar to Java but with C# specific rules
+    let allIssues = [];
+    
+    // Basic C# syntax checks
+    const lines = code.split('\n');
+    lines.forEach((line, i) => {
+        // Check for missing semicolons (basic check)
+        if (line.trim() && !line.trim().startsWith('//') && !line.trim().startsWith('/*') && 
+            !line.trim().startsWith('using') && !line.trim().endsWith('{') && !line.trim().endsWith('}') &&
+            !line.trim().endsWith(';') && !line.includes('static void Main') && !line.includes('return')) {
+            allIssues.push({
+                id: 'missing-semicolon-csharp',
+                severity: 'warn',
+                title: 'Possible missing semicolon',
+                desc: 'C# statements typically end with semicolons',
+                line: i + 1,
+                excerpt: line.trim()
+            });
+        }
+    });
+    
+    // Simulate runtime execution
+    const programOutput = simulateCsharpRuntime(code);
+    
+    return {
+        success: allIssues.length === 0,
+        output: programOutput || (allIssues.length === 0 ? "Program compiled successfully but had no output." : ""),
+        errors: allIssues,
+        scoring: null // Will be calculated if solutions are available
+    };
+}
+
+// C++ Runtime simulation
+function simulateCppRuntime(code) {
+    // Basic C++ output simulation
+    const output = [];
+    const lines = code.split('\n');
+    
+    for (const line of lines) {
+        const trimmedLine = line.trim();
+        if (trimmedLine.includes('std::cout') || trimmedLine.includes('cout')) {
+            // Extract string literals from cout statements
+            const matches = trimmedLine.match(/"([^"]*)"/g);
+            if (matches) {
+                matches.forEach(match => {
+                    const content = match.slice(1, -1); // Remove quotes
+                    output.push(content);
+                });
+            }
+        }
+    }
+    
+    return output.join('\n');
+}
+
+// C# Runtime simulation
+function simulateCsharpRuntime(code) {
+    // Basic C# output simulation
+    const output = [];
+    const lines = code.split('\n');
+    
+    for (const line of lines) {
+        const trimmedLine = line.trim();
+        if (trimmedLine.includes('Console.WriteLine') || trimmedLine.includes('Console.Write')) {
+            // Extract string literals from Console statements
+            const matches = trimmedLine.match(/"([^"]*)"/g);
+            if (matches) {
+                matches.forEach(match => {
+                    const content = match.slice(1, -1); // Remove quotes
+                    output.push(content);
+                });
+            }
+        }
+    }
+    
+    return output.join('\n');
+}
+
 // Export to window (browser environment)
+window.compileCode = compileCode;
 window.compileJavaCode = compileJavaCode;
+window.compileCppCode = compileCppCode;
+window.compileCsharpCode = compileCsharpCode;
 window.waitForANTLR4 = waitForANTLR4;
 
 // Test function to verify ANTLR4 is working

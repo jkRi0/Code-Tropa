@@ -35,7 +35,7 @@ export function process(clickedDiv, type) {
             plSelection.style.opacity = '1';
 
             // Fetch and highlight the currently saved language (green highlight)
-            fetch('../../../2be/get_current_language.php')
+            fetch('../../2be/get_current_language.php')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);

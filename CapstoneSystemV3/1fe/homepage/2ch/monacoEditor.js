@@ -42,7 +42,12 @@ require(['vs/editor/editor.main'], function() {
         
         const selectedDifficultySpan = document.getElementById('selectedDifficulty');
         const difficulty = selectedDifficultySpan ? selectedDifficultySpan.textContent.toLowerCase() : 'easy';
-        const result = window.compileJavaCode(code, difficulty);
+        
+        // Get current language
+        const selectedLanguageSpan = document.getElementById('selectedLanguage');
+        const language = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
+        
+        const result = window.compileCode(code, difficulty, language);
         console.log('Compilation result:', result); // Debug log
         
         if (result.success) {

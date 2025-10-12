@@ -1,3 +1,169 @@
+// Function to switch language and reload appropriate resources
+function switchLanguage(language) {
+    console.log(`Switching to language: ${language}`);
+    
+    // Get current level from localStorage
+    const selectedData = localStorage.getItem('selectedChallenge');
+    if (selectedData) {
+        const data = JSON.parse(selectedData);
+        const levelNumber = data.level.replace('lev', '');
+        
+        // Reload level scripts with new language
+        loadLevelScripts(levelNumber, language);
+        
+        // Switch Monaco editor language
+        switchMonacoLanguage(language);
+        
+        // Switch analysis grammar
+        switchAnalysisGrammar(language);
+        
+        // Switch tips
+        switchTips(language);
+    }
+}
+
+// Function to switch Monaco editor language
+function switchMonacoLanguage(language) {
+    if (window.editor) {
+        let monacoLanguage;
+        let defaultCode;
+        
+        switch(language.toLowerCase()) {
+            case 'c++':
+            case 'cpp':
+                monacoLanguage = 'cpp';
+                defaultCode = [
+                    '#include <iostream>',
+                    '',
+                    'int main() {',
+                    '    std::cout << "Hello C++!" << std::endl;',
+                    '    return 0;',
+                    '}'
+                ].join('\n');
+                break;
+            case 'c#':
+            case 'csharp':
+                monacoLanguage = 'csharp';
+                defaultCode = [
+                    'using System;',
+                    '',
+                    'class Program {',
+                    '    static void Main() {',
+                    '        Console.WriteLine("Hello C#!");',
+                    '    }',
+                    '}'
+                ].join('\n');
+                break;
+            case 'java':
+            default:
+                monacoLanguage = 'java';
+                defaultCode = [
+                    'public class MyClass {',
+                    '    public static void main(String[] args) {',
+                    '        System.out.println("Hello Java!");',
+                    '    }',
+                    '}'
+                ].join('\n');
+                break;
+        }
+        
+        window.monaco.editor.setModelLanguage(window.editor.getModel(), monacoLanguage);
+        window.editor.setValue(defaultCode);
+        console.log(`Monaco editor switched to ${monacoLanguage}`);
+    }
+}
+
+// Function to switch analysis grammar
+function switchAnalysisGrammar(language) {
+    // Remove existing grammar scripts
+    const existingGrammarScripts = document.querySelectorAll('script[src*="analysis_grammars"]');
+    existingGrammarScripts.forEach(script => script.remove());
+    
+    // Determine grammar folder
+    let grammarFolder;
+    switch(language.toLowerCase()) {
+        case 'c++':
+        case 'cpp':
+            grammarFolder = '2cP/analysis_grammars';
+            break;
+        case 'c#':
+        case 'csharp':
+            grammarFolder = '3cS/analysis_grammars';
+            break;
+        case 'java':
+        default:
+            grammarFolder = '1j/analysis_grammars';
+            break;
+    }
+    
+    // Load new grammar script
+    const grammarScript = document.createElement('script');
+    grammarScript.type = 'module';
+    grammarScript.src = `./${grammarFolder}/grammarLoader.js`;
+    document.head.appendChild(grammarScript);
+    
+    console.log(`Analysis grammar switched to ${grammarFolder}`);
+}
+
+// Function to switch tips
+function switchTips(language) {
+    // Remove existing tips scripts
+    const existingTipsScripts = document.querySelectorAll('script[src*="tips.js"]');
+    existingTipsScripts.forEach(script => script.remove());
+    
+    // Determine tips folder
+    let tipsFolder;
+    switch(language.toLowerCase()) {
+        case 'c++':
+        case 'cpp':
+            tipsFolder = '2cP';
+            break;
+        case 'c#':
+        case 'csharp':
+            tipsFolder = '3cS';
+            break;
+        case 'java':
+        default:
+            tipsFolder = '1j';
+            break;
+    }
+    
+    // Load new tips script
+    const tipsScript = document.createElement('script');
+    tipsScript.src = `./${tipsFolder}/tips.js`;
+    document.body.appendChild(tipsScript);
+    
+    console.log(`Tips switched to ${tipsFolder}`);
+}
+
+// Function to fetch and display current programming language
+function fetchCurrentLanguage() {
+    fetch('../../../2be/get_current_language.php')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const languageElement = document.getElementById('selectedLanguage');
+            if (data.currentLanguage) {
+                // Capitalize first letter and display
+                const language = data.currentLanguage.charAt(0).toUpperCase() + data.currentLanguage.slice(1);
+                languageElement.textContent = language;
+                
+                // Switch to the appropriate language
+                switchLanguage(data.currentLanguage);
+            } else {
+                languageElement.textContent = 'Not set';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching current language:', error);
+            document.getElementById('selectedLanguage').textContent = 'Error loading';
+        });
+}
+
 // Load and display selected challenge data from localStorage
 function loadSelectedChallengeData() {
     try {
@@ -11,7 +177,7 @@ function loadSelectedChallengeData() {
             document.getElementById('splashDifficulty').textContent = data.difficulty || 'Unknown Difficulty';
             
             // Update verification panel
-    document.getElementById('selectedLevel').textContent = splashLevelNumber || 'Not available';
+            document.getElementById('selectedLevel').textContent = splashLevelNumber || 'Not available';
             document.getElementById('selectedDifficulty').textContent = data.difficulty || 'Not available';
             
             if (data.timestamp) {
@@ -20,6 +186,9 @@ function loadSelectedChallengeData() {
             } else {
                 document.getElementById('selectedTime').textContent = 'Not available';
             }
+            
+            // Fetch and display current programming language
+            fetchCurrentLanguage();
             
             console.log('Loaded challenge data:', data);
             
@@ -52,6 +221,7 @@ function loadSelectedChallengeData() {
             document.getElementById('selectedLevel').textContent = 'No data available';
             document.getElementById('selectedDifficulty').textContent = 'No data available';
             document.getElementById('selectedTime').textContent = 'No data Available';
+            document.getElementById('selectedLanguage').textContent = 'No data available';
             console.log('No challenge data found in localStorage');
             
             // Still fade out splash screen even with no data
@@ -70,6 +240,7 @@ function loadSelectedChallengeData() {
         document.getElementById('selectedLevel').textContent = 'Error loading data';
         document.getElementById('selectedDifficulty').textContent = 'Error loading data';
         document.getElementById('selectedTime').textContent = 'Error loading data';
+        document.getElementById('selectedLanguage').textContent = 'Error loading data';
         
         // Still fade out splash screen on error
         setTimeout(() => {
@@ -82,20 +253,39 @@ function loadSelectedChallengeData() {
     }
 }
 
-// Add this function to handle dynamic script loading
-function loadLevelScripts(level) {
+// Add this function to handle dynamic script loading based on language
+function loadLevelScripts(level, language = 'java') {
     // Remove existing level scripts if any
     removeExistingScripts();
+    
+    // Determine the language folder
+    let languageFolder;
+    switch(language.toLowerCase()) {
+        case 'c++':
+        case 'cpp':
+            languageFolder = '2cP';
+            break;
+        case 'c#':
+        case 'csharp':
+            languageFolder = '3cS';
+            break;
+        case 'java':
+        default:
+            languageFolder = '1j';
+            break;
+    }
     
     // Create and append new script elements
     const objectivesScript = document.createElement('script');
     const solutionsScript = document.createElement('script');
     
-    objectivesScript.src = `1j/lvl${level}/objectives.js`;
-    solutionsScript.src = `1j/lvl${level}/solutions.js`;
+    objectivesScript.src = `${languageFolder}/lvl${level}/objectives.js`;
+    solutionsScript.src = `${languageFolder}/lvl${level}/solutions.js`;
     
     document.body.appendChild(objectivesScript);
     document.body.appendChild(solutionsScript);
+    
+    console.log(`Loaded scripts for ${language} level ${level} from ${languageFolder}/`);
 }
 
 function removeExistingScripts() {
@@ -119,7 +309,11 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
 
     // Simulate a delay for analysis and then hide loading and show results
     setTimeout(() => {
-        const result = window.compileJavaCode(code, difficulty); // Pass difficulty
+        // Get current language
+        const selectedLanguageSpan = document.getElementById('selectedLanguage');
+        const language = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
+        
+        const result = window.compileCode(code, difficulty, language); // Pass difficulty and language
         window.hideLoadingAnimation(); // Hide loading animation
 
         if (result.scoring) {

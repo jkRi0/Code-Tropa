@@ -24,6 +24,7 @@
         <div class="verification-info">
             <p><strong>Selected Level:</strong> <span id="selectedLevel">Loading...</span></p>
             <p><strong>Selected Difficulty:</strong> <span id="selectedDifficulty">Loading...</span></p>
+            <p><strong>Programming Language:</strong> <span id="selectedLanguage">Loading...</span></p>
             <p><strong>Selected At:</strong> <span id="selectedTime">Loading...</span></p>
         </div>
     </div>
@@ -100,7 +101,8 @@
             const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
             if (selectedData && selectedData.level) {
                 const levelNumber = selectedData.level.replace('lev', ''); // Extract only the number
-                loadLevelScripts(levelNumber);
+                // Load with default Java language initially, will be switched when language is fetched
+                loadLevelScripts(levelNumber, 'java');
             }
         });
     </script>
