@@ -35,8 +35,13 @@ export function process(clickedDiv, type) {
             plSelection.style.opacity = '1';
 
             // Fetch and highlight the currently saved language (green highlight)
-            fetch('../../2be/get_current_language.php')
-                .then(response => response.json())
+            fetch('../../../2be/get_current_language.php')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     const currentLanguage = data.currentLanguage.toLowerCase();
                     console.log('Current Language from session (process.js):', currentLanguage); // Debug log

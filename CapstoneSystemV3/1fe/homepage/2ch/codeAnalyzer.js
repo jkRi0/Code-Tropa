@@ -33,15 +33,31 @@ function compileJavaCode(code, difficulty) {
     // PHASE 2: SYNTAX ANALYSIS (ANTLR-based)
     // ================================
     function grammarAnalysis(code) {
-        const chars = new antlr4.InputStream(code);
-        const lexer = new JavaLexer(chars);
-        const tokens = new antlr4.CommonTokenStream(lexer);
-        const parser = new JavaParser(tokens);
+        // Check if antlr4 is available and ready
+        if (!window.antlr4Ready || typeof window.antlr4 === 'undefined' || typeof window.JavaLexer === 'undefined' || typeof window.JavaParser === 'undefined') {
+            console.warn('ANTLR4 not loaded yet, skipping grammar analysis');
+            return null;
+        }
+        
+        console.log('Starting grammar analysis for code:', code.substring(0, 100) + '...');
+        console.log('Available on window:', {
+            antlr4: typeof window.antlr4,
+            JavaLexer: typeof window.JavaLexer,
+            JavaParser: typeof window.JavaParser,
+            JavaLexerStructure: window.JavaLexer ? Object.keys(window.JavaLexer) : 'null',
+            JavaParserStructure: window.JavaParser ? Object.keys(window.JavaParser) : 'null'
+        });
+        
+        const chars = new window.antlr4.InputStream(code);
+        const lexer = new window.JavaLexer(chars);
+        const tokens = new window.antlr4.CommonTokenStream(lexer);
+        const parser = new window.JavaParser(tokens);
         parser.buildParseTrees = true;
 
         // Custom error listener to capture syntax errors
-        const errorListener = new antlr4.error.ErrorListener();
+        const errorListener = new window.antlr4.error.ErrorListener();
         errorListener.syntaxError = (recognizer, offendingSymbol, line, column, msg, e) => {
+            console.log('ANTLR4 Syntax Error detected:', { line, column, msg, offendingSymbol: offendingSymbol ? offendingSymbol.text : 'null' });
             allIssues.push({
                 id: 'syntax-error',
                 severity: 'error',
@@ -52,17 +68,41 @@ function compileJavaCode(code, difficulty) {
             });
         };
 
+        // Also add a reportAttemptingFullContext method to catch more errors
+        errorListener.reportAttemptingFullContext = (recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs) => {
+            console.log('ANTLR4 Full Context Error:', { startIndex, stopIndex, conflictingAlts });
+        };
+
+        // Add reportContextSensitivity method
+        errorListener.reportContextSensitivity = (recognizer, dfa, startIndex, stopIndex, prediction, configs) => {
+            console.log('ANTLR4 Context Sensitivity:', { startIndex, stopIndex, prediction });
+        };
+
         parser.removeErrorListeners(); // Remove default console error listener
         parser.addErrorListener(errorListener); // Add custom error listener
 
         lexer.removeErrorListeners(); // Remove default console error listener
         lexer.addErrorListener(errorListener); // Add custom error listener for lexical errors
 
-        const tree = parser.compilationUnit(); // Get the parse tree (AST)
-        if (allIssues.length === 0) {
-            console.log("AST (Parse Tree):", tree.toStringTree(parser.ruleNames));
+        try {
+            const tree = parser.compilationUnit(); // Get the parse tree (AST)
+            console.log('Grammar analysis completed. Issues found:', allIssues.length);
+            if (allIssues.length === 0) {
+                console.log("AST (Parse Tree):", tree.toStringTree(parser.ruleNames));
+            }
+            return tree; // Return the parse tree
+        } catch (error) {
+            console.error('Exception during grammar analysis:', error);
+            allIssues.push({
+                id: 'grammar-exception',
+                severity: 'error',
+                title: 'Grammar Analysis Exception',
+                desc: error.message,
+                line: 1,
+                excerpt: code.split('\n')[0].trim()
+            });
+            return null;
         }
-        return tree; // Return the parse tree
     }
 
     // ================================
@@ -270,6 +310,17 @@ function compileJavaCode(code, difficulty) {
     // ================================
     lexicalAnalysis(code);
     const submittedAST = grammarAnalysis(code); // Get the AST from grammar analysis
+    if (submittedAST === null) {
+        console.error('Grammar analysis failed - ANTLR4 dependencies not available');
+        allIssues.push({
+            id: 'antlr4-missing',
+            severity: 'error',
+            title: 'Analysis System Error',
+            desc: 'Grammar analysis system is not available. Please refresh the page and try again.',
+            line: 1,
+            excerpt: 'System error - analysis dependencies missing'
+        });
+    }
     semanticAnalysis(code);
     structureAnalysis(code);
 
@@ -292,6 +343,9 @@ function compileJavaCode(code, difficulty) {
             // For now, let's re-parse the solution code to get its AST for comparison.
             // In a real scenario, solutions might have pre-computed ASTs.
             const solutionAST = grammarAnalysis(solutionCode); // This will also log the solution AST
+            if (solutionAST === null) {
+                console.warn('Solution grammar analysis skipped due to missing ANTLR4 dependencies');
+            }
             scoringResult = calculateScore(code, solutionCode, difficulty);
         }
     }
@@ -304,8 +358,52 @@ function compileJavaCode(code, difficulty) {
     };
 }
 
+// Function to wait for ANTLR4 to be ready
+function waitForANTLR4(timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const startTime = Date.now();
+        const checkReady = () => {
+            if (window.antlr4Ready && window.antlr4 && window.JavaLexer && window.JavaParser) {
+                resolve(true);
+            } else if (Date.now() - startTime > timeout) {
+                reject(new Error('ANTLR4 loading timeout'));
+            } else {
+                setTimeout(checkReady, 100);
+            }
+        };
+        checkReady();
+    });
+}
+
 // Export to window (browser environment)
 window.compileJavaCode = compileJavaCode;
+window.waitForANTLR4 = waitForANTLR4;
+
+// Test function to verify ANTLR4 is working
+window.testANTLR4 = async function() {
+    console.log('Testing ANTLR4 with invalid Java code...');
+    
+    try {
+        await waitForANTLR4();
+        console.log('ANTLR4 is ready, running test...');
+    } catch (error) {
+        console.error('ANTLR4 not ready:', error);
+        return { error: 'ANTLR4 not available' };
+    }
+    
+    const invalidCode = `
+public class Test {
+    public static void main(String[] args) {
+        System.out.println("Hello World"
+        // Missing closing parenthesis and semicolon
+    }
+}
+    `;
+    
+    const result = compileJavaCode(invalidCode, 'easy');
+    console.log('Test result:', result);
+    return result;
+};
 
 // ================================
 // SCORING FUNCTIONS

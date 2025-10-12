@@ -29,7 +29,7 @@ function loadSelectedChallengeData() {
                 const difficultyUpper = data.difficulty.toUpperCase();
                 const levelNumber = data.level.replace('lev', 'lvl');
                 console.log(data.level+" "+difficultyUpper+" "+levelNumber);
-                imgContainer.src = `${levelNumber}/assets/${difficultyUpper}.png`;
+                imgContainer.src = `1j/${levelNumber}/assets/${difficultyUpper}.png`;
                 imgContainer.alt = `${data.level} - ${data.difficulty}`;
                 console.log(`Updated image to: ${levelNumber}/assets/${difficultyUpper}.png`);
             }
@@ -91,8 +91,8 @@ function loadLevelScripts(level) {
     const objectivesScript = document.createElement('script');
     const solutionsScript = document.createElement('script');
     
-    objectivesScript.src = `lvl${level}/objectives.js`;
-    solutionsScript.src = `lvl${level}/solutions.js`;
+    objectivesScript.src = `1j/lvl${level}/objectives.js`;
+    solutionsScript.src = `1j/lvl${level}/solutions.js`;
     
     document.body.appendChild(objectivesScript);
     document.body.appendChild(solutionsScript);
@@ -139,7 +139,8 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
             // Handle cases where scoring might not be available (e.g., compile errors)
             // For now, we can just show a message in the output terminal
             const outputTerminal = document.getElementById('outputTerminal');
-            outputTerminal.textContent = "Scoring not available due to compilation issues or missing solution.";
+            outputTerminal.style.color = '#ff0000'; // Make error message red
+            outputTerminal.textContent = "❌ Scoring not available due to compilation issues or missing solution.";
             if (result.errors && result.errors.length > 0) {
                 outputTerminal.textContent += "\nErrors: " + result.errors.map(err => err.title + " at line " + err.line).join("; ");
             }
