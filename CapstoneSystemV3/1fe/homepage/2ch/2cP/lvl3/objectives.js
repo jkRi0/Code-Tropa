@@ -1,5 +1,6 @@
 // C++ Level 3 Objectives - Template
-const objectivesData = {
+// Use namespace to avoid conflicts
+window.objectivesData = window.objectivesData || {
     easy: {
         title: "Level 3 - C++ Challenge (Easy)",
         objectives: [
@@ -29,18 +30,19 @@ const objectivesData = {
     }
 };
 
-const examples = {
+// Use namespace to avoid conflicts
+window.examples = window.examples || {
     easy: "// C++ Level 3 Easy Example",
     average: "// C++ Level 3 Average Example", 
     difficult: "// C++ Level 3 Difficult Example"
 };
 
-const selectedData = localStorage.getItem('selectedChallenge');
-const data = JSON.parse(selectedData);
-
-function displayObjectives(difficulty) {
+// Use namespace to avoid conflicts
+window.displayObjectives = window.displayObjectives || function(difficulty) {
+    const selectedData = localStorage.getItem('selectedChallenge');
+    const data = JSON.parse(selectedData);
     const objectivesContainer = document.querySelector('.objectives-container');
-    const difficultyData = objectivesData[difficulty.toLowerCase()];
+    const difficultyData = window.objectivesData[difficulty.toLowerCase()];
 
     if (difficultyData) {
         const content = `
@@ -49,11 +51,15 @@ function displayObjectives(difficulty) {
                     ${difficultyData.objectives.map(obj => `<li>${obj}</li>`).join('')}
                 </ul>
                 <div class="example-output">
-                    <pre>${examples[difficulty.toLowerCase()]}</pre>
+                    <pre>${window.examples[difficulty.toLowerCase()]}</pre>
                 </div>
             `;
         objectivesContainer.innerHTML = content;
     }
-}
+};
 
-displayObjectives(data.difficulty);
+(function() {
+    const selectedData = localStorage.getItem('selectedChallenge');
+    const data = JSON.parse(selectedData);
+    window.displayObjectives(data.difficulty);
+})();

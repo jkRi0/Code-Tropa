@@ -1,4 +1,5 @@
-const objectivesData = {
+// Use namespace to avoid conflicts
+window.objectivesData = window.objectivesData || {
     easy: {
         title: "Level 2 - Taho Time! (Easy) - C#",
         objectives: [
@@ -35,7 +36,8 @@ const objectivesData = {
 };
 
 // Example solutions to show in comments
-const examples = {
+// Use namespace to avoid conflicts
+window.examples = window.examples || {
     easy: `
 // Expected output:
 Tahooo!
@@ -65,12 +67,12 @@ Salamat po!
 `
 };
 
-const selectedData = localStorage.getItem('selectedChallenge');
-const data = JSON.parse(selectedData);
-
-function displayObjectives(difficulty) {
+// Use namespace to avoid conflicts
+window.displayObjectives = window.displayObjectives || function(difficulty) {
+    const selectedData = localStorage.getItem('selectedChallenge');
+    const data = JSON.parse(selectedData);
     const objectivesContainer = document.querySelector('.objectives-container');
-    const difficultyData = objectivesData[difficulty.toLowerCase()];
+    const difficultyData = window.objectivesData[difficulty.toLowerCase()];
 
     if (difficultyData) {
         const content = `
@@ -79,12 +81,16 @@ function displayObjectives(difficulty) {
                     ${difficultyData.objectives.map(obj => `<li>${obj}</li>`).join('')}
                 </ul>
                 <div class="example-output">
-                    <pre>${examples[difficulty.toLowerCase()]}</pre>
+                    <pre>${window.examples[difficulty.toLowerCase()]}</pre>
                 </div>
             `;
         objectivesContainer.innerHTML = content;
     }
-}
+};
 
 // Initialize objectives based on selected difficulty
-displayObjectives(data.difficulty);// objectives for level 2 - C#
+(function() {
+    const selectedData = localStorage.getItem('selectedChallenge');
+    const data = JSON.parse(selectedData);
+    window.displayObjectives(data.difficulty);
+})();// objectives for level 2 - C#

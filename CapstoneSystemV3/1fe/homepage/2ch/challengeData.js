@@ -1,83 +1,101 @@
 // Function to switch language and reload appropriate resources
 function switchLanguage(language) {
-    console.log(`Switching to language: ${language}`);
+    // Switching to language
     
-    // Get current level from localStorage
-    const selectedData = localStorage.getItem('selectedChallenge');
-    if (selectedData) {
-        const data = JSON.parse(selectedData);
-        const levelNumber = data.level.replace('lev', '');
-        
-        // Reload level scripts with new language
-        loadLevelScripts(levelNumber, language);
-        
-        // Switch Monaco editor language
-        switchMonacoLanguage(language);
-        
-        // Switch analysis grammar
-        switchAnalysisGrammar(language);
-        
-        // Switch tips
-        switchTips(language);
+    // Remove all existing scripts first to prevent conflicts
+    removeExistingScripts();
+    
+    // Wait a bit for scripts to be fully removed before loading new ones
+    setTimeout(() => {
+        // Get current level from localStorage
+        const selectedData = localStorage.getItem('selectedChallenge');
+        if (selectedData) {
+            const data = JSON.parse(selectedData);
+            const levelNumber = data.level.replace('lev', '');
+            
+            // Reload level scripts with new language
+            loadLevelScripts(levelNumber, language);
+            
+            // Switch Monaco editor language
+            switchMonacoLanguage(language);
+            
+            // Switch analysis grammar
+            switchAnalysisGrammar(language);
+            
+            // Switch tips
+            switchTips(language);
+        }
+    }, 50); // Small delay to ensure cleanup is complete
+}
+
+// Shared function to get default code for any language
+window.getDefaultCode = function(language = 'java') {
+    switch(language.toLowerCase()) {
+        case 'c++':
+        case 'cpp':
+            return [
+                '#include <iostream>',
+                '',
+                'int main() {',
+                '    std::cout << "Hello C++!" << std::endl;',
+                '    return 0;',
+                '}'
+            ].join('\n');
+        case 'c#':
+        case 'csharp':
+            return [
+                'using System;',
+                '',
+                'class Program {',
+                '    static void Main() {',
+                '        Console.WriteLine("Hello C#!");',
+                '    }',
+                '}'
+            ].join('\n');
+        case 'java':
+        default:
+            return [
+                'public class MyClass {',
+                '    public static void main(String[] args) {',
+                '        System.out.println("Hello Java!");',
+                '    }',
+                '}'
+            ].join('\n');
+    }
+}
+
+// Shared function to get Monaco language identifier
+window.getMonacoLanguage = function(language = 'java') {
+    switch(language.toLowerCase()) {
+        case 'c++':
+        case 'cpp':
+            return 'cpp';
+        case 'c#':
+        case 'csharp':
+            return 'csharp';
+        case 'java':
+        default:
+            return 'java';
     }
 }
 
 // Function to switch Monaco editor language
 function switchMonacoLanguage(language) {
     if (window.editor) {
-        let monacoLanguage;
-        let defaultCode;
-        
-        switch(language.toLowerCase()) {
-            case 'c++':
-            case 'cpp':
-                monacoLanguage = 'cpp';
-                defaultCode = [
-                    '#include <iostream>',
-                    '',
-                    'int main() {',
-                    '    std::cout << "Hello C++!" << std::endl;',
-                    '    return 0;',
-                    '}'
-                ].join('\n');
-                break;
-            case 'c#':
-            case 'csharp':
-                monacoLanguage = 'csharp';
-                defaultCode = [
-                    'using System;',
-                    '',
-                    'class Program {',
-                    '    static void Main() {',
-                    '        Console.WriteLine("Hello C#!");',
-                    '    }',
-                    '}'
-                ].join('\n');
-                break;
-            case 'java':
-            default:
-                monacoLanguage = 'java';
-                defaultCode = [
-                    'public class MyClass {',
-                    '    public static void main(String[] args) {',
-                    '        System.out.println("Hello Java!");',
-                    '    }',
-                    '}'
-                ].join('\n');
-                break;
-        }
+        const monacoLanguage = getMonacoLanguage(language);
+        const defaultCode = getDefaultCode(language);
         
         window.monaco.editor.setModelLanguage(window.editor.getModel(), monacoLanguage);
         window.editor.setValue(defaultCode);
-        console.log(`Monaco editor switched to ${monacoLanguage}`);
+        // Monaco editor language switched
+    } else {
+        console.warn('Monaco editor not available yet, will be set when language is loaded');
     }
 }
 
 // Function to switch analysis grammar
 function switchAnalysisGrammar(language) {
-    // Remove existing grammar scripts
-    const existingGrammarScripts = document.querySelectorAll('script[src*="analysis_grammars"]');
-    existingGrammarScripts.forEach(script => script.remove());
+    // Remove existing grammar scripts (handled by removeExistingScripts)
     
     // Determine grammar folder
     let grammarFolder;
@@ -102,14 +120,12 @@ function switchAnalysisGrammar(language) {
     grammarScript.src = `./${grammarFolder}/grammarLoader.js`;
     document.head.appendChild(grammarScript);
     
-    console.log(`Analysis grammar switched to ${grammarFolder}`);
+    // Analysis grammar switched
 }
 
 // Function to switch tips
 function switchTips(language) {
-    // Remove existing tips scripts
-    const existingTipsScripts = document.querySelectorAll('script[src*="tips.js"]');
-    existingTipsScripts.forEach(script => script.remove());
+    // Remove existing tips scripts (handled by removeExistingScripts)
     
     // Determine tips folder
     let tipsFolder;
@@ -133,7 +149,7 @@ function switchTips(language) {
     tipsScript.src = `./${tipsFolder}/tips.js`;
     document.body.appendChild(tipsScript);
     
-    console.log(`Tips switched to ${tipsFolder}`);
+    // Tips switched
 }
 
 // Function to fetch and display current programming language
@@ -152,8 +168,10 @@ function fetchCurrentLanguage() {
                 const language = data.currentLanguage.charAt(0).toUpperCase() + data.currentLanguage.slice(1);
                 languageElement.textContent = language;
                 
-                // Switch to the appropriate language
-                switchLanguage(data.currentLanguage);
+                // Wait a bit for Monaco editor to be ready, then switch language
+                setTimeout(() => {
+                    switchLanguage(data.currentLanguage);
+                }, 100);
             } else {
                 languageElement.textContent = 'Not set';
             }
@@ -255,8 +273,7 @@ function loadSelectedChallengeData() {
 
 // Add this function to handle dynamic script loading based on language
 function loadLevelScripts(level, language = 'java') {
-    // Remove existing level scripts if any
-    removeExistingScripts();
+    // Note: removeExistingScripts() is called by the caller if needed
     
     // Determine the language folder
     let languageFolder;
@@ -275,22 +292,68 @@ function loadLevelScripts(level, language = 'java') {
             break;
     }
     
-    // Create and append new script elements
+    // Create and append new script elements with unique IDs
     const objectivesScript = document.createElement('script');
     const solutionsScript = document.createElement('script');
+    
+    objectivesScript.id = `objectives-${languageFolder}-lvl${level}`;
+    solutionsScript.id = `solutions-${languageFolder}-lvl${level}`;
     
     objectivesScript.src = `${languageFolder}/lvl${level}/objectives.js`;
     solutionsScript.src = `${languageFolder}/lvl${level}/solutions.js`;
     
+    objectivesScript.onload = () => {}; // Script loaded successfully
+    objectivesScript.onerror = () => console.error(`Failed to load objectives script: ${objectivesScript.src}`);
+    solutionsScript.onload = () => {}; // Script loaded successfully
+    solutionsScript.onerror = () => console.error(`Failed to load solutions script: ${solutionsScript.src}`);
+    
     document.body.appendChild(objectivesScript);
     document.body.appendChild(solutionsScript);
     
-    console.log(`Loaded scripts for ${language} level ${level} from ${languageFolder}/`);
+    // Scripts loaded successfully
 }
 
 function removeExistingScripts() {
-    const scripts = document.querySelectorAll('script[src*="lvl"]');
-    scripts.forEach(script => script.remove());
+    // Remove all dynamically loaded level scripts by ID pattern
+    const levelScripts = document.querySelectorAll('script[id*="objectives-"], script[id*="solutions-"]');
+    levelScripts.forEach(script => {
+        script.remove();
+    });
+    
+    // Also remove by src pattern as backup
+    const levelScriptsBySrc = document.querySelectorAll('script[src*="lvl"]');
+    levelScriptsBySrc.forEach(script => {
+        if (!script.id || (!script.id.includes('objectives-') && !script.id.includes('solutions-'))) {
+            script.remove();
+        }
+    });
+    
+    // Remove all dynamically loaded grammar scripts
+    const grammarScripts = document.querySelectorAll('script[src*="analysis_grammars"]');
+    grammarScripts.forEach(script => {
+        script.remove();
+    });
+    
+    // Remove all dynamically loaded tips scripts
+    const tipsScripts = document.querySelectorAll('script[src*="tips.js"]');
+    tipsScripts.forEach(script => {
+        script.remove();
+    });
+    
+    // Clear any existing global variables to prevent conflicts
+    const globalVars = ['objectivesData', 'tahoSolutions', 'displayObjectives', 'examples'];
+    globalVars.forEach(varName => {
+        if (window[varName]) {
+            window[varName] = undefined;
+        }
+    });
+    
+    // Force garbage collection if available
+    if (window.gc) {
+        window.gc();
+    }
+    
+    // Scripts removed and variables cleared
 }
 
 // Initialize when DOM is loaded

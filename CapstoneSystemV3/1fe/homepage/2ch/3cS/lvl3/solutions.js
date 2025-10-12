@@ -1,5 +1,6 @@
 // C# Level 3 Solutions - Template
-const tahoSolutions = {
+// Use namespace to avoid conflicts
+window.tahoSolutions = window.tahoSolutions || {
     easy: `
 using System;
 

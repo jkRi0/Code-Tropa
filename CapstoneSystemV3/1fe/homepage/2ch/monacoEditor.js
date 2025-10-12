@@ -1,15 +1,15 @@
-// Monaco Editor initialization and Java compilation functionality
+// Monaco Editor initialization and compilation functionality
 require.config({ paths: { 'vs': '../../../../node_modules/monaco-editor/min/vs' }});
 require(['vs/editor/editor.main'], function() {
+    // Use shared functions from challengeData.js (will be available globally)
+    
+    // Get current language from the page (will be set by language switching)
+    const selectedLanguageSpan = document.getElementById('selectedLanguage');
+    const currentLanguage = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
+    
     var editor = monaco.editor.create(document.getElementById('monaco-container'), {
-        value: [
-            'public class MyClass {',
-            '    public static void main(String[] args) {',
-            '        System.out.println("Hello Java!");',
-            '    }',
-            '}'
-        ].join('\n'),
-        language: "java",
+        value: window.getDefaultCode(currentLanguage),
+        language: window.getMonacoLanguage(currentLanguage),
         theme: "vs-dark",
         automaticLayout: true,
         fontSize: 16,
@@ -19,19 +19,8 @@ require(['vs/editor/editor.main'], function() {
 
     const outputTerminal = document.getElementById('outputTerminal');
 
-    // Redirect console.log and console.error to the output terminal
-    (function () {
-        var oldLog = console.log;
-        var oldError = console.error;
-        console.log = function (message) {
-            oldLog.apply(console, arguments);
-            outputTerminal.textContent += message + '\n';
-        };
-        console.error = function (message) {
-            oldError.apply(console, arguments);
-            outputTerminal.textContent += message + '\n';
-        };
-    })();
+    // Keep console.log and console.error in browser console only
+    // (Removed redirection to output terminal to keep it clean for program output)
 
     document.getElementById('runCodeBtn').addEventListener('click', function() {
         const code = editor.getValue();

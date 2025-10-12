@@ -1,4 +1,5 @@
-const tahoSolutions = {
+// Use namespace to avoid conflicts
+window.tahoSolutions = window.tahoSolutions || {
     easy: `
 public class TahoVendor {
     public static void main(String[] args) {
