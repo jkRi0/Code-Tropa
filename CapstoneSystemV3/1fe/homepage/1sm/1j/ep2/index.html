@@ -197,38 +197,41 @@
             position: absolute;
             bottom: 0;
             left: 50%;
-            width: 6rem;
-            height: 7rem;
-            background-color: rgba(255, 0, 0, 0.3);
-            border: 2px solid #ff0000;
-            border-radius: 5px;
+            width: 8rem;
+            height: 10rem;
+            background-color: transparent;
+            border: none;
             transform: translateX(-50%);
             transition: left 0.2s ease-out;
             z-index: 10;
+            overflow: hidden;
         }
 
         .dummy-hitbox {
             position: absolute;
             bottom: 0;
-            width: 6rem;
-            height: 7rem;
-            background-color: rgba(0, 255, 0, 0.3);
-            border: 2px solid green;
-            border-radius: 5px;
+            width: 8rem;
+            height: 10rem;
+            background-color: transparent;
+            border: none;
+            overflow: hidden;
             z-index: 5;
         }
 
-        .avatar-sprite {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .dummy-sprite {
             width: 100%;
             height: 100%;
-            background-color: #4CAF50;
-            border-radius: 3px;
-            /* Simple avatar representation */
-            background-image: linear-gradient(45deg, #4CAF50 25%, #45a049 25%, #45a049 50%, #4CAF50 50%, #4CAF50 75%, #45a049 75%);
-            background-size: 20px 20px;
+            object-fit: contain;
+            object-position: center bottom;
+            image-rendering: pixelated;
+        }
+
+        .avatar-sprite {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center bottom;
+            image-rendering: pixelated;
         }
 
         .typing-cursor {
@@ -552,7 +555,7 @@
             <div class="floor"></div>
             
             <div class="avatar-hitbox" id="avatarHitbox">
-                <div class="avatar-sprite"></div>
+                <img id="avatarSprite" src="assets/4/chibi/f1.png" alt="Avatar" class="avatar-sprite">
             </div>
         </div>
     </div>
@@ -619,6 +622,13 @@
         let isInteractiveSceneActive = false;
         let keysPressed = {}; // Track pressed keys for smooth movement
         
+        // Avatar sprite animation variables
+        let avatarSpriteElement;
+        let avatarAnimationFrame = 0; // 0 for frame 1, 1 for frame 2
+        let lastMoveDirection = 'front'; // 'front', 'back', 'left', 'right'
+        let animationFrameCounter = 0;
+        const animationFrameThreshold = 10; // How many frames before switching sprite
+        
         // Dummy hitbox variables
         let dummyHitboxes = [];
         let dummyHitboxSpawnInterval = null;
@@ -655,11 +665,13 @@
         // Interactive scene functions
         function initInteractiveScene() {
             isInteractiveSceneActive = true;
+            avatarSpriteElement = document.getElementById('avatarSprite');
             avatarPositionX = 50;
             avatarPositionY = 15; // Start lower, within the floor area
             currentBackgroundIndex = 0;
             updateBackground();
             updateAvatarPosition();
+            updateAvatarSprite(); // Initial sprite update
             
             // Add keyboard event listeners
             document.addEventListener('keydown', handleKeyDown);
@@ -719,6 +731,7 @@
             }
             
             updateAvatarPosition();
+            updateAvatarSprite(); // Update sprite based on movement
             checkBackgroundSwitch();
             
             // Continue the loop
@@ -730,10 +743,21 @@
             const hitbox = document.createElement('div');
             hitbox.className = 'dummy-hitbox';
             
+            // Create sprite image
+            const sprite = document.createElement('img');
+            sprite.className = 'dummy-sprite';
+            
             // Random spawn from left or right edge
             const spawnFromLeft = Math.random() < 0.5;
             const startX = spawnFromLeft ? -15 : 100; // Start off-screen
             const direction = spawnFromLeft ? 1 : -1; // 1 for right, -1 for left
+            
+            // Set sprite based on direction
+            if (direction === 1) {
+                sprite.src = 'assets/4/chibi/r1d.png'; // Moving right
+            } else {
+                sprite.src = 'assets/4/chibi/l1d.png'; // Moving left
+            }
             
             // Random Y position (0-20% from bottom, within floor area)
             const randomY = Math.random() * 20;
@@ -746,12 +770,16 @@
             const zIndex = Math.floor(21 - (randomY / 20) * 20);
             hitbox.style.zIndex = zIndex;
             
+            // Add sprite to hitbox
+            hitbox.appendChild(sprite);
+            
             // Add to interactive scene
             interactiveScene.appendChild(hitbox);
             
             // Store hitbox data
             const hitboxData = {
                 element: hitbox,
+                sprite: sprite,
                 x: startX,
                 y: randomY,
                 direction: direction,
@@ -800,6 +828,54 @@
         function updateAvatarPosition() {
             avatarHitbox.style.left = avatarPositionX + '%';
             avatarHitbox.style.bottom = avatarPositionY + '%';
+        }
+
+        // Avatar sprite animation functions
+        const avatarSprites = {
+            'front': ['assets/4/chibi/f1.png', 'assets/4/chibi/f2.png'],
+            'back': ['assets/4/chibi/b1.png', 'assets/4/chibi/b2.png'],
+            'left': ['assets/4/chibi/l1.png', 'assets/4/chibi/l2.png'],
+            'right': ['assets/4/chibi/r1.png', 'assets/4/chibi/r2.png']
+        };
+
+        function updateAvatarSprite() {
+            let currentDirection = 'front'; // Default to front/standby
+            let isMoving = false;
+
+            // Determine current direction based on pressed keys
+            if (keysPressed['ArrowLeft'] || keysPressed['a']) {
+                currentDirection = 'left';
+                isMoving = true;
+            } else if (keysPressed['ArrowRight'] || keysPressed['d']) {
+                currentDirection = 'right';
+                isMoving = true;
+            } else if (keysPressed['ArrowUp'] || keysPressed['w']) {
+                currentDirection = 'back';
+                isMoving = true;
+            } else if (keysPressed['ArrowDown'] || keysPressed['s']) {
+                currentDirection = 'front';
+                isMoving = true;
+            }
+
+            if (isMoving) {
+                // Animate walking by alternating frames
+                animationFrameCounter++;
+                if (animationFrameCounter >= animationFrameThreshold) {
+                    avatarAnimationFrame = 1 - avatarAnimationFrame; // Toggle between 0 and 1
+                    animationFrameCounter = 0;
+                }
+                lastMoveDirection = currentDirection;
+            } else {
+                // Not moving, show standby frame (first frame of last direction)
+                avatarAnimationFrame = 0; // Always show the first frame for standby
+                animationFrameCounter = 0;
+                currentDirection = lastMoveDirection; // Maintain last direction's standby pose
+            }
+
+            // Update the sprite image
+            if (avatarSpriteElement && avatarSprites[currentDirection]) {
+                avatarSpriteElement.src = avatarSprites[currentDirection][avatarAnimationFrame];
+            }
         }
 
         function updateBackground() {
