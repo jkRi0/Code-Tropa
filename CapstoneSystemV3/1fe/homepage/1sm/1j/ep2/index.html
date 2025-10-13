@@ -197,14 +197,25 @@
             position: absolute;
             bottom: 0;
             left: 50%;
-            width: 60px;
-            height: 80px;
+            width: 6rem;
+            height: 7rem;
             background-color: rgba(255, 0, 0, 0.3);
             border: 2px solid #ff0000;
             border-radius: 5px;
             transform: translateX(-50%);
             transition: left 0.2s ease-out;
             z-index: 10;
+        }
+
+        .dummy-hitbox {
+            position: absolute;
+            bottom: 0;
+            width: 6rem;
+            height: 7rem;
+            background-color: rgba(0, 255, 0, 0.3);
+            border: 2px solid green;
+            border-radius: 5px;
+            z-index: 5;
         }
 
         .avatar-sprite {
@@ -607,6 +618,11 @@
         let avatarPositionY = 50; // Percentage from bottom (0-100)
         let isInteractiveSceneActive = false;
         let keysPressed = {}; // Track pressed keys for smooth movement
+        
+        // Dummy hitbox variables
+        let dummyHitboxes = [];
+        let dummyHitboxSpawnInterval = null;
+        let dummyHitboxMoveInterval = null;
 
         // Challenge variables
         let currentQuestionIndex = 0;
@@ -651,6 +667,9 @@
             
             // Start movement loop
             startMovementLoop();
+            
+            // Start dummy hitbox system
+            startDummyHitboxSystem();
         }
 
         function cleanupInteractiveScene() {
@@ -658,6 +677,16 @@
             document.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('keyup', handleKeyUp);
             keysPressed = {};
+            
+            // Clean up dummy hitboxes
+            clearInterval(dummyHitboxSpawnInterval);
+            clearInterval(dummyHitboxMoveInterval);
+            dummyHitboxes.forEach(hitbox => {
+                if (hitbox.element && hitbox.element.parentNode) {
+                    hitbox.element.parentNode.removeChild(hitbox.element);
+                }
+            });
+            dummyHitboxes = [];
         }
 
         function handleKeyDown(event) {
@@ -696,6 +725,78 @@
             requestAnimationFrame(startMovementLoop);
         }
 
+        // Dummy hitbox functions
+        function spawnDummyHitbox() {
+            const hitbox = document.createElement('div');
+            hitbox.className = 'dummy-hitbox';
+            
+            // Random spawn from left or right edge
+            const spawnFromLeft = Math.random() < 0.5;
+            const startX = spawnFromLeft ? -15 : 100; // Start off-screen
+            const direction = spawnFromLeft ? 1 : -1; // 1 for right, -1 for left
+            
+            // Random Y position (0-20% from bottom, within floor area)
+            const randomY = Math.random() * 20;
+            
+            hitbox.style.left = startX + '%';
+            hitbox.style.bottom = randomY + '%';
+            
+            // Set z-index based on Y position (closer to bottom = higher z-index)
+            // Convert Y position to z-index: bottom (0%) = z-index 20, top (20%) = z-index 1
+            const zIndex = Math.floor(21 - (randomY / 20) * 20);
+            hitbox.style.zIndex = zIndex;
+            
+            // Add to interactive scene
+            interactiveScene.appendChild(hitbox);
+            
+            // Store hitbox data
+            const hitboxData = {
+                element: hitbox,
+                x: startX,
+                y: randomY,
+                direction: direction,
+                speed: 0.3 + Math.random() * 0.3 // Random speed between 0.3-0.6
+            };
+            
+            dummyHitboxes.push(hitboxData);
+        }
+
+        function moveDummyHitboxes() {
+            dummyHitboxes.forEach((hitbox, index) => {
+                // Move the hitbox horizontally
+                hitbox.x += hitbox.direction * hitbox.speed;
+                hitbox.element.style.left = hitbox.x + '%';
+                
+                // Update z-index based on current Y position (closer to bottom = higher z-index)
+                const zIndex = Math.floor(21 - (hitbox.y / 20) * 20);
+                hitbox.element.style.zIndex = zIndex;
+                
+                // Remove if out of viewport
+                if (hitbox.x < -20 || hitbox.x > 120) {
+                    if (hitbox.element && hitbox.element.parentNode) {
+                        hitbox.element.parentNode.removeChild(hitbox.element);
+                    }
+                    dummyHitboxes.splice(index, 1);
+                }
+            });
+        }
+
+        function startDummyHitboxSystem() {
+            // Spawn dummy hitboxes every 2-4 seconds
+            dummyHitboxSpawnInterval = setInterval(() => {
+                if (isInteractiveSceneActive) {
+                    spawnDummyHitbox();
+                }
+            }, 2000 + Math.random() * 2000);
+            
+            // Move dummy hitboxes every frame
+            dummyHitboxMoveInterval = setInterval(() => {
+                if (isInteractiveSceneActive) {
+                    moveDummyHitboxes();
+                }
+            }, 16); // ~60 FPS
+        }
+
         function updateAvatarPosition() {
             avatarHitbox.style.left = avatarPositionX + '%';
             avatarHitbox.style.bottom = avatarPositionY + '%';
@@ -714,6 +815,18 @@
         }
 
         function checkBackgroundSwitch() {
+            // Check if hitbox reached center top of floor on background 5 (index 4)
+            if (currentBackgroundIndex === 4 && avatarPositionX >= 45 && avatarPositionX <= 55 && avatarPositionY >= 18 && avatarPositionY <= 22) {
+                // Proceed to next scene
+                console.log("Hitbox reached center top of floor on background 5 - proceeding to next scene");
+                cleanupInteractiveScene();
+                sceneNextText.classList.remove('show');
+                sceneNextText.classList.remove('highlight');
+                currentSceneIndex++;
+                showScene(currentSceneIndex);
+                return;
+            }
+            
             // Switch background when avatar reaches edges
             if (avatarPositionX <= 0 && currentBackgroundIndex > 0) {
                 // Move to previous background, spawn on the right side
