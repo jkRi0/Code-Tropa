@@ -20,7 +20,7 @@
 }
 
 .temporary-selected .inner1-2 {
-    background-color: rgb(65, 62, 62) !important; /* Gray highlight for temporary selection */
+    background-color: #49af5f !important; 
     color: white !important;
 }
 
