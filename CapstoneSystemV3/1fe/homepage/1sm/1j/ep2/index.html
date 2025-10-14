@@ -226,6 +226,30 @@
             image-rendering: pixelated;
         }
 
+        .objective-tag {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-family: 'Arial', sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 2px solid #2E7D32;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .objective-tag.show {
+            opacity: 1;
+        }
+
         .avatar-sprite {
             width: 100%;
             height: 100%;
@@ -527,7 +551,7 @@
             <div class="challenge-buttons">
                 <button class="challenge-btn end-episode-btn" id="endEpisodeBtn">END EPISODE 2</button>
             </div>
-        </div>
+            </div>
     </div>
 
     <div class="chapter-intro-screen" id="chapterIntroScreen">
@@ -546,6 +570,8 @@
         
         <!-- Interactive Scene -->
         <div class="interactive-scene" id="interactiveScene" style="display: none;">
+            <div class="objective-tag" id="objectiveTag">Objective: Go to 'Tindahan'</div>
+            
             <div class="background-layer active" id="background1" style="background-image: url('assets/4/backgoungs/1.png');"></div>
             <div class="background-layer inactive" id="background2" style="background-image: url('assets/4/backgoungs/2.png');"></div>
             <div class="background-layer inactive" id="background3" style="background-image: url('assets/4/backgoungs/3.png');"></div>
@@ -570,7 +596,7 @@
         const sceneTextOverlay = document.getElementById('sceneTextOverlay');
         const subtitleContainer = document.getElementById('subtitleContainer');
         const sceneNextText = document.getElementById('sceneNextText');
-        
+
         // Interactive scene elements
         const interactiveScene = document.getElementById('interactiveScene');
         const avatarHitbox = document.getElementById('avatarHitbox');
@@ -584,31 +610,30 @@
 
 
         const scenes = [
-            // { type: 'video', src: 'assets/1.mp4', subtitle: '' },
-            // { type: 'video', src: 'assets/2.mp4', subtitle: [
-            //     { text: "Axle: Hala push push na!", time: 0 },
-            //     { text: "Axle's mother: Axle halika ka dito may ipapabili ako, hindi ung puro laro ka lang dyaan!", time: 4000 }
-            // ]},
-            // { type: 'video', src: 'assets/3.mp4', subtitle: 'Axle: Opo nay, eto na po' },
+            { type: 'video', src: 'assets/1.mp4', subtitle: '' },
+            { type: 'video', src: 'assets/2.mp4', subtitle: [
+                { text: "Axle: Hala push push na!", time: 0 },
+                { text: "Axle's mother: Axle halika ka dito may ipapabili ako, hindi ung puro laro ka lang dyaan!", time: 4000 }
+            ]},
+            { type: 'video', src: 'assets/3.mp4', subtitle: 'Axle: Opo nay, eto na po' },
             { type: 'interactive', src: 'assets/4.mp4', subtitle: 'Use arrow keys to move around!' },
-            // { type: 'video', src: 'assets/5.mp4', subtitle: 'Maaga pa lang ay gising na ang buong barangay. Ang bawat sulok ng kalsada ay may kulay at galaw... parang buong baryo ay sabay-sabay nagising.' },
-            // { type: 'video', src: 'assets/6.mp4', subtitle: 'Lumabas si axle at sinalubong ni Tita Melba' },
-            // { type: 'video', src: 'assets/7.mp4', subtitle: 'Tita Melba: Ay, gising na ang binata! Axle, kumain ka na dito doon sa pista.' },
-            // { type: 'video', src: 'assets/8.mp4', subtitle: 'Axle: Ah.. sige lang po!'},
-            // { type: 'video', src: 'assets/9.mp4', subtitle: 'Axle: Kuya Justin! Andito ka pala. Kakauwi mo lang ba?' },
-            // { type: 'video', src: 'assets/9.mp4', subtitle: 'Justin: Oo, kararating lang kahapon. Tinulungan ko lang sila mag-setup ng sound system kanina.' },
-            // { type: 'video', src: 'assets/10.mp4', subtitle: 'Axle: Ah, Kuya… tanong ko lang. Sa course ko kasi may Java agad. Eh… honestly, wala talaga akong alam sa programming. Gusto ko lang sana mag-practice habang bakasyon...' },
-            // { type: 'video', src: 'assets/11.mp4', subtitle: 'Justin: Ganon? Sige, may dala akong laptop.' },
-            // { type: 'image', src: 'assets/12.png', subtitle: 'Justin: Gusto mo, turuan kita basics habang nagpapahinga tayo? Basic syntax muna.' },
-            // { type: 'image', src: 'assets/12.png', subtitle: 'Axle: Game ako d’yan! Baka sakto, magets ko rin sa wakas.' },
-            // { type: 'image', src: 'assets/laptop.png', subtitle: 'Justin: Okay, ganito muna. Sa Java, ang pinaka-basic na kailangan mong tandaan ay yung structure. Para kang gumagawa ng script na sinusunod ng computer.' },
-            // { type: 'image', src: 'assets/laptop.png', content: '<pre>public class HelloWorld {<br><br>}</pre>', subtitle: 'Justin: Ito ang "class". Parang container ng buong program mo. Ang pangalan nito dapat tugma sa filename.'  },
-            // { type: 'image', src: 'assets/laptop.png', content: 'public class HelloWorld {<br><pre>&emsp;public static void main(String[] args) {<br><br>&emsp;}</pre><br>}', subtitle: 'Justin: "main" naman ang pinaka-entrance. Pag run mo ng Java program, ito agad ang hinahanap ng computer.'  },
-            // { type: 'image', src: 'assets/laptop.png', content: 'public class HelloWorld {<br>&emsp;public static void main(String[] args) {<br><pre>&emsp;&emsp;System.out.println("Hello, Axle!");</pre><br>&emsp;<br>&emsp;}<br>}', 
-            // subtitle: 'Justin: "System.out.println" naman ang ginagamit para makapag print.'  },
-            // { type: 'image', src: 'assets/laptop.png', content: 'public class HelloWorld {<br>&emsp;public static void main(String[] args) {<br>&emsp;&emsp;System.out.println("Hello, Axle!");<br>&emsp;<br>&emsp;}<br>}', 
-            // subtitle: 'Justin: Kailangan ng semicolon “;” kada statement, parang period. At yung mga braces “{}” parang box, nagsasabi kung saan nagsisimula at nagtatapos ang block ng code.'  },
-            // { type: 'image', src: 'assets/12.png', subtitle: 'Axle: Sige kuya maraming salamat. Sa susunod uli' },
+            { type: 'video', src: 'assets/5.mp4', subtitle: '' },
+            { type: 'video', src: 'assets/6.mp4', subtitle: 'Axle: Tao po pabili po!' },
+            { type: 'video', src: 'assets/7.mp4', subtitle: 'Ate Kim: Hello ano sayo?' },
+            { type: 'video', src: 'assets/8.mp4', subtitle: 'Axle: Eto po'},
+            { type: 'video', src: 'assets/9.mp4', subtitle: 'Ate Kim: Sure! Sandali lang... Uy, Axle, ‘di ba ikaw yung pamangkin ni Tita Melba?' },
+            { type: 'video', src: 'assets/10.mp4', subtitle: 'Axle: Opo! Eh Ate... BSIT po ba kayo??' },
+            { type: 'video', src: 'assets/11.mp4', subtitle: 'Ate Kim: Oo naman! Graduate lang recently. Gusto mo, turuan kita habang sinasako ko ‘tong asukal?' },
+            { type: 'image', src: 'assets/12.png', subtitle: 'Ate Kim: Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.' },
+            { type: 'image', src: 'assets/12.png', content: '<pre>int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;</pre>', subtitle: 'Ate Kim: Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.' },
+            { type: 'image', src: 'assets/12.png', content: '<pre><b><u>int sukaQuantity = 3;</u></b><br>String brandName = "Silver Swan";<br>boolean mayStock = true;</pre>', subtitle: 'Ate Kim: int para sa bilang kung ilang piraso ng suka.' },
+            { type: 'image', src: 'assets/12.png', content: '<pre>int sukaQuantity = 3;<br><b><u>String brandName = "Silver Swan";</u></b><br>boolean mayStock = true;</pre>', subtitle: 'Ate Kim: String para sa mga pangalan.' },
+            { type: 'image', src: 'assets/12.png', content: '<pre>int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br><b><u>boolean mayStock = true;</u></b></pre>', subtitle: 'Ate Kim: At boolean kung meron o wala o nagsasagot ng true or false.' },
+            { type: 'image', src: 'assets/12.png', content: '<pre>int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;</pre>', subtitle: 'Axle: So parang... bawat variable, may type. Hindi puwedeng halo-halo lang.' },
+            { type: 'image', src: 'assets/12.png', content: '<pre>int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;</pre>', subtitle: 'Ate Kim: Tama! Parang ‘di mo pwedeng isulat ang ‘SkyFlakes’ sa lalagyan ng numbers. Mali ‘yon. Oh bale tatlong suka ay 13 isa, 39 pesos lahat' },
+            { type: 'video', src: 'assets/6.mp4', subtitle: 'Axle: Ate Kim, salamat sa lesson ah. Eto na po bayad.' },
+            { type: 'video', src: 'assets/7.mp4', subtitle: 'Ate Kim: Walang anuman! Next time punta ka ulit, tapos data types naman tayo ulit. Try natin with float at char.' },
+
         ];
         let currentSceneIndex = 0;
         let currentSubtitleIndex = 0; // New: to track current subtitle sentence
@@ -673,6 +698,12 @@
             updateAvatarPosition();
             updateAvatarSprite(); // Initial sprite update
             
+            // Show objective tag
+            const objectiveTag = document.getElementById('objectiveTag');
+            if (objectiveTag) {
+                objectiveTag.classList.add('show');
+            }
+            
             // Add keyboard event listeners
             document.addEventListener('keydown', handleKeyDown);
             document.addEventListener('keyup', handleKeyUp);
@@ -689,6 +720,12 @@
             document.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('keyup', handleKeyUp);
             keysPressed = {};
+            
+            // Hide objective tag
+            const objectiveTag = document.getElementById('objectiveTag');
+            if (objectiveTag) {
+                objectiveTag.classList.remove('show');
+            }
             
             // Clean up dummy hitboxes
             clearInterval(dummyHitboxSpawnInterval);
@@ -1076,7 +1113,7 @@
                         showTimedSubtitles(scene.subtitle);
                     } else {
                         // Regular array subtitles
-                        subtitleContainer.textContent = scene.subtitle.join('\n');
+                    subtitleContainer.textContent = scene.subtitle.join('\n');
                     }
                 } else {
                     subtitleContainer.textContent = scene.subtitle;
