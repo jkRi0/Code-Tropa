@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+(function() {
     const tipsModal = document.getElementById('tipsModal');
     const showTipsBtn = document.getElementById('showTipsBtn');
     const closeTipsBtn = document.querySelector('.close-tips');
@@ -717,93 +717,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Show tips modal
-    showTipsBtn.addEventListener('click', function() {
-        const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
-        if (selectedData) {
-            selectedLevel = selectedData.level;
-            selectedDifficulty = selectedData.difficulty.toLowerCase();
-            
-            const levelData = tipsData[selectedLevel];
-            if (levelData && levelData[selectedDifficulty]) {
-                currentQuestion = levelData[selectedDifficulty];
-                displayQuestion();
-                tipsModal.style.display = 'block';
-            } else {
-                alert('No tips available for this level and difficulty combination.');
-            }
-        } else {
-            alert('No challenge data found. Please select a challenge first.');
-        }
-    });
-
-    // Close tips modal
-    closeTipsBtn.addEventListener('click', function() {
-        tipsModal.style.display = 'none';
-        resetModal();
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
-        if (event.target === tipsModal) {
-            tipsModal.style.display = 'none';
-            resetModal();
-        }
-    });
-
-    // Submit answer
-    submitAnswerBtn.addEventListener('click', function() {
-        if (currentAnswer) {
-            const isCorrect = currentAnswer === currentQuestion.correctAnswer;
-            displayFeedback(isCorrect);
-        } else {
-            alert('Please select an answer before submitting.');
-        }
-    });
-
-    function displayQuestion() {
-        tipQuestionDiv.innerHTML = `<h3>${currentQuestion.question}</h3>`;
-        
-        const optionsHtml = Object.entries(currentQuestion.options).map(([key, value]) => 
-            `<label><input type="radio" name="answer" value="${key}"> ${key.toUpperCase()}. ${value}</label>`
-        ).join('<br>');
-        
-        tipOptionsDiv.innerHTML = optionsHtml;
-        
-        // Add event listeners to radio buttons
-        const radioButtons = tipOptionsDiv.querySelectorAll('input[type="radio"]');
-        radioButtons.forEach(radio => {
-            radio.addEventListener('change', function() {
-                currentAnswer = this.value;
-            });
-        });
-        
-        // Reset feedback and content
-        tipFeedbackDiv.innerHTML = '';
-        tipContentDiv.innerHTML = '';
-        submitAnswerBtn.style.display = 'block';
-    }
-
-    function displayFeedback(isCorrect) {
-        if (isCorrect) {
-            tipFeedbackDiv.innerHTML = '<p style="color: green;">✓ Correct! Well done!</p>';
-        } else {
-            tipFeedbackDiv.innerHTML = '<p style="color: red;">✗ Incorrect. The correct answer is ' + 
-                currentQuestion.correctAnswer.toUpperCase() + '.</p>';
-        }
-        
-        tipContentDiv.innerHTML = `<div class="tip-content"><h4>💡 Tip:</h4><p>${currentQuestion.tip}</p></div>`;
-        submitAnswerBtn.style.display = 'none';
-    }
-
-    function resetModal() {
-        currentQuestion = null;
-        currentAnswer = null;
-        tipQuestionDiv.innerHTML = '';
-        tipOptionsDiv.innerHTML = '';
-        tipFeedbackDiv.innerHTML = '';
-        tipContentDiv.innerHTML = '';
-        submitAnswerBtn.style.display = 'block';
-    }
-});
+    // Expose tips data globally for the shared UI and exit early to avoid duplicate handlers
+    window.tipsData = tipsData;
+    window.dispatchEvent(new Event('tipsDataLoaded'));
+    return;
+})();
 

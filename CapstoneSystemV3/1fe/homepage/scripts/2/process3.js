@@ -9,7 +9,7 @@ export function process3(clickedDiv, level) {
     // Change style of clicked div's inner1
     const targetInner1 = clickedDiv.querySelector('.inner1-3');
     if (targetInner1) {
-        targetInner1.style.backgroundColor = "rgb(65, 62, 62)"; // or any other style
+        targetInner1.style.backgroundColor = "#49af5f"; // or any other style
     }
 
     //FOR SHOWING EPISODES
