@@ -763,3 +763,93 @@ body {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* Pass/Fail Status Styles */
+.pass-fail-status {
+    margin: 15px 0;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.pass-fail-status.passed {
+    background-color: #d4edda;
+    color: #155724;
+    border: 2px solid #c3e6cb;
+}
+
+.pass-fail-status.failed {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 2px solid #f5c6cb;
+}
+
+/* Scoring Actions Styles */
+.scoring-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.scoring-actions button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.scoring-actions .btn-exit {
+    background-color: #6c757d;
+    color: white;
+}
+
+.scoring-actions .btn-exit:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.scoring-actions .btn-retry {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.scoring-actions .btn-retry:hover {
+    background-color: #e0a800;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.scoring-actions .btn-next-level {
+    background-color: #28a745;
+    color: white;
+}
+
+.scoring-actions .btn-next-level:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Responsive adjustments for scoring actions */
+@media (max-width: 768px) {
+    .scoring-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .scoring-actions button {
+        width: 100%;
+        max-width: 200px;
+    }
+}

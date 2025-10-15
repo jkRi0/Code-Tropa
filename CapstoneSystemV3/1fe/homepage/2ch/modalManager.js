@@ -106,15 +106,130 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to display scoring results
     function showScoringModal(scoringData) {
-        finalTotalScoreSpan.textContent = scoringData.totalScore;
+        const PASSING_SCORE = 80;
+        const totalScore = scoringData.totalScore;
+        const hasPassed = totalScore >= PASSING_SCORE;
+        
+        // Update score display
+        finalTotalScoreSpan.textContent = totalScore;
+        
+        // Update pass/fail status
+        const passFailStatus = document.getElementById('passFailStatus');
+        passFailStatus.className = `pass-fail-status ${hasPassed ? 'passed' : 'failed'}`;
+        passFailStatus.textContent = hasPassed ? '🎉 PASSED!' : '❌ FAILED';
+        
+        // Update criteria scores display
         criteriaScoresDisplay.innerHTML = '';
         for (const criterion in scoringData.criteriaScores) {
             const scoreItem = document.createElement('div');
             scoreItem.innerHTML = `<strong>${criterion.charAt(0).toUpperCase() + criterion.slice(1)}:</strong> ${scoringData.criteriaScores[criterion]}%`;
             criteriaScoresDisplay.appendChild(scoreItem);
         }
+        
+        // Update action buttons based on pass/fail status
+        updateScoringActions(hasPassed);
+        
         geminiAiFeedbackDiv.textContent = 'Generating AI feedback...'; // Placeholder
         scoringModal.style.display = 'flex'; // Use flex to center content
+    }
+
+    // Function to update scoring action buttons based on pass/fail status
+    function updateScoringActions(hasPassed) {
+        const scoringActions = document.getElementById('scoringActions');
+        scoringActions.innerHTML = '';
+        
+        if (hasPassed) {
+            // Passed: Show Exit and Next Level buttons
+            const exitBtn = document.createElement('button');
+            exitBtn.className = 'btn-exit';
+            exitBtn.textContent = 'Exit';
+            exitBtn.onclick = exitToHomepage;
+            
+            const nextLevelBtn = document.createElement('button');
+            nextLevelBtn.className = 'btn-next-level';
+            nextLevelBtn.textContent = 'Next Level';
+            nextLevelBtn.onclick = goToNextLevel;
+            
+            scoringActions.appendChild(exitBtn);
+            scoringActions.appendChild(nextLevelBtn);
+        } else {
+            // Failed: Show Exit and Retry buttons
+            const exitBtn = document.createElement('button');
+            exitBtn.className = 'btn-exit';
+            exitBtn.textContent = 'Exit';
+            exitBtn.onclick = exitToHomepage;
+            
+            const retryBtn = document.createElement('button');
+            retryBtn.className = 'btn-retry';
+            retryBtn.textContent = 'Retry';
+            retryBtn.onclick = retryChallenge;
+            
+            scoringActions.appendChild(exitBtn);
+            scoringActions.appendChild(retryBtn);
+        }
+    }
+
+    // Function to exit to homepage
+    function exitToHomepage() {
+        // Close the scoring modal
+        scoringModal.style.display = 'none';
+        // Redirect to homepage
+        window.location.href = '../index.html';
+    }
+
+    // Function to go to next level
+    function goToNextLevel() {
+        // Close the scoring modal
+        scoringModal.style.display = 'none';
+        
+        // Get current challenge data
+        const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
+        if (selectedData && selectedData.level) {
+            const currentLevelNumber = parseInt(selectedData.level.replace('lev', ''));
+            const nextLevelNumber = currentLevelNumber + 1;
+            const nextLevel = `lev${nextLevelNumber}`;
+            
+            // Check if next level exists (you might want to implement level validation)
+            // For now, we'll assume levels go up to a certain number
+            if (nextLevelNumber <= 10) { // Assuming max 10 levels, adjust as needed
+                // Update the selected challenge data
+                const updatedData = {
+                    ...selectedData,
+                    level: nextLevel
+                };
+                localStorage.setItem('selectedChallenge', JSON.stringify(updatedData));
+                
+                // Reload the page with the new level
+                window.location.reload();
+            } else {
+                // No more levels, go to homepage
+                alert('Congratulations! You have completed all available levels!');
+                window.location.href = '../index.html';
+            }
+        } else {
+            // Fallback to homepage if no challenge data
+            window.location.href = '../index.html';
+        }
+    }
+
+    // Function to retry the current challenge
+    function retryChallenge() {
+        // Close the scoring modal
+        scoringModal.style.display = 'none';
+        
+        // Clear the code editor content
+        if (window.monacoEditor) {
+            window.monacoEditor.setValue('');
+        }
+        
+        // Clear the output terminal
+        const outputTerminal = document.getElementById('outputTerminal');
+        if (outputTerminal) {
+            outputTerminal.textContent = 'Output/terminal';
+        }
+        
+        // Optionally show a message
+        console.log('Challenge retry initiated');
     }
 
     // Functions to manage loading animation
