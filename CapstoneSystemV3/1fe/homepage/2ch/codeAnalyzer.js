@@ -404,6 +404,7 @@ function compileJavaCode(code, difficulty) {
     // ================================
     function simulateRuntime(code) {
         const printRegex = /System\.out\.(println|print)\s*\((.*?)\)\s*;/g;
+        const printfRegex = /System\.out\.printf\s*\(("[\s\S]*?")\s*(?:,\s*[\s\S]*?)?\)\s*;/g; // capture first string literal only
         let output = "";
         let match;
         const symbolTable = {}; // Initialize symbol table
@@ -460,6 +461,8 @@ function compileJavaCode(code, difficulty) {
                         result += trimmedPart;
                     }
                 }
+                // Normalize whitespace in output for comparison
+                result = result.replace(/\t/g, "    ").replace(/\s+/g, " ").trim();
                 output += result + (method === "println" ? "\n" : "");
             } catch (e) {
                 allIssues.push({
@@ -470,6 +473,26 @@ function compileJavaCode(code, difficulty) {
                     line: getLineOfIndex(code, match.index),
                     excerpt: match[0].trim()
                 });
+            }
+        }
+        // Handle printf formatting (basic): use first string literal and replace %n with newline
+        const printfRegex2 = /System\.out\.printf\s*\(("[\s\S]*?")\s*(?:,\s*[\s\S]*?)?\)\s*;/g;
+        while ((match = printfRegex2.exec(code)) !== null) {
+            try {
+                let fmt = match[1];
+                // strip quotes
+                if (fmt.startsWith('"') && fmt.endsWith('"')) {
+                    fmt = fmt.substring(1, fmt.length - 1);
+                }
+                // replace %n with newline and %% with %
+                fmt = fmt.replace(/%n/g, "\n").replace(/%%/g, "%");
+                // Replace format specifiers with placeholder values for basic simulation
+                fmt = fmt.replace(/%s/g, "Vinegar").replace(/%d/g, "50").replace(/%.2f/g, "25.50");
+                // Normalize whitespace in printf output too
+                fmt = fmt.replace(/\t/g, "    ").replace(/\s+/g, " ").trim();
+                output += fmt; // ignore additional args for now
+            } catch (e) {
+                // ignore printf errors in simulation
             }
         }
         return output;
@@ -508,16 +531,28 @@ function compileJavaCode(code, difficulty) {
 
     if (allIssues.length === 0) {
         programOutput = simulateRuntime(code);
+        console.log('=== SOLUTION LOADING DEBUG ===');
+        console.log('Difficulty:', difficulty);
+        console.log('window.tahoSolutions exists:', !!window.tahoSolutions);
+        console.log('Available difficulties:', window.tahoSolutions ? Object.keys(window.tahoSolutions) : 'none');
+        console.log('Solution for difficulty:', window.tahoSolutions ? window.tahoSolutions[difficulty] : 'none');
+        
         if (difficulty && window.tahoSolutions && window.tahoSolutions[difficulty]) {
             const solutionCode = window.tahoSolutions[difficulty];
+            console.log('Solution code loaded:', solutionCode);
             // For now, let's re-parse the solution code to get its AST for comparison.
             // In a real scenario, solutions might have pre-computed ASTs.
             const solutionAST = grammarAnalysis(solutionCode, 'java'); // This will also log the solution AST
             if (solutionAST === null) {
                 console.warn('Solution grammar analysis skipped due to missing ANTLR4 dependencies');
             }
-            scoringResult = calculateScore(code, solutionCode, difficulty);
+            const solutionOutput = simulateRuntime(solutionCode);
+            console.log('Solution output:', solutionOutput);
+            scoringResult = calculateScore(code, solutionCode, difficulty, programOutput, solutionOutput);
+        } else {
+            console.log('No solution found for difficulty:', difficulty);
         }
+        console.log('=== END SOLUTION LOADING DEBUG ===');
     }
 
     return {
@@ -682,7 +717,8 @@ function compileCppCode(code, difficulty) {
             if (solutionAST === null) {
                 console.warn('C++ solution grammar analysis skipped due to missing ANTLR4 dependencies');
             }
-            scoringResult = calculateScore(code, solutionCode, difficulty);
+            const solutionOutput = simulateCppRuntime(solutionCode);
+            scoringResult = calculateScore(code, solutionCode, difficulty, programOutput, solutionOutput);
             console.log('C++ scoring result:', scoringResult);
         } else {
             console.log('C++ scoring not available - no solutions found for difficulty:', difficulty);
@@ -834,7 +870,8 @@ function compileCsharpCode(code, difficulty) {
             if (solutionAST === null) {
                 console.warn('C# solution grammar analysis skipped due to missing ANTLR4 dependencies');
             }
-            scoringResult = calculateScore(code, solutionCode, difficulty);
+            const solutionOutput = simulateCsharpRuntime(solutionCode);
+            scoringResult = calculateScore(code, solutionCode, difficulty, programOutput, solutionOutput);
             console.log('C# scoring result:', scoringResult);
         } else {
             console.log('C# scoring not available - no solutions found for difficulty:', difficulty);
@@ -932,7 +969,22 @@ public class Test {
 // SCORING FUNCTIONS
 // ================================
 function normalizeCode(code) {
-    return code.replace(/\s+/g, ' ').trim();
+    // Remove block comments
+    const withoutBlockComments = code.replace(/\/\*[\s\S]*?\*\//g, '');
+    // Remove line comments
+    const withoutLineComments = withoutBlockComments.replace(/\/\/.*$/gm, '');
+    // Collapse whitespace
+    const collapsedWhitespace = withoutLineComments.replace(/\s+/g, ' ').trim();
+    return collapsedWhitespace;
+}
+
+function normalizeCodeForStrictCompare(code) {
+    // A stricter normalization used for equality checks: remove comments and all whitespace
+    return code
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/\/\/.*$/gm, '')
+        .replace(/\s+/g, '')
+        .trim();
 }
 
 function compareASTs(submittedTree, solutionTree) {
@@ -957,16 +1009,42 @@ function containsPrintStatement(code, expectedOutput) {
     return code.includes(`System.out.println("${expectedOutput}")`) || code.includes(`System.out.print("${expectedOutput}")`);
 }
 
-function calculateScore(submittedCode, solutionCode, difficulty) {
+function calculateScore(submittedCode, solutionCode, difficulty, submittedOutput, solutionOutput) {
     const rubrics = window.rubricsCriteria[difficulty];
     let score = 0;
     let criteriaScores = {};
 
+    // Debug logging
+    console.log('=== SCORING DEBUG ===');
+    console.log('Difficulty:', difficulty);
+    console.log('Submitted code:', submittedCode);
+    console.log('Solution code:', solutionCode);
+    console.log('Submitted output:', submittedOutput);
+    console.log('Solution output:', solutionOutput);
+    
+    const normalizedSubmitted = normalizeCodeForStrictCompare(submittedCode);
+    const normalizedSolution = normalizeCodeForStrictCompare(solutionCode);
+    console.log('Normalized submitted:', normalizedSubmitted);
+    console.log('Normalized solution:', normalizedSolution);
+    console.log('Code match:', normalizedSubmitted === normalizedSolution);
+    console.log('Output match:', submittedOutput?.trim() === solutionOutput?.trim());
+
     // Accuracy
     let accuracyScore = 0;
-    // For now, a very simple accuracy check: exact match of normalized code
-    if (normalizeCode(submittedCode) === normalizeCode(solutionCode)) {
+    // First try: exact match of strictly normalized code (ignore whitespace/comments)
+    if (normalizeCodeForStrictCompare(submittedCode) === normalizeCodeForStrictCompare(solutionCode)) {
         accuracyScore = rubrics.accuracy.weight;
+        console.log('Accuracy: Code match - full points');
+    } else if (typeof submittedOutput === 'string' && typeof solutionOutput === 'string') {
+        // Fallback: runtime output equivalence after trimming
+        if (submittedOutput.trim() === solutionOutput.trim()) {
+            accuracyScore = rubrics.accuracy.weight;
+            console.log('Accuracy: Output match - full points');
+        } else {
+            console.log('Accuracy: No match - 0 points');
+        }
+    } else {
+        console.log('Accuracy: No valid comparison - 0 points');
     }
     // More sophisticated accuracy checks would involve AST comparison, output comparison, etc.
     criteriaScores.accuracy = accuracyScore;
@@ -995,6 +1073,10 @@ function calculateScore(submittedCode, solutionCode, difficulty) {
     criteriaScores.time = timeScore;
     score += timeScore;
 
+    console.log('Final score:', score);
+    console.log('Criteria scores:', criteriaScores);
+    console.log('=== END SCORING DEBUG ===');
+    
     return { totalScore: score, criteriaScores: criteriaScores };
 }
 

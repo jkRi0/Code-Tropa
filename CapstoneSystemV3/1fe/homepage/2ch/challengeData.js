@@ -6,7 +6,7 @@ function switchLanguage(language) {
     removeExistingScripts();
     
     // Wait a bit for scripts to be fully removed before loading new ones
-    setTimeout(() => {
+    setTimeout(async () => {
         // Get current level from localStorage
         const selectedData = localStorage.getItem('selectedChallenge');
         if (selectedData) {
@@ -386,6 +386,37 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
             // Get solution code for AI feedback
             const solutionCode = window.tahoSolutions[difficulty];
             
+            // Save progress (upsert by higher score)
+            try {
+                // Determine current level number from saved selection
+                const levelStr = (selectedData && selectedData.level) ? selectedData.level : 'lev1';
+                const levelNum = parseInt(levelStr.replace('lev', ''), 10) || 1;
+                const points = Math.round(result.scoring.totalScore);
+                
+                console.log('=== SAVING PROGRESS DEBUG ===');
+                console.log('Level string:', levelStr);
+                console.log('Level number:', levelNum);
+                console.log('Difficulty:', difficulty);
+                console.log('Points:', points);
+                console.log('Code length:', code.length);
+                
+                fetch('../../../2be/save_challenge_progress.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `difficulty=${encodeURIComponent(difficulty)}&level=${encodeURIComponent(levelNum)}&points=${encodeURIComponent(points)}&code=${encodeURIComponent(code)}`
+                }).then(r => {
+                    console.log('Save progress response status:', r.status);
+                    return r.json();
+                }).then(data => {
+                    console.log('Save progress response data:', data);
+                }).catch(err => {
+                    console.error('Save progress network error:', err);
+                });
+                console.log('=== END SAVING PROGRESS DEBUG ===');
+            } catch (e) {
+                console.error('Error saving progress:', e);
+            }
+
             // Get AI Feedback
             window.getGeminiFeedback(code, solutionCode, difficulty, result.scoring).then(feedback => {
                 document.getElementById('geminiAiFeedback').textContent = feedback;
