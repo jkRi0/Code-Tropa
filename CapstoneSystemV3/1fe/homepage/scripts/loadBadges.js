@@ -7,7 +7,7 @@ export function refreshBadges() {
                 badgesContainer.innerHTML = ''; // Clear existing badges
                 if (data.badges && data.badges.length > 0) {
                     // Skip the first element as it's for verification
-                    const badgesToDisplay = data.badges.slice(1);
+                    const badgesToDisplay = data.badges;
 
                     badgesToDisplay.forEach(badge => {
                         if (badge !== "") { // Exclude empty badge strings

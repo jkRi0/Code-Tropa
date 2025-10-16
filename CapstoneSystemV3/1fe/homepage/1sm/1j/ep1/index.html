@@ -176,7 +176,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0);
             color: white;
             padding: 30px;
             /* border-radius: 15px; */
@@ -360,6 +360,99 @@
             margin-top: 30px;
         }
 
+        /* Story mode buttons styled like challenges modal buttons */
+        .story-btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .story-btn {
+            height: 50px;
+            display: flex;
+            background-color: rgba(249, 201, 143, 0);
+            justify-content: center;
+            transition: 0.3s ease;
+            align-items: center;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+        }
+
+        .story-btn-inner {
+            height: 80%;
+            width: 100%;
+            background-color: rgba(127, 255, 212, 0);
+            position: relative;
+            padding: 4px;
+            margin-left: 30px;
+            margin-right: 30px;
+            border-radius: 8px;
+        }
+
+        .story-btn-top-border {
+            width: 100%;
+            height: 2px;
+            background-color: #ffc107;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .story-btn-bottom-border {
+            width: 100%;
+            height: 2px;
+            background-color: #ffc107;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .story-btn-text {
+            width: 100%;
+            height: 100%;
+            background-color: rgb(0, 0, 0);
+            text-align: center;
+            align-content: center;
+            font-size: 1rem;
+            color: white;
+            position: relative;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .story-btn:hover {
+            scale: 1.1;
+        }
+
+        /* Exit button styling */
+        .exit-btn .story-btn-top-border,
+        .exit-btn .story-btn-bottom-border {
+            background-color: #6c757d;
+        }
+
+        .exit-btn .story-btn-text {
+            background-color: #6c757d;
+        }
+
+        /* Action button styling (retry/next) */
+        .action-btn .story-btn-top-border,
+        .action-btn .story-btn-bottom-border {
+            background-color: #ffc107;
+        }
+
+        .action-btn .story-btn-text {
+            background-color: #000;
+            color: white;
+        }
+
         .challenge-btn {
             padding: 15px 35px;
             border: none;
@@ -420,6 +513,82 @@
 
         .end-episode-btn:hover {
             background-color: #F57C00;
+        }
+
+        .exit-btn {
+            background-color: #f44336;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            margin-left: 20px;
+        }
+
+        .exit-btn:hover {
+            background-color: #da190b;
+        }
+
+        /* Badge display styling */
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            padding: 20px;
+        }
+
+        .badge-display {
+            background: linear-gradient(135deg, #dfe5ff 0%, #b5a7c3 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .badge-image {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+            animation: badgeGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes badgeGlow {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .badge-text h3 {
+            color: #000000;
+            font-size: 1.8em;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .badge-text p {
+            color: #000000;
+            font-size: 1.2em;
+            margin: 0 0 20px 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .badge-ok-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .badge-ok-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
         }
 
         /* Responsive font sizes for mobile */
@@ -489,7 +658,23 @@
             <div class="results-container" id="resultsContainer" style="display: none;">
                 <div class="score-display" id="scoreDisplay"></div>
                 <div class="points-earned" id="pointsEarned"></div>
-                <button class="challenge-btn end-episode-btn" id="endEpisodeBtn">END EPISODE 1 - GAIN POINTS</button>
+                
+                <!-- Badge display for passed challenges -->
+                <div class="badge-container" id="badgeContainer" style="display: none;">
+                    <div class="badge-display">
+                        <img src="../../../../assets/b1.png" alt="Episode 1 Badge" class="badge-image">
+                        <div class="badge-text">
+                            <h3>CONGRATULATIONS!</h3>
+                            <p>You've earned the Episode 1 Badge!</p>
+                        </div>
+                        <!-- <button class="challenge-btn badge-ok-btn" id="badgeOkBtn">OK</button> -->
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+                    <button class="challenge-btn end-episode-btn" id="endEpisodeBtn">END EPISODE 1 - GAIN POINTS</button>
+                    <button class="challenge-btn exit-btn" id="exitBtn">EXIT TO HOMEPAGE</button>
+                </div>
             </div>
         </div>
     </div>
@@ -968,19 +1153,112 @@
             document.querySelector('.challenge-buttons').style.display = 'none';
             resultsContainer.style.display = 'block';
 
-            scoreDisplay.textContent = `Score: ${totalScore}/100`;
-            pointsEarned.textContent = `You earned ${totalScore} points!`;
+            const hasPassed = totalScore >= 80;
+            
+            if (hasPassed) {
+                scoreDisplay.textContent = `🎉 PASSED! Score: ${totalScore}/100`;
+                scoreDisplay.style.color = '#4CAF50';
+                pointsEarned.textContent = `You earned ${totalScore} points!`;
+                
+                // Show badge for passed challenge
+                document.getElementById('badgeContainer').style.display = 'flex';
+                
+                document.getElementById('endEpisodeBtn').textContent = 'NEXT EPISODE';
+                document.getElementById('endEpisodeBtn').style.backgroundColor = '#4CAF50';
 
-            // Save score to localStorage
-            localStorage.setItem('java_ep1_score', totalScore);
-            localStorage.setItem('java_ep1_progress', '100');
+                // Award badge in database (tier=t1, badgeName=b1)
+                fetch('../../../../../2be/award_badge.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `tier=${encodeURIComponent('t1')}&badgeName=${encodeURIComponent('b1')}`
+                })
+                .then(r => r.json())
+                .then(data => {
+                    console.log('Award badge response:', data);
+                })
+                .catch(err => {
+                    console.error('Failed to award badge:', err);
+                });
+            } else {
+                scoreDisplay.textContent = `❌ FAILED! Score: ${totalScore}/100`;
+                scoreDisplay.style.color = '#f44336';
+                pointsEarned.textContent = `You need 80+ points to pass. Try again!`;
+                
+                // Hide badge for failed challenge
+                document.getElementById('badgeContainer').style.display = 'none';
+                
+                document.getElementById('endEpisodeBtn').textContent = 'RETRY EPISODE';
+                document.getElementById('endEpisodeBtn').style.backgroundColor = '#FF9800';
+            }
+
+            // Save progress to database
+            saveStoryProgress(totalScore, hasPassed);
         }
 
         function endEpisode() {
+            const hasPassed = totalScore >= 80;
+            
+            if (hasPassed) {
+                // Go to next episode (Episode 2)
+                window.location.href = '../ep2/index.html';
+            } else {
+                // Retry current episode
+                retryEpisode();
+            }
+        }
+
+        function retryEpisode() {
+            // Reset all variables
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            totalScore = 0;
+            challengeStarted = false;
+
+            // Hide results and show challenge again
+            const resultsContainer = document.getElementById('resultsContainer');
+            const challengeContainer = document.getElementById('challengeContainer');
+            
+            resultsContainer.style.display = 'none';
+            document.querySelector('.challenge-buttons').style.display = 'flex';
+            
+            // Hide badge
+            document.getElementById('badgeContainer').style.display = 'none';
+            
+            // Reset button text and color
+            document.getElementById('endEpisodeBtn').textContent = 'END EPISODE 1 - GAIN POINTS';
+            document.getElementById('endEpisodeBtn').style.backgroundColor = '#FF9800';
+            
+            // Start challenge again
+            displayQuestion(0);
+        }
+
+        function saveStoryProgress(score, hasPassed) {
+            // Save story progress to database
+            const progressData = {
+                type: 'story',
+                language: 'java', // This should be dynamic based on current language
+                chapter: 1,
+                episode: 1,
+                points: score,
+                passed: hasPassed
+            };
+
+            fetch('../../../../../2be/save_story_progress.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `type=${encodeURIComponent(progressData.type)}&language=${encodeURIComponent(progressData.language)}&chapter=${encodeURIComponent(progressData.chapter)}&episode=${encodeURIComponent(progressData.episode)}&points=${encodeURIComponent(progressData.points)}&passed=${encodeURIComponent(progressData.passed)}`
+            }).then(r => r.json()).then(data => {
+                console.log('Story progress saved:', data);
+            }).catch(err => {
+                console.error('Error saving story progress:', err);
+            });
+        }
+
+        function exitToHomepage() {
             // Hide background before redirecting
             const mainBg = document.querySelector('.main-bg');
             mainBg.classList.remove('show');
-            // Redirect back to episodes hub or next episode
+            // Redirect back to homepage
             window.location.href = '../../../index.html';
         }
 
@@ -989,6 +1267,11 @@
             document.getElementById('submitBtn').addEventListener('click', submitAnswer);
             document.getElementById('nextBtn').addEventListener('click', nextQuestion);
             document.getElementById('endEpisodeBtn').addEventListener('click', endEpisode);
+            document.getElementById('exitBtn').addEventListener('click', exitToHomepage);
+            document.getElementById('badgeOkBtn').addEventListener('click', function() {
+                // Hide badge when OK is clicked
+                document.getElementById('badgeContainer').style.display = 'none';
+            });
         });
 
     </script>
