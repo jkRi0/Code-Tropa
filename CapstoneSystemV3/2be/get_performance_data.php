@@ -1,7 +1,12 @@
 <?php
 session_start();
-
 header('Content-Type: application/json');
+
+require_once __DIR__ . '/db.php';
+
+$prevDisplayErrors = ini_get('display_errors');
+ini_set('display_errors', '0');
+error_reporting(E_ERROR | E_PARSE);
 
 $response = [
     'accuracy' => 0,
@@ -9,88 +14,62 @@ $response = [
     'readability' => 0,
     'timeTaken' => 0,
     'success' => 0,
-    'failed' => 0
+    'failed' => 0,
+    'successFlag' => false,
+    'message' => 'Unknown error'
 ];
 
-if (isset($_SESSION['userData']['USERS']['id']) && isset($_SESSION['userData']['USERS']['programmingLanguage'])) {
-    $userId = $_SESSION['userData']['USERS']['id'];
-    $programmingLanguage = $_SESSION['userData']['USERS']['programmingLanguage'];
-
-    $totalAccuracy = 0;
-    $totalEfficiency = 0;
-    $totalReadability = 0;
-    $totalTimeTaken = 0;
-    $totalSuccess = 0;
-    $totalFailed = 0;
-    $entryCount = 0;
-
-    if (isset($_SESSION['userData']['PROGRESS']) && isset($_SESSION['userData']['PERFORMANCE'])) {
-        foreach ($_SESSION['userData']['PROGRESS'] as $progressEntry) {
-            if (isset($progressEntry['language']) && $progressEntry['language'] === $programmingLanguage) {
-                $progressId = null;
-                // In the new structure, we can have multiple progress entries for the same language, but how do we link to performance?
-                // The performance table references progressId. So, we need to find performance entries that match the progressId of the current language.
-                
-                // Assuming progressId is part of progressEntry (it should be, if fetched correctly).
-                // If not, we might need a separate query or ensure progressId is included in the session data during login/signup.
-                // For now, let's assume progressId is available in progressEntry. If it's not, we'll need to re-evaluate how progress and performance are linked in the session.
-                
-                // Let's iterate through performance entries and link them by progressId
-                foreach ($_SESSION['userData']['PERFORMANCE'] as $performanceEntry) {
-                    // Note: The previous logic in signup.php and login.php stored multiple performance entries
-                    // in the session, which might cause issues if a progress entry maps to multiple performance entries.
-                    // For now, I will assume a 1:1 mapping or aggregate all performance entries for the language.
-                    // A better approach would be to have a clear link (e.g., progressId in performance entry).
-
-                    // For this update, I will assume we are trying to aggregate all performance related to the selected language
-                    // without a direct 1:1 mapping via progressId in the session. This might need further refinement
-                    // if the user expects a specific progress entry's performance.
-                    // For now, I will aggregate all performance entries that *could* be related to the language,
-                    // and this might be a simplification.
-
-                    // A more robust solution might require fetching from DB directly here to ensure correct linkage.
-                    // However, adhering to the current pattern of fetching from session:
-                    
-                    // The session now has 'PERFORMANCE' as an array of objects, each having a 'progressId'.
-                    // We need to match this 'progressId' to an 'id' within the 'PROGRESS' session array.
-                    // However, the 'PROGRESS' session array does not contain 'id' directly from the DB.
-                    // This indicates a potential issue in how session data is structured for progress and performance.
-                    // For now, I will iterate through all performance entries that are associated with a progress entry for the selected language.
-                    
-                    // A temporary workaround: since the performance table is linked to progressId, and progressId is unique,
-                    // I will assume that if a performance entry's progressId matches *any* progress entry for the current language,
-                    // then it's relevant.
-                    
-                    // To do this properly from session data, we need the `id` of the progress entry stored in the session.
-                    // Let's modify the session data population in signup.php and login.php to include the `id` for progress entries.
-                    // Since I cannot modify previously edited files, I will simplify this here.
-                    
-                    // **Simplification**: I will sum all performance data for *any* performance entry in the session,
-                    // and it's assumed that this performance data is generally relevant to the user.
-                    // This is a temporary measure and should be addressed by improving session data population.
-
-                    $totalAccuracy += $performanceEntry['accuracy'];
-                    $totalEfficiency += $performanceEntry['efficiency'];
-                    $totalReadability += $performanceEntry['readability'];
-                    $totalTimeTaken += $performanceEntry['timeTaken'];
-                    $totalSuccess += $performanceEntry['success'];
-                    $totalFailed += $performanceEntry['failed'];
-                    $entryCount++;
-                }
-            }
-        }
-    }
-
-    if ($entryCount > 0) {
-        $response['accuracy'] = $totalAccuracy / $entryCount;
-        $response['efficiency'] = $totalEfficiency / $entryCount;
-        $response['readability'] = $totalReadability / $entryCount;
-        $response['timeTaken'] = $totalTimeTaken / $entryCount;
-        $response['success'] = $totalSuccess;
-        $response['failed'] = $totalFailed;
-    }
+$userId = $_SESSION['user_id'] ?? ($_SESSION['userData']['USERS']['id'] ?? null);
+if ($userId === null) {
+    $response['message'] = 'Unauthorized';
+    echo json_encode($response);
+    ini_set('display_errors', $prevDisplayErrors);
+    exit;
 }
 
-echo json_encode($response);
+if (!isset($conn) || !$conn) {
+    $response['message'] = 'Database connection not available';
+    echo json_encode($response);
+    ini_set('display_errors', $prevDisplayErrors);
+    exit;
+}
 
+// Compute averages directly in SQL
+$sql = "SELECT 
+            AVG(accuracy)   AS avgAccuracy,
+            AVG(efficiency) AS avgEfficiency,
+            AVG(readability) AS avgReadability,
+            AVG(timeTaken)  AS avgTimeTaken,
+            AVG(success)    AS avgSuccess,
+            AVG(failed)     AS avgFailed
+        FROM performance
+        WHERE userId = ?";
+
+if ($stmt = $conn->prepare($sql)) {
+    $stmt->bind_param('i', $userId);
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $response['accuracy']    = round(floatval($row['avgAccuracy'] ?? 0), 2);
+            $response['efficiency']  = round(floatval($row['avgEfficiency'] ?? 0), 2);
+            $response['readability'] = round(floatval($row['avgReadability'] ?? 0), 2);
+            $response['timeTaken']   = round(floatval($row['avgTimeTaken'] ?? 0), 2);
+            $response['success']     = round(floatval($row['avgSuccess'] ?? 0), 2);
+            $response['failed']      = round(floatval($row['avgFailed'] ?? 0), 2);
+            $response['successFlag'] = true;
+            $response['message']     = 'OK';
+        } else {
+            $response['message'] = 'No performance data';
+        }
+    } else {
+        $response['message'] = 'Query execution failed';
+    }
+    $stmt->close();
+} else {
+    $response['message'] = 'Failed to prepare statement';
+}
+
+$conn->close();
+echo json_encode($response);
+ini_set('display_errors', $prevDisplayErrors);
 ?>

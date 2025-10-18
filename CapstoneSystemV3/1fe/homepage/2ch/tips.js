@@ -153,38 +153,38 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Heuristic tip generator from the loaded solution text
-    function generateAutoTipsFromSolution(difficulty) {
-        try {
-            const solution = (window.tahoSolutions && window.tahoSolutions[difficulty]) ? String(window.tahoSolutions[difficulty]) : '';
-            if (!solution || solution.trim().length === 0) return [];
+    // function generateAutoTipsFromSolution(difficulty) {
+    //     try {
+    //         const solution = (window.tahoSolutions && window.tahoSolutions[difficulty]) ? String(window.tahoSolutions[difficulty]) : '';
+    //         if (!solution || solution.trim().length === 0) return [];
 
-            const langEl = document.getElementById('selectedLanguage');
-            const lang = langEl ? langEl.textContent.toLowerCase() : '';
+    //         const langEl = document.getElementById('selectedLanguage');
+    //         const lang = langEl ? langEl.textContent.toLowerCase() : '';
 
-            const tips = [];
+    //         const tips = [];
 
-            // Common patterns
-            if (/class\s+\w+/.test(solution)) tips.push('Structure your program into classes with clear responsibilities.');
-            if (/main\s*\(/i.test(solution)) tips.push('Use the entry point method to orchestrate input, processing, and output.');
-            if (/System\.out\.(print|println|printf|format)/.test(solution)) tips.push('Use appropriate printing methods; prefer formatted output for aligned and precise values.');
-            if (/printf|format\(/.test(solution)) tips.push('Use format specifiers (e.g., %.2f, %d, %s) for clean output.');
-            if (/Scanner\b/.test(solution)) tips.push('Use a Scanner to read user input and validate it before use.');
-            if (/std::cout|std::cin|iostream/.test(solution)) tips.push('Use std::cout/std::cin for I/O; add <iomanip> for alignment and precision.');
-            if (/Console\.Write(Line)?\(/.test(solution)) tips.push('Use Console.WriteLine with string interpolation for readable output.');
-            if (/for\s*\(|while\s*\(/.test(solution)) tips.push('Use loops to avoid repetition; keep loop bodies focused and clear.');
-            if (/(int|double|float|String|char|bool|boolean)\b/.test(solution)) tips.push('Choose correct data types; use integers for counts and doubles for decimals.');
-            if (/(ArrayList|List<|\[\]|new\s+\w+\[)/.test(solution)) tips.push('Store collections in arrays/lists; iterate carefully and check bounds.');
-            if (/if\s*\(/.test(solution)) tips.push('Use clear conditions; extract complex checks into named variables or methods.');
-            if (/printf\(|setprecision|setw/.test(solution)) tips.push('Format numbers and columns for user-friendly output.');
-            if (/Map<|HashMap|Dictionary|std::map/.test(solution)) tips.push('Use maps/dictionaries for key–value lookups; verify key presence before access.');
-            if (/StringBuilder|std::ostringstream/.test(solution)) tips.push('Build strings efficiently before printing to reduce I/O calls.');
-            if (/try\s*\{/.test(solution)) tips.push('Handle potential errors with try/catch and provide helpful messages.');
+    //         // Common patterns
+    //         // if (/class\s+\w+/.test(solution)) tips.push('Structure your program into classes with clear responsibilities.');
+    //         // if (/main\s*\(/i.test(solution)) tips.push('Use the entry point method to orchestrate input, processing, and output.');
+    //         // if (/System\.out\.(print|println|printf|format)/.test(solution)) tips.push('Use appropriate printing methods; prefer formatted output for aligned and precise values.');
+    //         // if (/printf|format\(/.test(solution)) tips.push('Use format specifiers (e.g., %.2f, %d, %s) for clean output.');
+    //         // if (/Scanner\b/.test(solution)) tips.push('Use a Scanner to read user input and validate it before use.');
+    //         // if (/std::cout|std::cin|iostream/.test(solution)) tips.push('Use std::cout/std::cin for I/O; add <iomanip> for alignment and precision.');
+    //         // if (/Console\.Write(Line)?\(/.test(solution)) tips.push('Use Console.WriteLine with string interpolation for readable output.');
+    //         // if (/for\s*\(|while\s*\(/.test(solution)) tips.push('Use loops to avoid repetition; keep loop bodies focused and clear.');
+    //         // if (/(int|double|float|String|char|bool|boolean)\b/.test(solution)) tips.push('Choose correct data types; use integers for counts and doubles for decimals.');
+    //         // if (/(ArrayList|List<|\[\]|new\s+\w+\[)/.test(solution)) tips.push('Store collections in arrays/lists; iterate carefully and check bounds.');
+    //         // if (/if\s*\(/.test(solution)) tips.push('Use clear conditions; extract complex checks into named variables or methods.');
+    //         // if (/printf\(|setprecision|setw/.test(solution)) tips.push('Format numbers and columns for user-friendly output.');
+    //         // if (/Map<|HashMap|Dictionary|std::map/.test(solution)) tips.push('Use maps/dictionaries for key–value lookups; verify key presence before access.');
+    //         // if (/StringBuilder|std::ostringstream/.test(solution)) tips.push('Build strings efficiently before printing to reduce I/O calls.');
+    //         // if (/try\s*\{/.test(solution)) tips.push('Handle potential errors with try/catch and provide helpful messages.');
 
-            // De-duplicate and limit
-            const uniq = Array.from(new Set(tips));
-            return uniq.slice(0, 8);
-        } catch (e) {
-            return [];
-        }
-    }
+    //         // De-duplicate and limit
+    //         const uniq = Array.from(new Set(tips));
+    //         return uniq.slice(0, 8);
+    //     } catch (e) {
+    //         return [];
+    //     }
+    // }
 });

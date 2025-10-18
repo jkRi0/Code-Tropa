@@ -24,7 +24,15 @@ if (!$difficulty || !$level || $points === null) {
 }
 
 // Validate difficulty
-$validDifficulties = ['easy', 'medium', 'hard'];
+$validDifficulties = ['easy', 'average', 'difficult'];
+
+// Debug logging
+error_log("Received difficulty: '" . $difficulty . "' (length: " . strlen($difficulty) . ")");
+error_log("Received level: " . $level);
+error_log("Received points: " . $points);
+error_log("Valid difficulties: " . implode(', ', $validDifficulties));
+error_log("Is difficulty valid: " . (in_array($difficulty, $validDifficulties, true) ? 'YES' : 'NO'));
+
 if (!in_array($difficulty, $validDifficulties, true)) {
     echo json_encode(['success' => false, 'message' => 'Invalid difficulty']);
     exit();
@@ -53,10 +61,10 @@ if ($existing) {
         $u->bind_param('isi', $points, $code, $existing['id']);
         $ok = $u->execute();
         $u->close();
-        echo json_encode(['success' => $ok, 'message' => $ok ? 'Progress updated' : 'Update failed', 'updated' => $ok, 'inserted' => false]);
+        echo json_encode(['success' => $ok, 'message' => $ok ? 'Progress updated' : 'Update failed', 'updated' => $ok, 'inserted' => false, 'progressId' => $existing['id']]);
         exit();
     } else {
-        echo json_encode(['success' => true, 'message' => 'Existing score is higher or equal, no update', 'updated' => false, 'inserted' => false]);
+        echo json_encode(['success' => true, 'message' => 'Existing score is higher or equal, no update', 'updated' => false, 'inserted' => false, 'progressId' => $existing['id']]);
         exit();
     }
 } else {
@@ -68,8 +76,9 @@ if ($existing) {
     }
     $i->bind_param('issiis', $userId, $language, $difficulty, $level, $points, $code);
     $ok = $i->execute();
+    $progressId = $conn->insert_id;
     $i->close();
-    echo json_encode(['success' => $ok, 'message' => $ok ? 'Progress inserted' : 'Insert failed', 'updated' => false, 'inserted' => $ok]);
+    echo json_encode(['success' => $ok, 'message' => $ok ? 'Progress inserted' : 'Insert failed', 'updated' => false, 'inserted' => $ok, 'progressId' => $progressId]);
     exit();
 }
 ?>

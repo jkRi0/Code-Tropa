@@ -1249,6 +1249,36 @@
                 body: `type=${encodeURIComponent(progressData.type)}&language=${encodeURIComponent(progressData.language)}&chapter=${encodeURIComponent(progressData.chapter)}&episode=${encodeURIComponent(progressData.episode)}&points=${encodeURIComponent(progressData.points)}&passed=${encodeURIComponent(progressData.passed)}`
             }).then(r => r.json()).then(data => {
                 console.log('Story progress saved:', data);
+                
+                // Save performance data if progress was saved successfully
+                if (data.success && data.progressId) {
+                    const performanceData = {
+                        progressId: data.progressId,
+                        accuracy: score >= 80 ? 100 : 0, // Simple accuracy based on pass/fail
+                        efficiency: score >= 80 ? 100 : 0, // Simple efficiency based on pass/fail
+                        readability: score >= 80 ? 100 : 0, // Simple readability based on pass/fail
+                        timeTaken: 0, // Story mode doesn't track time yet
+                        success: hasPassed ? 1 : 0,
+                        failed: hasPassed ? 0 : 1
+                    };
+                    
+                    console.log('=== SAVING STORY PERFORMANCE DEBUG ===');
+                    console.log('Performance data:', performanceData);
+                    
+                    fetch('../../../../../2be/save_performance.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `progressId=${encodeURIComponent(performanceData.progressId)}&accuracy=${encodeURIComponent(performanceData.accuracy)}&efficiency=${encodeURIComponent(performanceData.efficiency)}&readability=${encodeURIComponent(performanceData.readability)}&timeTaken=${encodeURIComponent(performanceData.timeTaken)}&success=${encodeURIComponent(performanceData.success)}&failed=${encodeURIComponent(performanceData.failed)}`
+                    }).then(perfResponse => {
+                        console.log('Save story performance response status:', perfResponse.status);
+                        return perfResponse.json();
+                    }).then(perfData => {
+                        console.log('Save story performance response data:', perfData);
+                    }).catch(perfErr => {
+                        console.error('Save story performance network error:', perfErr);
+                    });
+                    console.log('=== END SAVING STORY PERFORMANCE DEBUG ===');
+                }
             }).catch(err => {
                 console.error('Error saving story progress:', err);
             });

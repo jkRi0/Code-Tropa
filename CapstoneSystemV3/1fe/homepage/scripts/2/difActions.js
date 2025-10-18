@@ -24,10 +24,19 @@ export function difActions(action){
     }else if(action=="ok"){
         console.log("Checking difficulty. Current selected: ", window.currentSelectedDifficulty);
         if (window.currentSelectedDifficulty) {
+            // Map frontend difficulty values to backend expected values
+            const difficultyMapping = {
+                'EASY': 'easy',
+                'AVERAGE': 'average', 
+                'DIFFICULT': 'difficult'
+            };
+            
+            const mappedDifficulty = difficultyMapping[window.currentSelectedDifficulty] || 'easy';
+            
             // Save to localStorage
             const selectedData = {
                 level: window.currentSelectedLevel,
-                difficulty: window.currentSelectedDifficulty,
+                difficulty: mappedDifficulty,
                 timestamp: new Date().toISOString()
             };
             

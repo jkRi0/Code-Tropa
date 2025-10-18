@@ -43,15 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Insert default values into rewards table
             $languages = ['java', 'c++', 'c#'];
             
-            // Default reward values
-            $defaultTier = 't1';
-            $defaultBadgeName = 'b1';
+            // // Default reward values
+            // $defaultTier = 't1';
+            // $defaultBadgeName = 'b1';
 
-            // Insert a default reward for the user's chosen programming language
-            $stmtRewards = mysqli_prepare($conn, "INSERT INTO rewards (userId, language, tier, badgeName) VALUES (?, ?, ?, ?)");
-            mysqli_stmt_bind_param($stmtRewards, "isss", $newUserId, $programmingLanguage, $defaultTier, $defaultBadgeName);
-            mysqli_stmt_execute($stmtRewards);
-            mysqli_stmt_close($stmtRewards);
+            // // Insert a default reward for the user's chosen programming language
+            // $stmtRewards = mysqli_prepare($conn, "INSERT INTO rewards (userId, language, tier, badgeName) VALUES (?, ?, ?, ?)");
+            // mysqli_stmt_bind_param($stmtRewards, "isss", $newUserId, $programmingLanguage, $defaultTier, $defaultBadgeName);
+            // mysqli_stmt_execute($stmtRewards);
+            // mysqli_stmt_close($stmtRewards);
 
             // SAVING table insertion (only for the chosen language)
             $stmtSaving = mysqli_prepare($conn, "INSERT INTO saving (userId, language, chapter, episode, scene) VALUES (?, ?, ?, ?, ?)");
@@ -202,7 +202,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $token = base64_encode(json_encode($tokenPayload));
         
             setcookie('auth_token', $token, [
-                'expires' => time() + 3600,
                 'path' => '/',
                 'secure' => true,
                 'httponly' => true,

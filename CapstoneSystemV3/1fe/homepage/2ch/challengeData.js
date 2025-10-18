@@ -195,7 +195,7 @@ function loadSelectedChallengeData() {
             document.getElementById('splashDifficulty').textContent = data.difficulty || 'Unknown Difficulty';
             
             // Update verification panel
-    document.getElementById('selectedLevel').textContent = splashLevelNumber || 'Not available';
+            document.getElementById('selectedLevel').textContent = splashLevelNumber || 'Not available';
             document.getElementById('selectedDifficulty').textContent = data.difficulty || 'Not available';
             
             if (data.timestamp) {
@@ -213,13 +213,20 @@ function loadSelectedChallengeData() {
             // Dynamically update the image source based on difficulty and level
             const imgContainer = document.querySelector('.image-container img');
             if (data.difficulty && data.level) {
-                const difficultyUpper = data.difficulty.toUpperCase();
-                const levelNumber = data.level.replace('lev', '');
-                console.log(data.level+" "+difficultyUpper+" "+levelNumber);
+                // Map backend difficulty values back to frontend image names
+                const difficultyImageMapping = {
+                    'easy': 'EASY',
+                    'average': 'AVERAGE',
+                    'difficult': 'DIFFICULT'
+                };
                 
-                imgContainer.src = `./assets/${levelNumber}/${difficultyUpper}.png`;
+                const difficultyImageName = difficultyImageMapping[data.difficulty] || 'EASY';
+                const levelNumber = data.level.replace('lev', '');
+                console.log(data.level+" "+difficultyImageName+" "+levelNumber);
+                
+                imgContainer.src = `./assets/${levelNumber}/${difficultyImageName}.png`;
                 imgContainer.alt = `${data.level} - ${data.difficulty}`;
-                console.log(`Updated image to: assets/${levelNumber}/${difficultyUpper}.png`);
+                console.log(`Updated image to: assets/${levelNumber}/${difficultyImageName}.png`);
             }
             
             // Start splash screen fade out after 2 seconds
@@ -367,7 +374,14 @@ document.getElementById('backButton').addEventListener('click', function() {
 document.getElementById('submitCodeBtn').addEventListener('click', async function() {
     const code = window.editor.getValue(); // Assuming 'editor' is the global Monaco editor instance
     const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
+    
+    console.log('=== DIFFICULTY DEBUG ===');
+    console.log('Selected data from localStorage:', selectedData);
+    console.log('Raw difficulty from selectedData:', selectedData ? selectedData.difficulty : 'null');
+    
     const difficulty = selectedData ? selectedData.difficulty.toLowerCase() : 'easy'; // Default to 'easy' if not found
+    console.log('Final difficulty value:', difficulty);
+    console.log('=== END DIFFICULTY DEBUG ===');
 
     window.showLoadingAnimation(); // Show loading animation
 
@@ -409,6 +423,36 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
                     return r.json();
                 }).then(data => {
                     console.log('Save progress response data:', data);
+                    
+                    // Save performance data if progress was saved successfully
+                    if (data.success && data.progressId) {
+                        const performanceData = {
+                            progressId: data.progressId,
+                            accuracy: result.scoring.criteriaScores.accuracy || 0,
+                            efficiency: result.scoring.criteriaScores.efficiency || 0,
+                            readability: result.scoring.criteriaScores.readability || 0,
+                            timeTaken: result.scoring.criteriaScores.time || 0,
+                            success: points >= 80 ? 1 : 0, // 1 if passed (80+ points), 0 if failed
+                            failed: points < 80 ? 1 : 0   // 1 if failed (<80 points), 0 if passed
+                        };
+                        
+                        console.log('=== SAVING PERFORMANCE DEBUG ===');
+                        console.log('Performance data:', performanceData);
+                        
+                        fetch('../../../2be/save_performance.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `progressId=${encodeURIComponent(performanceData.progressId)}&accuracy=${encodeURIComponent(performanceData.accuracy)}&efficiency=${encodeURIComponent(performanceData.efficiency)}&readability=${encodeURIComponent(performanceData.readability)}&timeTaken=${encodeURIComponent(performanceData.timeTaken)}&success=${encodeURIComponent(performanceData.success)}&failed=${encodeURIComponent(performanceData.failed)}`
+                        }).then(perfResponse => {
+                            console.log('Save performance response status:', perfResponse.status);
+                            return perfResponse.json();
+                        }).then(perfData => {
+                            console.log('Save performance response data:', perfData);
+                        }).catch(perfErr => {
+                            console.error('Save performance network error:', perfErr);
+                        });
+                        console.log('=== END SAVING PERFORMANCE DEBUG ===');
+                    }
                 }).catch(err => {
                     console.error('Save progress network error:', err);
                 });
