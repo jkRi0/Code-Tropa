@@ -491,6 +491,74 @@
             margin-top: 20px;
         }
 
+        /* Scoring actions styling (from challenges) */
+        .scoring-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .scoring-actions button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .scoring-actions .btn-exit {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .scoring-actions .btn-exit:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .scoring-actions .btn-retry {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .scoring-actions .btn-retry:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .scoring-actions .btn-next-level {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .scoring-actions .btn-next-level:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Responsive adjustments for scoring actions */
+        @media (max-width: 768px) {
+            .scoring-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .scoring-actions button {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+
         .score-display {
             font-size: 2.8em;
             font-weight: bold;
@@ -671,9 +739,9 @@
                     </div>
                 </div>
                 
-                <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
-                    <button class="challenge-btn end-episode-btn" id="endEpisodeBtn">END EPISODE 1 - GAIN POINTS</button>
-                    <button class="challenge-btn exit-btn" id="exitBtn">EXIT TO HOMEPAGE</button>
+                <!-- Scoring actions container (similar to challenges) -->
+                <div class="scoring-actions" id="scoringActions">
+                    <!-- Buttons will be dynamically created here -->
                 </div>
             </div>
         </div>
@@ -1156,15 +1224,12 @@
             const hasPassed = totalScore >= 80;
             
             if (hasPassed) {
-                scoreDisplay.textContent = `🎉 PASSED! Score: ${totalScore}/100`;
+                scoreDisplay.textContent = `PASSED! Score: ${totalScore}/100`;
                 scoreDisplay.style.color = '#4CAF50';
                 pointsEarned.textContent = `You earned ${totalScore} points!`;
                 
                 // Show badge for passed challenge
                 document.getElementById('badgeContainer').style.display = 'flex';
-                
-                document.getElementById('endEpisodeBtn').textContent = 'NEXT EPISODE';
-                document.getElementById('endEpisodeBtn').style.backgroundColor = '#4CAF50';
 
                 // Award badge in database (tier=t1, badgeName=b1)
                 fetch('../../../../../2be/award_badge.php', {
@@ -1186,13 +1251,49 @@
                 
                 // Hide badge for failed challenge
                 document.getElementById('badgeContainer').style.display = 'none';
-                
-                document.getElementById('endEpisodeBtn').textContent = 'RETRY EPISODE';
-                document.getElementById('endEpisodeBtn').style.backgroundColor = '#FF9800';
             }
+
+            // Update scoring actions dynamically (like challenges)
+            updateScoringActions(hasPassed);
 
             // Save progress to database
             saveStoryProgress(totalScore, hasPassed);
+        }
+
+        // Function to update scoring action buttons based on pass/fail status (from challenges)
+        function updateScoringActions(hasPassed) {
+            const scoringActions = document.getElementById('scoringActions');
+            scoringActions.innerHTML = '';
+            
+            if (hasPassed) {
+                // Passed: Show Exit and Next Episode buttons
+                const exitBtn = document.createElement('button');
+                exitBtn.className = 'btn-exit';
+                exitBtn.textContent = 'Exit';
+                exitBtn.onclick = exitToHomepage;
+                
+                const nextEpisodeBtn = document.createElement('button');
+                nextEpisodeBtn.className = 'btn-next-level';
+                nextEpisodeBtn.textContent = 'Next Episode';
+                nextEpisodeBtn.onclick = goToNextEpisode;
+                
+                scoringActions.appendChild(exitBtn);
+                scoringActions.appendChild(nextEpisodeBtn);
+            } else {
+                // Failed: Show Exit and Retry buttons
+                const exitBtn = document.createElement('button');
+                exitBtn.className = 'btn-exit';
+                exitBtn.textContent = 'Exit';
+                exitBtn.onclick = exitToHomepage;
+                
+                const retryBtn = document.createElement('button');
+                retryBtn.className = 'btn-retry';
+                retryBtn.textContent = 'Retry Episode';
+                retryBtn.onclick = retryEpisode;
+                
+                scoringActions.appendChild(exitBtn);
+                scoringActions.appendChild(retryBtn);
+            }
         }
 
         function endEpisode() {
@@ -1224,9 +1325,7 @@
             // Hide badge
             document.getElementById('badgeContainer').style.display = 'none';
             
-            // Reset button text and color
-            document.getElementById('endEpisodeBtn').textContent = 'END EPISODE 1 - GAIN POINTS';
-            document.getElementById('endEpisodeBtn').style.backgroundColor = '#FF9800';
+            // Reset scoring actions (buttons will be recreated when results are shown)
             
             // Start challenge again
             displayQuestion(0);
@@ -1289,15 +1388,19 @@
             const mainBg = document.querySelector('.main-bg');
             mainBg.classList.remove('show');
             // Redirect back to homepage
-            window.location.href = '../../../index.html';
+            window.location.href = '../../../../../index.html';
+        }
+
+        function goToNextEpisode() {
+            // Redirect to next episode (Episode 2)
+            window.location.href = '../ep2/index.html';
         }
 
         // Add event listeners for challenge buttons
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('submitBtn').addEventListener('click', submitAnswer);
             document.getElementById('nextBtn').addEventListener('click', nextQuestion);
-            document.getElementById('endEpisodeBtn').addEventListener('click', endEpisode);
-            document.getElementById('exitBtn').addEventListener('click', exitToHomepage);
+            // Note: endEpisodeBtn and exitBtn are now dynamically created in updateScoringActions()
             document.getElementById('badgeOkBtn').addEventListener('click', function() {
                 // Hide badge when OK is clicked
                 document.getElementById('badgeContainer').style.display = 'none';
