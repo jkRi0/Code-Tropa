@@ -1053,7 +1053,14 @@
                 if (Array.isArray(scene.subtitle)) {
                     subtitleContainer.textContent = scene.subtitle.join('\n');
                 } else {
-                    subtitleContainer.textContent = scene.subtitle;
+                    subtitleContainer.textContent = scene.subtitle || '';
+                }
+                
+                // Hide subtitle container if no subtitle
+                if (!scene.subtitle || scene.subtitle.trim() === '') {
+                    subtitleContainer.style.display = 'none';
+                } else {
+                    subtitleContainer.style.display = 'block';
                 }
 
                 sceneContainer.style.opacity = '1';
@@ -1061,18 +1068,20 @@
                 sceneNextText.classList.remove('show'); // Ensure it's hidden before deciding to show/highlight
                 sceneNextText.classList.remove('highlight'); // Ensure highlight is removed initially
 
-                // Show "Click to Next" text unless it's the last scene
-                if (index < scenes.length - 1) {
+                // Show "Click to Next" text unless it's the last scene or video without subtitle
+                const hasSubtitle = scene.subtitle && scene.subtitle.trim() !== '';
+                if (index < scenes.length - 1 && (scene.type !== 'video' || hasSubtitle)) {
                     sceneNextText.textContent = "Click to Next";
-                } else {
+                    sceneNextText.classList.add('show');
+                } else if (index === scenes.length - 1) {
                     sceneNextText.textContent = "Click to Start"; // Last scene
+                    sceneNextText.classList.add('show');
                 }
-                sceneNextText.classList.add('show');
 
                 // Handle highlighting
                 if (scene.type === 'image' || scene.type === 'text') {
                     sceneNextText.classList.add('highlight');
-                } else if (scene.type === 'video') {
+                } else if (scene.type === 'video' && hasSubtitle) {
                     sceneNextText.classList.remove('highlight'); // Initially not highlighted
                     sceneVideo.onended = () => {
                         sceneNextText.classList.add('highlight'); // Highlight when video ends
@@ -1088,14 +1097,23 @@
                 };
 
                 // For video, also listen for 'ended' event to advance scene automatically
-                /*
                 if (scene.type === 'video') {
-                    sceneVideo.onended = () => {
-                        currentSceneIndex++;
-                        showScene(currentSceneIndex);
-                    };
+                    // Check if subtitle is empty or not provided
+                    const hasSubtitle = scene.subtitle && scene.subtitle.trim() !== '';
+                    
+                    if (!hasSubtitle) {
+                        // Auto-advance if no subtitle
+                        sceneVideo.onended = () => {
+                            currentSceneIndex++;
+                            showScene(currentSceneIndex);
+                        };
+                    } else {
+                        // Manual advance if has subtitle
+                        sceneVideo.onended = () => {
+                            sceneNextText.classList.add('highlight'); // Highlight when video ends
+                        };
+                    }
                 }
-                */
             } else {
                 // All scenes shown, hide scene container and show challenge
                 sceneContainer.style.opacity = '0';
