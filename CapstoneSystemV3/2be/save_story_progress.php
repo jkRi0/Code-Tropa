@@ -52,10 +52,10 @@ if ($existing) {
         $u->bind_param('ii', $points, $existing['id']);
         $ok = $u->execute();
         $u->close();
-        echo json_encode(['success' => $ok, 'message' => $ok ? 'Progress updated' : 'Update failed', 'updated' => $ok, 'inserted' => false]);
+        echo json_encode(['success' => $ok, 'message' => $ok ? 'Progress updated' : 'Update failed', 'updated' => $ok, 'inserted' => false, 'progressId' => $existing['id']]);
         exit();
     } else {
-        echo json_encode(['success' => true, 'message' => 'Existing score is higher or equal, no update', 'updated' => false, 'inserted' => false]);
+        echo json_encode(['success' => true, 'message' => 'Existing score is higher or equal, no update', 'updated' => false, 'inserted' => false, 'progressId' => $existing['id']]);
         exit();
     }
 } else {
@@ -67,8 +67,9 @@ if ($existing) {
     }
     $i->bind_param('isiii', $userId, $language, $chapter, $episode, $points);
     $ok = $i->execute();
+    $progressId = $conn->insert_id; // Get the ID of the inserted record
     $i->close();
-    echo json_encode(['success' => $ok, 'message' => $ok ? 'Progress inserted' : 'Insert failed', 'updated' => false, 'inserted' => $ok]);
+    echo json_encode(['success' => $ok, 'message' => $ok ? 'Progress inserted' : 'Insert failed', 'updated' => false, 'inserted' => $ok, 'progressId' => $progressId]);
     exit();
 }
 ?>

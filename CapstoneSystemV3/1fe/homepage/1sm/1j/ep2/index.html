@@ -1223,12 +1223,14 @@
 
         // Challenge functions
         function showChallenge() {
-            const challengeContainer = document.getElementById('challengeContainer');
-            const mainBg = document.querySelector('.main-bg');
-            challengeContainer.classList.add('show');
-            mainBg.classList.add('show');
-            // TODO: Implement coding challenge
-            console.log("Coding challenge will be implemented here");
+            // Save storymode selection context for episode 2 with easy difficulty
+            localStorage.setItem('selectedChallenge', JSON.stringify({
+                level: 'ep2',
+                difficulty: 'easy',
+                timestamp: new Date().toISOString()
+            }));
+            // Redirect to storymode challenge interface root
+            window.location.href = '../../index.html';
         }
 
         function endEpisode() {
