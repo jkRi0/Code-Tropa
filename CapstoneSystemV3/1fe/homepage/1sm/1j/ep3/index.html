@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Episode 2</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+            background-color: rgb(255, 255, 255); /* Full black background */
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Hide scrollbars */
+        }
+
+
+
+
+        .startBG{
+            background-color: wheat;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .chapter-intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001; /* Higher z-index than intro-screen */
+            color: white;
+            font-family: Arial, sans-serif;
+            opacity: 0; /* Initially hidden */
+            visibility: hidden; /* Ensure it's not interactive */
+            transition: opacity 1s ease-out;
+            cursor: pointer;
+        }
+
+        .chapter-text-container {
+            text-align: center;
+        }
+
+        .main-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .main-bg.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .main-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(10px);
+        }
+
+        .scene-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999; /* Below intro screens */
+            color: white;
+            font-family: Arial, sans-serif;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out;
+            cursor: pointer;
+        }
+
+        .scene-content {
+            width: 100%; /* Fill the width */
+            height: 100%; /* Fill the height */
+            object-fit: cover; /* Cover the entire container */
+        }
+
+        .subtitle-container {
+            position: absolute;
+            bottom: 20px;
+            width: 80%;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 2.3em; /* Enlarged font size */
+            border-radius: 5px;
+        }
+
+        .scene-next-text {
+            position: absolute;
+            top: 10px; /* Adjust as needed to be above subtitle */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2em;
+            opacity: 0;
+            transition: opacity 0.1s ease-in-out, background-color 0.3s ease, color 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .scene-text-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0);
+            color: rgb(0, 0, 0);
+            padding: 30px;
+            /* border-radius: 15px; */
+            font-size: 3em;
+            max-width: 80%;
+            line-height: 1.6;
+            /* border: 2px solid rgba(255, 255, 255, 0.3); */
+            /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); */
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .scene-text-overlay.show {
+            opacity: 1;
+        }
+
+        /* Interactive Scene Styles */
+        .interactive-scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #87CEEB; /* Sky blue background */
+            overflow: hidden;
+        }
+
+        .background-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80%;
+            background-size: cover;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .background-layer.active {
+            opacity: 1;
+        }
+
+        .background-layer.inactive {
+            opacity: 0;
+        }
+
+        .floor {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20%;
+            background: linear-gradient(to bottom, #bbb2ad 50%, #a29b96 100%);
+            border-top: 3px solid #654321;
+            /* 2.5D perspective effect */
+            /* transform: perspective(1000px) rotateX(60deg); */
+            transform-origin: bottom;
+        }
+
+        .avatar-hitbox {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 8rem;
+            height: 10rem;
+            background-color: transparent;
+            border: none;
+            transform: translateX(-50%);
+            transition: left 0.2s ease-out;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .dummy-hitbox {
+            position: absolute;
+            bottom: 0;
+            width: 8rem;
+            height: 10rem;
+            background-color: transparent;
+            border: none;
+            overflow: hidden;
+            z-index: 5;
+        }
+
+        .dummy-sprite {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center bottom;
+            image-rendering: pixelated;
+        }
+
+        .objective-tag {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-family: 'Arial', sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 2px solid #2E7D32;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .objective-tag.show {
+            opacity: 1;
+        }
+
+        .avatar-sprite {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center bottom;
+            image-rendering: pixelated;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background-color: white;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .scene-next-text.show {
+            opacity: 1;
+        }
+
+        .scene-next-text.highlight {
+            background-color: rgba(105, 211, 57, 0.562); /* Subtle highlight */
+            color: #fff;
+        }
+
+        .chapter-main-text {
+            font-size: 7em; /* Big Font for Chapter */
+            margin: 0;
+        }
+
+        .episode-sub-text {
+            font-size: 3em; /* Small Font for Episode */
+            margin: 0;
+            opacity: 1; /* Make it visible */
+            /* transition: opacity 1s ease-in; */ /* Remove ease-in transition */
+        }
+
+        /* Challenge Container Styles */
+        .challenge-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1002; /* Above everything */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .challenge-container.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .challenge-paper {
+            /* background-image: url('assets/paper.png'); */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100vw;
+            height: 100vh;
+            /* max-width: 100%;
+            max-height: 100%; */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 60px 80px 40px 80px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .challenge-title {
+            font-size: 3.5em;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .challenge-subtitle {
+            font-size: 1.8em;
+            color: #666;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .question-container {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            font-size: 1.8em;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.3em;
+            color: #333;
+        }
+
+        .option:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-color: #4CAF50;
+        }
+
+        .option.selected {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #45a049;
+        }
+
+        .option.correct {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #45a049;
+        }
+
+        .option.incorrect {
+            background-color: #f44336;
+            color: white;
+            border-color: #da190b;
+        }
+
+        .option-letter {
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 25px;
+            font-size: 1.1em;
+            color: #4CAF50;
+        }
+
+        .challenge-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .challenge-btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.4em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .submit-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .next-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .next-btn:hover {
+            background-color: #1976D2;
+        }
+
+        .results-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .score-display {
+            font-size: 2.8em;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .points-earned {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .end-episode-btn {
+            background-color: #FF9800;
+            color: white;
+            padding: 18px 45px;
+            font-size: 1.6em;
+        }
+
+        .end-episode-btn:hover {
+            background-color: #F57C00;
+        }
+
+        /* Responsive font sizes for mobile */
+        @media (max-width: 768px) {
+            .challenge-paper {
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+            
+            .challenge-title {
+                font-size: 2.5em;
+            }
+            
+            .challenge-subtitle {
+                font-size: 1.2em;
+            }
+            
+            .question-number {
+                font-size: 1.3em;
+            }
+            
+            .question-text {
+                font-size: 1.1em;
+            }
+            
+            .option {
+                font-size: 1em;
+                padding: 10px 15px;
+            }
+            
+            .challenge-btn {
+                font-size: 1.1em;
+                padding: 12px 30px;
+            }
+            
+            .score-display {
+                font-size: 2em;
+            }
+            
+            .points-earned {
+                font-size: 1.5em;
+            }
+            
+            .end-episode-btn {
+                font-size: 1.2em;
+                padding: 15px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- <div class="main-bg"><img src="assets/12.png" alt="Background Image"></div> -->
+    <div class="challenge-container" id="challengeContainer">
+        <div class="challenge-paper">
+            <h2 class="challenge-title">Challenge Time!</h2>
+            <p class="challenge-subtitle">Coding Challenge - Coming Soon</p>
+            
+            <div id="challengeContent">
+                <!-- Coding challenge will be implemented here -->
+                <p style="text-align: center; font-size: 1.5em; color: #666; margin-top: 50px;">
+                    Coding challenge implementation in progress...
+                </p>
+            </div>
+            
+            <div class="challenge-buttons">
+                <button class="challenge-btn end-episode-btn" id="endEpisodeBtn">END EPISODE 2</button>
+            </div>
+            </div>
+    </div>
+
+    <div class="chapter-intro-screen" id="chapterIntroScreen">
+        <div class="chapter-text-container">
+            <p class="chapter-main-text">Chapter 1</p>
+            <p class="episode-sub-text" id="episodeSubText">Episode 2</p>
+        </div>
+    </div>
+
+    <div class="scene-container" id="sceneContainer">
+        <img src="" alt="Scene Content" class="scene-content" id="sceneImage" style="display: none;">
+        <video src="" class="scene-content" id="sceneVideo" autoplay muted style="display: none;"></video>
+        <div class="scene-text-overlay" id="sceneTextOverlay" style="display: none;"></div>
+        <div class="subtitle-container" id="subtitleContainer"></div>
+        <p class="scene-next-text" id="sceneNextText"></p>
+        
+        <!-- Interactive Scene -->
+        <div class="interactive-scene" id="interactiveScene" style="display: none;">
+            <div class="objective-tag" id="objectiveTag">Objective: Go to 'Tindahan'</div>
+            
+            <div class="background-layer active" id="background1" style="background-image: url('assets/4/backgoungs/1.png');"></div>
+            <div class="background-layer inactive" id="background2" style="background-image: url('assets/4/backgoungs/2.png');"></div>
+            <div class="background-layer inactive" id="background3" style="background-image: url('assets/4/backgoungs/3.png');"></div>
+            <div class="background-layer inactive" id="background4" style="background-image: url('assets/4/backgoungs/4.png');"></div>
+            <div class="background-layer inactive" id="background5" style="background-image: url('assets/4/backgoungs/5.png');"></div>
+            
+            <div class="floor"></div>
+            
+            <div class="avatar-hitbox" id="avatarHitbox">
+                <img id="avatarSprite" src="assets/4/chibi/f1.png" alt="Avatar" class="avatar-sprite">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chapterIntroScreen = document.getElementById('chapterIntroScreen');
+        const episodeSubText = document.getElementById('episodeSubText');
+
+        const sceneContainer = document.getElementById('sceneContainer');
+        const sceneImage = document.getElementById('sceneImage');
+        const sceneVideo = document.getElementById('sceneVideo');
+        const sceneTextOverlay = document.getElementById('sceneTextOverlay');
+        const subtitleContainer = document.getElementById('subtitleContainer');
+        const sceneNextText = document.getElementById('sceneNextText');
+
+        // Interactive scene elements
+        const interactiveScene = document.getElementById('interactiveScene');
+        const avatarHitbox = document.getElementById('avatarHitbox');
+        const backgrounds = [
+            document.getElementById('background1'),
+            document.getElementById('background2'),
+            document.getElementById('background3'),
+            document.getElementById('background4'),
+            document.getElementById('background5')
+        ];
+
+
+        const scenes = [
+            // { type: 'video', src: 'assets/1.mp4', subtitle: '' },
+            // { type: 'video', src: 'assets/2.mp4', subtitle: [
+            //     { text: "Axle: Hala push push na!", time: 0 },
+            //     { text: "Axle's mother: Axle halika ka dito may ipapabili ako, hindi ung puro laro ka lang dyaan!", time: 4000 }
+            // ]},
+            // { type: 'video', src: 'assets/3.mp4', subtitle: 'Axle: Opo nay, eto na po' },
+            // { type: 'interactive', src: 'assets/4.mp4', subtitle: 'Use arrow keys to move around!' },
+            // { type: 'video', src: 'assets/5.mp4', subtitle: '' },
+            // { type: 'video', src: 'assets/6.mp4', subtitle: 'Axle: Tao po pabili po!' },
+            // { type: 'video', src: 'assets/7.mp4', subtitle: 'Ate Kim: Hello ano sayo?' },
+            // { type: 'video', src: 'assets/8.mp4', subtitle: 'Axle: Eto po'},
+            // { type: 'video', src: 'assets/9.mp4', subtitle: 'Ate Kim: Sure! Sandali lang... Uy, Axle, ‘di ba ikaw yung pamangkin ni Tita Melba?' },
+            // { type: 'video', src: 'assets/10.mp4', subtitle: 'Axle: Opo! Eh Ate... BSIT po ba kayo??' },
+            // { type: 'video', src: 'assets/11.mp4', subtitle: 'Ate Kim: Oo naman! Graduate lang recently. Gusto mo, turuan kita habang sinasako ko ‘tong asukal?' },
+            // { type: 'image', src: 'assets/12.png', subtitle: 'Ate Kim: Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.' },
+            // { type: 'image', src: 'assets/12.png', content: '<pre>int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;</pre>', subtitle: 'Ate Kim: Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.' },
+            // { type: 'image', src: 'assets/12.png', content: '<b><u>int sukaQuantity = 3;</u></b><br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Ate Kim: int para sa bilang kung ilang piraso ng suka.' },
+            // { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br><b><u>String brandName = "Silver Swan";</u></b><br>boolean mayStock = true;', subtitle: 'Ate Kim: String para sa mga pangalan.' },
+            // { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br><b><u>boolean mayStock = true;</u></b>', subtitle: 'Ate Kim: At boolean kung meron o wala o nagsasagot ng true or false.' },
+            // { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Axle: So parang... bawat variable, may type. Hindi puwedeng halo-halo lang.' },
+            // { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Ate Kim: Tama! Parang ‘di mo pwedeng isulat ang ‘SkyFlakes’ sa lalagyan ng numbers. Mali ‘yon. Oh bale tatlong suka ay 13 isa, 39 pesos lahat' },
+            // { type: 'video', src: 'assets/6.mp4', subtitle: 'Axle: Ate Kim, salamat sa lesson ah. Eto na po bayad.' },
+            { type: 'video', src: 'assets/7.mp4', subtitle: 'Ate Kim: Walang anuman! Next time punta ka ulit, tapos data types naman tayo ulit. Try natin with float at char.' },
+
+        ];
+        let currentSceneIndex = 0;
+        let currentSubtitleIndex = 0; // New: to track current subtitle sentence
+        let typingInterval = null; // For typing animation
+        let subtitleTimeout = null; // For timed subtitle changes
+        
+        // Interactive scene variables
+        let currentBackgroundIndex = 0;
+        let avatarPositionX = 50; // Percentage from left (0-100)
+        let avatarPositionY = 50; // Percentage from bottom (0-100)
+        let isInteractiveSceneActive = false;
+        let keysPressed = {}; // Track pressed keys for smooth movement
+        
+        // Avatar sprite animation variables
+        let avatarSpriteElement;
+        let avatarAnimationFrame = 0; // 0 for frame 1, 1 for frame 2
+        let lastMoveDirection = 'front'; // 'front', 'back', 'left', 'right'
+        let animationFrameCounter = 0;
+        const animationFrameThreshold = 10; // How many frames before switching sprite
+        
+        // Dummy hitbox variables
+        let dummyHitboxes = [];
+        let dummyHitboxSpawnInterval = null;
+        let dummyHitboxMoveInterval = null;
+
+        // Challenge variables
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let totalScore = 0;
+        let challengeStarted = false;
+
+
+
+
+
+
+
+        function showChapterIntro() {
+            chapterIntroScreen.style.opacity = '1';
+            chapterIntroScreen.style.visibility = 'visible';
+            setTimeout(() => {
+                hideChapterIntro(); // Automatically hide after 3 seconds
+            }, 1500); // 3000 milliseconds = 3 seconds
+        }
+
+        function hideChapterIntro() {
+            chapterIntroScreen.style.opacity = '0';
+            chapterIntroScreen.addEventListener('transitionend', () => {
+                chapterIntroScreen.style.visibility = 'hidden';
+                showScene(0); // Start showing the first scene
+            }, { once: true });
+        }
+
+        // Interactive scene functions
+        function initInteractiveScene() {
+            isInteractiveSceneActive = true;
+            avatarSpriteElement = document.getElementById('avatarSprite');
+            avatarPositionX = 50;
+            avatarPositionY = 15; // Start lower, within the floor area
+            currentBackgroundIndex = 0;
+            updateBackground();
+            updateAvatarPosition();
+            updateAvatarSprite(); // Initial sprite update
+            
+            // Show objective tag
+            const objectiveTag = document.getElementById('objectiveTag');
+            if (objectiveTag) {
+                objectiveTag.classList.add('show');
+            }
+            
+            // Add keyboard event listeners
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('keyup', handleKeyUp);
+            
+            // Start movement loop
+            startMovementLoop();
+            
+            // Start dummy hitbox system
+            startDummyHitboxSystem();
+        }
+
+        function cleanupInteractiveScene() {
+            isInteractiveSceneActive = false;
+            document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('keyup', handleKeyUp);
+            keysPressed = {};
+            
+            // Hide objective tag
+            const objectiveTag = document.getElementById('objectiveTag');
+            if (objectiveTag) {
+                objectiveTag.classList.remove('show');
+            }
+            
+            // Clean up dummy hitboxes
+            clearInterval(dummyHitboxSpawnInterval);
+            clearInterval(dummyHitboxMoveInterval);
+            dummyHitboxes.forEach(hitbox => {
+                if (hitbox.element && hitbox.element.parentNode) {
+                    hitbox.element.parentNode.removeChild(hitbox.element);
+                }
+            });
+            dummyHitboxes = [];
+        }
+
+        function handleKeyDown(event) {
+            if (!isInteractiveSceneActive) return;
+            keysPressed[event.key] = true;
+        }
+
+        function handleKeyUp(event) {
+            if (!isInteractiveSceneActive) return;
+            keysPressed[event.key] = false;
+        }
+
+        function startMovementLoop() {
+            if (!isInteractiveSceneActive) return;
+            
+            const step = 1; // Movement step in percentage
+            const floorTop = 20; // Floor height is 30%, so hitbox can't go above this
+            
+            if (keysPressed['ArrowLeft']) {
+                avatarPositionX = Math.max(0, avatarPositionX - step);
+            }
+            if (keysPressed['ArrowRight']) {
+                avatarPositionX = Math.min(100, avatarPositionX + step);
+            }
+            if (keysPressed['ArrowUp']) {
+                avatarPositionY = Math.min(floorTop, avatarPositionY + step);
+            }
+            if (keysPressed['ArrowDown']) {
+                avatarPositionY = Math.max(0, avatarPositionY - step);
+            }
+            
+            updateAvatarPosition();
+            updateAvatarSprite(); // Update sprite based on movement
+            checkBackgroundSwitch();
+            
+            // Continue the loop
+            requestAnimationFrame(startMovementLoop);
+        }
+
+        // Dummy hitbox functions
+        function spawnDummyHitbox() {
+            const hitbox = document.createElement('div');
+            hitbox.className = 'dummy-hitbox';
+            
+            // Create sprite image
+            const sprite = document.createElement('img');
+            sprite.className = 'dummy-sprite';
+            
+            // Random spawn from left or right edge
+            const spawnFromLeft = Math.random() < 0.5;
+            const startX = spawnFromLeft ? -15 : 100; // Start off-screen
+            const direction = spawnFromLeft ? 1 : -1; // 1 for right, -1 for left
+            
+            // Set sprite based on direction
+            if (direction === 1) {
+                sprite.src = 'assets/4/chibi/r1d.png'; // Moving right
+            } else {
+                sprite.src = 'assets/4/chibi/l1d.png'; // Moving left
+            }
+            
+            // Random Y position (0-20% from bottom, within floor area)
+            const randomY = Math.random() * 20;
+            
+            hitbox.style.left = startX + '%';
+            hitbox.style.bottom = randomY + '%';
+            
+            // Set z-index based on Y position (closer to bottom = higher z-index)
+            // Convert Y position to z-index: bottom (0%) = z-index 20, top (20%) = z-index 1
+            const zIndex = Math.floor(21 - (randomY / 20) * 20);
+            hitbox.style.zIndex = zIndex;
+            
+            // Add sprite to hitbox
+            hitbox.appendChild(sprite);
+            
+            // Add to interactive scene
+            interactiveScene.appendChild(hitbox);
+            
+            // Store hitbox data
+            const hitboxData = {
+                element: hitbox,
+                sprite: sprite,
+                x: startX,
+                y: randomY,
+                direction: direction,
+                speed: 0.3 + Math.random() * 0.3 // Random speed between 0.3-0.6
+            };
+            
+            dummyHitboxes.push(hitboxData);
+        }
+
+        function moveDummyHitboxes() {
+            dummyHitboxes.forEach((hitbox, index) => {
+                // Move the hitbox horizontally
+                hitbox.x += hitbox.direction * hitbox.speed;
+                hitbox.element.style.left = hitbox.x + '%';
+                
+                // Update z-index based on current Y position (closer to bottom = higher z-index)
+                const zIndex = Math.floor(21 - (hitbox.y / 20) * 20);
+                hitbox.element.style.zIndex = zIndex;
+                
+                // Remove if out of viewport
+                if (hitbox.x < -20 || hitbox.x > 120) {
+                    if (hitbox.element && hitbox.element.parentNode) {
+                        hitbox.element.parentNode.removeChild(hitbox.element);
+                    }
+                    dummyHitboxes.splice(index, 1);
+                }
+            });
+        }
+
+        function startDummyHitboxSystem() {
+            // Spawn dummy hitboxes every 2-4 seconds
+            dummyHitboxSpawnInterval = setInterval(() => {
+                if (isInteractiveSceneActive) {
+                    spawnDummyHitbox();
+                }
+            }, 2000 + Math.random() * 2000);
+            
+            // Move dummy hitboxes every frame
+            dummyHitboxMoveInterval = setInterval(() => {
+                if (isInteractiveSceneActive) {
+                    moveDummyHitboxes();
+                }
+            }, 16); // ~60 FPS
+        }
+
+        function updateAvatarPosition() {
+            avatarHitbox.style.left = avatarPositionX + '%';
+            avatarHitbox.style.bottom = avatarPositionY + '%';
+        }
+
+        // Avatar sprite animation functions
+        const avatarSprites = {
+            'front': ['assets/4/chibi/f1.png', 'assets/4/chibi/f2.png'],
+            'back': ['assets/4/chibi/b1.png', 'assets/4/chibi/b2.png'],
+            'left': ['assets/4/chibi/l1.png', 'assets/4/chibi/l2.png'],
+            'right': ['assets/4/chibi/r1.png', 'assets/4/chibi/r2.png']
+        };
+
+        function updateAvatarSprite() {
+            let currentDirection = 'front'; // Default to front/standby
+            let isMoving = false;
+
+            // Determine current direction based on pressed keys
+            if (keysPressed['ArrowLeft'] || keysPressed['a']) {
+                currentDirection = 'left';
+                isMoving = true;
+            } else if (keysPressed['ArrowRight'] || keysPressed['d']) {
+                currentDirection = 'right';
+                isMoving = true;
+            } else if (keysPressed['ArrowUp'] || keysPressed['w']) {
+                currentDirection = 'back';
+                isMoving = true;
+            } else if (keysPressed['ArrowDown'] || keysPressed['s']) {
+                currentDirection = 'front';
+                isMoving = true;
+            }
+
+            if (isMoving) {
+                // Animate walking by alternating frames
+                animationFrameCounter++;
+                if (animationFrameCounter >= animationFrameThreshold) {
+                    avatarAnimationFrame = 1 - avatarAnimationFrame; // Toggle between 0 and 1
+                    animationFrameCounter = 0;
+                }
+                lastMoveDirection = currentDirection;
+            } else {
+                // Not moving, show standby frame (first frame of last direction)
+                avatarAnimationFrame = 0; // Always show the first frame for standby
+                animationFrameCounter = 0;
+                currentDirection = lastMoveDirection; // Maintain last direction's standby pose
+            }
+
+            // Update the sprite image
+            if (avatarSpriteElement && avatarSprites[currentDirection]) {
+                avatarSpriteElement.src = avatarSprites[currentDirection][avatarAnimationFrame];
+            }
+        }
+
+        function updateBackground() {
+            backgrounds.forEach((bg, index) => {
+                if (index === currentBackgroundIndex) {
+                    bg.classList.add('active');
+                    bg.classList.remove('inactive');
+                } else {
+                    bg.classList.add('inactive');
+                    bg.classList.remove('active');
+                }
+            });
+        }
+
+        function checkBackgroundSwitch() {
+            // Check if hitbox reached center top of floor on background 5 (index 4)
+            if (currentBackgroundIndex === 4 && avatarPositionX >= 45 && avatarPositionX <= 55 && avatarPositionY >= 18 && avatarPositionY <= 22) {
+                // Proceed to next scene
+                console.log("Hitbox reached center top of floor on background 5 - proceeding to next scene");
+                cleanupInteractiveScene();
+                sceneNextText.classList.remove('show');
+                sceneNextText.classList.remove('highlight');
+                currentSceneIndex++;
+                showScene(currentSceneIndex);
+                return;
+            }
+            
+            // Switch background when avatar reaches edges
+            if (avatarPositionX <= 0 && currentBackgroundIndex > 0) {
+                // Move to previous background, spawn on the right side
+                currentBackgroundIndex--;
+                avatarPositionX = 90; // Spawn a little bit from the right edge
+                updateBackground();
+                updateAvatarPosition();
+            } else if (avatarPositionX >= 100 && currentBackgroundIndex < backgrounds.length - 1) {
+                // Move to next background, spawn on the left side
+                currentBackgroundIndex++;
+                avatarPositionX = 10; // Spawn a little bit from the left edge
+                updateBackground();
+                updateAvatarPosition();
+            }
+        }
+
+        // Function to show timed subtitles
+        function showTimedSubtitles(subtitles) {
+            let currentSubtitleIndex = 0;
+            
+            function showNextSubtitle() {
+                if (currentSubtitleIndex < subtitles.length) {
+                    const subtitle = subtitles[currentSubtitleIndex];
+                    subtitleContainer.textContent = subtitle.text;
+                    
+                    // Schedule next subtitle
+                    if (currentSubtitleIndex < subtitles.length - 1) {
+                        const nextSubtitle = subtitles[currentSubtitleIndex + 1];
+                        const delay = nextSubtitle.time - subtitle.time;
+                        subtitleTimeout = setTimeout(() => {
+                            currentSubtitleIndex++;
+                            showNextSubtitle();
+                        }, delay);
+                    }
+                }
+            }
+            
+            // Start showing subtitles
+            showNextSubtitle();
+        }
+
+        // Typing animation function for mixed content (only <pre> tags type)
+        function typeText(element, text, speed = 50) {
+            // Clear any existing typing animation
+            if (typingInterval) {
+                clearInterval(typingInterval);
+            }
+            
+            // Split content into parts: before <pre>, <pre> content, after </pre>
+            const preStart = text.indexOf('<pre>');
+            const preEnd = text.indexOf('</pre>');
+            
+            if (preStart === -1 || preEnd === -1) {
+                // No <pre> tags found, just display normally
+                element.innerHTML = text;
+                return;
+            }
+            
+            const beforePre = text.substring(0, preStart);
+            const preContent = text.substring(preStart, preEnd + 6); // Include </pre>
+            const afterPre = text.substring(preEnd + 6);
+            
+            // Display the non-<pre> content immediately
+            element.innerHTML = beforePre;
+            
+            // Start typing the <pre> content
+            let i = 0;
+            const fullPreContent = preContent;
+            
+            typingInterval = setInterval(() => {
+                if (i < fullPreContent.length) {
+                    // Handle HTML entities (like &emsp;)
+                    if (fullPreContent[i] === '&') {
+                        let entityEnd = fullPreContent.indexOf(';', i);
+                        if (entityEnd !== -1) {
+                            element.innerHTML += fullPreContent.substring(i, entityEnd + 1);
+                            i = entityEnd + 1;
+                        } else {
+                            element.innerHTML += fullPreContent[i];
+                            i++;
+                        }
+                    }
+                    // Handle HTML tags
+                    else if (fullPreContent[i] === '<') {
+                        let tagEnd = fullPreContent.indexOf('>', i);
+                        if (tagEnd !== -1) {
+                            element.innerHTML += fullPreContent.substring(i, tagEnd + 1);
+                            i = tagEnd + 1;
+                        } else {
+                            element.innerHTML += fullPreContent[i];
+                            i++;
+                        }
+                    } else {
+                        element.innerHTML += fullPreContent[i];
+                        i++;
+                    }
+                } else {
+                    // Add the after-pre content and blinking cursor
+                    element.innerHTML += afterPre + '<span class="typing-cursor"></span>';
+                    clearInterval(typingInterval);
+                    typingInterval = null;
+                }
+            }, speed);
+        }
+
+        function showScene(index) {
+            if (index < scenes.length) {
+                const scene = scenes[index];
+
+                sceneImage.style.display = 'none';
+                sceneVideo.style.display = 'none';
+                sceneTextOverlay.style.display = 'none';
+                interactiveScene.style.display = 'none';
+                sceneVideo.pause();
+                sceneVideo.currentTime = 0;
+                
+                // Clear any existing typing animation and subtitle timeout
+                if (typingInterval) {
+                    clearInterval(typingInterval);
+                    typingInterval = null;
+                }
+                if (subtitleTimeout) {
+                    clearTimeout(subtitleTimeout);
+                    subtitleTimeout = null;
+                }
+                
+                // Clean up any captured frame from previous scene
+                const capturedFrame = sceneContainer.querySelector('.captured-frame');
+                if (capturedFrame) {
+                    capturedFrame.style.display = 'none';
+                }
+
+                if (scene.type === 'image') {
+                    sceneImage.src = scene.src;
+                    sceneImage.style.display = 'block';
+                    
+                    // Check if this image scene has content for text overlay
+                    if (scene.content) {
+                        sceneTextOverlay.style.display = 'block';
+                        sceneTextOverlay.classList.add('show');
+                        // Use typing animation only for <pre> tags
+                        if (scene.content.includes('<pre>')) {
+                            typeText(sceneTextOverlay, scene.content, 100);
+                        } else {
+                            sceneTextOverlay.innerHTML = scene.content;
+                        }
+                    }
+                } else if (scene.type === 'video') {
+                    sceneVideo.src = scene.src;
+                    sceneVideo.style.display = 'block';
+                    sceneVideo.play();
+                } else if (scene.type === 'text') {
+                    sceneTextOverlay.style.display = 'block';
+                    sceneTextOverlay.classList.add('show');
+                    // Use typing animation only for <pre> tags
+                    if (scene.content.includes('<pre>')) {
+                        typeText(sceneTextOverlay, scene.content, 100);
+                    } else {
+                        sceneTextOverlay.innerHTML = scene.content;
+                    }
+                } else if (scene.type === 'interactive') {
+                    interactiveScene.style.display = 'block';
+                    initInteractiveScene();
+                }
+
+                // Handle different subtitle formats
+                if (Array.isArray(scene.subtitle)) {
+                    // Check if it's timed subtitles (objects with text and time)
+                    if (scene.subtitle.length > 0 && typeof scene.subtitle[0] === 'object' && scene.subtitle[0].text) {
+                        // Timed subtitles
+                        showTimedSubtitles(scene.subtitle);
+                    } else {
+                        // Regular array subtitles
+                        subtitleContainer.textContent = scene.subtitle.join('\n');
+                    }
+                } else {
+                    subtitleContainer.textContent = scene.subtitle || '';
+                }
+                
+                // Hide subtitle container if no subtitle
+                let shouldShowSubtitle = false;
+                if (scene.subtitle) {
+                    if (Array.isArray(scene.subtitle)) {
+                        // Check if it's timed subtitles (objects with text and time)
+                        if (scene.subtitle.length > 0 && typeof scene.subtitle[0] === 'object' && scene.subtitle[0].text) {
+                            shouldShowSubtitle = true; // Timed subtitles
+                        } else if (scene.subtitle.length > 0) {
+                            shouldShowSubtitle = true; // Regular array subtitles
+                        }
+                    } else {
+                        shouldShowSubtitle = scene.subtitle.trim() !== '';
+                    }
+                }
+                
+                if (shouldShowSubtitle) {
+                    subtitleContainer.style.display = 'block';
+                } else {
+                    subtitleContainer.style.display = 'none';
+                }
+
+                sceneContainer.style.opacity = '1';
+                sceneContainer.style.visibility = 'visible';
+                sceneNextText.classList.remove('show'); // Ensure it's hidden before deciding to show/highlight
+                sceneNextText.classList.remove('highlight'); // Ensure highlight is removed initially
+
+                // Show "Click to Next" text unless it's the last scene or video without subtitle
+                let hasSubtitle = false;
+                if (scene.subtitle) {
+                    if (Array.isArray(scene.subtitle)) {
+                        // Check if it's timed subtitles (objects with text and time)
+                        if (scene.subtitle.length > 0 && typeof scene.subtitle[0] === 'object' && scene.subtitle[0].text) {
+                            hasSubtitle = true; // Timed subtitles
+                        } else if (scene.subtitle.length > 0) {
+                            hasSubtitle = true; // Regular array subtitles
+                        }
+                    } else {
+                        hasSubtitle = scene.subtitle.trim() !== '';
+                    }
+                }
+                
+                if (index < scenes.length - 1 && (scene.type !== 'video' || hasSubtitle)) {
+                    sceneNextText.textContent = "Click to Next";
+                    sceneNextText.classList.add('show');
+                } else if (index === scenes.length - 1) {
+                    sceneNextText.textContent = "Click to Start"; // Last scene
+                    sceneNextText.classList.add('show');
+                }
+
+                // Handle highlighting
+                if (scene.type === 'image' || scene.type === 'text') {
+                    sceneNextText.classList.add('highlight');
+                } else if (scene.type === 'video' && hasSubtitle) {
+                    sceneNextText.classList.remove('highlight'); // Initially not highlighted
+                    sceneVideo.onended = () => {
+                        sceneNextText.classList.add('highlight'); // Highlight when video ends
+                    };
+                }
+
+                // Add event listener to skip scene on click
+                sceneContainer.onclick = () => {
+                    // Clean up interactive scene if active
+                    if (scene.type === 'interactive') {
+                        cleanupInteractiveScene();
+                    }
+                    
+                    sceneNextText.classList.remove('show'); // Hide text on click
+                    sceneNextText.classList.remove('highlight'); // Remove highlight on click
+                    currentSceneIndex++;
+                    showScene(currentSceneIndex);
+                };
+
+                // For video, also listen for 'ended' event to advance scene automatically
+                if (scene.type === 'video') {
+                    if (!hasSubtitle) {
+                        // Auto-advance if no subtitle
+                        sceneVideo.onended = () => {
+                            currentSceneIndex++;
+                            showScene(currentSceneIndex);
+                        };
+                    } else {
+                        // Manual advance if has subtitle
+                        sceneVideo.onended = () => {
+                            sceneNextText.classList.add('highlight'); // Highlight when video ends
+                        };
+                    }
+                }
+            } else {
+                // All scenes shown, hide scene container and show challenge
+                sceneContainer.style.opacity = '0';
+                sceneContainer.addEventListener('transitionend', () => {
+                    sceneContainer.style.visibility = 'hidden';
+                    // Show challenge after all scenes are completed
+                    console.log("All scenes completed! Starting challenge...");
+                    showChallenge();
+                }, { once: true });
+            }
+        }
+
+        // Start directly with chapter intro
+        document.addEventListener('DOMContentLoaded', showChapterIntro);
+
+        // Challenge functions
+        function showChallenge() {
+            // Save storymode selection context for episode 2 with easy difficulty
+            localStorage.setItem('selectedChallenge', JSON.stringify({
+                level: 'ep2',
+                difficulty: 'easy',
+                timestamp: new Date().toISOString()
+            }));
+            // Redirect to storymode challenge interface root
+            window.location.href = '../../index.html';
+        }
+
+        function endEpisode() {
+            // Hide background before redirecting
+            const mainBg = document.querySelector('.main-bg');
+            mainBg.classList.remove('show');
+            // Redirect back to episodes hub or next episode
+            window.location.href = '../../../index.html';
+        }
+
+        // Add event listeners for challenge buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('endEpisodeBtn').addEventListener('click', endEpisode);
+        });
+
+    </script>
+    
+</body>
+</html>

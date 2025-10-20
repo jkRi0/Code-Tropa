@@ -141,25 +141,77 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get current challenge data
         const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
         if (selectedData && selectedData.level) {
-            const currentLevelNumber = parseInt(selectedData.level.replace('lev', ''));
-            const nextLevelNumber = currentLevelNumber + 1;
-            const nextLevel = `lev${nextLevelNumber}`;
+            const currentLevel = selectedData.level;
             
-            // Check if next level exists (you might want to implement level validation)
-            // For now, we'll assume levels go up to a certain number
-            if (nextLevelNumber <= 10) { // Assuming max 10 levels, adjust as needed
-                // Update the selected challenge data
-                const updatedData = {
-                    ...selectedData,
-                    level: nextLevel
-                };
-                localStorage.setItem('selectedChallenge', JSON.stringify(updatedData));
+            // Check if this is story mode (episodes) or challenge mode (levels)
+            if (currentLevel.startsWith('ep')) {
+                // Story mode: Handle episode progression
+                const currentEpisodeNumber = parseInt(currentLevel.replace('ep', ''));
+                const nextEpisodeNumber = currentEpisodeNumber + 1;
+                const nextEpisode = `ep${nextEpisodeNumber}`;
                 
-                // Reload the page with the new level
-                window.location.reload();
+                // Check if next episode exists (episodes 1-7)
+                if (nextEpisodeNumber <= 7) {
+                    // Update the selected challenge data for next episode
+                    const updatedData = {
+                        ...selectedData,
+                        level: nextEpisode,
+                        timestamp: new Date().toISOString()
+                    };
+                    localStorage.setItem('selectedChallenge', JSON.stringify(updatedData));
+                    
+                    // Determine language folder dynamically
+                    const selectedLanguageSpan = document.getElementById('selectedLanguage');
+                    const currentLanguage = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
+                    let languageFolder;
+                    switch(currentLanguage.toLowerCase()) {
+                        case 'c++':
+                        case 'cpp':
+                            languageFolder = '2cP';
+                            break;
+                        case 'c#':
+                        case 'csharp':
+                            languageFolder = '3cS';
+                            break;
+                        case 'java':
+                        default:
+                            languageFolder = '1j';
+                            break;
+                    }
+                    
+                    // Redirect to the next episode's story page
+                    window.location.href = `./${languageFolder}/${nextEpisode}/index.html`;
+                } else {
+                    // No more episodes, go to homepage
+                    alert('Congratulations! You have completed all available episodes!');
+                    window.location.href = '../index.html';
+                }
+            } else if (currentLevel.startsWith('lev')) {
+                // Challenge mode: Handle level progression (existing logic)
+                const currentLevelNumber = parseInt(currentLevel.replace('lev', ''));
+                const nextLevelNumber = currentLevelNumber + 1;
+                const nextLevel = `lev${nextLevelNumber}`;
+                
+                // Check if next level exists (you might want to implement level validation)
+                // For now, we'll assume levels go up to a certain number
+                if (nextLevelNumber <= 10) { // Assuming max 10 levels, adjust as needed
+                    // Update the selected challenge data
+                    const updatedData = {
+                        ...selectedData,
+                        level: nextLevel
+                    };
+                    localStorage.setItem('selectedChallenge', JSON.stringify(updatedData));
+                    
+                    // Reload the page with the new level
+                    window.location.reload();
+                } else {
+                    // No more levels, go to homepage
+                    alert('Congratulations! You have completed all available levels!');
+                    window.location.href = '../index.html';
+                }
             } else {
-                // No more levels, go to homepage
-                alert('Congratulations! You have completed all available levels!');
+                // Unknown level format, go to homepage
+                console.warn('Unknown level format:', currentLevel);
                 window.location.href = '../index.html';
             }
         } else {

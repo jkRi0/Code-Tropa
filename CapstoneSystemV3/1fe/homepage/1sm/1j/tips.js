@@ -2,20 +2,21 @@
     const tipsData = {
         ep2: {
             easy: {
-                question: "What is the main purpose of Java's main method?",
+                question: "What data type should you use for storing the number of noodle packs (10) in Java?",
                 options: {
-                    a: "To declare variables",
-                    b: "To serve as the program entry point",
-                    c: "To create objects",
-                    d: "To handle exceptions"
+                    a: "String",
+                    b: "int",
+                    c: "double",
+                    d: "boolean"
                 },
                 correctAnswer: "b",
                 tips: [
-                    "Start with: `public class Main {`",
-                    "Add the main method: `public static void main(String[] args) {`",
-                    "Use System.out.println() for output",
-                    "Close all braces properly",
-                    "Test your program to ensure it runs correctly"
+                    "Use `int` for whole numbers like 10",
+                    "Use `String` for text like \"Lucky Me\" (with double quotes)",
+                    "Use `boolean` for true/false values like availability",
+                    "Use `double` for decimal numbers like 13.75",
+                    "Remember to end each statement with a semicolon (;)",
+                    "Variable names should be descriptive: noodles, brand, available, price"
                 ]
             }
         },

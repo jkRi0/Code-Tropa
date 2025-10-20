@@ -191,8 +191,8 @@ function loadSelectedChallengeData() {
             const splashLevelNumber = data.level.replace('lev', 'level');
             
             // Update splash screen
-            document.getElementById('splashLevel').textContent = splashLevelNumber || 'Unknown Level';
-            document.getElementById('splashDifficulty').textContent = data.difficulty || 'Unknown Difficulty';
+            document.getElementById('splashLevel').textContent = "CHALLENGE TIME!" || 'Unknown Level';
+            document.getElementById('splashDifficulty').textContent = ("Episode "+splashLevelNumber[splashLevelNumber.length-1]) || 'Unknown Difficulty';
             
             // Update verification panel
             document.getElementById('selectedLevel').textContent = splashLevelNumber || 'Not available';

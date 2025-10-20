@@ -1,11 +1,11 @@
 // Use namespace to avoid conflicts (storymode uses easy only)
 window.objectivesData = window.objectivesData || {
     easy: {
-        title: "Episode 2 - Java (Easy)",
+        title: "Episode 2 - Java Variables Challenge",
         objectives: [
-            "Create a Java class named 'Greeting'",
-            "Add a main method",
-            "Print 'Hello, Storymode!' to the console"
+            "Declare and initialize Java variables using correct data types",
+            "Apply what you've learned about int, String, boolean, and double",
+            "Understand proper Java syntax: use of semicolons, naming conventions, and quotation marks for strings"
         ]
     }
 };
@@ -13,8 +13,19 @@ window.objectivesData = window.objectivesData || {
 // Example output to display under objectives
 window.examples = window.examples || {
     easy: `
-// Expected output:
-Hello, Storymode!`
+// Challenge Scenario:
+// Axle wants to help Ate Kim manage her tindahan inventory in code form.
+// Write Java statements that declare the variables needed to track:
+// - 10 packs of noodles
+// - Brand name: "Lucky Me"
+// - Are they available? Yes
+// - Price per pack: 13.75 pesos
+
+// Expected Output:
+int noodles = 10;
+String brand = "Lucky Me";
+boolean available = true;
+double price = 13.75;`
 };
 
 // Display objectives in the storymode challenge UI
