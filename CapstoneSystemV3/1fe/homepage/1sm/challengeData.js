@@ -511,6 +511,35 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
                                 return perfResponse.json();
                             }).then(perfData => {
                                 console.log('Save story performance response data:', perfData);
+                                
+                                // Award badge if user passed the episode challenge
+                                if (hasPassed) {
+                                    console.log('=== AWARDING BADGE FOR EPISODE ===');
+                                    console.log('Episode:', episodeNum);
+                                    console.log('Points:', points);
+                                    
+                                    // Award badge based on episode number
+                                    const badgeTier = `t${episodeNum}`;
+                                    const badgeName = `b${episodeNum}`;
+                                    
+                                    fetch('../../../2be/award_badge.php', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                        body: `tier=${encodeURIComponent(badgeTier)}&badgeName=${encodeURIComponent(badgeName)}`
+                                    }).then(badgeResponse => {
+                                        console.log('Award badge response status:', badgeResponse.status);
+                                        return badgeResponse.json();
+                                    }).then(badgeData => {
+                                        console.log('Award badge response data:', badgeData);
+                                        console.log('Badge awarded successfully for episode', episodeNum);
+                                        
+                                        // Display badge congratulations
+                                        displayBadgeCongratulations(episodeNum);
+                                    }).catch(badgeErr => {
+                                        console.error('Failed to award badge:', badgeErr);
+                                    });
+                                    console.log('=== END AWARDING BADGE FOR EPISODE ===');
+                                }
                             }).catch(perfErr => {
                                 console.error('Save story performance network error:', perfErr);
                             });
@@ -603,3 +632,33 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
         }
     }, 1500); // Simulate 1.5 seconds of analysis time
 });
+
+// Function to display badge congratulations
+function displayBadgeCongratulations(episodeNum) {
+    console.log('=== DISPLAYING BADGE CONGRATULATIONS ===');
+    console.log('Episode:', episodeNum);
+    
+    const badgeContainer = document.getElementById('badgeContainer');
+    const badgeImage = document.getElementById('badgeImage');
+    const badgeMessage = document.getElementById('badgeMessage');
+    
+    if (badgeContainer && badgeImage && badgeMessage) {
+        // Set badge image source
+        badgeImage.src = `../../assets/b${episodeNum}.png`;
+        badgeImage.alt = `Episode ${episodeNum} Badge`;
+        
+        // Set badge message
+        badgeMessage.textContent = `You've earned the Episode ${episodeNum} Badge!`;
+        
+        // Show badge container
+        badgeContainer.style.display = 'flex';
+        
+        console.log('Badge congratulations displayed for episode', episodeNum);
+    } else {
+        console.error('Badge display elements not found');
+    }
+    console.log('=== END DISPLAYING BADGE CONGRATULATIONS ===');
+}
+
+// Expose function to global scope
+window.displayBadgeCongratulations = displayBadgeCongratulations;

@@ -8,6 +8,80 @@ body {
     overflow: hidden; /* Hide scrollbars */
 }
 
+/* Badge Display Styles */
+.badge-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+}
+
+.badge-display {
+    background: linear-gradient(135deg, #dfe5ff 0%, #b5a7c3 100%);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 100%;
+    animation: badgeAppear 0.5s ease-out;
+    position: relative;
+}
+
+.close-badge {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    z-index: 1;
+}
+
+.close-badge:hover {
+    color: #333;
+}
+
+@keyframes badgeAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.badge-image {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+    /* border-radius: 50%; */
+    /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); */
+}
+
+.badge-text h3 {
+    color: #2c3e50;
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.badge-text p {
+    color: #34495e;
+    margin: 0;
+    font-size: 16px;
+}
+
 .image-container {
     grid-column: 1 / 2;
     grid-row: 1 / 2;

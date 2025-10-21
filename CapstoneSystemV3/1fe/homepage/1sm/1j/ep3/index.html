@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Episode 2</title>
+    <title>Episode 3</title>
     <style>
         /* Global Styles */
         body {
@@ -149,114 +149,6 @@
             opacity: 1;
         }
 
-        /* Interactive Scene Styles */
-        .interactive-scene {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #87CEEB; /* Sky blue background */
-            overflow: hidden;
-        }
-
-        .background-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 80%;
-            background-size: cover;
-            background-position: center bottom;
-            background-repeat: no-repeat;
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .background-layer.active {
-            opacity: 1;
-        }
-
-        .background-layer.inactive {
-            opacity: 0;
-        }
-
-        .floor {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 20%;
-            background: linear-gradient(to bottom, #bbb2ad 50%, #a29b96 100%);
-            border-top: 3px solid #654321;
-            /* 2.5D perspective effect */
-            /* transform: perspective(1000px) rotateX(60deg); */
-            transform-origin: bottom;
-        }
-
-        .avatar-hitbox {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 8rem;
-            height: 10rem;
-            background-color: transparent;
-            border: none;
-            transform: translateX(-50%);
-            transition: left 0.2s ease-out;
-            z-index: 10;
-            overflow: hidden;
-        }
-
-        .dummy-hitbox {
-            position: absolute;
-            bottom: 0;
-            width: 8rem;
-            height: 10rem;
-            background-color: transparent;
-            border: none;
-            overflow: hidden;
-            z-index: 5;
-        }
-
-        .dummy-sprite {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            object-position: center bottom;
-            image-rendering: pixelated;
-        }
-
-        .objective-tag {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-family: 'Arial', sans-serif;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            border: 2px solid #2E7D32;
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .objective-tag.show {
-            opacity: 1;
-        }
-
-        .avatar-sprite {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            object-position: center bottom;
-            image-rendering: pixelated;
-        }
 
         .typing-cursor {
             display: inline-block;
@@ -549,7 +441,7 @@
             </div>
             
             <div class="challenge-buttons">
-                <button class="challenge-btn end-episode-btn" id="endEpisodeBtn">END EPISODE 2</button>
+                <button class="challenge-btn end-episode-btn" id="endEpisodeBtn">END EPISODE 3</button>
             </div>
             </div>
     </div>
@@ -557,7 +449,7 @@
     <div class="chapter-intro-screen" id="chapterIntroScreen">
         <div class="chapter-text-container">
             <p class="chapter-main-text">Chapter 1</p>
-            <p class="episode-sub-text" id="episodeSubText">Episode 2</p>
+            <p class="episode-sub-text" id="episodeSubText">Episode 3</p>
         </div>
     </div>
 
@@ -567,23 +459,6 @@
         <div class="scene-text-overlay" id="sceneTextOverlay" style="display: none;"></div>
         <div class="subtitle-container" id="subtitleContainer"></div>
         <p class="scene-next-text" id="sceneNextText"></p>
-        
-        <!-- Interactive Scene -->
-        <div class="interactive-scene" id="interactiveScene" style="display: none;">
-            <div class="objective-tag" id="objectiveTag">Objective: Go to 'Tindahan'</div>
-            
-            <div class="background-layer active" id="background1" style="background-image: url('assets/4/backgoungs/1.png');"></div>
-            <div class="background-layer inactive" id="background2" style="background-image: url('assets/4/backgoungs/2.png');"></div>
-            <div class="background-layer inactive" id="background3" style="background-image: url('assets/4/backgoungs/3.png');"></div>
-            <div class="background-layer inactive" id="background4" style="background-image: url('assets/4/backgoungs/4.png');"></div>
-            <div class="background-layer inactive" id="background5" style="background-image: url('assets/4/backgoungs/5.png');"></div>
-            
-            <div class="floor"></div>
-            
-            <div class="avatar-hitbox" id="avatarHitbox">
-                <img id="avatarSprite" src="assets/4/chibi/f1.png" alt="Avatar" class="avatar-sprite">
-            </div>
-        </div>
     </div>
 
     <script>
@@ -597,41 +472,34 @@
         const subtitleContainer = document.getElementById('subtitleContainer');
         const sceneNextText = document.getElementById('sceneNextText');
 
-        // Interactive scene elements
-        const interactiveScene = document.getElementById('interactiveScene');
-        const avatarHitbox = document.getElementById('avatarHitbox');
-        const backgrounds = [
-            document.getElementById('background1'),
-            document.getElementById('background2'),
-            document.getElementById('background3'),
-            document.getElementById('background4'),
-            document.getElementById('background5')
-        ];
 
 
         const scenes = [
-            // { type: 'video', src: 'assets/1.mp4', subtitle: '' },
-            // { type: 'video', src: 'assets/2.mp4', subtitle: [
-            //     { text: "Axle: Hala push push na!", time: 0 },
-            //     { text: "Axle's mother: Axle halika ka dito may ipapabili ako, hindi ung puro laro ka lang dyaan!", time: 4000 }
-            // ]},
-            // { type: 'video', src: 'assets/3.mp4', subtitle: 'Axle: Opo nay, eto na po' },
-            // { type: 'interactive', src: 'assets/4.mp4', subtitle: 'Use arrow keys to move around!' },
-            // { type: 'video', src: 'assets/5.mp4', subtitle: '' },
-            // { type: 'video', src: 'assets/6.mp4', subtitle: 'Axle: Tao po pabili po!' },
+            { type: 'video', src: 'assets/1.mp4', subtitle: 'Tapat ng tanghali ay inutusan si axle dalhin ang mga tupperware na ginamit nung fiesta sa kanyang kuya Justin' },
+            { type: 'video', src: 'assets/2.mp4', subtitle: [
+                { text: " ", time: 0 },
+                { text: "Axle: Kuya justin?!", time: 3000 }
+            ]},
+            { type: 'video', src: 'assets/3.mp4', subtitle: [
+                { text: " ", time: 0 },
+                { text: "Justin: Uy Axle!. Ginagawa mo dito?", time: 3000 }
+            ]},
+            { type: 'video', src: 'assets/4.mp4', subtitle: 'Axle: Inutusan lang po ni nanay ibalik ito... pero Kuya, pwede pa ba magpaturo sayo tungkol sa java?' },
+            { type: 'video', src: 'assets/5.mp4', subtitle: 'Justin: Oo naman. Actually kahit sa simpleng benta, pwede mo i-apply ang programming logic… lalo na expressions at operators. Katulad dito' },
             // { type: 'video', src: 'assets/7.mp4', subtitle: 'Ate Kim: Hello ano sayo?' },
             // { type: 'video', src: 'assets/8.mp4', subtitle: 'Axle: Eto po'},
             // { type: 'video', src: 'assets/9.mp4', subtitle: 'Ate Kim: Sure! Sandali lang... Uy, Axle, ‘di ba ikaw yung pamangkin ni Tita Melba?' },
             // { type: 'video', src: 'assets/10.mp4', subtitle: 'Axle: Opo! Eh Ate... BSIT po ba kayo??' },
             // { type: 'video', src: 'assets/11.mp4', subtitle: 'Ate Kim: Oo naman! Graduate lang recently. Gusto mo, turuan kita habang sinasako ko ‘tong asukal?' },
-            // { type: 'image', src: 'assets/12.png', subtitle: 'Ate Kim: Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.' },
-            // { type: 'image', src: 'assets/12.png', content: '<pre>int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;</pre>', subtitle: 'Ate Kim: Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.' },
-            // { type: 'image', src: 'assets/12.png', content: '<b><u>int sukaQuantity = 3;</u></b><br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Ate Kim: int para sa bilang kung ilang piraso ng suka.' },
-            // { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br><b><u>String brandName = "Silver Swan";</u></b><br>boolean mayStock = true;', subtitle: 'Ate Kim: String para sa mga pangalan.' },
-            // { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br><b><u>boolean mayStock = true;</u></b>', subtitle: 'Ate Kim: At boolean kung meron o wala o nagsasagot ng true or false.' },
-            // { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Axle: So parang... bawat variable, may type. Hindi puwedeng halo-halo lang.' },
-            // { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Ate Kim: Tama! Parang ‘di mo pwedeng isulat ang ‘SkyFlakes’ sa lalagyan ng numbers. Mali ‘yon. Oh bale tatlong suka ay 13 isa, 39 pesos lahat' },
-            // { type: 'video', src: 'assets/6.mp4', subtitle: 'Axle: Ate Kim, salamat sa lesson ah. Eto na po bayad.' },
+            { type: 'image', src: 'assets/6.png', subtitle: 'Justin: Halimbawa, 2 adobo na ₱50 at 1 gulay na ₱30. Paano mo kukuwentahin?' },
+            { type: 'image', src: 'assets/6.png', subtitle: 'Axle: Uhm… multiply tapos add?' },
+            { type: 'image', src: 'assets/6.png', content: '<pre>int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty * adoboPrice) + (gulayQty * gulayPrice);</pre>', subtitle: 'Justin: Correct. Sa Java, ganito ‘yan.' },
+            { type: 'image', src: 'assets/12.png', content: '<b><u>int sukaQuantity = 3;</u></b><br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Ate Kim: int para sa bilang kung ilang piraso ng suka.' },
+            { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br><b><u>String brandName = "Silver Swan";</u></b><br>boolean mayStock = true;', subtitle: 'Ate Kim: String para sa mga pangalan.' },
+            { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br><b><u>boolean mayStock = true;</u></b>', subtitle: 'Ate Kim: At boolean kung meron o wala o nagsasagot ng true or false.' },
+            { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Axle: So parang... bawat variable, may type. Hindi puwedeng halo-halo lang.' },
+            { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Ate Kim: Tama! Parang ‘di mo pwedeng isulat ang ‘SkyFlakes’ sa lalagyan ng numbers. Mali ‘yon. Oh bale tatlong suka ay 13 isa, 39 pesos lahat' },
+            { type: 'video', src: 'assets/6.mp4', subtitle: 'Axle: Ate Kim, salamat sa lesson ah. Eto na po bayad.' },
             { type: 'video', src: 'assets/7.mp4', subtitle: 'Ate Kim: Walang anuman! Next time punta ka ulit, tapos data types naman tayo ulit. Try natin with float at char.' },
 
         ];
@@ -639,31 +507,6 @@
         let currentSubtitleIndex = 0; // New: to track current subtitle sentence
         let typingInterval = null; // For typing animation
         let subtitleTimeout = null; // For timed subtitle changes
-        
-        // Interactive scene variables
-        let currentBackgroundIndex = 0;
-        let avatarPositionX = 50; // Percentage from left (0-100)
-        let avatarPositionY = 50; // Percentage from bottom (0-100)
-        let isInteractiveSceneActive = false;
-        let keysPressed = {}; // Track pressed keys for smooth movement
-        
-        // Avatar sprite animation variables
-        let avatarSpriteElement;
-        let avatarAnimationFrame = 0; // 0 for frame 1, 1 for frame 2
-        let lastMoveDirection = 'front'; // 'front', 'back', 'left', 'right'
-        let animationFrameCounter = 0;
-        const animationFrameThreshold = 10; // How many frames before switching sprite
-        
-        // Dummy hitbox variables
-        let dummyHitboxes = [];
-        let dummyHitboxSpawnInterval = null;
-        let dummyHitboxMoveInterval = null;
-
-        // Challenge variables
-        let currentQuestionIndex = 0;
-        let userAnswers = [];
-        let totalScore = 0;
-        let challengeStarted = false;
 
 
 
@@ -685,275 +528,6 @@
                 chapterIntroScreen.style.visibility = 'hidden';
                 showScene(0); // Start showing the first scene
             }, { once: true });
-        }
-
-        // Interactive scene functions
-        function initInteractiveScene() {
-            isInteractiveSceneActive = true;
-            avatarSpriteElement = document.getElementById('avatarSprite');
-            avatarPositionX = 50;
-            avatarPositionY = 15; // Start lower, within the floor area
-            currentBackgroundIndex = 0;
-            updateBackground();
-            updateAvatarPosition();
-            updateAvatarSprite(); // Initial sprite update
-            
-            // Show objective tag
-            const objectiveTag = document.getElementById('objectiveTag');
-            if (objectiveTag) {
-                objectiveTag.classList.add('show');
-            }
-            
-            // Add keyboard event listeners
-            document.addEventListener('keydown', handleKeyDown);
-            document.addEventListener('keyup', handleKeyUp);
-            
-            // Start movement loop
-            startMovementLoop();
-            
-            // Start dummy hitbox system
-            startDummyHitboxSystem();
-        }
-
-        function cleanupInteractiveScene() {
-            isInteractiveSceneActive = false;
-            document.removeEventListener('keydown', handleKeyDown);
-            document.removeEventListener('keyup', handleKeyUp);
-            keysPressed = {};
-            
-            // Hide objective tag
-            const objectiveTag = document.getElementById('objectiveTag');
-            if (objectiveTag) {
-                objectiveTag.classList.remove('show');
-            }
-            
-            // Clean up dummy hitboxes
-            clearInterval(dummyHitboxSpawnInterval);
-            clearInterval(dummyHitboxMoveInterval);
-            dummyHitboxes.forEach(hitbox => {
-                if (hitbox.element && hitbox.element.parentNode) {
-                    hitbox.element.parentNode.removeChild(hitbox.element);
-                }
-            });
-            dummyHitboxes = [];
-        }
-
-        function handleKeyDown(event) {
-            if (!isInteractiveSceneActive) return;
-            keysPressed[event.key] = true;
-        }
-
-        function handleKeyUp(event) {
-            if (!isInteractiveSceneActive) return;
-            keysPressed[event.key] = false;
-        }
-
-        function startMovementLoop() {
-            if (!isInteractiveSceneActive) return;
-            
-            const step = 1; // Movement step in percentage
-            const floorTop = 20; // Floor height is 30%, so hitbox can't go above this
-            
-            if (keysPressed['ArrowLeft']) {
-                avatarPositionX = Math.max(0, avatarPositionX - step);
-            }
-            if (keysPressed['ArrowRight']) {
-                avatarPositionX = Math.min(100, avatarPositionX + step);
-            }
-            if (keysPressed['ArrowUp']) {
-                avatarPositionY = Math.min(floorTop, avatarPositionY + step);
-            }
-            if (keysPressed['ArrowDown']) {
-                avatarPositionY = Math.max(0, avatarPositionY - step);
-            }
-            
-            updateAvatarPosition();
-            updateAvatarSprite(); // Update sprite based on movement
-            checkBackgroundSwitch();
-            
-            // Continue the loop
-            requestAnimationFrame(startMovementLoop);
-        }
-
-        // Dummy hitbox functions
-        function spawnDummyHitbox() {
-            const hitbox = document.createElement('div');
-            hitbox.className = 'dummy-hitbox';
-            
-            // Create sprite image
-            const sprite = document.createElement('img');
-            sprite.className = 'dummy-sprite';
-            
-            // Random spawn from left or right edge
-            const spawnFromLeft = Math.random() < 0.5;
-            const startX = spawnFromLeft ? -15 : 100; // Start off-screen
-            const direction = spawnFromLeft ? 1 : -1; // 1 for right, -1 for left
-            
-            // Set sprite based on direction
-            if (direction === 1) {
-                sprite.src = 'assets/4/chibi/r1d.png'; // Moving right
-            } else {
-                sprite.src = 'assets/4/chibi/l1d.png'; // Moving left
-            }
-            
-            // Random Y position (0-20% from bottom, within floor area)
-            const randomY = Math.random() * 20;
-            
-            hitbox.style.left = startX + '%';
-            hitbox.style.bottom = randomY + '%';
-            
-            // Set z-index based on Y position (closer to bottom = higher z-index)
-            // Convert Y position to z-index: bottom (0%) = z-index 20, top (20%) = z-index 1
-            const zIndex = Math.floor(21 - (randomY / 20) * 20);
-            hitbox.style.zIndex = zIndex;
-            
-            // Add sprite to hitbox
-            hitbox.appendChild(sprite);
-            
-            // Add to interactive scene
-            interactiveScene.appendChild(hitbox);
-            
-            // Store hitbox data
-            const hitboxData = {
-                element: hitbox,
-                sprite: sprite,
-                x: startX,
-                y: randomY,
-                direction: direction,
-                speed: 0.3 + Math.random() * 0.3 // Random speed between 0.3-0.6
-            };
-            
-            dummyHitboxes.push(hitboxData);
-        }
-
-        function moveDummyHitboxes() {
-            dummyHitboxes.forEach((hitbox, index) => {
-                // Move the hitbox horizontally
-                hitbox.x += hitbox.direction * hitbox.speed;
-                hitbox.element.style.left = hitbox.x + '%';
-                
-                // Update z-index based on current Y position (closer to bottom = higher z-index)
-                const zIndex = Math.floor(21 - (hitbox.y / 20) * 20);
-                hitbox.element.style.zIndex = zIndex;
-                
-                // Remove if out of viewport
-                if (hitbox.x < -20 || hitbox.x > 120) {
-                    if (hitbox.element && hitbox.element.parentNode) {
-                        hitbox.element.parentNode.removeChild(hitbox.element);
-                    }
-                    dummyHitboxes.splice(index, 1);
-                }
-            });
-        }
-
-        function startDummyHitboxSystem() {
-            // Spawn dummy hitboxes every 2-4 seconds
-            dummyHitboxSpawnInterval = setInterval(() => {
-                if (isInteractiveSceneActive) {
-                    spawnDummyHitbox();
-                }
-            }, 2000 + Math.random() * 2000);
-            
-            // Move dummy hitboxes every frame
-            dummyHitboxMoveInterval = setInterval(() => {
-                if (isInteractiveSceneActive) {
-                    moveDummyHitboxes();
-                }
-            }, 16); // ~60 FPS
-        }
-
-        function updateAvatarPosition() {
-            avatarHitbox.style.left = avatarPositionX + '%';
-            avatarHitbox.style.bottom = avatarPositionY + '%';
-        }
-
-        // Avatar sprite animation functions
-        const avatarSprites = {
-            'front': ['assets/4/chibi/f1.png', 'assets/4/chibi/f2.png'],
-            'back': ['assets/4/chibi/b1.png', 'assets/4/chibi/b2.png'],
-            'left': ['assets/4/chibi/l1.png', 'assets/4/chibi/l2.png'],
-            'right': ['assets/4/chibi/r1.png', 'assets/4/chibi/r2.png']
-        };
-
-        function updateAvatarSprite() {
-            let currentDirection = 'front'; // Default to front/standby
-            let isMoving = false;
-
-            // Determine current direction based on pressed keys
-            if (keysPressed['ArrowLeft'] || keysPressed['a']) {
-                currentDirection = 'left';
-                isMoving = true;
-            } else if (keysPressed['ArrowRight'] || keysPressed['d']) {
-                currentDirection = 'right';
-                isMoving = true;
-            } else if (keysPressed['ArrowUp'] || keysPressed['w']) {
-                currentDirection = 'back';
-                isMoving = true;
-            } else if (keysPressed['ArrowDown'] || keysPressed['s']) {
-                currentDirection = 'front';
-                isMoving = true;
-            }
-
-            if (isMoving) {
-                // Animate walking by alternating frames
-                animationFrameCounter++;
-                if (animationFrameCounter >= animationFrameThreshold) {
-                    avatarAnimationFrame = 1 - avatarAnimationFrame; // Toggle between 0 and 1
-                    animationFrameCounter = 0;
-                }
-                lastMoveDirection = currentDirection;
-            } else {
-                // Not moving, show standby frame (first frame of last direction)
-                avatarAnimationFrame = 0; // Always show the first frame for standby
-                animationFrameCounter = 0;
-                currentDirection = lastMoveDirection; // Maintain last direction's standby pose
-            }
-
-            // Update the sprite image
-            if (avatarSpriteElement && avatarSprites[currentDirection]) {
-                avatarSpriteElement.src = avatarSprites[currentDirection][avatarAnimationFrame];
-            }
-        }
-
-        function updateBackground() {
-            backgrounds.forEach((bg, index) => {
-                if (index === currentBackgroundIndex) {
-                    bg.classList.add('active');
-                    bg.classList.remove('inactive');
-                } else {
-                    bg.classList.add('inactive');
-                    bg.classList.remove('active');
-                }
-            });
-        }
-
-        function checkBackgroundSwitch() {
-            // Check if hitbox reached center top of floor on background 5 (index 4)
-            if (currentBackgroundIndex === 4 && avatarPositionX >= 45 && avatarPositionX <= 55 && avatarPositionY >= 18 && avatarPositionY <= 22) {
-                // Proceed to next scene
-                console.log("Hitbox reached center top of floor on background 5 - proceeding to next scene");
-                cleanupInteractiveScene();
-                sceneNextText.classList.remove('show');
-                sceneNextText.classList.remove('highlight');
-                currentSceneIndex++;
-                showScene(currentSceneIndex);
-                return;
-            }
-            
-            // Switch background when avatar reaches edges
-            if (avatarPositionX <= 0 && currentBackgroundIndex > 0) {
-                // Move to previous background, spawn on the right side
-                currentBackgroundIndex--;
-                avatarPositionX = 90; // Spawn a little bit from the right edge
-                updateBackground();
-                updateAvatarPosition();
-            } else if (avatarPositionX >= 100 && currentBackgroundIndex < backgrounds.length - 1) {
-                // Move to next background, spawn on the left side
-                currentBackgroundIndex++;
-                avatarPositionX = 10; // Spawn a little bit from the left edge
-                updateBackground();
-                updateAvatarPosition();
-            }
         }
 
         // Function to show timed subtitles
@@ -1052,7 +626,6 @@
                 sceneImage.style.display = 'none';
                 sceneVideo.style.display = 'none';
                 sceneTextOverlay.style.display = 'none';
-                interactiveScene.style.display = 'none';
                 sceneVideo.pause();
                 sceneVideo.currentTime = 0;
                 
@@ -1100,9 +673,6 @@
                     } else {
                         sceneTextOverlay.innerHTML = scene.content;
                     }
-                } else if (scene.type === 'interactive') {
-                    interactiveScene.style.display = 'block';
-                    initInteractiveScene();
                 }
 
                 // Handle different subtitle formats
@@ -1180,11 +750,6 @@
 
                 // Add event listener to skip scene on click
                 sceneContainer.onclick = () => {
-                    // Clean up interactive scene if active
-                    if (scene.type === 'interactive') {
-                        cleanupInteractiveScene();
-                    }
-                    
                     sceneNextText.classList.remove('show'); // Hide text on click
                     sceneNextText.classList.remove('highlight'); // Remove highlight on click
                     currentSceneIndex++;
@@ -1223,9 +788,9 @@
 
         // Challenge functions
         function showChallenge() {
-            // Save storymode selection context for episode 2 with easy difficulty
+            // Save storymode selection context for episode 3 with easy difficulty
             localStorage.setItem('selectedChallenge', JSON.stringify({
-                level: 'ep2',
+                level: 'ep3',
                 difficulty: 'easy',
                 timestamp: new Date().toISOString()
             }));

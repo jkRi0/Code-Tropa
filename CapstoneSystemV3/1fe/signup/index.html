@@ -62,6 +62,47 @@
     <script type="module">
         
 
+        function validatePassword(password, username) {
+            // Disallow leading or trailing spaces
+            if (password !== password.trim()) {
+                return { ok: false, message: 'Password cannot start or end with a blank space.' };
+            }
+
+            // Minimum length
+            if (password.length < 8) {
+                return { ok: false, message: 'Password must be at least 8 characters long.' };
+            }
+
+            // Character variety
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasLowercase = /[a-z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            const hasSpecial = /[^A-Za-z0-9]/.test(password);
+
+            if (!hasUppercase || !hasLowercase || !hasNumber || !hasSpecial) {
+                return { ok: false, message: 'Password must include uppercase, lowercase, number, and special character.' };
+            }
+
+            // Block common/weak passwords
+            const weakList = new Set([
+                'password', 'password1', 'password123', 'passw0rd', 'admin', 'administrator',
+                'letmein', 'qwerty', 'qwerty123', 'abc123', 'iloveyou', 'welcome', 'monkey',
+                'dragon', 'football', 'baseball', '111111', '123456', '1234567', '12345678',
+                '123456789', '1234567890', '000000', 'sunshine'
+            ]);
+            const lower = password.toLowerCase();
+            if (weakList.has(lower) || /password/.test(lower)) {
+                return { ok: false, message: 'Password is too common or easily guessable.' };
+            }
+
+            // Basic username resemblance check (optional, strengthens policy)
+            if (username && lower.includes(String(username).toLowerCase())) {
+                return { ok: false, message: 'Password should not contain your username.' };
+            }
+
+            return { ok: true };
+        }
+
         document.querySelector('.cancel-btn').addEventListener('click', function() {
             window.location.href = '../login/'; 
         });
@@ -76,6 +117,13 @@
             const username = usernameField.value;
             const password = passwordField.value;
             const confirmPassword = confirmPasswordField.value;
+
+            // Validate password against policy
+            const validation = validatePassword(password, username);
+            if (!validation.ok) {
+                alert(validation.message);
+                return;
+            }
 
             if (password !== confirmPassword) {
                 alert('Passwords do not match.');
