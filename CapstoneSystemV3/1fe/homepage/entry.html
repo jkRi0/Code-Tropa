@@ -176,7 +176,29 @@
     
     <script type="module" src="./scripts/entryScript.js"></script>
 
+    <!-- Service Worker Registration - Needed to serve cached videos -->
+    <script src="scripts/registerSW.js"></script>
 
-    <!-- ADD SERVICE WORKER -->
+    <script>
+        // Check if videos are already cached before redirecting
+        if ('caches' in window) {
+            caches.open('code-tropa-videos-v1')
+                .then(cache => cache.keys())
+                .then(keys => {
+                    if (keys.length < 5) {
+                        // Not enough videos cached, redirect to preload
+                        window.location.href = './preload.html';
+                    }
+                    // If enough videos are cached, stay on this page
+                })
+                .catch(() => {
+                    // Cache not available, redirect to preload
+                    window.location.href = './preload.html';
+                });
+        } else {
+            // Service worker not supported, redirect to preload
+            window.location.href = './preload.html';
+        }
+    </script>
 </body>
 </html>

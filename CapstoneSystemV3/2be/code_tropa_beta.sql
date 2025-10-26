@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 19, 2025 at 02:56 PM
+-- Generation Time: Oct 24, 2025 at 05:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -47,7 +47,13 @@ INSERT INTO `performance` (`id`, `userId`, `progressId`, `accuracy`, `efficiency
 (48, 26, 53, 0, 0, 0, 0, 0, 0),
 (49, 26, 54, 0, 0, 0, 0, 0, 0),
 (50, 26, 56, 40, 10, 30, 20, 1, 0),
-(52, 26, 58, 30, 25, 25, 20, 1, 0);
+(52, 26, 58, 30, 25, 25, 20, 1, 0),
+(55, 26, 65, 40, 10, 30, 0, 1, 0),
+(59, 28, 69, 0, 0, 0, 0, 0, 0),
+(60, 28, 70, 0, 0, 0, 0, 0, 0),
+(61, 28, 71, 100, 100, 100, 0, 1, 0),
+(62, 28, 72, 40, 10, 30, 0, 1, 0),
+(63, 28, 73, 20, 40, 25, 15, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -77,7 +83,13 @@ INSERT INTO `progress` (`id`, `userId`, `type`, `language`, `chapter`, `episode`
 (54, 26, 'challenge', 'java', NULL, NULL, '', 0, 0, ''),
 (56, 26, 'challenge', 'java', NULL, NULL, 'easy', 1, 100, 'public class TahoVendor {\n    public static void main(String[] args) {\n        System.out.println(\"Tahooo!\");\n        System.out.println(\"Taho: ₱15\");\n        System.out.println(\"Syrup: ₱5\");\n    }\n}'),
 (58, 26, 'challenge', 'java', NULL, NULL, 'average', 1, 100, '/* \n * Taho is a beloved Filipino street food made of silken tofu,\n * brown sugar syrup, and sago pearls. Vendors traditionally\n * announce their presence by calling out \"Tahooo!\"\n */\npublic class TahoVendor {\n    public static void main(String[] args) {\n        // Print header\n        System.out.println(\"================\");\n        System.out.println(\"   TAHO MENU\");\n        System.out.println(\"================\");\n        \n        // Print menu items with proper formatting\n        System.out.println(\"Taho:₱15\");\n        System.out.println(\"Syrup:₱5\");\n        \n        // Print footer\n        System.out.println(\"================\");\n    }\n}'),
-(59, 26, 'story', 'java', 1, 1, NULL, NULL, 100, NULL);
+(59, 26, 'story', 'java', 1, 1, NULL, NULL, 100, NULL),
+(65, 26, 'story', 'java', 1, 2, NULL, NULL, 100, NULL),
+(69, 28, 'story', 'java', 0, 0, NULL, NULL, 0, ''),
+(70, 28, 'challenge', 'java', NULL, NULL, '', 0, 0, ''),
+(71, 28, 'story', 'java', 1, 1, NULL, NULL, 100, NULL),
+(72, 28, 'story', 'java', 1, 2, NULL, NULL, 100, NULL),
+(73, 28, 'challenge', 'java', NULL, NULL, 'difficult', 1, 100, 'public class TahoVendor {\n    public static void main(String[] args) {\n        // Fixed: Added quotes around string literal\n        System.out.println(\"Tahooo!\");\n        System.out.println(\"Taho: ₱15\");\n        System.out.println(\"Syrup: ₱5\");\n        // Fixed: Proper string concatenation with parentheses\n        System.out.println(\"Total: \" + (15 + 5) + \"₱\");\n    }\n}');
 
 -- --------------------------------------------------------
 
@@ -98,7 +110,10 @@ CREATE TABLE `rewards` (
 --
 
 INSERT INTO `rewards` (`id`, `userId`, `language`, `tier`, `badgeName`) VALUES
-(51, 26, 'java', 't1', 'b1');
+(51, 26, 'java', 't1', 'b1'),
+(52, 26, 'java', 't2', 'b2'),
+(53, 28, 'java', 't1', 'b1'),
+(54, 28, 'java', 't2', 'b2');
 
 -- --------------------------------------------------------
 
@@ -120,7 +135,8 @@ CREATE TABLE `saving` (
 --
 
 INSERT INTO `saving` (`id`, `userId`, `language`, `chapter`, `episode`, `scene`) VALUES
-(36, 26, 'java', 0, 0, 0);
+(36, 26, 'java', 0, 0, 0),
+(38, 28, 'java', 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -141,7 +157,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `programmingLanguage`, `created_at`) VALUES
-(26, 'asd', '$2y$10$oCttyq9FuZAnZhf4kxkxtuKH9ynhH/x3Pyhpdd7RxXMuJ5CcrxZkm', 'java', '2025-10-17 23:53:10');
+(26, 'asd', '$2y$10$oCttyq9FuZAnZhf4kxkxtuKH9ynhH/x3Pyhpdd7RxXMuJ5CcrxZkm', 'java', '2025-10-17 23:53:10'),
+(28, 'qwe', '$2y$10$YgVITT0ou5aO2CSBOp1.XuGeZ9Q6vlld98UI8xiqD357vdBysmDDK', 'java', '2025-10-21 10:07:17');
 
 --
 -- Indexes for dumped tables
@@ -191,31 +208,31 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `performance`
 --
 ALTER TABLE `performance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT for table `progress`
 --
 ALTER TABLE `progress`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT for table `rewards`
 --
 ALTER TABLE `rewards`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `saving`
 --
 ALTER TABLE `saving`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- Constraints for dumped tables
