@@ -52,6 +52,12 @@ export function process(clickedDiv, type) {
                     // Set the global language variable
                     setCurrentSelectedLanguage(currentLanguage);
                     
+                    // Store the current language in localStorage
+                    if (currentLanguage && currentLanguage !== 'null' && currentLanguage !== 'undefined') {
+                        localStorage.setItem('selectedLanguage', currentLanguage);
+                        console.log('Language stored in localStorage:', currentLanguage);
+                    }
+                    
                     document.querySelectorAll('.outer2-2').forEach(div => {
                         div.classList.remove('active-language'); // Remove persistent highlight
                         div.classList.remove('temporary-selected'); // Remove temporary highlight

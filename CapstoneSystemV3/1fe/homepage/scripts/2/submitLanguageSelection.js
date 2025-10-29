@@ -27,6 +27,10 @@ export function submitLanguageSelection() {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
+                // Store the selected language in localStorage
+                localStorage.setItem('selectedLanguage', currentSelectedLanguage.toLowerCase());
+                console.log('Language saved to localStorage:', currentSelectedLanguage);
+                
                 alert(data.message);
                 hideModal(); // Hide modal after successful submission
                 // Refresh UI components that depend on the programming language

@@ -1155,6 +1155,129 @@
 
     <audio id="homepageBackgroundMusic" src="../assets/bgMusic.mp3" loop preload="auto" volume="0.5"></audio>
 
+    <!-- Bottom-right Info Container -->
+    <div class="bottom-right-info-container">
+        <div class="info-content">
+            <p class="welcome-text">Welcome, <span id="playerNameDisplay">Player</span>!</p>
+            <p class="language-text">Programming Language: <span id="currentLanguageDisplay">Not Selected</span></p>
+            <button class="post-test-btn" onclick="redirectToPostTest()">Take Post-Test</button>
+        </div>
+    </div>
+
+    <style>
+        .bottom-right-info-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, rgba(139, 90, 43, 0.95), rgba(101, 67, 33, 0.95));
+            border: 2px solid #d4a574;
+            border-radius: 10px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 15px rgba(139, 90, 43, 0.4);
+            z-index: 999;
+            backdrop-filter: blur(10px);
+            min-width: 250px;
+        }
+
+        .info-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .welcome-text,
+        .language-text {
+            color: #f5e6d3;
+            font-size: 1.5rem;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .welcome-text span,
+        .language-text span {
+            color: #f4d4a0;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .post-test-btn {
+            background: linear-gradient(135deg, #c89d5c, #a3692f);
+            color: #f4d4a0;
+            border: 2px solid #d4a574;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 2rem;
+            margin-top: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .post-test-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #d4a574, #c89d5c);
+            box-shadow: 0 4px 10px rgba(212, 165, 116, 0.6);
+        }
+
+        .post-test-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Responsive adjustments for mobile */
+        @media (max-width: 768px) {
+            .bottom-right-info-container {
+                bottom: 10px;
+                right: 10px;
+                padding: 12px 15px;
+                min-width: 200px;
+            }
+
+            .welcome-text,
+            .language-text {
+                font-size: 12px;
+            }
+
+            .post-test-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+
+    <script>
+        // Function to redirect to post-test page (currently non-functional as requested)
+        function redirectToPostTest() {
+            alert('Post-test functionality will be implemented soon!');
+            // Future implementation:
+            // window.location.href = '../posttest/posttest.html';
+        }
+
+        // Update player name from session/local storage or profile data
+        function updatePlayerInfo() {
+            const playerNameElement = document.getElementById('playerNameDisplay');
+            const languageElement = document.getElementById('currentLanguageDisplay');
+            
+            // Get player name from existing profile data if available
+            const playerNameFromProfile = document.getElementById('playerName');
+            if (playerNameFromProfile && playerNameFromProfile.textContent !== 'Loading...') {
+                playerNameElement.textContent = playerNameFromProfile.textContent;
+            }
+            
+            // Get selected language from localStorage
+            const selectedLanguage = localStorage.getItem('selectedLanguage');
+            if (selectedLanguage) {
+                languageElement.textContent = selectedLanguage.toUpperCase();
+            }
+        }
+
+        // Update info on page load
+        document.addEventListener('DOMContentLoaded', updatePlayerInfo);
+        
+        // Update info periodically to catch changes
+        setInterval(updatePlayerInfo, 1000);
+    </script>
+
     <!-- Service Worker Registration - Needed to serve cached videos -->
     <script src="scripts/registerSW.js"></script>
     
