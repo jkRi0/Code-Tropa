@@ -1161,6 +1161,7 @@
             <p class="welcome-text">Welcome, <span id="playerNameDisplay">Player</span>!</p>
             <p class="language-text">Programming Language: <span id="currentLanguageDisplay">Not Selected</span></p>
             <button class="post-test-btn" onclick="redirectToPostTest()">Take Post-Test</button>
+            <button class="new-tab-btn" onclick="openNewTab()">AnswerKey</button>
         </div>
     </div>
 
@@ -1224,6 +1225,30 @@
             transform: scale(0.98);
         }
 
+        .new-tab-btn {
+            background: linear-gradient(135deg, #c89d5c, #a3692f);
+            color: #f4d4a0;
+            border: 2px solid #d4a574;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 2rem;
+            margin-top: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .new-tab-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #d4a574, #c89d5c);
+            box-shadow: 0 4px 10px rgba(212, 165, 116, 0.6);
+        }
+
+        .new-tab-btn:active {
+            transform: scale(0.98);
+        }
+
         /* Responsive adjustments for mobile */
         @media (max-width: 768px) {
             .bottom-right-info-container {
@@ -1238,7 +1263,8 @@
                 font-size: 12px;
             }
 
-            .post-test-btn {
+            .post-test-btn,
+            .new-tab-btn {
                 padding: 8px 12px;
                 font-size: 12px;
             }
@@ -1250,6 +1276,11 @@
         function redirectToPostTest() {
             // Check if user has completed all episodes before allowing post-test
             window.location.href = '../asmt/posttest.html';
+        }
+
+        // Function to open new tab
+        function openNewTab() {
+            window.open('newtab.html', '_blank');
         }
 
         // Update player name from session/local storage or profile data
