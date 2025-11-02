@@ -296,6 +296,13 @@
             font-weight: 400;
         }
 
+        .language-selection-screen .btn {
+            width: 100%;
+            max-width: 400px;
+            margin: 8px auto;
+            display: block;
+        }
+
         .language-options {
             display: flex;
             flex-direction: column;
@@ -454,6 +461,15 @@
             // Initialize answers array
             userAnswers = new Array(questions.length).fill(null);
             
+            // Reset and show navigation buttons
+            document.getElementById('prevBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'block';
+            document.getElementById('nextBtn').disabled = false;
+            
+            // Reset progress bar
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressLabel').textContent = '0 of 0';
+            
             // Display first question
             displayQuestion(0);
         }
@@ -551,7 +567,7 @@
 
             let warningHTML = '';
             if (unansweredCount > 0) {
-                const links = unansweredNumbers.map(n => `<span style="text-decoration:underline; cursor:pointer;" onclick="displayQuestion(${n - 1})">${n}</span>`).join(', ');
+                const links = unansweredNumbers.map(n => `<span style="text-decoration:underline; cursor:pointer; color: #2563eb;" onclick="displayQuestion(${n - 1})">${n}</span>`).join(', ');
                 warningHTML = `
                     <div class="warning">
                         <strong>Warning:</strong> You have ${unansweredCount} unanswered question(s). These will be marked as incorrect.<br/>
@@ -569,10 +585,15 @@
                 </div>
             `;
             
+            // Show and update navigation buttons
+            document.getElementById('prevBtn').style.display = 'block';
             document.getElementById('prevBtn').textContent = 'Review Answers';
             document.getElementById('prevBtn').onclick = () => displayQuestion(0);
+            
+            document.getElementById('nextBtn').style.display = 'block';
             document.getElementById('nextBtn').textContent = 'Confirm & Submit';
             document.getElementById('nextBtn').onclick = submitTest;
+            document.getElementById('nextBtn').disabled = false;
         }
 
         async function submitTest() {
@@ -644,13 +665,23 @@
 
         function showNextLanguageScreen() {
             const nextLanguage = selectedLanguages[currentLanguageIndex + 1];
+            const lastResult = allTestResults[allTestResults.length - 1];
+            
+            // Hide navigation buttons
+            document.getElementById('prevBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            // Reset progress bar
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressLabel').textContent = '0 of 0';
+            
             document.getElementById('questionContainer').innerHTML = `
                 <div class="language-selection-screen">
                     <h2>Great Job!</h2>
-                    <p>You completed the ${currentLanguage.toUpperCase()} pre-test with a score of ${allTestResults[allTestResults.length - 1].score}%</p>
-                    <p>Next up: <strong>${nextLanguage.toUpperCase()}</strong> pre-test</p>
-                    <div class="btn-container">
-                        <button class="btn btn-primary" onclick="continueToNextLanguage()">Continue to ${nextLanguage.toUpperCase()}</button>
+                    <p>You completed the <strong>${currentLanguage.toUpperCase()}</strong> pre-test with a score of <strong>${lastResult.score}%</strong> (${lastResult.correctAnswers}/${lastResult.totalQuestions} correct)</p>
+                    <p style="margin-top: 20px;">Next up: <strong>${nextLanguage.toUpperCase()}</strong> pre-test</p>
+                    <div style="margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="continueToNextLanguage()" style="margin-bottom: 15px;">Continue to ${nextLanguage.toUpperCase()}</button>
                         <button class="btn btn-secondary" onclick="showFinalResults()">Finish Here</button>
                     </div>
                 </div>
@@ -660,6 +691,9 @@
         function continueToNextLanguage() {
             currentLanguageIndex++;
             currentLanguage = selectedLanguages[currentLanguageIndex];
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            questions = [];
             startLanguageTest();
         }
 

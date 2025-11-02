@@ -17,13 +17,13 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 try {
-    // Get current selected language or pretest language
-    $stmt = $conn->prepare("SELECT selected_language, pretest_language FROM users WHERE id = ?");
+    // Get user's programming language from programmingLanguage column
+    $stmt = $conn->prepare("SELECT programmingLanguage FROM users WHERE id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $userData = $result->fetch_assoc();
-    $language = $userData['selected_language'] ?? $userData['pretest_language'];
+    $language = $userData['programmingLanguage'] ?? null;
     $stmt->close();
     
     if (!$language) {

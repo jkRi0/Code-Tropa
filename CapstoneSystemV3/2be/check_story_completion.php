@@ -17,13 +17,13 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 try {
-    // Get user's selected language
-    $stmt = $conn->prepare("SELECT selected_language FROM users WHERE id = ?");
+    // Get user's selected language from programmingLanguage column
+    $stmt = $conn->prepare("SELECT programmingLanguage FROM users WHERE id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $userData = $result->fetch_assoc();
-    $language = $userData['selected_language'] ?? null;
+    $language = $userData['programmingLanguage'] ?? null;
     $stmt->close();
     
     if (!$language) {
@@ -34,13 +34,13 @@ try {
         exit;
     }
     
-    // Count completed episodes for the selected language
-    $stmt = $conn->prepare("SELECT COUNT(*) as completed FROM story_progress WHERE user_id = ? AND language = ? AND completed = 1");
+    // Count completed story episodes for the selected language (points >= 80)
+    $stmt = $conn->prepare("SELECT COUNT(*) as completed FROM progress WHERE userId = ? AND language = ? AND type = 'story' AND points >= 80");
     $stmt->bind_param("is", $user_id, $language);
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
-    $completedEpisodes = intval($row['completed']);
+    $completedEpisodes = $row ? intval($row['completed']) : 0;
     $stmt->close();
     
     // Total episodes per language (as per your requirements: 7 episodes covering all topics)
@@ -49,14 +49,17 @@ try {
     // Check if all episodes are completed
     $allEpisodesCompleted = $completedEpisodes >= $totalEpisodes;
     
-    // Get list of completed episode numbers
-    $stmt = $conn->prepare("SELECT episode_number FROM story_progress WHERE user_id = ? AND language = ? AND completed = 1 ORDER BY episode_number");
+    // Get list of completed episodes (chapter and episode numbers)
+    $stmt = $conn->prepare("SELECT chapter, episode FROM progress WHERE userId = ? AND language = ? AND type = 'story' AND points >= 80 ORDER BY chapter, episode");
     $stmt->bind_param("is", $user_id, $language);
     $stmt->execute();
     $result = $stmt->get_result();
     $completedEpisodesList = [];
     while ($row = $result->fetch_assoc()) {
-        $completedEpisodesList[] = intval($row['episode_number']);
+        $completedEpisodesList[] = [
+            'chapter' => intval($row['chapter']),
+            'episode' => intval($row['episode'])
+        ];
     }
     $stmt->close();
     
