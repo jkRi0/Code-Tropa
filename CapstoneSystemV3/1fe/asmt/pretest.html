@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Test Assessment - Code-Tropa</title>
+    <link rel="stylesheet" href="../globalStyles/body.css">
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.3) blur(3px);
+        }
+
+        .test-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #111827;
+            font-size: 2rem;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .header .language {
+            color: #374151;
+            font-size: 1rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            position: relative;
+            background: rgba(0, 0, 0, 0.09);
+            border-radius: 10px;
+            height: 30px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 2px solid #d4a574;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .question-card {
+            background: #fff;
+            border: 1.5px solid #c3c8d0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .question-number {
+            color: #111827;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .topic-tag {
+            background: #eef2f7;
+            color: #374151;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .question-text {
+            color: #111827;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #d4a574;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            color: #f5e6d3;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            white-space: pre;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .option:hover {
+            background: #f3f4f6;
+        }
+
+        .option input[type="radio"] {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #c89d5c;
+            flex-shrink: 0;
+        }
+
+        .option-text {
+            color: #111827;
+            font-size: 0.98rem;
+            line-height: 1.55;
+            flex: 1;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .option.selected {
+            background: #e1eafe;
+            border-color: #214e96;
+        }
+
+        .option input[type="radio"]:checked {
+            accent-color: #214e96;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffecb5;
+            color: #6c4402;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: 2px solid #d4a574;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #c89d5c, #a3692f);
+            color: #2a1810;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #d4a574, #c89d5c);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 165, 116, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #9e7e4a;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 165, 116, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .submit-section {
+            text-align: center;
+            padding: 28px;
+            background: #fff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            margin-top: 20px;
+            margin-bottom: 10px;
+            width: 100%;
+            transition: box-shadow 0.16s;
+            /* Optional pop-in animation */
+            /* animation: pop-in 0.24s cubic-bezier(.17,.67,.76,1.22); */
+        }
+        .submit-section h2 {
+            color: #254191;
+            font-weight: 700;
+            margin-bottom: 18px;
+            letter-spacing: 0.01em;
+        }
+        .submit-section p {
+            color: #374151;
+            font-size: 1.05rem;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+        .submit-section .warning {
+            margin-top: 18px;
+            margin-bottom: 18px;
+        }
+        /* Optional pop-in effect */
+        @keyframes pop-in {
+            0% { transform: scale(0.87); opacity: 0.33; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .language-selection-screen {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .language-selection-screen h2 {
+            color: #111827;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .language-selection-screen p {
+            color: #374151;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .language-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .language-option {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .language-option:hover {
+            background: #f3f4f6;
+        }
+
+        .language-name {
+            color: #111827;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .language-info {
+            color: #6b7280;
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .test-container { padding: 20px; border-radius: 10px; max-height: calc(100vh - 40px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+            .header h1 { font-size: 1.4rem; }
+            .header .language { font-size: 0.9rem; }
+            .progress-bar { height: 22px; }
+            .progress-fill { font-size: 0.85rem; }
+            .question-card { padding: 16px; margin-bottom: 16px; }
+            .question-text { font-size: 1rem; margin-bottom: 12px; }
+            .code-block { font-size: 0.85rem; }
+            .options { gap: 10px; }
+            .option { padding: 12px 14px; gap: 10px; }
+            .option input[type="radio"] { width: 16px; height: 16px; }
+            .option-text { font-size: 0.95rem; }
+            .question-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .navigation-buttons { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 380px) {
+            .test-container { max-height: calc(100vh - 24px); padding: 16px; }
+            .header h1 { font-size: 1.25rem; }
+            .question-text { font-size: 0.95rem; }
+            .option-text { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <video autoplay loop muted playsinline class="bg-video">
+        <source src="../assets/bg.mp4" type="video/mp4">
+    </video>
+
+    <div class="test-container">
+        <div class="header">
+            <h1>Pre-Test Assessment</h1>
+            <p class="language" id="languageDisplay">Loading...</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+            <div class="progress-label" id="progressLabel">0 of 0</div>
+        </div>
+
+        <div id="questionContainer">
+            <!-- Questions will be loaded here -->
+        </div>
+
+        <div class="navigation-buttons">
+            <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" style="display: none;">Previous</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+
+    <script src="questions.js"></script>
+    <script>
+        let selectedLanguagesRaw = JSON.parse(localStorage.getItem('pretestLanguages') || '[]');
+        let selectedLanguages = Array.from(new Set(
+            (Array.isArray(selectedLanguagesRaw) ? selectedLanguagesRaw : [])
+                .map(l => (typeof l === 'string' ? l : String(l)).trim().toLowerCase())
+        )).filter(l => ['java', 'c++', 'c#'].includes(l));
+        // Persist cleaned selection to avoid future duplication
+        localStorage.setItem('pretestLanguages', JSON.stringify(selectedLanguages));
+        let currentLanguageIndex = 0;
+        let currentLanguage = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let questions = [];
+        let allTestResults = [];
+
+        // Initialize test
+        function initializeTest() {
+            if (!selectedLanguages || selectedLanguages.length === 0) {
+                alert('Please select at least one programming language first');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Show language selection screen if multiple languages
+            if (selectedLanguages.length > 1) {
+                showLanguageSelectionScreen();
+            } else {
+                // Single language - start immediately
+                currentLanguage = selectedLanguages[0];
+                startLanguageTest();
+            }
+        }
+
+        function showLanguageSelectionScreen() {
+            document.getElementById('questionContainer').innerHTML = `
+                <div class="language-selection-screen">
+                    <h2>Select Language for Pre-Test</h2>
+                    <p>You selected multiple languages. Please choose which language to test first:</p>
+                    <div class="language-options">
+                        ${selectedLanguages.map((lang, index) => `
+                            <div class="language-option" onclick="selectLanguageForTest('${lang}', ${index})">
+                                <span class="language-name">${lang.toUpperCase()}</span>
+                                <span class="language-info">35 questions covering 7 topics</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="btn-container">
+                        <button class="btn btn-secondary" onclick="window.location.href='index.html'">Back to Selection</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectLanguageForTest(language, index) {
+            currentLanguage = language;
+            currentLanguageIndex = index;
+            startLanguageTest();
+        }
+
+        function startLanguageTest() {
+            document.getElementById('languageDisplay').textContent = currentLanguage.toUpperCase() + ' Pre-Test';
+            
+            // Get questions for the selected language
+            questions = getQuestionsForLanguage(currentLanguage);
+            
+            // Initialize answers array
+            userAnswers = new Array(questions.length).fill(null);
+            
+            // Display first question
+            displayQuestion(0);
+        }
+
+        function displayQuestion(index) {
+            currentQuestionIndex = index;
+            const question = questions[index];
+            
+            // Update progress bar
+            const progress = Math.max(0, Math.min(100, ((index + 1) / questions.length * 100)));
+            const progressPct = `${progress.toFixed(0)}%`;
+            const fillEl = document.getElementById('progressFill');
+            const labelEl = document.getElementById('progressLabel');
+            if (fillEl) fillEl.style.width = progressPct;
+            if (labelEl) labelEl.textContent = `${index + 1} of ${questions.length}`;
+            
+            // Build question HTML
+            let questionHTML = `
+                <div class="question-card">
+                    <div class="question-header">
+                        <span class="question-number">Question ${index + 1}</span>
+                        <span class="topic-tag">${question.topic}</span>
+                    </div>
+                    <div class="question-text">${question.question}</div>
+            `;
+            
+            // Add code block if exists
+            if (question.code) {
+                questionHTML += `
+                    <div class="code-block">
+                        <code>${escapeHtml(question.code)}</code>
+                    </div>
+                `;
+            }
+            
+            // Add options
+            questionHTML += `<div class="options">`;
+            question.options.forEach((option, optionIndex) => {
+                const isSelected = userAnswers[index] === optionIndex;
+                questionHTML += `
+                    <div class="option ${isSelected ? 'selected' : ''}" onclick="selectOption(${optionIndex})">
+                        <input type="radio" name="question${index}" value="${optionIndex}" ${isSelected ? 'checked' : ''}>
+                        <span class="option-text">${option}</span>
+                    </div>
+                `;
+            });
+            questionHTML += `</div></div>`;
+            
+            document.getElementById('questionContainer').innerHTML = questionHTML;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').style.display = index > 0 ? 'block' : 'none';
+            
+            if (index === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Submit Test';
+                document.getElementById('nextBtn').onclick = showSubmitConfirmation;
+            } else {
+                document.getElementById('nextBtn').textContent = 'Next Question';
+                document.getElementById('nextBtn').onclick = nextQuestion;
+            }
+        }
+
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestionIndex] = optionIndex;
+            
+            // Update UI
+            document.querySelectorAll('.option').forEach((option, index) => {
+                if (index === optionIndex) {
+                    option.classList.add('selected');
+                    option.querySelector('input').checked = true;
+                } else {
+                    option.classList.remove('selected');
+                    option.querySelector('input').checked = false;
+                }
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                displayQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                displayQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function showSubmitConfirmation() {
+            const unansweredCount = userAnswers.filter(answer => answer === null).length;
+            const unansweredNumbers = userAnswers
+                .map((ans, idx) => ans === null ? (idx + 1) : null)
+                .filter(n => n !== null);
+
+            let warningHTML = '';
+            if (unansweredCount > 0) {
+                const links = unansweredNumbers.map(n => `<span style="text-decoration:underline; cursor:pointer;" onclick="displayQuestion(${n - 1})">${n}</span>`).join(', ');
+                warningHTML = `
+                    <div class="warning">
+                        <strong>Warning:</strong> You have ${unansweredCount} unanswered question(s). These will be marked as incorrect.<br/>
+                        Unanswered question numbers: ${links}
+                    </div>
+                `;
+            }
+
+            document.getElementById('questionContainer').innerHTML = `
+                <div class="submit-section">
+                    <h2>Ready to Submit?</h2>
+                    <p>You have answered ${questions.length - unansweredCount} out of ${questions.length} questions.</p>
+                    ${warningHTML}
+                    <p>Once you submit, you cannot change your answers. Are you sure you want to submit your test?</p>
+                </div>
+            `;
+            
+            document.getElementById('prevBtn').textContent = 'Review Answers';
+            document.getElementById('prevBtn').onclick = () => displayQuestion(0);
+            document.getElementById('nextBtn').textContent = 'Confirm & Submit';
+            document.getElementById('nextBtn').onclick = submitTest;
+        }
+
+        async function submitTest() {
+            // Disable button to prevent double submission
+            document.getElementById('nextBtn').disabled = true;
+            document.getElementById('nextBtn').textContent = 'Submitting...';
+            
+            // Calculate score
+            let correctAnswers = 0;
+            questions.forEach((question, index) => {
+                if (userAnswers[index] === question.correctAnswer) {
+                    correctAnswers++;
+                }
+            });
+            
+            const score = Math.round((correctAnswers / questions.length) * 100);
+            
+            // Store current test result
+            allTestResults.push({
+                language: currentLanguage,
+                score: score,
+                correctAnswers: correctAnswers,
+                totalQuestions: questions.length,
+                answers: userAnswers
+            });
+            
+            // Prepare data for submission
+            const testData = {
+                language: currentLanguage,
+                answers: userAnswers,
+                score: score,
+                totalQuestions: questions.length,
+                correctAnswers: correctAnswers
+            };
+            
+            try {
+                const response = await fetch('../../2be/submit_pretest.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Check if there are more languages to test
+                    const nextLanguageIndex = currentLanguageIndex + 1;
+                    if (nextLanguageIndex < selectedLanguages.length) {
+                        // Move to next language
+                        showNextLanguageScreen();
+                    } else {
+                        // All languages completed - show final results
+                        showFinalResults();
+                    }
+                } else {
+                    alert('Error submitting test: ' + data.message);
+                    document.getElementById('nextBtn').disabled = false;
+                    document.getElementById('nextBtn').textContent = 'Confirm & Submit';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while submitting your test. Please try again.');
+                document.getElementById('nextBtn').disabled = false;
+                document.getElementById('nextBtn').textContent = 'Confirm & Submit';
+            }
+        }
+
+        function showNextLanguageScreen() {
+            const nextLanguage = selectedLanguages[currentLanguageIndex + 1];
+            document.getElementById('questionContainer').innerHTML = `
+                <div class="language-selection-screen">
+                    <h2>Great Job!</h2>
+                    <p>You completed the ${currentLanguage.toUpperCase()} pre-test with a score of ${allTestResults[allTestResults.length - 1].score}%</p>
+                    <p>Next up: <strong>${nextLanguage.toUpperCase()}</strong> pre-test</p>
+                    <div class="btn-container">
+                        <button class="btn btn-primary" onclick="continueToNextLanguage()">Continue to ${nextLanguage.toUpperCase()}</button>
+                        <button class="btn btn-secondary" onclick="showFinalResults()">Finish Here</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function continueToNextLanguage() {
+            currentLanguageIndex++;
+            currentLanguage = selectedLanguages[currentLanguageIndex];
+            startLanguageTest();
+        }
+
+        function showFinalResults() {
+            // Store all results in localStorage
+            localStorage.setItem('allPretestResults', JSON.stringify(allTestResults));
+            
+            // Calculate overall average
+            const totalScore = allTestResults.reduce((sum, result) => sum + result.score, 0);
+            const averageScore = Math.round(totalScore / allTestResults.length);
+            
+            localStorage.setItem('pretestScore', averageScore);
+            localStorage.setItem('pretestCorrect', allTestResults.reduce((sum, result) => sum + result.correctAnswers, 0));
+            localStorage.setItem('pretestTotal', allTestResults.reduce((sum, result) => sum + result.totalQuestions, 0));
+            
+            // Redirect to results page
+            window.location.href = 'result.html?type=pretest&multi=true';
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeTest);
+    </script>
+</body>
+</html>
+

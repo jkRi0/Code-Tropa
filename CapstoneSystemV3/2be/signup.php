@@ -208,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'samesite' => 'Strict',
             ]);
 
-            echo "<script>alert('Account Added Successfully'); window.location.href='../1fe/homepage/index.html'; </script>";
+            echo "<script>alert('Account Added Successfully! Please complete the pre-test assessment.'); window.location.href='../1fe/asmt/index.html'; </script>";
             
         } else {
             echo "<script>alert('Failed to add account, please try again later'); window.location.href='../1fe/signup/'; </script>";

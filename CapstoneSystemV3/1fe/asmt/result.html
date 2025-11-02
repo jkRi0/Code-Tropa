@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Results - Code-Tropa</title>
+    <link rel="stylesheet" href="../globalStyles/body.css">
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.3) blur(3px);
+        }
+
+        .result-container {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        h1 {
+            color: #111827;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            background: conic-gradient(#d4a574 0deg, #d4a574 var(--score-deg), rgba(42, 24, 16, 0.5) var(--score-deg));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            background: linear-gradient(135deg, rgba(139, 90, 43, 0.95), rgba(101, 67, 33, 0.95));
+            border-radius: 50%;
+        }
+
+        .score-value {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .score-value .percentage {
+            font-size: 3rem;
+            color: #f4d4a0;
+            font-weight: bold;
+            display: block;
+        }
+
+        .score-value .label {
+            font-size: 1rem;
+            color: #1a0d00;
+            font-weight: 500;
+        }
+
+        .stats {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(212, 165, 116, 0.3);
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #111827;
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            color: #111827;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .message {
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .message.excellent {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            color: #c8e6c9;
+        }
+
+        .message.good {
+            background: rgba(33, 150, 243, 0.2);
+            border: 2px solid #2196F3;
+            color: #bbdefb;
+        }
+
+        .message.average {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid #FFC107;
+            color: #fff3cd;
+        }
+
+        .message.needs-improvement {
+            background: rgba(244, 67, 54, 0.2);
+            border: 2px solid #F44336;
+            color: #ffcdd2;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 30px;
+            border: 2px solid #d4a574;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #c89d5c, #a3692f);
+            color: #2a1810;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #d4a574, #c89d5c);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 165, 116, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #f4d4a0;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 165, 116, 0.2);
+        }
+
+        .loading {
+            text-align: center;
+            color: #f4d4a0;
+            font-size: 1.2rem;
+            padding: 40px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .result-container { padding: 20px; border-radius: 10px; max-height: calc(100vh - 40px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+            h1 { font-size: 1.4rem; }
+            .score-circle { width: 150px; height: 150px; }
+            .score-circle::before { width: 120px; height: 120px; }
+            .score-value .percentage { font-size: 2rem; }
+            .score-value .label { font-size: 0.9rem; }
+            .stats { padding: 16px; }
+            .stat-label, .stat-value { font-size: 1rem; }
+            .button-group { flex-direction: column; }
+            .btn { min-width: 100%; }
+        }
+
+        @media (max-width: 380px) {
+            .result-container { max-height: calc(100vh - 24px); padding: 16px; }
+            h1 { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+    <video autoplay loop muted playsinline class="bg-video">
+        <source src="../assets/bg.mp4" type="video/mp4">
+    </video>
+
+    <div class="result-container">
+        <div class="logo">
+            <img src="../assets/capstone-logo.png" alt="Code-Tropa Logo">
+        </div>
+
+        <div id="content">
+            <div class="loading">Loading your results...</div>
+        </div>
+    </div>
+
+    <script>
+        // Get test type from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const testType = urlParams.get('type') || 'pretest';
+
+        async function loadResults() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const isMultiLanguage = urlParams.get('multi') === 'true';
+                
+                if (isMultiLanguage && testType === 'pretest') {
+                    // Handle multiple language results
+                    loadMultiLanguageResults();
+                } else {
+                    // Handle single language results
+                    loadSingleLanguageResults();
+                }
+
+            } catch (error) {
+                console.error('Error loading results:', error);
+                document.getElementById('content').innerHTML = `
+                    <div class="message needs-improvement">
+                        Error loading results. Please try again.
+                    </div>
+                    <div class="button-group">
+                        <a href="../homepage/" class="btn btn-primary">Back to Homepage</a>
+                    </div>
+                `;
+            }
+        }
+
+        function loadSingleLanguageResults() {
+            // Get data from localStorage (set after test submission)
+            const score = parseInt(localStorage.getItem(`${testType}Score`)) || 0;
+            const correct = parseInt(localStorage.getItem(`${testType}Correct`)) || 0;
+            const total = parseInt(localStorage.getItem(`${testType}Total`)) || 0;
+            const language = localStorage.getItem('pretestLanguage') || 'Unknown';
+
+            // Determine performance message
+            let messageClass = '';
+            let messageText = '';
+            
+            if (score >= 90) {
+                messageClass = 'excellent';
+                messageText = '🎉 Excellent work! You have a strong understanding of ' + language.toUpperCase() + ' fundamentals!';
+            } else if (score >= 75) {
+                messageClass = 'good';
+                messageText = '👍 Good job! You have a solid grasp of the concepts. Keep practicing!';
+            } else if (score >= 60) {
+                messageClass = 'average';
+                messageText = '📚 Not bad! There\'s room for improvement. Review the topics and try again!';
+            } else {
+                messageClass = 'needs-improvement';
+                messageText = '💪 Keep learning! Everyone starts somewhere. Practice makes perfect!';
+            }
+
+            // Calculate degree for circular progress
+            const scoreDeg = (score / 100) * 360;
+
+            // Display results
+            document.getElementById('content').innerHTML = `
+                <h1>${testType === 'pretest' ? 'Pre-Test' : 'Post-Test'} Results</h1>
+                
+                <div class="score-circle" style="--score-deg: ${scoreDeg}deg;">
+                    <div class="score-value">
+                        <span class="percentage">${score}%</span>
+                        <span class="label">Score</span>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-row">
+                        <span class="stat-label">Language:</span>
+                        <span class="stat-value">${language.toUpperCase()}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Correct Answers:</span>
+                        <span class="stat-value">${correct} / ${total}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Questions Attempted:</span>
+                        <span class="stat-value">${total}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Performance:</span>
+                        <span class="stat-value">${getPerformanceLevel(score)}</span>
+                    </div>
+                </div>
+
+                <div class="message ${messageClass}">
+                    ${messageText}
+                </div>
+
+                <div class="button-group">
+                    ${testType === 'pretest' ? 
+                        '<a href="../homepage/" class="btn btn-primary">Start Learning</a>' : 
+                        '<a href="../homepage/" class="btn btn-primary">Back to Homepage</a>'
+                    }
+                    <a href="comparison.html" class="btn btn-secondary">View Progress</a>
+                </div>
+            `;
+
+            // Clear localStorage after displaying
+            if (testType === 'pretest') {
+                setTimeout(() => {
+                    localStorage.removeItem('pretestScore');
+                    localStorage.removeItem('pretestCorrect');
+                    localStorage.removeItem('pretestTotal');
+                }, 1000);
+            }
+        }
+
+        function loadMultiLanguageResults() {
+            const allResults = JSON.parse(localStorage.getItem('allPretestResults') || '[]');
+            
+            if (allResults.length === 0) {
+                loadSingleLanguageResults();
+                return;
+            }
+
+            // Calculate overall average
+            const totalScore = allResults.reduce((sum, result) => sum + result.score, 0);
+            const averageScore = Math.round(totalScore / allResults.length);
+            
+            // Determine performance message
+            let messageClass = '';
+            let messageText = '';
+            
+            if (averageScore >= 90) {
+                messageClass = 'excellent';
+                messageText = '🎉 Outstanding! You have excellent programming fundamentals across all languages!';
+            } else if (averageScore >= 75) {
+                messageClass = 'good';
+                messageText = '👍 Great job! You have solid programming knowledge. Keep up the good work!';
+            } else if (averageScore >= 60) {
+                messageClass = 'average';
+                messageText = '📚 Good start! There\'s room for improvement. Focus on weaker areas!';
+            } else {
+                messageClass = 'needs-improvement';
+                messageText = '💪 Keep learning! Programming takes time to master. Practice makes perfect!';
+            }
+
+            // Calculate degree for circular progress
+            const scoreDeg = (averageScore / 100) * 360;
+
+            // Create language breakdown
+            const languageBreakdown = allResults.map(result => `
+                <div class="stat-row">
+                    <span class="stat-label">${result.language.toUpperCase()}:</span>
+                    <span class="stat-value">${result.score}% (${result.correctAnswers}/${result.totalQuestions})</span>
+                </div>
+            `).join('');
+
+            // Display results
+            document.getElementById('content').innerHTML = `
+                <h1>Pre-Test Results - Multiple Languages</h1>
+                
+                <div class="score-circle" style="--score-deg: ${scoreDeg}deg;">
+                    <div class="score-value">
+                        <span class="percentage">${averageScore}%</span>
+                        <span class="label">Average Score</span>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-row">
+                        <span class="stat-label">Languages Tested:</span>
+                        <span class="stat-value">${allResults.length}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Questions:</span>
+                        <span class="stat-value">${allResults.reduce((sum, result) => sum + result.totalQuestions, 0)}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Correct:</span>
+                        <span class="stat-value">${allResults.reduce((sum, result) => sum + result.correctAnswers, 0)}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Overall Performance:</span>
+                        <span class="stat-value">${getPerformanceLevel(averageScore)}</span>
+                    </div>
+                    ${languageBreakdown}
+                </div>
+
+                <div class="message ${messageClass}">
+                    ${messageText}
+                </div>
+
+                <div class="button-group">
+                    <a href="../homepage/" class="btn btn-primary">Start Learning</a>
+                    <a href="comparison.html" class="btn btn-secondary">View Progress</a>
+                </div>
+            `;
+
+            // Clear localStorage after displaying
+            setTimeout(() => {
+                localStorage.removeItem('allPretestResults');
+                localStorage.removeItem('pretestScore');
+                localStorage.removeItem('pretestCorrect');
+                localStorage.removeItem('pretestTotal');
+            }, 1000);
+        }
+
+        function getPerformanceLevel(score) {
+            if (score >= 90) return 'Excellent';
+            if (score >= 75) return 'Good';
+            if (score >= 60) return 'Average';
+            return 'Needs Improvement';
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', loadResults);
+    </script>
+</body>
+</html>
+

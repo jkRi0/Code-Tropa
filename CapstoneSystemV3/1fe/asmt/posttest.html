@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post-Test Assessment - Code-Tropa</title>
+    <link rel="stylesheet" href="../globalStyles/body.css">
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.3) blur(3px);
+        }
+
+        .test-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(139, 90, 43, 0.95), rgba(101, 67, 33, 0.95));
+            border: 3px solid #d4a574;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #f4d4a0;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header .language {
+            color: #f5e6d3;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            background: rgba(0, 0, 0, 0.09);
+            border-radius: 10px;
+            height: 30px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 2px solid #d4a574;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #c89d5c, #d4a574);
+            height: 100%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2a1810;
+            font-weight: bold;
+        }
+
+        .question-card {
+            background: rgba(42, 24, 16, 0.4);
+            border: 2px solid #d4a574;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .question-number {
+            color: #f4d4a0;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .topic-tag {
+            background: rgba(212, 165, 116, 0.3);
+            color: #f4d4a0;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            border: 1px solid #d4a574;
+        }
+
+        .question-text {
+            color: #f5e6d3;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #d4a574;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            color: #f5e6d3;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            white-space: pre;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: rgba(212, 165, 116, 0.2);
+            border: 2px solid #d4a574;
+            border-radius: 8px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .option:hover {
+            background: rgba(212, 165, 116, 0.4);
+            transform: translateX(5px);
+        }
+
+        .option input[type="radio"] {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #c89d5c;
+            flex-shrink: 0;
+        }
+
+        .option-text {
+            color: #f5e6d3;
+            font-size: 1rem;
+            line-height: 1.5;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .option.selected {
+            background: rgba(212, 165, 116, 0.6);
+            border-color: #f4d4a0;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: 2px solid #d4a574;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #c89d5c, #a3692f);
+            color: #2a1810;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #d4a574, #c89d5c);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 165, 116, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #f4d4a0;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 165, 116, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .submit-section {
+            text-align: center;
+            padding: 30px;
+            background: rgba(42, 24, 16, 0.4);
+            border: 2px solid #d4a574;
+            border-radius: 10px;
+        }
+
+        .submit-section h2 {
+            color: #f4d4a0;
+            margin-bottom: 20px;
+        }
+
+        .submit-section p {
+            color: #f5e6d3;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .warning {
+            background: rgba(255, 165, 0, 0.2);
+            border: 2px solid #ffa500;
+            border-radius: 8px;
+            padding: 15px;
+            color: #ffe0b3;
+            margin: 20px 0;
+        }
+
+        .loading, .error-message {
+            text-align: center;
+            padding: 40px;
+            color: #f5e6d3;
+            font-size: 1.2rem;
+        }
+
+        .locked-message {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid #FFC107;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            color: #fff3cd;
+            line-height: 1.8;
+        }
+
+        .locked-message h2 {
+            color: #f4d4a0;
+            margin-bottom: 20px;
+        }
+
+        .completion-status {
+            background: rgba(42, 24, 16, 0.4);
+            border: 2px solid #d4a574;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .completion-status h3 {
+            color: #f4d4a0;
+            margin-bottom: 15px;
+        }
+
+        .episode-list {
+            color: #f5e6d3;
+            line-height: 1.8;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .test-container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .question-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <video autoplay loop muted playsinline class="bg-video">
+        <source src="../assets/bg.mp4" type="video/mp4">
+    </video>
+
+    <div class="test-container">
+        <div class="header">
+            <h1>Post-Test Assessment</h1>
+            <p class="language" id="languageDisplay">Loading...</p>
+        </div>
+
+        <div id="mainContent">
+            <div class="loading">Checking eligibility...</div>
+        </div>
+    </div>
+
+    <script src="questions.js"></script>
+    <script>
+        let currentLanguage = localStorage.getItem('selectedLanguage');
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let questions = [];
+        let isEligible = false;
+
+        // Check if user has completed all episodes
+        async function checkEligibility() {
+            try {
+                const response = await fetch('../../2be/check_story_completion.php');
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    if (data.allEpisodesCompleted) {
+                        isEligible = true;
+                        currentLanguage = data.language;
+                        initializeTest();
+                    } else {
+                        showLockedMessage(data);
+                    }
+                } else {
+                    showError(data.message || 'Failed to check eligibility');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('An error occurred. Please try again.');
+            }
+        }
+
+        function showLockedMessage(data) {
+            const completedEpisodes = data.completedEpisodes || 0;
+            const totalEpisodes = data.totalEpisodes || 7;
+            
+            document.getElementById('mainContent').innerHTML = `
+                <div class="locked-message">
+                    <h2>🔒 Post-Test Locked</h2>
+                    <p>You need to complete all Story Mode episodes in your selected programming language (${data.language ? data.language.toUpperCase() : 'Unknown'}) before taking the post-test.</p>
+                    
+                    <div class="completion-status">
+                        <h3>Your Progress:</h3>
+                        <div class="episode-list">
+                            <p><strong>Episodes Completed:</strong> ${completedEpisodes} / ${totalEpisodes}</p>
+                            <p><strong>Remaining Episodes:</strong> ${totalEpisodes - completedEpisodes}</p>
+                        </div>
+                    </div>
+                    
+                    <p>Keep learning and come back when you've finished all episodes!</p>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-primary" onclick="window.location.href='../homepage/'">
+                            Continue Learning
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='comparison.html'">
+                            View Progress
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function initializeTest() {
+            document.getElementById('languageDisplay').textContent = currentLanguage.toUpperCase() + ' Post-Test';
+            
+            // Get questions for the selected language
+            questions = getQuestionsForLanguage(currentLanguage);
+            
+            // Initialize answers array
+            userAnswers = new Array(questions.length).fill(null);
+            
+            // Display first question
+            displayQuestion(0);
+        }
+
+        function displayQuestion(index) {
+            currentQuestionIndex = index;
+            const question = questions[index];
+            
+            // Update progress bar
+            const progress = ((index + 1) / questions.length * 100).toFixed(0);
+            
+            let questionHTML = `
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progress}%">${index + 1} of ${questions.length}</div>
+                </div>
+                
+                <div class="question-card">
+                    <div class="question-header">
+                        <span class="question-number">Question ${index + 1}</span>
+                        <span class="topic-tag">${question.topic}</span>
+                    </div>
+                    <div class="question-text">${question.question}</div>
+            `;
+            
+            // Add code block if exists
+            if (question.code) {
+                questionHTML += `
+                    <div class="code-block">
+                        <code>${escapeHtml(question.code)}</code>
+                    </div>
+                `;
+            }
+            
+            // Add options
+            questionHTML += `<div class="options">`;
+            question.options.forEach((option, optionIndex) => {
+                const isSelected = userAnswers[index] === optionIndex;
+                questionHTML += `
+                    <div class="option ${isSelected ? 'selected' : ''}" onclick="selectOption(${optionIndex})">
+                        <input type="radio" name="question${index}" value="${optionIndex}" ${isSelected ? 'checked' : ''}>
+                        <span class="option-text">${option}</span>
+                    </div>
+                `;
+            });
+            questionHTML += `</div></div>`;
+            
+            questionHTML += `
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" ${index === 0 ? 'style="display:none;"' : ''}>Previous</button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="${index === questions.length - 1 ? 'showSubmitConfirmation()' : 'nextQuestion()'}">
+                        ${index === questions.length - 1 ? 'Submit Test' : 'Next Question'}
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('mainContent').innerHTML = questionHTML;
+        }
+
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestionIndex] = optionIndex;
+            
+            // Update UI
+            document.querySelectorAll('.option').forEach((option, index) => {
+                if (index === optionIndex) {
+                    option.classList.add('selected');
+                    option.querySelector('input').checked = true;
+                } else {
+                    option.classList.remove('selected');
+                    option.querySelector('input').checked = false;
+                }
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                displayQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                displayQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function showSubmitConfirmation() {
+            const unanswered = userAnswers.filter(answer => answer === null).length;
+            
+            let warningHTML = '';
+            if (unanswered > 0) {
+                warningHTML = `
+                    <div class="warning">
+                        <strong>Warning:</strong> You have ${unanswered} unanswered question(s). 
+                        These will be marked as incorrect.
+                    </div>
+                `;
+            }
+            
+            document.getElementById('mainContent').innerHTML = `
+                <div class="submit-section">
+                    <h2>Ready to Submit?</h2>
+                    <p>You have answered ${questions.length - unanswered} out of ${questions.length} questions.</p>
+                    ${warningHTML}
+                    <p>Once you submit, you cannot change your answers. Are you sure you want to submit your test?</p>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-secondary" onclick="displayQuestion(0)">Review Answers</button>
+                        <button class="btn btn-primary" onclick="submitTest()">Confirm & Submit</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function submitTest() {
+            // Calculate score
+            let correctAnswers = 0;
+            questions.forEach((question, index) => {
+                if (userAnswers[index] === question.correctAnswer) {
+                    correctAnswers++;
+                }
+            });
+            
+            const score = Math.round((correctAnswers / questions.length) * 100);
+            
+            // Prepare data for submission
+            const testData = {
+                language: currentLanguage,
+                answers: userAnswers,
+                score: score,
+                totalQuestions: questions.length,
+                correctAnswers: correctAnswers
+            };
+            
+            try {
+                const response = await fetch('../../2be/submit_posttest.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Store score in localStorage for use in results page
+                    localStorage.setItem('posttestScore', score);
+                    localStorage.setItem('posttestCorrect', correctAnswers);
+                    localStorage.setItem('posttestTotal', questions.length);
+                    
+                    // Redirect to results page
+                    window.location.href = 'result.html?type=posttest';
+                } else {
+                    alert('Error submitting test: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while submitting your test. Please try again.');
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('mainContent').innerHTML = `
+                <div class="error-message">
+                    ${message}
+                    <div class="navigation-buttons" style="margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="window.location.href='../homepage/'">
+                            Back to Homepage
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', checkEligibility);
+    </script>
+</body>
+</html>
+
+
+
+
+

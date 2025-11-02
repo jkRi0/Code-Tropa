@@ -1246,11 +1246,10 @@
     </style>
 
     <script>
-        // Function to redirect to post-test page (currently non-functional as requested)
+        // Function to redirect to post-test page
         function redirectToPostTest() {
-            alert('Post-test functionality will be implemented soon!');
-            // Future implementation:
-            // window.location.href = '../posttest/posttest.html';
+            // Check if user has completed all episodes before allowing post-test
+            window.location.href = '../asmt/posttest.html';
         }
 
         // Update player name from session/local storage or profile data
