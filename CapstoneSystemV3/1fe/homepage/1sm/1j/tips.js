@@ -22,20 +22,23 @@
         },
         ep3: {
             easy: {
-                question: "What data type should you use for storing text in Java?",
+                question: "How do you initialize a boolean variable using a comparison operator in Java?",
                 options: {
-                    a: "int",
-                    b: "String",
-                    c: "double",
-                    d: "boolean"
+                    a: "boolean result = true;",
+                    b: "boolean result = (5 > 3);",
+                    c: "boolean result = \"true\";",
+                    d: "boolean result = 1;"
                 },
                 correctAnswer: "b",
                 tips: [
-                    "Use String for text data: `String name = \"Hello\";`",
-                    "Remember to use double quotes for strings",
-                    "Use System.out.println() to display strings",
-                    "You can concatenate strings with + operator",
-                    "Practice with different string operations"
+                    "Use arithmetic operators for calculations: `int cost = 85 * 3;` (multiplication)",
+                    "Use comparison operators to create boolean expressions: `boolean withinBudget = totalCost <= budget;`",
+                    "The <= operator means 'less than or equal to' and returns true or false",
+                    "Initialize boolean variables with comparison expressions: `boolean ready = (cost > 0);`",
+                    "Use logical operators to combine conditions: `boolean readyToCook = (withinBudget && totalCost > 0);`",
+                    "The && operator means 'AND' - both conditions must be true for the result to be true",
+                    "Example: Calculate total cost first, then check if it's within budget: `int totalCost = peanutButter + vegetables; boolean withinBudget = totalCost <= 400;`",
+                    "Parentheses help group expressions: `boolean result = (a > b) && (c > 0);`"
                 ]
             }
         },

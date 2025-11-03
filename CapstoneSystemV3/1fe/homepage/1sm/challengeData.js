@@ -225,10 +225,26 @@ function loadSelectedChallengeData() {
                     const episodeNumber = data.level.replace('ep', '');
                     
                     // Determine language folder based on current language
-                    const selectedLanguageSpan = document.getElementById('selectedLanguage');
-                    const currentLanguage = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
+                    // Priority: localStorage > DOM element > default to java
+                    let currentLanguage = localStorage.getItem('selectedLanguage');
+                    if (!currentLanguage) {
+                        const selectedLanguageSpan = document.getElementById('selectedLanguage');
+                        currentLanguage = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
+                    } else {
+                        currentLanguage = currentLanguage.toLowerCase();
+                    }
+                    
+                    // Normalize language value (handle variations)
+                    if (currentLanguage === 'cpp' || currentLanguage === 'c++') {
+                        currentLanguage = 'c++';
+                    } else if (currentLanguage === 'csharp' || currentLanguage === 'c#' || currentLanguage === 'c #') {
+                        currentLanguage = 'c#';
+                    } else if (currentLanguage === 'java') {
+                        currentLanguage = 'java';
+                    }
+                    
                     let languageFolder;
-                    switch(currentLanguage.toLowerCase()) {
+                    switch(currentLanguage) {
                         case 'c++':
                         case 'cpp':
                             languageFolder = '2cP';
@@ -245,7 +261,7 @@ function loadSelectedChallengeData() {
                     
                     imgContainer.src = `./${languageFolder}/ep${episodeNumber}/assets/bg.png`;
                     imgContainer.alt = `${data.level} - ${data.difficulty}`;
-                    console.log(`Updated image to: ${languageFolder}/ep${episodeNumber}/assets/bg.png`);
+                    console.log(`Updated image to: ${languageFolder}/ep${episodeNumber}/assets/bg.png (language: ${currentLanguage})`);
                 } 
             }
             

@@ -6,6 +6,7 @@ import { initializeDomContent } from './domContentLoaded.js'; // For refreshing 
 // Assuming there's a function to refresh badges, or we can add it later if needed
 import { refreshBadges } from '../loadBadges.js'; 
 import { fetchProfileData } from '../fetchProfileData.js';
+import { applyStoryModeLocks } from '../lockStoryMode.js'; // For refreshing story mode locks
 
 export function submitLanguageSelection() {
     // const selectedLanguageInput = document.getElementById('selectedLanguageInput'); // No longer needed
@@ -40,6 +41,10 @@ export function submitLanguageSelection() {
                 }
                 if (typeof fetchProfileData === 'function') {
                     fetchProfileData(); // Call function to refresh profile data (including tier)
+                }
+                // Refresh story mode locks for the new programming language
+                if (typeof applyStoryModeLocks === 'function') {
+                    applyStoryModeLocks(); // Refresh unlocked episodes based on new language
                 }
             } else {
                 alert(`Error: ${data.message}`);

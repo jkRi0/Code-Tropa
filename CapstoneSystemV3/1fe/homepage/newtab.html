@@ -195,15 +195,21 @@
                 <div class="item-title">Episode 3: Operators and Expressions</div>
                 <div class="difficulty easy">Easy</div>
                 <div class="code-block"><code>public class Main {
-                    public static int sum(int a, int b) {
-                        return a + b;
-                    }
-                    public static void main(String[] args) {
-                        System.out.println(sum(2, 3));
-                    }
-                }</code></div>
+    public static void main(String[] args) {
+        int peanutButter = 85 * 3;
+        int vegetables = 40 * 2;
+        int totalCost = peanutButter + vegetables;
+        int budget = 400;
+        boolean withinBudget = totalCost <= budget;
+        boolean readyToCook = (withinBudget && totalCost > 0);
+
+        System.out.println("Total Cost: " + totalCost);
+        System.out.println("Within Budget: " + withinBudget);
+        System.out.println("Ready to Cook: " + readyToCook);
+    }
+}</code></div>
                 <div class="note">
-                    <strong>Key Points:</strong> Use operators (+, -, *, /, %) for calculations. Methods can return values using the return statement.
+                    <strong>Key Points:</strong> Use arithmetic operators (+, -, *, /) for calculations. Use comparison operators (<=, >, ==) to compare values. Use logical operators (&&) to combine boolean expressions. The task helps Axle compute total cost, check if within budget, and verify if ready to cook.
                 </div>
             </div>
         </div>

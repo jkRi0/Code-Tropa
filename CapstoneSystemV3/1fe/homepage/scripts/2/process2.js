@@ -44,8 +44,25 @@ export function process2(clickedDiv, chapter) {
 
 // Function to get the correct path based on selected programming language
 export function getLanguageBasedPath(episode) {
-    // Get the current selected language from the global variable
-    const currentLanguage = window.currentSelectedLanguage || '';
+    // Get the current selected language from multiple sources (priority order)
+    let currentLanguage = window.currentSelectedLanguage || '';
+    
+    // If not in window, check localStorage
+    if (!currentLanguage) {
+        currentLanguage = localStorage.getItem('selectedLanguage') || '';
+    }
+    
+    // Normalize the language value (handle variations)
+    currentLanguage = currentLanguage.toLowerCase().trim();
+    
+    // Handle common variations
+    if (currentLanguage === 'cpp' || currentLanguage === 'c++') {
+        currentLanguage = 'c++';
+    } else if (currentLanguage === 'csharp' || currentLanguage === 'c#' || currentLanguage === 'c #') {
+        currentLanguage = 'c#';
+    } else if (currentLanguage === 'java') {
+        currentLanguage = 'java';
+    }
     
     // Map languages to their folder names
     const languageMap = {
@@ -54,13 +71,13 @@ export function getLanguageBasedPath(episode) {
         'c#': '3cS'
     };
     
-    const languageFolder = languageMap[currentLanguage.toLowerCase()];
+    const languageFolder = languageMap[currentLanguage];
     
     if (languageFolder) {
         return `1sm/${languageFolder}/${episode}`;
     } else {
-        // Default fallback to Java if no language is selected
-        console.warn('No programming language selected, defaulting to Java');
+        // Default fallback to Java if no language is selected or invalid
+        console.warn('No programming language selected or invalid language, defaulting to Java. Current language:', currentLanguage);
         return `1sm/1j/${episode}`;
     }
 }

@@ -1,28 +1,37 @@
 // Storymode objectives (easy only) – structured like 2ch lvl1
 window.objectivesData = window.objectivesData || {
     easy: {
-        title: "Episode 3 - Java Operators and Expressions",
+        title: "Episode 1 - Fiesta Syntax!",
         objectives: [
-            "Use arithmetic, comparison, and logical operators in Java expressions.",
-            "Apply what you've learned about +, -, *, /, %, >, <, ==, and &&.",
-            "Understand how operators interact with variables to calculate values and make decisions.",
-            "Your task is to help Axle compute the total cost, check if the team is within budget, and verify if the recipe is ready to cook (only if all ingredients are complete and the budget is enough)."
+            "Identify valid C++ syntax.",
+            "Understand program structure (#include, int main(), { }, return 0;).",
+            "Differentiate between code and comments.",
+            "Practice using single-line // and multi-line /* ... */ comments."
         ]
     }
 };
 
 window.examples = window.examples || {
     easy: `
-// Player Task:
-// Write Java code using arithmetic and logical operators to:
-// - Calculate the total ingredient cost.
-// - Compare it with the budget.
-// - Use a boolean expression to check if cooking can proceed.
+// Challenge Scenario:
+// The Barangay Captain asks Axle to fix the fiesta program announcement code.
+// The draft code is messy—some parts are missing semicolons, others need proper comments.
 
-// Expected output:
-Total Cost: 335
-Within Budget: true
-Ready to Cook: true`
+// Player Task: Correct the program below by:
+// - Adding the missing semicolons.
+// - Placing comments to explain each part.
+// - Making sure it compiles properly.
+
+// Draft (Fix This):
+#include <iostream>
+using namespace std
+
+int main() {
+    cout << "Welcome sa Fiesta 2025!" << endl
+    cout << "Handog ng Barangay San Juan" << endl
+
+    return 0
+}`
 };
 
 window.displayObjectives = window.displayObjectives || function(difficulty) {
