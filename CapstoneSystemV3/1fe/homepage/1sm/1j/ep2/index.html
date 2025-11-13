@@ -103,27 +103,121 @@
             object-fit: cover; /* Cover the entire container */
         }
 
-        .subtitle-container {
+        .subtitle-wrapper{
             position: absolute;
-            bottom: 20px;
+            bottom: 0;
             width: 80%;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px 20px;
-            text-align: center;
+            height: 10rem;
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7));
+            padding: 10px 20px 0 20px;
+            display: flex;
+            flex-direction: row;
+            
+        }
+        .speaker-box{
+            display: block;
+            width: 200px;
+            height: 100%;
+            border-radius: 14px;
+            /* border: 3px solid rgba(255, 255, 255, 0.85); */
+            /* background-color: rgba(0, 0, 0, 0.55); */
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            /* box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45); */
+            transition: transform 0.3s ease;
+        }
+        .subtitle-content{
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            width: 100%;
+            height: 100%;
+            padding-left: 16px;
+        }
+        .speaker-name{
+            background-color: rgba(0, 0, 0, 0.65);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 2em;
+            /* margin-bottom: 6px; */
+            padding: 8px 18px;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+            text-transform: uppercase;
+        }
+        .subtitle-container {
+            display: flex;
+            background-color: rgba(0, 0, 0, 0.55);
+            color: #ffffff;
             font-size: 2.3em; /* Enlarged font size */
-            border-radius: 5px;
+            flex: 1;
+            padding: 8px 18px;
+            overflow-y: auto;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.6) transparent;
+        }
+
+        .subtitle-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .subtitle-container::-webkit-scrollbar-thumb {
+            background-color: rgba(255,255,255,0.6);
+            border-radius: 4px;
+        }
+
+        .subtitle-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .subtitle-wrapper.no-speaker .speaker-box {
+            display: none;
+        }
+
+        .subtitle-wrapper.no-speaker .subtitle-content {
+            padding-left: 0;
+        }
+
+        .subtitle-wrapper.no-speaker .speaker-name {
+            display: none;
+        }
+
+        .subtitle-wrapper.no-speaker .subtitle-header {
+            justify-content: flex-end;
+        }
+
+        .subtitle-wrapper.no-speaker .scene-next-text {
+            margin-left: 0;
+        }
+
+        .subtitle-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
         }
 
         .scene-next-text {
-            position: absolute;
-            top: 10px; /* Adjust as needed to be above subtitle */
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.2em;
+            font-size: 1.05em;
             opacity: 0;
-            transition: opacity 0.1s ease-in-out, background-color 0.3s ease, color 0.3s ease;
-            padding: 5px 10px;
-            border-radius: 5px;
+            transition: opacity 0.15s ease-in-out, background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            padding: 6px 14px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #f5f5f5;
+            margin-left: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .scene-text-overlay {
@@ -277,8 +371,9 @@
         }
 
         .scene-next-text.highlight {
-            background-color: rgba(105, 211, 57, 0.562); /* Subtle highlight */
-            color: #fff;
+            background-color: rgba(81, 255, 0, 0.493); /* Subtle highlight */
+            color: #ffffff;
+            border-color: rgba(105, 211, 57, 0.5);
         }
 
         .chapter-main-text {
@@ -514,6 +609,51 @@
                 padding: 10px 15px;
             }
             
+            .subtitle-wrapper{
+                width: 90%;
+                height: auto;
+                padding: 12px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .speaker-box{
+                width: 140px;
+                height: 140px;
+                align-self: center;
+            }
+
+            .subtitle-wrapper.no-speaker .subtitle-content {
+                padding-left: 0;
+            }
+
+            .subtitle-content{
+                padding-left: 0;
+            }
+
+            .subtitle-header{
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .speaker-name{
+                font-size: 1.2em;
+                align-self: center;
+            }
+
+            .scene-next-text{
+                margin-left: 0;
+                font-size: 0.95em;
+                padding: 6px 12px;
+                text-align: center;
+            }
+
+            .subtitle-container{
+                font-size: 1.2em;
+                padding: 12px;
+            }
+
             .challenge-btn {
                 font-size: 1.1em;
                 padding: 12px 30px;
@@ -565,8 +705,16 @@
         <img src="" alt="Scene Content" class="scene-content" id="sceneImage" style="display: none;">
         <video src="" class="scene-content" id="sceneVideo" autoplay muted style="display: none;"></video>
         <div class="scene-text-overlay" id="sceneTextOverlay" style="display: none;"></div>
-        <div class="subtitle-container" id="subtitleContainer"></div>
-        <p class="scene-next-text" id="sceneNextText"></p>
+        <div class="subtitle-wrapper" id="subtitleWrapper">
+            <div class="speaker-box" id="speakerBox"></div>
+            <div class="subtitle-content" id="subtitleContent">
+                <div class="subtitle-header" id="subtitleHeader">
+                    <div class="speaker-name" id="speakerName">Character Name</div>
+                    <p class="scene-next-text" id="sceneNextText"></p>
+                </div>
+                <div class="subtitle-container" id="subtitleContainer"></div>
+            </div>
+        </div>
         
         <!-- Interactive Scene -->
         <div class="interactive-scene" id="interactiveScene" style="display: none;">
@@ -594,7 +742,64 @@
         const sceneImage = document.getElementById('sceneImage');
         const sceneVideo = document.getElementById('sceneVideo');
         const sceneTextOverlay = document.getElementById('sceneTextOverlay');
+        const subtitleWrapper = document.getElementById('subtitleWrapper');
+        const subtitleContent = document.getElementById('subtitleContent');
         const subtitleContainer = document.getElementById('subtitleContainer');
+        const speakerBox = document.getElementById('speakerBox');
+        const speakerName = document.getElementById('speakerName');
+
+        let currentSpeaker = { name: '', image: '' };
+        let defaultSceneSpeaker = { name: '', image: '' };
+        let advanceKeyHandler = null;
+        let isAdvancingScene = false;
+
+        function applySpeaker(name = '', image = '') {
+            if (!speakerBox || !speakerName || !subtitleWrapper) return;
+
+            const hasName = typeof name === 'string' && name.trim() !== '';
+            const hasImage = typeof image === 'string' && image.trim() !== '';
+
+            if (!hasName && !hasImage) {
+                subtitleWrapper.classList.add('no-speaker');
+                speakerBox.style.backgroundImage = 'none';
+                speakerBox.style.display = 'none';
+                speakerName.textContent = '';
+                speakerName.style.display = 'none';
+                currentSpeaker = { name: '', image: '' };
+                return;
+            }
+
+            subtitleWrapper.classList.remove('no-speaker');
+
+            if (hasImage) {
+                speakerBox.style.display = 'block';
+                speakerBox.style.backgroundImage = `url('${image}')`;
+            } else {
+                speakerBox.style.backgroundImage = 'none';
+                speakerBox.style.display = hasName ? 'block' : 'none';
+            }
+
+            if (hasName) {
+                speakerName.textContent = name;
+                speakerName.style.display = 'inline-flex';
+            } else {
+                speakerName.textContent = '';
+                speakerName.style.display = 'none';
+            }
+
+            currentSpeaker = { name: hasName ? name : '', image: hasImage ? image : '' };
+        }
+
+        function clearSpeaker() {
+            applySpeaker('', '');
+        }
+
+        function detachAdvanceKeyHandler() {
+            if (advanceKeyHandler) {
+                document.removeEventListener('keydown', advanceKeyHandler);
+                advanceKeyHandler = null;
+            }
+        }
         const sceneNextText = document.getElementById('sceneNextText');
 
         // Interactive scene elements
@@ -611,28 +816,148 @@
 
         const scenes = [
             { type: 'video', src: 'assets/1.mp4', subtitle: '' },
-            { type: 'video', src: 'assets/2.mp4', subtitle: [
-                { text: "Axle: Hala push push na!", time: 0 },
-                { text: "Axle's mother: Axle halika ka dito may ipapabili ako, hindi ung puro laro ka lang dyaan!", time: 4000 }
-            ]},
-            { type: 'video', src: 'assets/3.mp4', subtitle: 'Axle: Opo nay, eto na po' },
-            { type: 'interactive', src: 'assets/4.mp4', subtitle: 'Use arrow keys to move around!' },
+            {
+            type: 'video',
+            src: 'assets/2.mp4',
+            subtitle: [
+                {
+                    text: "Axle: Hala push push na!",
+                    time: 0,
+                    speakerName: "Axle",
+                    speakerImage: "assets/axle.png"
+                },
+                {
+                    text: "Axle halika ka dito may ipapabili ako, hindi ung puro laro ka lang dyaan!",
+                    time: 4000,
+                    speakerName: "Axle's mother",
+                    speakerImage: "assets/mama.png"
+                },
+                // {
+                //     text: "[Background chatter]",
+                //     time: 6000,
+                //     hideSpeaker: true
+                // }
+            ]
+        },
+            { 
+                type: 'video', 
+                src: 'assets/3.mp4', 
+                subtitle: 'Opo nay, eto na po',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png'
+            },
+            { 
+                type: 'interactive', 
+                src: 'assets/4.mp4', 
+                subtitle: 'Use arrow keys to move around!',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png'
+            },
             { type: 'video', src: 'assets/5.mp4', subtitle: '' },
-            { type: 'video', src: 'assets/6.mp4', subtitle: 'Axle: Tao po pabili po!' },
-            { type: 'video', src: 'assets/7.mp4', subtitle: 'Ate Kim: Hello ano sayo?' },
-            { type: 'video', src: 'assets/8.mp4', subtitle: 'Axle: Eto po'},
-            { type: 'video', src: 'assets/9.mp4', subtitle: 'Ate Kim: Sure! Sandali lang... Uy, Axle, ‘di ba ikaw yung pamangkin ni Tita Melba?' },
-            { type: 'video', src: 'assets/10.mp4', subtitle: 'Axle: Opo! Eh Ate... BSIT din po ba kayo??' },
-            { type: 'video', src: 'assets/11.mp4', subtitle: 'Ate Kim: Oo naman! Graduate lang recently. Gusto mo, turuan kita habang sinasako ko ‘tong asukal?' },
+            { 
+                type: 'video', src: 'assets/6.mp4', 
+                subtitle: 'Tao po pabili po!',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/7.mp4', 
+                subtitle: 'Hello ano sayo?',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/8.mp4', 
+                subtitle: 'Eto po',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/9.mp4', 
+                subtitle: 'Sure! Sandali lang... Uy, Axle, ‘di ba ikaw yung pamangkin ni Tita Melba?',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/10.mp4', 
+                subtitle: 'Opo! Eh Ate... BSIT din po ba kayo??',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/11.mp4', 
+                subtitle: 'Oo naman! Graduate lang recently. Gusto mo, turuan kita habang sinasako ko ‘tong asukal?',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png'
+            },
             // { type: 'image', src: 'assets/12.png', subtitle: 'Ate Kim: Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.' },
-            { type: 'image', src: 'assets/12.png', content: '<pre>int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;</pre>', subtitle: 'Ate Kim: Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.' },
-            { type: 'image', src: 'assets/12.png', content: '<b><u>int sukaQuantity = 3;</u></b><br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Ate Kim: int para sa bilang kung ilang piraso ng suka.' },
-            { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br><b><u>String brandName = "Silver Swan";</u></b><br>boolean mayStock = true;', subtitle: 'Ate Kim: String para sa mga pangalan.' },
-            { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br><b><u>boolean mayStock = true;</u></b>', subtitle: 'Ate Kim: At boolean kung meron o wala o nagsasagot ng true or false.' },
-            { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Axle: So parang... bawat variable, may type. Hindi pwedeng halo-halo lang.' },
-            { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Ate Kim: Tama! Parang ‘di mo pwedeng isulat ang ‘SkyFlakes’ sa lalagyan ng numbers. Mali ‘yon. Oh bale tatlong suka ay 13 isa, 39 pesos lahat' },
-            { type: 'video', src: 'assets/6.mp4', subtitle: 'Axle: Ate Kim, salamat sa lesson ah. Eto na po bayad.' },
-            { type: 'video', src: 'assets/7.mp4', subtitle: 'Ate Kim: Walang anuman! Next time punta ka ulit, tapos data types naman tayo ulit. Try natin with float at char.' },
+            { 
+                type: 'image', 
+                src: 'assets/12.png', 
+                content: '<pre>int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;</pre>', 
+                subtitle: 'Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/12.png', 
+                content: '<b><u>int sukaQuantity = 3;</u></b><br>String brandName = "Silver Swan";<br>boolean mayStock = true;', 
+                subtitle: 'int para sa bilang kung ilang piraso ng suka.',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/12.png', 
+                content: 'int sukaQuantity = 3;<br><b><u>String brandName = "Silver Swan";</u></b><br>boolean mayStock = true;', 
+                subtitle: 'String para sa mga pangalan.',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/12.png', 
+                content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br><b><u>boolean mayStock = true;</u></b>', 
+                subtitle: 'At boolean kung meron o wala o nagsasagot ng true or false.',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/12.png', 
+                content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', 
+                subtitle: 'So parang... bawat variable, may type. Hindi pwedeng halo-halo lang.',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/12.png', 
+                content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', 
+                subtitle: 'Tama! Parang ‘di mo pwedeng isulat ang ‘SkyFlakes’ sa lalagyan ng numbers. Mali ‘yon. Oh bale tatlong suka ay 13 isa, 39 pesos lahat',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/6.mp4', 
+                subtitle: 'Ate Kim, salamat sa lesson ah. Eto na po bayad.',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/7.mp4', 
+                subtitle: 'Walang anuman! Next time punta ka ulit, tapos data types naman tayo ulit. Try natin with float at char.',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png'
+            },
 
         ];
         let currentSceneIndex = 0;
@@ -957,18 +1282,67 @@
         }
 
         // Function to show timed subtitles
-        function showTimedSubtitles(subtitles) {
+        function showTimedSubtitles(subtitles, defaultSpeaker = { name: '', image: '' }) {
             let currentSubtitleIndex = 0;
+            let lastSpeakerName = defaultSpeaker?.name || '';
+            let lastSpeakerImage = defaultSpeaker?.image || '';
+
+            if (lastSpeakerName || lastSpeakerImage) {
+                applySpeaker(lastSpeakerName, lastSpeakerImage);
+            } else {
+                clearSpeaker();
+            }
             
             function showNextSubtitle() {
                 if (currentSubtitleIndex < subtitles.length) {
                     const subtitle = subtitles[currentSubtitleIndex];
-                    subtitleContainer.textContent = subtitle.text;
+                    const isObjectSubtitle = typeof subtitle === 'object' && subtitle !== null;
+                    const subtitleText = isObjectSubtitle ? subtitle.text : subtitle;
+                    
+                    if (typeof subtitleText === 'string') {
+                        subtitleContainer.textContent = subtitleText;
+                    } else {
+                        subtitleContainer.textContent = '';
+                    }
+
+                    if (isObjectSubtitle) {
+                        const hasSpeakerFields = Object.prototype.hasOwnProperty.call(subtitle, 'speakerName') ||
+                            Object.prototype.hasOwnProperty.call(subtitle, 'speakerImage') ||
+                            Object.prototype.hasOwnProperty.call(subtitle, 'hideSpeaker');
+
+                        if (hasSpeakerFields) {
+                            if (subtitle.hideSpeaker) {
+                                clearSpeaker();
+                                lastSpeakerName = '';
+                                lastSpeakerImage = '';
+                            } else {
+                                const nextSpeakerName = Object.prototype.hasOwnProperty.call(subtitle, 'speakerName')
+                                    ? (subtitle.speakerName || '')
+                                    : (lastSpeakerName || defaultSpeaker?.name || '');
+                                const nextSpeakerImage = Object.prototype.hasOwnProperty.call(subtitle, 'speakerImage')
+                                    ? (subtitle.speakerImage || '')
+                                    : (lastSpeakerImage || defaultSpeaker?.image || '');
+
+                                if (nextSpeakerName || nextSpeakerImage) {
+                                    applySpeaker(nextSpeakerName, nextSpeakerImage);
+                                } else {
+                                    clearSpeaker();
+                                }
+
+                                lastSpeakerName = nextSpeakerName;
+                                lastSpeakerImage = nextSpeakerImage;
+                            }
+                        }
+                    }
                     
                     // Schedule next subtitle
                     if (currentSubtitleIndex < subtitles.length - 1) {
                         const nextSubtitle = subtitles[currentSubtitleIndex + 1];
-                        const delay = nextSubtitle.time - subtitle.time;
+                        const currentTime = isObjectSubtitle && typeof subtitle.time === 'number' ? subtitle.time : 0;
+                        const nextTime = (typeof nextSubtitle === 'object' && nextSubtitle !== null && typeof nextSubtitle.time === 'number')
+                            ? nextSubtitle.time
+                            : currentTime;
+                        const delay = Math.max(0, nextTime - currentTime);
                         subtitleTimeout = setTimeout(() => {
                             currentSubtitleIndex++;
                             showNextSubtitle();
@@ -1049,6 +1423,20 @@
             if (index < scenes.length) {
                 const scene = scenes[index];
 
+                detachAdvanceKeyHandler();
+                isAdvancingScene = false;
+
+                defaultSceneSpeaker = {
+                    name: scene.speakerName || '',
+                    image: scene.speakerImage || ''
+                };
+
+                if (defaultSceneSpeaker.name || defaultSceneSpeaker.image) {
+                    applySpeaker(defaultSceneSpeaker.name, defaultSceneSpeaker.image);
+                } else {
+                    clearSpeaker();
+                }
+
                 sceneImage.style.display = 'none';
                 sceneVideo.style.display = 'none';
                 sceneTextOverlay.style.display = 'none';
@@ -1110,7 +1498,7 @@
                     // Check if it's timed subtitles (objects with text and time)
                     if (scene.subtitle.length > 0 && typeof scene.subtitle[0] === 'object' && scene.subtitle[0].text) {
                         // Timed subtitles
-                        showTimedSubtitles(scene.subtitle);
+                        showTimedSubtitles(scene.subtitle, defaultSceneSpeaker);
                     } else {
                         // Regular array subtitles
                         subtitleContainer.textContent = scene.subtitle.join('\n');
@@ -1161,12 +1549,33 @@
                 }
                 
                 if (index < scenes.length - 1 && (scene.type !== 'video' || hasSubtitle)) {
-                    sceneNextText.textContent = "Click to Next";
+                    sceneNextText.textContent = "Press any key or click to continue";
                     sceneNextText.classList.add('show');
                 } else if (index === scenes.length - 1) {
-                    sceneNextText.textContent = "Click to Start"; // Last scene
+                    sceneNextText.textContent = "Press any key or click to start challenge"; // Last scene
                     sceneNextText.classList.add('show');
                 }
+
+                const proceedToNextScene = () => {
+                    if (isAdvancingScene) return;
+                    isAdvancingScene = true;
+
+                    if (scene.type === 'interactive') {
+                        cleanupInteractiveScene();
+                    }
+
+                    detachAdvanceKeyHandler();
+
+                    if (scene.type === 'video') {
+                        sceneVideo.pause();
+                    }
+
+                    sceneNextText.classList.remove('show');
+                    sceneNextText.classList.remove('highlight');
+
+                    currentSceneIndex++;
+                    showScene(currentSceneIndex);
+                };
 
                 // Handle highlighting
                 if (scene.type === 'image' || scene.type === 'text') {
@@ -1180,22 +1589,36 @@
 
                 // Add event listener to skip scene on click
                 sceneContainer.onclick = () => {
-                    // Clean up interactive scene if active
-                    if (scene.type === 'interactive') {
-                        cleanupInteractiveScene();
-                    }
-                    
-                    sceneNextText.classList.remove('show'); // Hide text on click
-                    sceneNextText.classList.remove('highlight'); // Remove highlight on click
-                    currentSceneIndex++;
-                    showScene(currentSceneIndex);
+                    proceedToNextScene();
                 };
+
+                detachAdvanceKeyHandler();
+                advanceKeyHandler = (event) => {
+                    if (event.repeat) return;
+                    if (isInteractiveSceneActive) return;
+                    if (!sceneNextText.classList.contains('show')) return;
+
+                    // For input elements or textareas avoid hijacking typing
+                    const targetTag = event.target?.tagName?.toLowerCase();
+                    if (targetTag === 'input' || targetTag === 'textarea') {
+                        return;
+                    }
+
+                    const keysToPrevent = [' ', 'Spacebar', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown'];
+                    if (keysToPrevent.includes(event.key)) {
+                        event.preventDefault();
+                    }
+
+                    proceedToNextScene();
+                };
+                document.addEventListener('keydown', advanceKeyHandler);
 
                 // For video, also listen for 'ended' event to advance scene automatically
                 if (scene.type === 'video') {
                     if (!hasSubtitle) {
                         // Auto-advance if no subtitle
                         sceneVideo.onended = () => {
+                            detachAdvanceKeyHandler();
                             currentSceneIndex++;
                             showScene(currentSceneIndex);
                         };
@@ -1207,6 +1630,7 @@
                     }
                 }
             } else {
+                detachAdvanceKeyHandler();
                 // All scenes shown, hide scene container and show challenge
                 sceneContainer.style.opacity = '0';
                 sceneContainer.addEventListener('transitionend', () => {

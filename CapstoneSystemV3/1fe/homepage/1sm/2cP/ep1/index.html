@@ -443,7 +443,7 @@
             <div class="challenge-buttons">
                 <button class="challenge-btn end-episode-btn" id="endEpisodeBtn">END EPISODE 3</button>
             </div>
-            </div>
+        </div>
     </div>
 
     <div class="chapter-intro-screen" id="chapterIntroScreen">
@@ -696,7 +696,7 @@
                         showTimedSubtitles(scene.subtitle);
                     } else {
                         // Regular array subtitles
-                        subtitleContainer.textContent = scene.subtitle.join('\n');
+                    subtitleContainer.textContent = scene.subtitle.join('\n');
                     }
                 } else {
                     subtitleContainer.textContent = scene.subtitle || '';
@@ -773,10 +773,10 @@
                 if (scene.type === 'video') {
                     if (!hasSubtitle) {
                         // Auto-advance if no subtitle
-                        sceneVideo.onended = () => {
-                            currentSceneIndex++;
-                            showScene(currentSceneIndex);
-                        };
+                    sceneVideo.onended = () => {
+                        currentSceneIndex++;
+                        showScene(currentSceneIndex);
+                    };
                     } else {
                         // Manual advance if has subtitle
                         sceneVideo.onended = () => {
