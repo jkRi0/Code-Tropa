@@ -122,7 +122,7 @@
         .pause-screen {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0);
             display: none;
             align-items: center;
             justify-content: center;
@@ -783,7 +783,7 @@
                 font-size: 1.2em;
                 padding: 12px;
             }
-
+            
             .challenge-btn {
                 font-size: 1.1em;
                 padding: 12px 30px;
@@ -833,7 +833,6 @@
 
     <div class="pause-screen" id="pauseScreen">
         <div class="pause-modal">
-            <button class="pause-close-btn" id="resumeButton">Resume</button>
             <iframe id="pausePage" src="../../pause.html" class="pause-page"></iframe>
         </div>
     </div>
@@ -848,7 +847,7 @@
             <div class="subtitle-content" id="subtitleContent">
                 <div class="subtitle-header" id="subtitleHeader">
                     <div class="speaker-name" id="speakerName">Character Name</div>
-                    <p class="scene-next-text" id="sceneNextText"></p>
+        <p class="scene-next-text" id="sceneNextText"></p>
                 </div>
                 <div class="subtitle-container" id="subtitleContainer"></div>
             </div>
@@ -892,7 +891,6 @@
         const speakerName = document.getElementById('speakerName');
         const pauseScreen = document.getElementById('pauseScreen');
         const pauseButton = document.getElementById('pauseButton');
-        const resumeButton = document.getElementById('resumeButton');
         const dialogueChoices = document.getElementById('dialogueChoices');
 
         let currentSpeaker = { name: '', image: '' };
@@ -902,6 +900,11 @@
         let isPauseScreenVisible = false;
         let wasVideoPlaying = false;
         let currentVoiceAudio = null;
+        
+        // Volume settings (defaults, will be loaded from localStorage)
+        let bgMusicVolume = parseInt(localStorage.getItem('bgMusicVolume')) || 50;
+        let sfxVolume = parseInt(localStorage.getItem('sfxVolume')) || 75;
+        let voiceoverVolume = parseInt(localStorage.getItem('voiceoverVolume')) || 100;
 
         function applySpeaker(name = '', image = '') {
             if (!speakerBox || !speakerName || !subtitleWrapper) return;
@@ -1022,24 +1025,24 @@
             
             // Create and play new audio
             currentVoiceAudio = new Audio(voicePath);
-            currentVoiceAudio.volume = 1.0;
+            currentVoiceAudio.volume = voiceoverVolume / 100;
             currentVoiceAudio.play().catch(error => {
                 console.error('Error playing voice audio:', error);
                 currentVoiceAudio = null;
             });
+        }
+        
+        // Update voice audio volume if currently playing
+        function updateVoiceAudioVolume() {
+            if (currentVoiceAudio) {
+                currentVoiceAudio.volume = voiceoverVolume / 100;
+            }
         }
 
         if (pauseButton) {
             pauseButton.addEventListener('click', (event) => {
                 event.stopPropagation();
                 togglePauseScreen(true);
-            });
-        }
-
-        if (resumeButton) {
-            resumeButton.addEventListener('click', (event) => {
-                event.stopPropagation();
-                togglePauseScreen(false);
             });
         }
 
@@ -1059,6 +1062,37 @@
             }
         };
         document.addEventListener('keydown', handlePauseHotkey, true);
+
+        // Listen for messages from pause iframe
+        window.addEventListener('message', (event) => {
+            // Only accept messages from same origin for security
+            if (event.origin !== window.location.origin) return;
+
+            const data = event.data;
+            
+            if (data.type === 'resume') {
+                togglePauseScreen(false);
+            } else if (data.type === 'volumeUpdate') {
+                if (data.volumeType === 'bgMusic') {
+                    bgMusicVolume = data.value;
+                    localStorage.setItem('bgMusicVolume', bgMusicVolume);
+                    // Update background music if playing
+                    // Note: Add background music element if you have one
+                } else if (data.volumeType === 'sfx') {
+                    sfxVolume = data.value;
+                    localStorage.setItem('sfxVolume', sfxVolume);
+                    // Update sound effects if playing
+                    // Note: Add sound effects handling if needed
+                } else if (data.volumeType === 'voiceover') {
+                    voiceoverVolume = data.value;
+                    localStorage.setItem('voiceoverVolume', voiceoverVolume);
+                    updateVoiceAudioVolume();
+                }
+            } else if (data.type === 'quit') {
+                // Redirect to homepage
+                window.location.href = '../../../index.html';
+            }
+        });
 
         // Dialogue choice functions
         function showDialogueChoices(choices) {
@@ -1939,38 +1973,38 @@
 
                 // Handle different subtitle formats (skip for dialogue scenes - they use question field)
                 if (scene.type !== 'dialogue') {
+                if (Array.isArray(scene.subtitle)) {
+                    // Check if it's timed subtitles (objects with text and time)
+                    if (scene.subtitle.length > 0 && typeof scene.subtitle[0] === 'object' && scene.subtitle[0].text) {
+                        // Timed subtitles
+                            showTimedSubtitles(scene.subtitle, defaultSceneSpeaker);
+                    } else {
+                        // Regular array subtitles
+                        subtitleContainer.textContent = scene.subtitle.join('\n');
+                    }
+                } else {
+                    subtitleContainer.textContent = scene.subtitle || '';
+                }
+                
+                // Hide subtitle container if no subtitle
+                let shouldShowSubtitle = false;
+                if (scene.subtitle) {
                     if (Array.isArray(scene.subtitle)) {
                         // Check if it's timed subtitles (objects with text and time)
                         if (scene.subtitle.length > 0 && typeof scene.subtitle[0] === 'object' && scene.subtitle[0].text) {
-                            // Timed subtitles
-                            showTimedSubtitles(scene.subtitle, defaultSceneSpeaker);
-                        } else {
-                            // Regular array subtitles
-                            subtitleContainer.textContent = scene.subtitle.join('\n');
+                            shouldShowSubtitle = true; // Timed subtitles
+                        } else if (scene.subtitle.length > 0) {
+                            shouldShowSubtitle = true; // Regular array subtitles
                         }
                     } else {
-                        subtitleContainer.textContent = scene.subtitle || '';
+                        shouldShowSubtitle = scene.subtitle.trim() !== '';
                     }
-                    
-                    // Hide subtitle container if no subtitle
-                    let shouldShowSubtitle = false;
-                    if (scene.subtitle) {
-                        if (Array.isArray(scene.subtitle)) {
-                            // Check if it's timed subtitles (objects with text and time)
-                            if (scene.subtitle.length > 0 && typeof scene.subtitle[0] === 'object' && scene.subtitle[0].text) {
-                                shouldShowSubtitle = true; // Timed subtitles
-                            } else if (scene.subtitle.length > 0) {
-                                shouldShowSubtitle = true; // Regular array subtitles
-                            }
-                        } else {
-                            shouldShowSubtitle = scene.subtitle.trim() !== '';
-                        }
-                    }
-                    
-                    if (shouldShowSubtitle) {
-                        subtitleContainer.style.display = 'block';
-                    } else {
-                        subtitleContainer.style.display = 'none';
+                }
+                
+                if (shouldShowSubtitle) {
+                    subtitleContainer.style.display = 'block';
+                } else {
+                    subtitleContainer.style.display = 'none';
                     }
                 } else {
                     // For dialogue scenes, always show subtitle (it contains the question)
@@ -1999,12 +2033,12 @@
                 
                 // Don't show "Click to Next" for dialogue scenes (player must choose)
                 if (scene.type !== 'dialogue') {
-                    if (index < scenes.length - 1 && (scene.type !== 'video' || hasSubtitle)) {
+                if (index < scenes.length - 1 && (scene.type !== 'video' || hasSubtitle)) {
                         sceneNextText.textContent = "Press any key or click to continue";
-                        sceneNextText.classList.add('show');
-                    } else if (index === scenes.length - 1) {
+                    sceneNextText.classList.add('show');
+                } else if (index === scenes.length - 1) {
                         sceneNextText.textContent = "Press any key or click to start challenge"; // Last scene
-                        sceneNextText.classList.add('show');
+                    sceneNextText.classList.add('show');
                     }
                 }
 
@@ -2138,6 +2172,6 @@
 
     </script>
     
-
+    
 </body>
 </html>

@@ -3,199 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Pause Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: transparent;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pause-menu {
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(40, 40, 40, 0.95));
+            border: 3px solid rgba(212, 165, 116, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .pause-title {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #f4d4a0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+        }
+
+        .buttons-container {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .pause-button {
+            width: 100%;
+            padding: 14px 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            background: linear-gradient(135deg, rgba(139, 90, 43, 0.9), rgba(101, 67, 33, 0.9));
+            border: 2px solid #d4a574;
+            border-radius: 10px;
+            color: #f5e6d3;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .pause-button:hover {
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.95), rgba(139, 90, 43, 0.95));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 165, 116, 0.6);
+            border-color: #f4d4a0;
+        }
+
+        .pause-button:active {
+            transform: translateY(0);
+        }
+
+        .volume-controls {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        .volume-controls::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .volume-controls::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        .volume-controls::-webkit-scrollbar-thumb {
+            background: rgba(212, 165, 116, 0.6);
+            border-radius: 4px;
+        }
+
+        .volume-controls::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 165, 116, 0.8);
+        }
+
+        .volume-controls.show {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .volume-setting {
+            margin: 15px 0;
+            flex-shrink: 0;
+        }
+
+        .volume-setting p {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            color: #f5e6d3;
+        }
+
+        .volume-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #d4a574;
+            cursor: pointer;
+            border: 2px solid #f4d4a0;
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #d4a574;
+            cursor: pointer;
+            border: 2px solid #f4d4a0;
+        }
+
+        .volume-value {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 1em;
+            color: #f4d4a0;
+            min-width: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .pause-menu {
+                padding: 20px 15px;
+            }
+
+            .pause-title {
+                font-size: 1.5em;
+                margin-bottom: 15px;
+            }
+
+            .pause-button {
+                font-size: 1em;
+                padding: 12px 20px;
+            }
+
+            .volume-setting p {
+                font-size: 0.95em;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>PAUSE</h1>
-    
-
-
-
-    <!-- MODAL FOR PROGRAMMING LANGUAGE SELECTION -->
-    <!-- <div class="pl-selection-back1">
-        <div class="pl-selection">
-            <div class="poly1">
-                <img src="../../assets/poly1.png">
-                <p>Select Programming Language</p>
-            </div>
-            
-            <img src="../../assets/poly2.png" class="poly2">
-
-            <div class="outer2-2" onclick="process1(this)">
-                <img src="../../assets/arrow-l-b.png">
-                
-                <div class="outer1-2">
-                    <div class="top-border-2"></div>
-                    <div class="inner1-2-1"></div>
-                    <div class="inner1-2">JAVA</div>
-                    <div class="bottom-border-2"></div>
-                </div>
-                <img src="../../assets/arrow-r-b.png">
-            </div>  
-
-            <div class="outer2-2" onclick="process1(this)">
-                <img src="../../assets/arrow-l-b.png">
-                <div class="outer1-2">
-                    <div class="top-border-2"></div>
-                    <div class="inner1-2-1"></div>
-                    <div class="inner1-2">C++</div>
-                    <div class="bottom-border-2"></div>
-                </div>
-                <img src="../../assets/arrow-r-b.png">
-            </div>  
-
-            <div class="outer2-2" onclick="process1(this)">
-                <img src="../../assets/arrow-l-b.png">
-                <div class="outer1-2">
-                    <div class="top-border-2"></div>
-                    <div class="inner1-2-1"></div>
-                    <div class="inner1-2">C#</div>
-                    <div class="bottom-border-2"></div>
-                </div>
-                <img src="../../assets/arrow-r-b.png">
-            </div>  
-            
-            <div class="outer-button">
-                <div class="act-button" onclick="hideModal('back')">Back</div>
-                <div class="act-button" onclick="hideModal('ok')">Ok</div>
-            </div>
-        </div>
-    </div> -->
-
-    <!-- MODAL FOR SETTING -->
-    <!-- <div class="se-back1">
-        <div class="sm-selection se-selection">
-            <div class="poly1-2">
-                <img src="../../assets/poly1.png">
-                <p>SETTINGS</p>
-            </div>
-            <button class="back-btn" onclick="hideModal()">BACK</button>
-            <div class="chap-selection-outer">
-                <div class="chap-selection">
-                    <div class="outer2-3" onclick="process2(this,'profile')">
-                        <img src="../../assets/arrow-l-b.png">
-                        <div class="outer1-3">
-                            <div class="top-border-3"></div>
-                            <div class="inner1-3">Profile</div>
-                            <div class="bottom-border-3"></div>
-                        </div>
-                        <img src="../../assets/arrow-r-b.png">
-                    </div>
-                    <div class="outer2-3 mobile-hide-controls-modal-item" onclick="process2(this,'controls')">
-                        <img src="../../assets/arrow-l-b.png">
-                        <div class="outer1-3">
-                            <div class="top-border-3"></div>
-                            <div class="inner1-3">Controls</div>
-                            <div class="bottom-border-3"></div>
-                        </div>
-                        <img src="../../assets/arrow-r-b.png">
-                    </div>
-                    <div class="outer2-3" onclick="process2(this,'volume')">
-                        <img src="../../assets/arrow-l-b.png">
-                        <div class="outer1-3">
-                            <div class="top-border-3"></div>
-                            <div class="inner1-3">Volume</div>
-                            <div class="bottom-border-3"></div>
-                        </div>
-                        <img src="../../assets/arrow-r-b.png">
-                    </div>
+    <div class="pause-menu">
+        <h1 class="pause-title">PAUSED</h1>
+        
+        <div class="buttons-container">
+            <button class="pause-button" id="resumeBtn">Resume</button>
+            <button class="pause-button" id="volumeBtn">Volume</button>
+            <button class="pause-button" id="quitBtn">Quit</button>
                 </div>
 
-                
-                <div class="epi-selection profile">
-                    <div class="profile-info">
-                        <p><strong>Player Name:</strong> <span id="playerName">Loading...</span></p>
-                        <p><strong>Current Points:</strong> <span id="currentPoints">Loading...</span></p>
-                        <p><strong>Current Tier Level:</strong> <span id="currentTier">Loading...</span></p>
-                    </div>
-                    <div class="profile-badges">
-                        <h3>Badges Achieved:</h3>
-                        <div class="badges-container">
-                        </div>
-                    </div>
-                    <div class="profile-performance">
-                        <h3>Overall Performance Insights:</h3>
-                        <div class="bar-graph-container">
-                            <div class="bar-wrapper">
-                                <div class="bar bar-accuracy"><span class="bar-percentage-label">%</span></div>
-                            </div>
-                            <div class="bar-wrapper">
-                                <div class="bar bar-efficiency"><span class="bar-percentage-label">%</span></div>
-                            </div>
-                            <div class="bar-wrapper">
-                                <div class="bar bar-readability"><span class="bar-percentage-label">%</span></div>
-                            </div>
-                            <div class="bar-wrapper">
-                                <div class="bar bar-time"><span class="bar-percentage-label">%</span></div>
-                            </div>
-                            <div class="bar-wrapper">
-                                <div class="bar bar-success"><span class="bar-percentage-label">%</span></div>
-                            </div>
-                            <div class="bar-wrapper">
-                                <div class="bar bar-failed"><span class="bar-percentage-label">%</span></div>
-                            </div>
-                        </div>
-                        <div class="chart-legends">
-                            <p><span class="legend-color legend-color-accuracy"></span> Accuracy</p>
-                            <p><span class="legend-color legend-color-efficiency"></span> Efficiency</p>
-                            <p><span class="legend-color legend-color-readability"></span> Readability</p>
-                            <p><span class="legend-color legend-color-time"></span> Time</p>
-                            <p><span class="legend-color legend-color-success"></span> Success</p>
-                            <p><span class="legend-color legend-color-failed"></span> Failed</p>
-                        </div>
-                    </div>
-                    <div class="profile-actions">
-                        <button class="edit-account-btn">Edit Account</button>
-                        <button class="delete-account-btn">Delete Account</button>
-                    </div>
-                </div>
-
-                <div class="epi-selection controls">
-                    <h3>Game Controls</h3>
-                    <div class="control-setting">
-                        <p><strong>Move Up:</strong></p>
-                        <span class="control-key" id="moveUpKey">W</span>
-                        <button class="edit-control-btn" data-control="moveUp">Edit</button>
-                    </div>
-                    <div class="control-setting">
-                        <p><strong>Move Left:</strong></p>
-                        <span class="control-key" id="moveLeftKey">A</span>
-                        <button class="edit-control-btn" data-control="moveLeft">Edit</button>
-                    </div>
-                    <div class="control-setting">
-                        <p><strong>Move Down:</strong></p>
-                        <span class="control-key" id="moveDownKey">S</span>
-                        <button class="edit-control-btn" data-control="moveDown">Edit</button>
-                    </div>
-                    <div class="control-setting">
-                        <p><strong>Move Right:</strong></p>
-                        <span class="control-key" id="moveRightKey">D</span>
-                        <button class="edit-control-btn" data-control="moveRight">Edit</button>
-                    </div>
-                    <div class="control-setting">
-                        <p><strong>Skip/Next:</strong></p>
-                        <span class="control-key" id="skipNextControl">Click / Touch</span>
-                        <button class="edit-control-btn" data-control="skipNext">Edit</button>
-                    </div>
-                </div>
-
-                <div class="epi-selection volume">
-                    <h3>Volume Settings</h3>
+        <div class="volume-controls" id="volumeControls">
                     <div class="volume-setting">
                         <p><strong>Background Music:</strong></p>
                         <input type="range" id="bgMusicVolume" min="0" max="100" value="50" class="volume-slider">
-                        <span id="bgMusicValue">50%</span>
+                <span class="volume-value" id="bgMusicValue">50%</span>
                     </div>
                     <div class="volume-setting">
                         <p><strong>Sound Effects:</strong></p>
                         <input type="range" id="sfxVolume" min="0" max="100" value="75" class="volume-slider">
-                        <span id="sfxValue">75%</span>
+                <span class="volume-value" id="sfxValue">75%</span>
+                    </div>
+            <div class="volume-setting">
+                <p><strong>Voiceover:</strong></p>
+                <input type="range" id="voiceoverVolume" min="0" max="100" value="100" class="volume-slider">
+                <span class="volume-value" id="voiceoverValue">100%</span>
+            </div>
                     </div>
                 </div>
 
-                
-            </div>
-        </div>
-    </div> -->
+    <script>
+        // Get elements
+        const resumeBtn = document.getElementById('resumeBtn');
+        const volumeBtn = document.getElementById('volumeBtn');
+        const quitBtn = document.getElementById('quitBtn');
+        const volumeControls = document.getElementById('volumeControls');
+        const bgMusicSlider = document.getElementById('bgMusicVolume');
+        const sfxSlider = document.getElementById('sfxVolume');
+        const voiceoverSlider = document.getElementById('voiceoverVolume');
+        const bgMusicValue = document.getElementById('bgMusicValue');
+        const sfxValue = document.getElementById('sfxValue');
+        const voiceoverValue = document.getElementById('voiceoverValue');
+
+        // Load saved volume settings from localStorage
+        function loadVolumeSettings() {
+            const bgMusic = localStorage.getItem('bgMusicVolume') || 50;
+            const sfx = localStorage.getItem('sfxVolume') || 75;
+            const voiceover = localStorage.getItem('voiceoverVolume') || 100;
+
+            bgMusicSlider.value = bgMusic;
+            sfxSlider.value = sfx;
+            voiceoverSlider.value = voiceover;
+
+            bgMusicValue.textContent = bgMusic + '%';
+            sfxValue.textContent = sfx + '%';
+            voiceoverValue.textContent = voiceover + '%';
+        }
+
+        // Save volume settings to localStorage
+        function saveVolumeSettings() {
+            localStorage.setItem('bgMusicVolume', bgMusicSlider.value);
+            localStorage.setItem('sfxVolume', sfxSlider.value);
+            localStorage.setItem('voiceoverVolume', voiceoverSlider.value);
+        }
+
+        // Send volume updates to parent window
+        function sendVolumeUpdate(type, value) {
+            if (window.parent) {
+                window.parent.postMessage({
+                    type: 'volumeUpdate',
+                    volumeType: type,
+                    value: parseInt(value)
+                }, '*');
+            }
+        }
+
+        // Resume button
+        resumeBtn.addEventListener('click', () => {
+            if (window.parent) {
+                window.parent.postMessage({ type: 'resume' }, '*');
+            }
+        });
+
+        // Volume button - toggle volume controls
+        let volumeControlsVisible = false;
+        volumeBtn.addEventListener('click', () => {
+            volumeControlsVisible = !volumeControlsVisible;
+            if (volumeControlsVisible) {
+                volumeControls.classList.add('show');
+            } else {
+                volumeControls.classList.remove('show');
+            }
+        });
+
+        // Volume sliders
+        bgMusicSlider.addEventListener('input', (e) => {
+            const value = e.target.value;
+            bgMusicValue.textContent = value + '%';
+            saveVolumeSettings();
+            sendVolumeUpdate('bgMusic', value);
+        });
+
+        sfxSlider.addEventListener('input', (e) => {
+            const value = e.target.value;
+            sfxValue.textContent = value + '%';
+            saveVolumeSettings();
+            sendVolumeUpdate('sfx', value);
+        });
+
+        voiceoverSlider.addEventListener('input', (e) => {
+            const value = e.target.value;
+            voiceoverValue.textContent = value + '%';
+            saveVolumeSettings();
+            sendVolumeUpdate('voiceover', value);
+        });
+
+        // Quit button
+        quitBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to quit? Your progress will be saved.')) {
+                if (window.parent) {
+                    window.parent.postMessage({ type: 'quit' }, '*');
+                }
+            }
+        });
+
+        // Load volume settings on page load
+        loadVolumeSettings();
+
+        // Send initial volume values to parent
+        sendVolumeUpdate('bgMusic', bgMusicSlider.value);
+        sendVolumeUpdate('sfx', sfxSlider.value);
+        sendVolumeUpdate('voiceover', voiceoverSlider.value);
+    </script>
 </body>
 </html>
