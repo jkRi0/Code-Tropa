@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>PAUSE</h1>
+    
+
+
+
+    <!-- MODAL FOR PROGRAMMING LANGUAGE SELECTION -->
+    <!-- <div class="pl-selection-back1">
+        <div class="pl-selection">
+            <div class="poly1">
+                <img src="../../assets/poly1.png">
+                <p>Select Programming Language</p>
+            </div>
+            
+            <img src="../../assets/poly2.png" class="poly2">
+
+            <div class="outer2-2" onclick="process1(this)">
+                <img src="../../assets/arrow-l-b.png">
+                
+                <div class="outer1-2">
+                    <div class="top-border-2"></div>
+                    <div class="inner1-2-1"></div>
+                    <div class="inner1-2">JAVA</div>
+                    <div class="bottom-border-2"></div>
+                </div>
+                <img src="../../assets/arrow-r-b.png">
+            </div>  
+
+            <div class="outer2-2" onclick="process1(this)">
+                <img src="../../assets/arrow-l-b.png">
+                <div class="outer1-2">
+                    <div class="top-border-2"></div>
+                    <div class="inner1-2-1"></div>
+                    <div class="inner1-2">C++</div>
+                    <div class="bottom-border-2"></div>
+                </div>
+                <img src="../../assets/arrow-r-b.png">
+            </div>  
+
+            <div class="outer2-2" onclick="process1(this)">
+                <img src="../../assets/arrow-l-b.png">
+                <div class="outer1-2">
+                    <div class="top-border-2"></div>
+                    <div class="inner1-2-1"></div>
+                    <div class="inner1-2">C#</div>
+                    <div class="bottom-border-2"></div>
+                </div>
+                <img src="../../assets/arrow-r-b.png">
+            </div>  
+            
+            <div class="outer-button">
+                <div class="act-button" onclick="hideModal('back')">Back</div>
+                <div class="act-button" onclick="hideModal('ok')">Ok</div>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- MODAL FOR SETTING -->
+    <!-- <div class="se-back1">
+        <div class="sm-selection se-selection">
+            <div class="poly1-2">
+                <img src="../../assets/poly1.png">
+                <p>SETTINGS</p>
+            </div>
+            <button class="back-btn" onclick="hideModal()">BACK</button>
+            <div class="chap-selection-outer">
+                <div class="chap-selection">
+                    <div class="outer2-3" onclick="process2(this,'profile')">
+                        <img src="../../assets/arrow-l-b.png">
+                        <div class="outer1-3">
+                            <div class="top-border-3"></div>
+                            <div class="inner1-3">Profile</div>
+                            <div class="bottom-border-3"></div>
+                        </div>
+                        <img src="../../assets/arrow-r-b.png">
+                    </div>
+                    <div class="outer2-3 mobile-hide-controls-modal-item" onclick="process2(this,'controls')">
+                        <img src="../../assets/arrow-l-b.png">
+                        <div class="outer1-3">
+                            <div class="top-border-3"></div>
+                            <div class="inner1-3">Controls</div>
+                            <div class="bottom-border-3"></div>
+                        </div>
+                        <img src="../../assets/arrow-r-b.png">
+                    </div>
+                    <div class="outer2-3" onclick="process2(this,'volume')">
+                        <img src="../../assets/arrow-l-b.png">
+                        <div class="outer1-3">
+                            <div class="top-border-3"></div>
+                            <div class="inner1-3">Volume</div>
+                            <div class="bottom-border-3"></div>
+                        </div>
+                        <img src="../../assets/arrow-r-b.png">
+                    </div>
+                </div>
+
+                
+                <div class="epi-selection profile">
+                    <div class="profile-info">
+                        <p><strong>Player Name:</strong> <span id="playerName">Loading...</span></p>
+                        <p><strong>Current Points:</strong> <span id="currentPoints">Loading...</span></p>
+                        <p><strong>Current Tier Level:</strong> <span id="currentTier">Loading...</span></p>
+                    </div>
+                    <div class="profile-badges">
+                        <h3>Badges Achieved:</h3>
+                        <div class="badges-container">
+                        </div>
+                    </div>
+                    <div class="profile-performance">
+                        <h3>Overall Performance Insights:</h3>
+                        <div class="bar-graph-container">
+                            <div class="bar-wrapper">
+                                <div class="bar bar-accuracy"><span class="bar-percentage-label">%</span></div>
+                            </div>
+                            <div class="bar-wrapper">
+                                <div class="bar bar-efficiency"><span class="bar-percentage-label">%</span></div>
+                            </div>
+                            <div class="bar-wrapper">
+                                <div class="bar bar-readability"><span class="bar-percentage-label">%</span></div>
+                            </div>
+                            <div class="bar-wrapper">
+                                <div class="bar bar-time"><span class="bar-percentage-label">%</span></div>
+                            </div>
+                            <div class="bar-wrapper">
+                                <div class="bar bar-success"><span class="bar-percentage-label">%</span></div>
+                            </div>
+                            <div class="bar-wrapper">
+                                <div class="bar bar-failed"><span class="bar-percentage-label">%</span></div>
+                            </div>
+                        </div>
+                        <div class="chart-legends">
+                            <p><span class="legend-color legend-color-accuracy"></span> Accuracy</p>
+                            <p><span class="legend-color legend-color-efficiency"></span> Efficiency</p>
+                            <p><span class="legend-color legend-color-readability"></span> Readability</p>
+                            <p><span class="legend-color legend-color-time"></span> Time</p>
+                            <p><span class="legend-color legend-color-success"></span> Success</p>
+                            <p><span class="legend-color legend-color-failed"></span> Failed</p>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="edit-account-btn">Edit Account</button>
+                        <button class="delete-account-btn">Delete Account</button>
+                    </div>
+                </div>
+
+                <div class="epi-selection controls">
+                    <h3>Game Controls</h3>
+                    <div class="control-setting">
+                        <p><strong>Move Up:</strong></p>
+                        <span class="control-key" id="moveUpKey">W</span>
+                        <button class="edit-control-btn" data-control="moveUp">Edit</button>
+                    </div>
+                    <div class="control-setting">
+                        <p><strong>Move Left:</strong></p>
+                        <span class="control-key" id="moveLeftKey">A</span>
+                        <button class="edit-control-btn" data-control="moveLeft">Edit</button>
+                    </div>
+                    <div class="control-setting">
+                        <p><strong>Move Down:</strong></p>
+                        <span class="control-key" id="moveDownKey">S</span>
+                        <button class="edit-control-btn" data-control="moveDown">Edit</button>
+                    </div>
+                    <div class="control-setting">
+                        <p><strong>Move Right:</strong></p>
+                        <span class="control-key" id="moveRightKey">D</span>
+                        <button class="edit-control-btn" data-control="moveRight">Edit</button>
+                    </div>
+                    <div class="control-setting">
+                        <p><strong>Skip/Next:</strong></p>
+                        <span class="control-key" id="skipNextControl">Click / Touch</span>
+                        <button class="edit-control-btn" data-control="skipNext">Edit</button>
+                    </div>
+                </div>
+
+                <div class="epi-selection volume">
+                    <h3>Volume Settings</h3>
+                    <div class="volume-setting">
+                        <p><strong>Background Music:</strong></p>
+                        <input type="range" id="bgMusicVolume" min="0" max="100" value="50" class="volume-slider">
+                        <span id="bgMusicValue">50%</span>
+                    </div>
+                    <div class="volume-setting">
+                        <p><strong>Sound Effects:</strong></p>
+                        <input type="range" id="sfxVolume" min="0" max="100" value="75" class="volume-slider">
+                        <span id="sfxValue">75%</span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+    </div> -->
+</body>
+</html>
