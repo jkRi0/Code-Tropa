@@ -901,6 +901,7 @@
         let isAdvancingScene = false;
         let isPauseScreenVisible = false;
         let wasVideoPlaying = false;
+        let currentVoiceAudio = null;
 
         function applySpeaker(name = '', image = '') {
             if (!speakerBox || !speakerName || !subtitleWrapper) return;
@@ -965,6 +966,11 @@
             } else {
                 wasVideoPlaying = false;
             }
+            
+            // Pause voice audio
+            if (currentVoiceAudio && !currentVoiceAudio.paused) {
+                currentVoiceAudio.pause();
+            }
         }
 
         function hidePauseScreen() {
@@ -974,6 +980,11 @@
 
             if (wasVideoPlaying && sceneVideo) {
                 sceneVideo.play().catch(() => {});
+            }
+            
+            // Resume voice audio if it was playing
+            if (currentVoiceAudio && currentVoiceAudio.paused) {
+                currentVoiceAudio.play().catch(() => {});
             }
         }
 
@@ -992,6 +1003,30 @@
             } else {
                 showPauseScreen();
             }
+        }
+
+        // Voice audio functions
+        function stopVoiceAudio() {
+            if (currentVoiceAudio) {
+                currentVoiceAudio.pause();
+                currentVoiceAudio.currentTime = 0;
+                currentVoiceAudio = null;
+            }
+        }
+
+        function playVoiceAudio(voicePath) {
+            if (!voicePath) return;
+            
+            // Stop any currently playing voice
+            stopVoiceAudio();
+            
+            // Create and play new audio
+            currentVoiceAudio = new Audio(voicePath);
+            currentVoiceAudio.volume = 1.0;
+            currentVoiceAudio.play().catch(error => {
+                console.error('Error playing voice audio:', error);
+                currentVoiceAudio = null;
+            });
         }
 
         if (pauseButton) {
@@ -1094,134 +1129,149 @@
 
 
         const scenes = [
-        //     { type: 'video', src: 'assets/1.mp4', subtitle: '' },
-        //     {
-        //     type: 'video',
-        //     src: 'assets/2.mp4',
-        //     subtitle: [
-        //         {
-        //             text: "Axle: Hala push push na!",
-        //             time: 0,
-        //             speakerName: "Axle",
-        //             speakerImage: "assets/axle.png"
-        //         },
-        //         {
-        //             text: "Axle halika ka dito may ipapabili ako, hindi ung puro laro ka lang dyaan!",
-        //             time: 4000,
-        //             speakerName: "Axle's mother",
-        //             speakerImage: "assets/mama.png"
-        //         },
-        //         // {
-        //         //     text: "[Background chatter]",
-        //         //     time: 6000,
-        //         //     hideSpeaker: true
-        //         // }
-        //     ]
-        // },
-        //     { 
-        //         type: 'video', 
-        //         src: 'assets/3.mp4', 
-        //         subtitle: 'Opo nay, eto na po',
-        //         speakerName: 'Axle',
-        //         speakerImage: 'assets/axle.png'
-        //     },
-        //     { 
-        //         type: 'interactive', 
-        //         src: 'assets/4.mp4', 
-        //         subtitle: 'Use arrow keys to move around!',
-        //         speakerName: 'Axle',
-        //         speakerImage: 'assets/axle.png'
-        //     },
-        //     { type: 'video', src: 'assets/5.mp4', subtitle: '' },
-        //     { 
-        //         type: 'video', src: 'assets/6.mp4', 
-        //         subtitle: 'Tao po pabili po!',
-        //         speakerName: 'Axle',
-        //         speakerImage: 'assets/axle.png'
-        //     },
-        //     { 
-        //         type: 'video', 
-        //         src: 'assets/7.mp4', 
-        //         subtitle: 'Hello ano sayo?',
-        //         speakerName: 'Ate Kim',
-        //         speakerImage: 'assets/atekim.png'
-        //     },
-        //     { 
-        //         type: 'video', 
-        //         src: 'assets/8.mp4', 
-        //         subtitle: 'Eto po',
-        //         speakerName: 'Axle',
-        //         speakerImage: 'assets/axle.png'
-        //     },
-        //     { 
-        //         type: 'video', 
-        //         src: 'assets/9.mp4', 
-        //         subtitle: 'Sure! Sandali lang... Uy, Axle, ‘di ba ikaw yung pamangkin ni Tita Melba?',
-        //         speakerName: 'Ate Kim',
-        //         speakerImage: 'assets/atekim.png'
-        //     },
-        //     { 
-        //         type: 'video', 
-        //         src: 'assets/10.mp4', 
-        //         subtitle: 'Opo! Eh Ate... BSIT din po ba kayo??',
-        //         speakerName: 'Axle',
-        //         speakerImage: 'assets/axle.png'
-        //     },
-        //     { 
-        //         type: 'video', 
-        //         src: 'assets/11.mp4', 
-        //         subtitle: 'Oo naman! Graduate lang recently. Gusto mo, turuan kita habang sinasako ko ‘tong asukal?',
-        //         speakerName: 'Ate Kim',
-        //         speakerImage: 'assets/atekim.png'
-        //     },
-        //     // { type: 'image', src: 'assets/12.png', subtitle: 'Ate Kim: Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.' },
-        //     { 
-        //         type: 'image', 
-        //         src: 'assets/12.png', 
-        //         content: '<pre>int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;</pre>', 
-        //         subtitle: 'Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.',
-        //         speakerName: 'Ate Kim',
-        //         speakerImage: 'assets/atekim.png'
-        //     },
-        //     { 
-        //         type: 'image', 
-        //         src: 'assets/12.png', 
-        //         content: '<b><u>int sukaQuantity = 3;</u></b><br>String brandName = "Silver Swan";<br>boolean mayStock = true;', 
-        //         subtitle: 'int para sa bilang kung ilang piraso ng suka.',
-        //         speakerName: 'Ate Kim',
-        //         speakerImage: 'assets/atekim.png'
-        //     },
-        //     { 
-        //         type: 'image', 
-        //         src: 'assets/12.png', 
-        //         content: 'int sukaQuantity = 3;<br><b><u>String brandName = "Silver Swan";</u></b><br>boolean mayStock = true;', 
-        //         subtitle: 'String para sa mga pangalan.',
-        //         speakerName: 'Ate Kim',
-        //         speakerImage: 'assets/atekim.png'
-        //     },
-        //     { 
-        //         type: 'image', 
-        //         src: 'assets/12.png', 
-        //         content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br><b><u>boolean mayStock = true;</u></b>', 
-        //         subtitle: 'At boolean kung meron o wala o nagsasagot ng true or false.',
-        //         speakerName: 'Ate Kim',
-        //         speakerImage: 'assets/atekim.png'
-        //     },
-        //     { 
-        //         type: 'image', 
-        //         src: 'assets/12.png', 
-        //         content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', 
-        //         subtitle: 'So parang... bawat variable, may type. Hindi pwedeng halo-halo lang.',
-        //         speakerName: 'Axle',
-        //         speakerImage: 'assets/axle.png'
-        //     },
+            { type: 'video', src: 'assets/1.mp4', subtitle: '' },
+            {
+                type: 'video',
+                src: 'assets/2.mp4',
+                subtitle: [
+                    {
+                        text: "Axle: Hala push push na!",
+                        time: 0,
+                        speakerName: "Axle",
+                        speakerImage: "assets/axle.png", 
+                        voice: 'assets/audio/2.mp3'
+                    },
+                    {
+                        text: "Axle halika ka dito may ipapabili ako, hindi ung puro laro ka lang dyaan!",
+                        time: 4000,
+                        speakerName: "Axle's mother",
+                        speakerImage: "assets/mama.png", 
+                        voice: 'assets/audio/2-1.mp3'
+                    },
+                    // {
+                    //     text: "[Background chatter]",
+                    //     time: 6000,
+                    //     hideSpeaker: true
+                    // }
+                ]
+            },
+            { 
+                type: 'video', 
+                src: 'assets/3.mp4', 
+                subtitle: 'Opo nay, eto na po',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png', 
+                voice: 'assets/audio/3.mp3'
+            },
+            { 
+                type: 'interactive', 
+                src: 'assets/4.mp4', 
+                subtitle: 'Use arrow keys to move around!',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png'
+            },
+            { type: 'video', src: 'assets/5.mp4', subtitle: '' },
+            { 
+                type: 'video', src: 'assets/6.mp4', 
+                subtitle: 'Tao po pabili po!',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png', 
+                voice: 'assets/audio/6.mp3'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/7.mp4', 
+                subtitle: 'Hello ano sayo?',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png', 
+                voice: 'assets/audio/7.mp3'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/8.mp4', 
+                subtitle: 'Eto po',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png', 
+                voice: 'assets/audio/8.mp3'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/9.mp4', 
+                subtitle: 'Sure! Sandali lang... Uy, Axle, ‘di ba ikaw yung pamangkin ni Tita Melba?',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png', 
+                voice: 'assets/audio/9.mp3'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/10.mp4', 
+                subtitle: 'Opo! Eh Ate... BSIT din po ba kayo??',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png', 
+                voice: 'assets/audio/10.mp3'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/11.mp4', 
+                subtitle: 'Oo naman! Graduate lang recently. Gusto mo, turuan kita habang sinasako ko ‘tong asukal?',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png', 
+                voice: 'assets/audio/11.mp3'
+            },
+            // { type: 'image', src: 'assets/12.png', subtitle: 'Ate Kim: Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.' },
+            { 
+                type: 'image', 
+                src: 'assets/12.png', 
+                content: '<pre>int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;</pre>', 
+                subtitle: 'Axle, isipin mo ‘tong tindahan parang Java program. Bawat item dito, parang variable.. may label, may value.',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png', 
+                voice: 'assets/audio/12-note.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/12.png', 
+                content: '<b><u>int sukaQuantity = 3;</u></b><br>String brandName = "Silver Swan";<br>boolean mayStock = true;', 
+                subtitle: 'int para sa bilang kung ilang piraso ng suka.',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png', 
+                voice: 'assets/audio/13-note.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/12.png', 
+                content: 'int sukaQuantity = 3;<br><b><u>String brandName = "Silver Swan";</u></b><br>boolean mayStock = true;', 
+                subtitle: 'String para sa mga pangalan.',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png', 
+                voice: 'assets/audio/14-note.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/12.png', 
+                content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br><b><u>boolean mayStock = true;</u></b>', 
+                subtitle: 'At boolean kung meron o wala o nagsasagot ng true or false.',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png', 
+                voice: 'assets/audio/15-note.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/12.png', 
+                content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', 
+                subtitle: 'So parang... bawat variable, may type. Hindi pwedeng halo-halo lang.',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png', 
+                voice: 'assets/audio/16-note.mp3'
+            },
             { 
                 type: 'image', 
                 src: 'assets/12.png', 
                 content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', 
                 subtitle: 'Tama! Parang \'di mo pwedeng isulat ang \'SkyFlakes\' sa lalagyan ng numbers. Mali \'yon. Oh bale tatlong suka ay 13 isa, 39 pesos lahat',
                 speakerName: 'Ate Kim',
-                speakerImage: 'assets/atekim.png'
+                speakerImage: 'assets/atekim.png', 
+                voice: 'assets/audio/17-note.mp3'
             },
             {
                 type: 'dialogue',
@@ -1282,20 +1332,22 @@
             },
 
 
-            // { 
-            //     type: 'video', 
-            //     src: 'assets/6.mp4', 
-            //     subtitle: 'Ate Kim, salamat sa lesson ah. Eto na po bayad.',
-            //     speakerName: 'Axle',
-            //     speakerImage: 'assets/axle.png'
-            // },
-            // { 
-            //     type: 'video', 
-            //     src: 'assets/7.mp4', 
-            //     subtitle: 'Walang anuman! Next time punta ka ulit, tapos data types naman tayo ulit. Try natin with float at char.',
-            //     speakerName: 'Ate Kim',
-            //     speakerImage: 'assets/atekim.png'
-            // },
+            { 
+                type: 'video', 
+                src: 'assets/6.mp4', 
+                subtitle: 'Ate Kim, salamat sa lesson ah. Eto na po bayad.',
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png', 
+                voice: 'assets/audio/18-6.mp3'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/7.mp4', 
+                subtitle: 'Walang anuman! Next time punta ka ulit, tapos data types naman tayo ulit. Try natin with float at char.',
+                speakerName: 'Ate Kim',
+                speakerImage: 'assets/atekim.png', 
+                voice: 'assets/audio/19-7.mp3'
+            },
 
         ];
         let currentSceneIndex = 0;
@@ -1675,6 +1727,11 @@
                                 lastSpeakerImage = nextSpeakerImage;
                             }
                         }
+                        
+                        // Play voice audio if available for this subtitle
+                        if (subtitle.voice) {
+                            playVoiceAudio(subtitle.voice);
+                        }
                     }
                     
                     // Schedule next subtitle
@@ -1768,6 +1825,7 @@
                 detachAdvanceKeyHandler();
                 isAdvancingScene = false;
                 hideDialogueChoices(); // Clear any previous dialogue choices
+                stopVoiceAudio(); // Stop any currently playing voice
 
                 defaultSceneSpeaker = {
                     name: scene.speakerName || '',
@@ -1818,10 +1876,20 @@
                             sceneTextOverlay.innerHTML = scene.content;
                         }
                     }
+                    
+                    // Play voice audio if available
+                    if (scene.voice) {
+                        playVoiceAudio(scene.voice);
+                    }
                 } else if (scene.type === 'video') {
                     sceneVideo.src = scene.src;
                     sceneVideo.style.display = 'block';
                     sceneVideo.play();
+                    
+                    // Play voice audio if available (for non-timed subtitle videos)
+                    if (scene.voice && !Array.isArray(scene.subtitle)) {
+                        playVoiceAudio(scene.voice);
+                    }
                 } else if (scene.type === 'text') {
                     sceneTextOverlay.style.display = 'block';
                     sceneTextOverlay.classList.add('show');
@@ -1861,6 +1929,11 @@
                         setTimeout(() => {
                             showDialogueChoices(scene.choices);
                         }, 500); // Small delay to ensure subtitle is shown first
+                    }
+                    
+                    // Play voice audio if available
+                    if (scene.voice) {
+                        playVoiceAudio(scene.voice);
                     }
                 }
 
