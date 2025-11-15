@@ -974,7 +974,7 @@
             <div class="subtitle-content" id="subtitleContent">
                 <div class="subtitle-header" id="subtitleHeader">
                     <div class="speaker-name" id="speakerName">Character Name</div>
-                    <p class="scene-next-text" id="sceneNextText"></p>
+        <p class="scene-next-text" id="sceneNextText"></p>
                 </div>
                 <div class="subtitle-container" id="subtitleContainer"></div>
             </div>
@@ -1272,8 +1272,8 @@
                 src: 'assets/8.mp4', 
                 subtitle: [
                     'Grabe, parang buong barangay naghahanda...',
-                    'Pero ang saya rin.',
-                    'Kung ganito lang sana kadali ang programming...'
+                'Pero ang saya rin.',
+                'Kung ganito lang sana kadali ang programming...'
                 ],
                 speakerName: 'Axle',
                 speakerImage: 'assets/axle.png',
@@ -1956,12 +1956,12 @@
                 
                 // Don't show "Click to Next" for dialogue scenes (player must choose)
                 if (scene.type !== 'dialogue') {
-                    if (index < scenes.length - 1 && (scene.type !== 'video' || hasSubtitle)) {
+                if (index < scenes.length - 1 && (scene.type !== 'video' || hasSubtitle)) {
                         sceneNextText.textContent = "Press any key or click to continue";
-                        sceneNextText.classList.add('show');
-                    } else if (index === scenes.length - 1) {
+                    sceneNextText.classList.add('show');
+                } else if (index === scenes.length - 1) {
                         sceneNextText.textContent = "Press any key or click to start challenge"; // Last scene
-                        sceneNextText.classList.add('show');
+                    sceneNextText.classList.add('show');
                     }
                 }
 
