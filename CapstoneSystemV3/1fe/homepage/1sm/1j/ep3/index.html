@@ -103,27 +103,222 @@
             object-fit: cover; /* Cover the entire container */
         }
 
-        .subtitle-container {
+        .pause-button {
             position: absolute;
-            bottom: 20px;
-            width: 80%;
-            background-color: rgba(0, 0, 0, 0.7);
+            top: 10px;
+            left: 10px;
+            font-size: 1.5rem;
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
             padding: 10px 20px;
-            text-align: center;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .pause-button:hover {
+            transform: scale(1.05);
+            background-color: rgba(0, 0, 0, 0.65);
+        }
+
+        .pause-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(6px);
+            padding: 20px;
+        }
+
+        .pause-screen.show {
+            display: flex;
+        }
+
+        .pause-modal {
+            position: relative;
+            width: min(90vw, 900px);
+            height: min(90vh, 600px);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(20, 20, 20, 0);
+        }
+
+        .pause-page {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .subtitle-wrapper{
+            position: absolute;
+            bottom: 0;
+            width: 80%;
+            height: 10rem;
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7));
+            padding: 10px 20px 0 20px;
+            display: flex;
+            flex-direction: row;
+        }
+        .speaker-box{
+            display: block;
+            width: 200px;
+            height: 100%;
+            border-radius: 14px;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            transition: transform 0.3s ease;
+        }
+        .subtitle-content{
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            width: 100%;
+            height: 100%;
+            padding-left: 16px;
+        }
+        .speaker-name{
+            background-color: rgba(0, 0, 0, 0.65);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 2em;
+            padding: 8px 18px;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+            text-transform: uppercase;
+        }
+        .subtitle-container {
+            display: flex;
+            background-color: rgba(0, 0, 0, 0.55);
+            color: #ffffff;
             font-size: 2.3em; /* Enlarged font size */
-            border-radius: 5px;
+            flex: 1;
+            padding: 8px 18px;
+            overflow-y: auto;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.6) transparent;
+        }
+
+        .subtitle-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .subtitle-container::-webkit-scrollbar-thumb {
+            background-color: rgba(255,255,255,0.6);
+            border-radius: 4px;
+        }
+
+        .subtitle-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .subtitle-wrapper.no-speaker .speaker-box {
+            display: none;
+        }
+
+        .subtitle-wrapper.no-speaker .subtitle-content {
+            padding-left: 0;
+        }
+
+        .subtitle-wrapper.no-speaker .speaker-name {
+            display: none;
+        }
+
+        .subtitle-wrapper.no-speaker .subtitle-header {
+            justify-content: flex-end;
+        }
+
+        .subtitle-wrapper.no-speaker .scene-next-text {
+            margin-left: 0;
+        }
+
+        .subtitle-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
         }
 
         .scene-next-text {
+            font-size: 1.05em;
+            opacity: 0;
+            transition: opacity 0.15s ease-in-out, background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            padding: 6px 14px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #f5f5f5;
+            margin-left: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        /* Dialogue Choice Styles */
+        .dialogue-choices {
             position: absolute;
-            top: 10px; /* Adjust as needed to be above subtitle */
+            bottom: 20%;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 1.2em;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 100;
+            width: 80%;
+            max-width: 800px;
             opacity: 0;
-            transition: opacity 0.1s ease-in-out, background-color 0.3s ease, color 0.3s ease;
-            padding: 5px 10px;
-            border-radius: 5px;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+
+        .dialogue-choices.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dialogue-choice {
+            background: linear-gradient(135deg, rgba(139, 90, 43, 0.95), rgba(101, 67, 33, 0.95));
+            border: 2px solid #d4a574;
+            border-radius: 10px;
+            padding: 18px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #f5e6d3;
+            font-size: 1.4em;
+            text-align: left;
+            box-shadow: 0 4px 15px rgba(139, 90, 43, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .dialogue-choice:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.95), rgba(139, 90, 43, 0.95));
+            box-shadow: 0 6px 20px rgba(212, 165, 116, 0.6);
+            border-color: #f4d4a0;
+        }
+
+        .dialogue-choice:active {
+            transform: translateY(0);
+        }
+
+        .dialogue-choice.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
         }
 
         .scene-text-overlay {
@@ -453,12 +648,32 @@
         </div>
     </div>
 
+    <div class="pause-screen" id="pauseScreen">
+        <div class="pause-modal">
+            <iframe id="pausePage" src="../../pause.html" class="pause-page"></iframe>
+        </div>
+    </div>
+
     <div class="scene-container" id="sceneContainer">
+        <button id="pauseButton" class="pause-button">Pause</button>
         <img src="" alt="Scene Content" class="scene-content" id="sceneImage" style="display: none;">
         <video src="" class="scene-content" id="sceneVideo" autoplay muted style="display: none;"></video>
         <div class="scene-text-overlay" id="sceneTextOverlay" style="display: none;"></div>
-        <div class="subtitle-container" id="subtitleContainer"></div>
-        <p class="scene-next-text" id="sceneNextText"></p>
+        <div class="subtitle-wrapper" id="subtitleWrapper">
+            <div class="speaker-box" id="speakerBox"></div>
+            <div class="subtitle-content" id="subtitleContent">
+                <div class="subtitle-header" id="subtitleHeader">
+                    <div class="speaker-name" id="speakerName">Character Name</div>
+                    <p class="scene-next-text" id="sceneNextText"></p>
+                </div>
+                <div class="subtitle-container" id="subtitleContainer"></div>
+            </div>
+        </div>
+        
+        <!-- Dialogue Choices -->
+        <div class="dialogue-choices" id="dialogueChoices">
+            <!-- Choices will be dynamically inserted here -->
+        </div>
     </div>
 
     <script>
@@ -469,45 +684,198 @@
         const sceneImage = document.getElementById('sceneImage');
         const sceneVideo = document.getElementById('sceneVideo');
         const sceneTextOverlay = document.getElementById('sceneTextOverlay');
+        const subtitleWrapper = document.getElementById('subtitleWrapper');
+        const subtitleContent = document.getElementById('subtitleContent');
         const subtitleContainer = document.getElementById('subtitleContainer');
+        const speakerBox = document.getElementById('speakerBox');
+        const speakerName = document.getElementById('speakerName');
+        const pauseScreen = document.getElementById('pauseScreen');
+        const pauseButton = document.getElementById('pauseButton');
         const sceneNextText = document.getElementById('sceneNextText');
+        const dialogueChoices = document.getElementById('dialogueChoices');
+
+        let currentSpeaker = { name: '', image: '' };
+        let defaultSceneSpeaker = { name: '', image: '' };
+        let isPauseScreenVisible = false;
+        let wasVideoPlaying = false;
+        let currentVoiceAudio = null;
+        
+        // Volume settings (defaults, will be loaded from localStorage)
+        let bgMusicVolume = parseInt(localStorage.getItem('bgMusicVolume')) || 50;
+        let sfxVolume = parseInt(localStorage.getItem('sfxVolume')) || 75;
+        let voiceoverVolume = parseInt(localStorage.getItem('voiceoverVolume')) || 100;
 
 
 
         const scenes = [
-            { type: 'video', src: 'assets/1.mp4', subtitle: 'Tapat ng tanghali ay inutusan si axle dalhin ang mga tupperware na ginamit nung fiesta sa kanyang kuya Justin' },
-            { type: 'video', src: 'assets/2.mp4', subtitle: [
-                { text: " ", time: 0 },
-                { text: "Axle: Kuya justin?!", time: 3000 }
-            ]},
-            { type: 'video', src: 'assets/3.mp4', subtitle: [
-                { text: " ", time: 0 },
-                { text: "Justin: Uy Axle!. Ginagawa mo dito?", time: 3000 }
-            ]},
-            { type: 'video', src: 'assets/4.mp4', subtitle: 'Axle: Inutusan lang po ni nanay ibalik ito... pero Kuya, pwede pa ba magpaturo sayo tungkol sa java?' },
-            { type: 'video', src: 'assets/5.mp4', subtitle: 'Justin: Oo naman. Actually kahit sa simpleng benta, pwede mo i-apply ang programming logic… lalo na expressions at operators. Katulad dito' },
-            { type: 'image', src: 'assets/6.png', subtitle: 'Justin: Halimbawa, 2 adobo na ₱50 at 1 gulay na ₱30. Paano mo kukuwentahin?' },
-            { type: 'image', src: 'assets/6.png', subtitle: 'Axle: Uhm… multiply tapos add?' },
-            { type: 'image', src: 'assets/6.png', content: '<pre>int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty * adoboPrice) + (gulayQty * gulayPrice);</pre>', subtitle: 'Justin: Correct. Sa Java, ganito ‘yan.' },
-            { type: 'image', src: 'assets/6.png', content: 'int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty <span style="color: red;">*</span> adoboPrice) + (gulayQty <span style="color: red;">*</span> gulayPrice);', subtitle: 'Justin: ‘*’ ang multiplication' },
-            { type: 'image', src: 'assets/6.png', content: 'int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty * adoboPrice) <span style="color: red;">+</span> (gulayQty * gulayPrice);', subtitle: 'Justin: ‘+’ ang addition' },
-            { type: 'image', src: 'assets/6.png', content: 'int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = <span style="color: red;">(</span>adoboQty * adoboPrice <span style="color: red;">)</span>+<span style="color: red;">(</span>gulayQty * gulayPrice <span style="color: red;">)</span>;', subtitle: 'Axle:  Kuya, bakit may parentheses? At kailangan po ba lagi ng int?' },
-            { type: 'image', src: 'assets/6.png', content: 'int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty * adoboPrice) + (gulayQty * gulayPrice);', subtitle: [
-                { text: "Justin: Good question. Gamit tayo ng int kapag whole number, pero pwede rin double kung may cents o decimals.", time: 0 },
-                { text: "Justin: At ‘yung parentheses, kagaya lang din ng PEMDAS (Parentheses, Exponents, Multiplication, Division, Addition, and Subtraction) sa Math… para mas klaro sa computer kung ano ang uunahin.", time: 6000 }
-            ]},
-            { type: 'image', src: 'assets/6.png', content: '<pre>int adoboStock = 10;<br>adoboStock = adoboStock - adoboQty;</pre>', subtitle: 'Justin: At eto pa.' },
-            { type: 'image', src: 'assets/6.png', content: 'int adoboStock = 10;<br>adoboStock = adoboStock - adoboQty;', subtitle: 'Axle: Ang haba naman. Pwede bang shortcut?' },
-            { type: 'image', src: 'assets/6.png', content: 'int adoboStock = 10;<br><pre>adoboStock -= adoboQty;</pre>', subtitle: 'Justin: Pwede! Gamit ka ng -= (shorthand assignment operator)' },
-            { type: 'image', src: 'assets/6.png', content: 'int adoboStock = 10;<br>adoboStock -= adoboQty;', subtitle: 'Axle: Ahhh gets! Parang bawas o dagdag na automatic!' },
-            { type: 'image', src: 'assets/6.png', content: 'int adoboStock = 10;<br>adoboStock -= adoboQty;', subtitle: 'Justin: Good job! Operators lang ‘yan, pero malaking tulong sa mga computation sa Java. Next time, try natin ‘yung division at modulo.' },
-            // { type: 'image', src: 'assets/12.png', content: '<b><u>int sukaQuantity = 3;</u></b><br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Ate Kim: int para sa bilang kung ilang piraso ng suka.' },
-            // { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br><b><u>String brandName = "Silver Swan";</u></b><br>boolean mayStock = true;', subtitle: 'Ate Kim: String para sa mga pangalan.' },
-            // { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br><b><u>boolean mayStock = true;</u></b>', subtitle: 'Ate Kim: At boolean kung meron o wala o nagsasagot ng true or false.' },
-            // { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Axle: So parang... bawat variable, may type. Hindi puwedeng halo-halo lang.' },
-            // { type: 'image', src: 'assets/12.png', content: 'int sukaQuantity = 3;<br>String brandName = "Silver Swan";<br>boolean mayStock = true;', subtitle: 'Ate Kim: Tama! Parang ‘di mo pwedeng isulat ang ‘SkyFlakes’ sa lalagyan ng numbers. Mali ‘yon. Oh bale tatlong suka ay 13 isa, 39 pesos lahat' },
-            // { type: 'video', src: 'assets/6.mp4', subtitle: 'Axle: Ate Kim, salamat sa lesson ah. Eto na po bayad.' },
-            // { type: 'video', src: 'assets/7.mp4', subtitle: 'Ate Kim: Walang anuman! Next time punta ka ulit, tapos data types naman tayo ulit. Try natin with float at char.' },
+            { 
+                type: 'video', 
+                src: 'assets/1.mp4', 
+                subtitle: 'Tapat ng tanghali ay inutusan si axle dalhin ang mga tupperware na ginamit nung fiesta sa kanyang kuya Justin',
+                voice: 'assets/audio/1.mp3'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/2.mp4', 
+                subtitle: [
+                    { text: " ", time: 0 },
+                    { text: "Kuya justin?!", time: 3000, voice: 'assets/audio/2.mp3'}
+                ], 
+                speakerName: 'Axle',
+                speakerImage: 'assets/axle.png',
+            }, 
+            { 
+                type: 'video', 
+                src: 'assets/3.mp4', 
+                subtitle: [
+                    { text: " ", time: 0 },
+                    { text: "Uy Axle!.  Ginagawa mo dito?", time: 2000 , voice: 'assets/audio/3.mp3'}
+                ], 
+                speakerName: 'Justin',
+                speakerImage: 'assets/justin.png'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/4.mp4', 
+                subtitle: 'Inutusan lang po ni nanay ibalik ito... pero Kuya, pwede pa ba magpaturo sayo tungkol sa java?', 
+                speakerName: 'Axle', 
+                speakerImage: 'assets/axle.png',
+                voice: 'assets/audio/4.mp3'
+            },
+            { 
+                type: 'video', 
+                src: 'assets/5.mp4', 
+                subtitle: 'Oo naman. Actually kahit sa simpleng benta, pwede mo i-apply ang programming logic… lalo na expressions at operators. Katulad dito', 
+                speakerName: 'Justin', 
+                speakerImage: 'assets/justin.png',
+                voice: 'assets/audio/5.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/6.png',  
+                subtitle: 'Halimbawa, 2 adobo na ₱50 at 1 gulay na ₱30. Paano mo kukuwentahin?', 
+                speakerName: 'Justin', 
+                speakerImage: 'assets/justin.png',
+                voice: 'assets/audio/6-note.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/6.png', 
+                subtitle: 'Uhm… multiply tapos add?', 
+                speakerName: 'Axle', 
+                speakerImage: 'assets/axle.png',
+                voice: 'assets/audio/7-note.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/6.png', 
+                content: '<pre>int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty * adoboPrice) + (gulayQty * gulayPrice);</pre>', 
+                subtitle: 'Correct. Sa Java, ganito \'yan.', 
+                speakerName: 'Justin', 
+                speakerImage: 'assets/justin.png',
+                voice: 'assets/audio/8-note.mp3'
+            },
+            {
+                type: 'image', 
+                src: 'assets/6.png', 
+                content: 'int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty <span style="color: red;">*</span> adoboPrice) + (gulayQty <span style="color: red;">*</span> gulayPrice);', 
+                subtitle: ' \'*\' ang multiplication', 
+                speakerName: 'Justin', 
+                speakerImage: 'assets/justin.png',
+                voice: 'assets/audio/9.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/6.png', 
+                content: 'int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty * adoboPrice) <span style="color: red;">+</span> (gulayQty * gulayPrice);', 
+                subtitle: ' \'+\' ang addition', 
+                speakerName: 'Justin', 
+                speakerImage: 'assets/justin.png',
+                voice: 'assets/audio/10.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/6.png', 
+                content: 'int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = <span style="color: red;">(</span>adoboQty * adoboPrice <span style="color: red;">)</span>+<span style="color: red;">(</span>gulayQty * gulayPrice <span style="color: red;">)</span>;', 
+                subtitle: 'Kuya, bakit may parentheses? At kailangan po ba lagi ng int?', 
+                speakerName: 'Axle', 
+                speakerImage: 'assets/axle.png',
+                voice: 'assets/audio/11.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/6.png', 
+                content: 'int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty * adoboPrice) + (gulayQty * gulayPrice);', 
+                subtitle: [
+                    { text: "Good question. Gamit tayo ng int kapag whole number, pero pwede rin double kung may cents o decimals.", time: 0 },
+                    { text: "At 'yung parentheses, kagaya lang din ng PEMDAS (Parentheses, Exponents, Multiplication, Division, Addition, and Subtraction) sa Math… para mas klaro sa computer kung ano ang uunahin.", time: 6000 }
+                ], 
+                speakerName: 'Justin',
+                speakerImage: 'assets/justin.png',
+                voice: 'assets/audio/12.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/6.png', 
+                content: '<pre>int adoboStock = 10;<br>adoboStock = adoboStock - adoboQty;</pre>', 
+                subtitle: 'At eto pa.', 
+                speakerName: 'Justin', 
+                speakerImage: 'assets/justin.png',
+                voice: 'assets/audio/13.mp3'
+            },
+            { 
+                type: 'image', src: 'assets/6.png', 
+                content: 'int adoboStock = 10;<br>adoboStock = adoboStock - adoboQty;', 
+                subtitle: 'Ang haba naman. Pwede bang shortcut?', 
+                speakerName: 'Axle', 
+                speakerImage: 'assets/axle.png',
+                voice: 'assets/audio/14.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/6.png', 
+                content: 'int adoboStock = 10;<br><pre>adoboStock -= adoboQty;</pre>', 
+                subtitle: 'Pwede! Gamit ka ng -= (shorthand assignment operator)', 
+                speakerName: 'Justin', 
+                speakerImage: 'assets/justin.png',
+                voice: 'assets/audio/15.mp3'
+            },
+            { 
+                type: 'image', 
+                src: 'assets/6.png', 
+                content: 'int adoboStock = 10;<br>adoboStock -= adoboQty;', 
+                subtitle: 'Ahhh gets! Parang bawas o dagdag na automatic!', 
+                speakerName: 'Axle', 
+                speakerImage: 'assets/axle.png',
+                voice: 'assets/audio/16.mp3'
+            },
+            {
+                type: 'dialogue',
+                src: 'assets/6.png',
+                question: 'Axle, kung gusto mong dagdagan naman ang stock, anong shorthand assignment operator ang gagamitin mo?',
+                speakerName: 'Justin',
+                speakerImage: 'assets/justin.png',
+                choices: [
+                    {
+                        id: 'choice1',
+                        text: '+= para automatic na madagdagan.',
+                        response: 'Exactly! += kapag gusto mong magdagdag.'
+                    },
+                    {
+                        id: 'choice2',
+                        text: '-= pa rin, kasi pareho lang sila.',
+                        response: 'Hindi. -= ay bawas, += ay dagdag.'
+                    }
+                ]
+            },
+            { 
+                type: 'image', src: 'assets/6.png', 
+                content: 'int adoboStock = 10;<br>adoboStock -= adoboQty;', 
+                subtitle: 'Operators lang \'yan, pero malaking tulong sa mga computation sa Java. Next time, try natin \'yung division at modulo.', 
+                speakerName: 'Justin', 
+                speakerImage: 'assets/justin.png',
+                voice: 'assets/audio/17.mp3'
+            },
 
         ];
         let currentSceneIndex = 0;
@@ -537,19 +905,327 @@
             }, { once: true });
         }
 
+        // Dialogue choice functions
+        function showDialogueChoices(choices) {
+            if (!dialogueChoices) return;
+            
+            dialogueChoices.innerHTML = '';
+            choices.forEach((choice, index) => {
+                const choiceButton = document.createElement('div');
+                choiceButton.className = 'dialogue-choice';
+                choiceButton.textContent = choice.text;
+                choiceButton.dataset.choiceId = choice.id;
+                choiceButton.addEventListener('click', () => handleDialogueChoice(choice));
+                dialogueChoices.appendChild(choiceButton);
+            });
+            
+            dialogueChoices.classList.add('show');
+        }
+
+        function hideDialogueChoices() {
+            if (!dialogueChoices) return;
+            dialogueChoices.classList.remove('show');
+            dialogueChoices.innerHTML = '';
+        }
+
+        function handleDialogueChoice(choice) {
+            if (!dialogueChoices) return;
+            
+            // Disable all choices
+            const allChoices = dialogueChoices.querySelectorAll('.dialogue-choice');
+            allChoices.forEach(btn => {
+                btn.classList.add('disabled');
+            });
+            
+            // Hide choices after a short delay
+            setTimeout(() => {
+                hideDialogueChoices();
+                
+                // Show Justin's response
+                if (choice.response) {
+                    subtitleContainer.textContent = choice.response;
+                    applySpeaker('Justin', 'assets/justin.png');
+                    
+                    // Show "Click to Next" text for the response
+                    sceneNextText.textContent = "Press any key or click to continue";
+                    sceneNextText.classList.add('show');
+                    sceneNextText.classList.add('highlight');
+                    
+                    // Wait for user interaction before proceeding
+                    const proceedFromResponse = () => {
+                        sceneNextText.classList.remove('show');
+                        sceneNextText.classList.remove('highlight');
+                        sceneContainer.onclick = null; // Remove this handler
+                        document.removeEventListener('keydown', keyHandler); // Remove key handler
+                        currentSceneIndex++;
+                        showScene(currentSceneIndex);
+                    };
+                    
+                    // Click handler for response
+                    sceneContainer.onclick = () => {
+                        if (isPauseScreenVisible) return;
+                        proceedFromResponse();
+                    };
+                    
+                    // Key handler for response
+                    const keyHandler = (event) => {
+                        if (isPauseScreenVisible) return;
+                        if (event.repeat) return;
+                        if (!sceneNextText || !sceneNextText.classList.contains('show')) return;
+                        proceedFromResponse();
+                    };
+                    document.addEventListener('keydown', keyHandler);
+                } else {
+                    // No response, just proceed
+                    currentSceneIndex++;
+                    showScene(currentSceneIndex);
+                }
+            }, 500);
+        }
+
+        function applySpeaker(name = '', image = '') {
+            if (!speakerBox || !speakerName || !subtitleWrapper) return;
+
+            const hasName = typeof name === 'string' && name.trim() !== '';
+            const hasImage = typeof image === 'string' && image.trim() !== '';
+
+            if (!hasName && !hasImage) {
+                subtitleWrapper.classList.add('no-speaker');
+                speakerBox.style.backgroundImage = 'none';
+                speakerBox.style.display = 'none';
+                speakerName.textContent = '';
+                speakerName.style.display = 'none';
+                currentSpeaker = { name: '', image: '' };
+                return;
+            }
+
+            subtitleWrapper.classList.remove('no-speaker');
+
+            if (hasImage) {
+                speakerBox.style.display = 'block';
+                speakerBox.style.backgroundImage = `url('${image}')`;
+            } else {
+                speakerBox.style.backgroundImage = 'none';
+                speakerBox.style.display = hasName ? 'block' : 'none';
+            }
+
+            if (hasName) {
+                speakerName.textContent = name;
+                speakerName.style.display = 'inline-flex';
+            } else {
+                speakerName.textContent = '';
+                speakerName.style.display = 'none';
+            }
+
+            currentSpeaker = { name: hasName ? name : '', image: hasImage ? image : '' };
+        }
+
+        function clearSpeaker() {
+            applySpeaker('', '');
+        }
+
+        function showPauseScreen() {
+            if (!pauseScreen || isPauseScreenVisible) return;
+            isPauseScreenVisible = true;
+            pauseScreen.classList.add('show');
+
+            if (sceneVideo && sceneVideo.style.display === 'block') {
+                if (!sceneVideo.paused) {
+                    wasVideoPlaying = true;
+                    sceneVideo.pause();
+                } else {
+                    wasVideoPlaying = false;
+                }
+            } else {
+                wasVideoPlaying = false;
+            }
+            
+            // Pause voice audio
+            if (currentVoiceAudio && !currentVoiceAudio.paused) {
+                currentVoiceAudio.pause();
+            }
+        }
+
+        function hidePauseScreen() {
+            if (!pauseScreen || !isPauseScreenVisible) return;
+            isPauseScreenVisible = false;
+            pauseScreen.classList.remove('show');
+
+            if (wasVideoPlaying && sceneVideo) {
+                sceneVideo.play().catch(() => {});
+            }
+            
+            // Resume voice audio if it was playing
+            if (currentVoiceAudio && currentVoiceAudio.paused) {
+                currentVoiceAudio.play().catch(() => {});
+            }
+        }
+
+        function togglePauseScreen(forceState = null) {
+            if (forceState === true) {
+                showPauseScreen();
+                return;
+            }
+            if (forceState === false) {
+                hidePauseScreen();
+                return;
+            }
+
+            if (isPauseScreenVisible) {
+                hidePauseScreen();
+            } else {
+                showPauseScreen();
+            }
+        }
+
+        // Voice audio functions
+        function stopVoiceAudio() {
+            if (currentVoiceAudio) {
+                currentVoiceAudio.pause();
+                currentVoiceAudio.currentTime = 0;
+                currentVoiceAudio = null;
+            }
+        }
+
+        function playVoiceAudio(voicePath) {
+            if (!voicePath) return;
+            
+            // Stop any currently playing voice
+            stopVoiceAudio();
+            
+            // Create and play new audio
+            currentVoiceAudio = new Audio(voicePath);
+            currentVoiceAudio.volume = voiceoverVolume / 100;
+            currentVoiceAudio.play().catch(error => {
+                console.error('Error playing voice audio:', error);
+                currentVoiceAudio = null;
+            });
+        }
+        
+        // Update voice audio volume if currently playing
+        function updateVoiceAudioVolume() {
+            if (currentVoiceAudio) {
+                currentVoiceAudio.volume = voiceoverVolume / 100;
+            }
+        }
+
+        if (pauseButton) {
+            pauseButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                togglePauseScreen(true);
+            });
+        }
+
+        if (pauseScreen) {
+            pauseScreen.addEventListener('click', (event) => {
+                if (event.target === pauseScreen) {
+                    togglePauseScreen(false);
+                }
+            });
+        }
+
+        // Handle pause hotkey (Esc key)
+        function handlePauseHotkey(event) {
+            if (event.key === 'Escape' && !isPauseScreenVisible) {
+                togglePauseScreen(true);
+            }
+        }
+        document.addEventListener('keydown', handlePauseHotkey, true);
+
+        // Listen for messages from pause iframe
+        window.addEventListener('message', (event) => {
+            // Only accept messages from same origin for security
+            if (event.origin !== window.location.origin) return;
+
+            const data = event.data;
+            
+            if (data.type === 'resume') {
+                togglePauseScreen(false);
+            } else if (data.type === 'volumeUpdate') {
+                if (data.volumeType === 'bgMusic') {
+                    bgMusicVolume = data.value;
+                    localStorage.setItem('bgMusicVolume', bgMusicVolume);
+                } else if (data.volumeType === 'sfx') {
+                    sfxVolume = data.value;
+                    localStorage.setItem('sfxVolume', sfxVolume);
+                } else if (data.volumeType === 'voiceover') {
+                    voiceoverVolume = data.value;
+                    localStorage.setItem('voiceoverVolume', voiceoverVolume);
+                    updateVoiceAudioVolume();
+                }
+            } else if (data.type === 'quit') {
+                // Redirect to homepage
+                window.location.href = '../../../index.html';
+            }
+        });
+
         // Function to show timed subtitles
-        function showTimedSubtitles(subtitles) {
+        function showTimedSubtitles(subtitles, defaultSpeaker = { name: '', image: '' }) {
             let currentSubtitleIndex = 0;
+            let lastSpeakerName = defaultSpeaker?.name || '';
+            let lastSpeakerImage = defaultSpeaker?.image || '';
+
+            if (lastSpeakerName || lastSpeakerImage) {
+                applySpeaker(lastSpeakerName, lastSpeakerImage);
+            } else {
+                clearSpeaker();
+            }
             
             function showNextSubtitle() {
                 if (currentSubtitleIndex < subtitles.length) {
                     const subtitle = subtitles[currentSubtitleIndex];
-                    subtitleContainer.textContent = subtitle.text;
+                    const isObjectSubtitle = typeof subtitle === 'object' && subtitle !== null;
+                    const subtitleText = isObjectSubtitle ? subtitle.text : subtitle;
+                    
+                    if (typeof subtitleText === 'string') {
+                        subtitleContainer.textContent = subtitleText;
+                    } else {
+                        subtitleContainer.textContent = '';
+                    }
+
+                    if (isObjectSubtitle) {
+                        const hasSpeakerFields = Object.prototype.hasOwnProperty.call(subtitle, 'speakerName') ||
+                            Object.prototype.hasOwnProperty.call(subtitle, 'speakerImage') ||
+                            Object.prototype.hasOwnProperty.call(subtitle, 'hideSpeaker');
+
+                        if (hasSpeakerFields) {
+                            if (subtitle.hideSpeaker) {
+                                clearSpeaker();
+                                lastSpeakerName = '';
+                                lastSpeakerImage = '';
+                            } else {
+                                const nextSpeakerName = Object.prototype.hasOwnProperty.call(subtitle, 'speakerName')
+                                    ? (subtitle.speakerName || '')
+                                    : (lastSpeakerName || defaultSpeaker?.name || '');
+                                const nextSpeakerImage = Object.prototype.hasOwnProperty.call(subtitle, 'speakerImage')
+                                    ? (subtitle.speakerImage || '')
+                                    : (lastSpeakerImage || defaultSpeaker?.image || '');
+
+                                if (nextSpeakerName || nextSpeakerImage) {
+                                    applySpeaker(nextSpeakerName, nextSpeakerImage);
+                                } else {
+                                    clearSpeaker();
+                                }
+
+                                lastSpeakerName = nextSpeakerName;
+                                lastSpeakerImage = nextSpeakerImage;
+                            }
+                        }
+                        
+                        // Play voice audio if available for this subtitle
+                        if (subtitle.voice) {
+                            playVoiceAudio(subtitle.voice);
+                        }
+                    }
                     
                     // Schedule next subtitle
                     if (currentSubtitleIndex < subtitles.length - 1) {
                         const nextSubtitle = subtitles[currentSubtitleIndex + 1];
-                        const delay = nextSubtitle.time - subtitle.time;
+                        const currentTime = isObjectSubtitle && typeof subtitle.time === 'number' ? subtitle.time : 0;
+                        const nextTime = (typeof nextSubtitle === 'object' && nextSubtitle !== null && typeof nextSubtitle.time === 'number')
+                            ? nextSubtitle.time
+                            : currentTime;
+                        const delay = Math.max(0, nextTime - currentTime);
                         subtitleTimeout = setTimeout(() => {
                             currentSubtitleIndex++;
                             showNextSubtitle();
@@ -630,6 +1306,20 @@
             if (index < scenes.length) {
                 const scene = scenes[index];
 
+                hideDialogueChoices(); // Clear any previous dialogue choices
+                stopVoiceAudio(); // Stop any currently playing voice
+
+                defaultSceneSpeaker = {
+                    name: scene.speakerName || '',
+                    image: scene.speakerImage || ''
+                };
+
+                if (defaultSceneSpeaker.name || defaultSceneSpeaker.image) {
+                    applySpeaker(defaultSceneSpeaker.name, defaultSceneSpeaker.image);
+                } else {
+                    clearSpeaker();
+                }
+
                 sceneImage.style.display = 'none';
                 sceneVideo.style.display = 'none';
                 sceneTextOverlay.style.display = 'none';
@@ -667,10 +1357,20 @@
                             sceneTextOverlay.innerHTML = scene.content;
                         }
                     }
+                    
+                    // Play voice audio if available
+                    if (scene.voice) {
+                        playVoiceAudio(scene.voice);
+                    }
                 } else if (scene.type === 'video') {
                     sceneVideo.src = scene.src;
                     sceneVideo.style.display = 'block';
                     sceneVideo.play();
+                    
+                    // Play voice audio if available (for non-timed subtitle videos)
+                    if (scene.voice && !Array.isArray(scene.subtitle)) {
+                        playVoiceAudio(scene.voice);
+                    }
                 } else if (scene.type === 'text') {
                     sceneTextOverlay.style.display = 'block';
                     sceneTextOverlay.classList.add('show');
@@ -680,14 +1380,53 @@
                     } else {
                         sceneTextOverlay.innerHTML = scene.content;
                     }
+                    
+                    // Play voice audio if available
+                    if (scene.voice) {
+                        playVoiceAudio(scene.voice);
+                    }
+                } else if (scene.type === 'dialogue') {
+                    // Show the background image or video if provided
+                    if (scene.src) {
+                        // Check if it's a video file
+                        const isVideo = scene.src.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/);
+                        if (isVideo) {
+                            sceneVideo.src = scene.src;
+                            sceneVideo.style.display = 'block';
+                            sceneVideo.play();
+                            sceneImage.style.display = 'none';
+                        } else {
+                            // It's an image
+                            sceneImage.src = scene.src;
+                            sceneImage.style.display = 'block';
+                            sceneVideo.style.display = 'none';
+                        }
+                    }
+                    
+                    // Show the question in subtitle
+                    subtitleContainer.textContent = scene.question || '';
+                    
+                    // Show dialogue choices
+                    if (scene.choices && Array.isArray(scene.choices)) {
+                        hideDialogueChoices(); // Clear any previous choices
+                        setTimeout(() => {
+                            showDialogueChoices(scene.choices);
+                        }, 500); // Small delay to ensure subtitle is shown first
+                    }
+                    
+                    // Play voice audio if available
+                    if (scene.voice) {
+                        playVoiceAudio(scene.voice);
+                    }
                 }
 
-                // Handle different subtitle formats
+                // Handle different subtitle formats (skip for dialogue scenes - they use question field)
+                if (scene.type !== 'dialogue') {
                 if (Array.isArray(scene.subtitle)) {
                     // Check if it's timed subtitles (objects with text and time)
                     if (scene.subtitle.length > 0 && typeof scene.subtitle[0] === 'object' && scene.subtitle[0].text) {
                         // Timed subtitles
-                        showTimedSubtitles(scene.subtitle);
+                        showTimedSubtitles(scene.subtitle, defaultSceneSpeaker);
                     } else {
                         // Regular array subtitles
                         subtitleContainer.textContent = scene.subtitle.join('\n');
@@ -716,6 +1455,10 @@
                 } else {
                     subtitleContainer.style.display = 'none';
                 }
+                } else {
+                    // For dialogue scenes, always show subtitle (it contains the question)
+                    subtitleContainer.style.display = 'block';
+                }
 
                 sceneContainer.style.opacity = '1';
                 sceneContainer.style.visibility = 'visible';
@@ -737,12 +1480,15 @@
                     }
                 }
                 
-                if (index < scenes.length - 1 && (scene.type !== 'video' || hasSubtitle)) {
-                    sceneNextText.textContent = "Click to Next";
-                    sceneNextText.classList.add('show');
-                } else if (index === scenes.length - 1) {
-                    sceneNextText.textContent = "Click to Start"; // Last scene
-                    sceneNextText.classList.add('show');
+                // Don't show "Click to Next" for dialogue scenes (player must choose)
+                if (scene.type !== 'dialogue') {
+                    if (index < scenes.length - 1 && (scene.type !== 'video' || hasSubtitle)) {
+                        sceneNextText.textContent = "Click to Next";
+                        sceneNextText.classList.add('show');
+                    } else if (index === scenes.length - 1) {
+                        sceneNextText.textContent = "Click to Start"; // Last scene
+                        sceneNextText.classList.add('show');
+                    }
                 }
 
                 // Handle highlighting
@@ -755,8 +1501,10 @@
                     };
                 }
 
-                // Add event listener to skip scene on click
+                // Add event listener to skip scene on click (but not for dialogue scenes)
                 sceneContainer.onclick = () => {
+                    if (isPauseScreenVisible) return;
+                    if (scene.type === 'dialogue') return; // Don't advance dialogue scenes by clicking
                     sceneNextText.classList.remove('show'); // Hide text on click
                     sceneNextText.classList.remove('highlight'); // Remove highlight on click
                     currentSceneIndex++;
