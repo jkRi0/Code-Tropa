@@ -198,6 +198,46 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
             text-transform: uppercase;
         }
+
+        .translation-button {
+            background-color: rgba(0, 0, 0, 0.65);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1.5em;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+            width: 40px;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        .translation-button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .translation-button:active {
+            transform: translateY(0);
+        }
+
+        .translation-button.active {
+            background-color: rgba(212, 165, 116, 0.8);
+            border-color: #d4a574;
+        }
+
+        .translation-icon {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
         .subtitle-container {
             display: flex;
             background-color: rgba(0, 0, 0, 0.55);
@@ -663,7 +703,12 @@
             <div class="speaker-box" id="speakerBox"></div>
             <div class="subtitle-content" id="subtitleContent">
                 <div class="subtitle-header" id="subtitleHeader">
-                    <div class="speaker-name" id="speakerName">Character Name</div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="speaker-name" id="speakerName">Character Name</div>
+                        <button class="translation-button" id="translationButton" title="Toggle Translation">
+                            <img src="../../../../assets/translate.png" alt="Translate" class="translation-icon">
+                        </button>
+                    </div>
                     <p class="scene-next-text" id="sceneNextText"></p>
                 </div>
                 <div class="subtitle-container" id="subtitleContainer"></div>
@@ -689,6 +734,11 @@
         const subtitleContainer = document.getElementById('subtitleContainer');
         const speakerBox = document.getElementById('speakerBox');
         const speakerName = document.getElementById('speakerName');
+        const translationButton = document.getElementById('translationButton');
+        
+        let isTranslated = false; // Track translation state
+        let currentSubtitleText = ''; // Store current subtitle text
+        let currentSubtitleTranslation = ''; // Store translated subtitle text
         const pauseScreen = document.getElementById('pauseScreen');
         const pauseButton = document.getElementById('pauseButton');
         const sceneNextText = document.getElementById('sceneNextText');
@@ -974,11 +1024,17 @@
                 speakerBox.style.display = 'none';
                 speakerName.textContent = '';
                 speakerName.style.display = 'none';
+                if (translationButton) {
+                    translationButton.style.display = 'none';
+                }
                 currentSpeaker = { name: '', image: '' };
                 return;
             }
 
             subtitleWrapper.classList.remove('no-speaker');
+            if (translationButton) {
+                translationButton.style.display = 'inline-flex';
+            }
 
             if (hasImage) {
                 speakerBox.style.display = 'block';
@@ -1088,6 +1144,42 @@
             }
         }
 
+        // Translation toggle function
+        function toggleTranslation() {
+            isTranslated = !isTranslated;
+            
+            // Update button appearance
+            if (translationButton) {
+                if (isTranslated) {
+                    translationButton.classList.add('active');
+                } else {
+                    translationButton.classList.remove('active');
+                }
+            }
+            
+            // Update subtitle display
+            updateSubtitleDisplay();
+        }
+        
+        // Update subtitle display based on translation state
+        function updateSubtitleDisplay() {
+            if (!subtitleContainer) return;
+            
+            if (isTranslated && currentSubtitleTranslation) {
+                subtitleContainer.textContent = currentSubtitleTranslation;
+            } else {
+                subtitleContainer.textContent = currentSubtitleText;
+            }
+        }
+        
+        // Translation button event listener
+        if (translationButton) {
+            translationButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleTranslation();
+            });
+        }
+
         if (pauseButton) {
             pauseButton.addEventListener('click', (event) => {
                 event.stopPropagation();
@@ -1157,8 +1249,14 @@
                     const subtitleText = isObjectSubtitle ? subtitle.text : subtitle;
                     
                     if (typeof subtitleText === 'string') {
-                        subtitleContainer.textContent = subtitleText;
+                        // Store original and translation for timed subtitles
+                        const subtitleTranslation = isObjectSubtitle && subtitle.translation ? subtitle.translation : '';
+                        currentSubtitleText = subtitleText;
+                        currentSubtitleTranslation = subtitleTranslation;
+                        updateSubtitleDisplay();
                     } else {
+                        currentSubtitleText = '';
+                        currentSubtitleTranslation = '';
                         subtitleContainer.textContent = '';
                     }
 
@@ -1395,7 +1493,9 @@
                     }
                     
                     // Show the question in subtitle
-                    subtitleContainer.textContent = scene.question || '';
+                    currentSubtitleText = scene.question || '';
+                    currentSubtitleTranslation = scene.questionTranslation || '';
+                    updateSubtitleDisplay();
                     
                     // Show dialogue choices
                     if (scene.choices && Array.isArray(scene.choices)) {
@@ -1420,10 +1520,14 @@
                         showTimedSubtitles(scene.subtitle, defaultSceneSpeaker);
                     } else {
                         // Regular array subtitles
-                        subtitleContainer.textContent = scene.subtitle.join('\n');
+                        currentSubtitleText = scene.subtitle.join('\n');
+                        currentSubtitleTranslation = scene.subtitleTranslation ? (Array.isArray(scene.subtitleTranslation) ? scene.subtitleTranslation.join('\n') : scene.subtitleTranslation) : '';
+                        updateSubtitleDisplay();
                     }
                 } else {
-                    subtitleContainer.textContent = scene.subtitle || '';
+                    currentSubtitleText = scene.subtitle || '';
+                    currentSubtitleTranslation = scene.subtitleTranslation || '';
+                    updateSubtitleDisplay();
                 }
                 
                 // Hide subtitle container if no subtitle
