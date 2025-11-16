@@ -771,7 +771,8 @@
             { 
                 type: 'video', 
                 src: 'assets/3.mp4', 
-                subtitle: 'Axle, sakto ang dating mo. Tulungan mo ako habang wala pa ‘yung ibang teachers.',
+                subtitle: 'Axle, sakto ang dating mo. Tulungan mo ako habang wala pa \'yung ibang teachers.',
+                subtitleTranslation: 'Axle, good timing. Help me out while the other teachers aren\'t here yet.',
                 speakerName: 'Ma\'am Reyes',
                 speakerImage: 'assets/reyes.png',
                 voice: 'assets/audio/3.wav'
@@ -779,7 +780,8 @@
             { 
                 type: 'video', 
                 src: 'assets/4.mp4', 
-                subtitle: 'Sure po, Ma’am! Pahingi na rin ng Java tips habang tumutulong.', 
+                subtitle: 'Sure po, Ma\'am! Pahingi na rin ng Java tips habang tumutulong.', 
+                subtitleTranslation: 'Sure, Ma\'am! Give me some Java tips too while I\'m helping.',
                 speakerName: 'Axle', 
                 speakerImage: 'assets/axle.png',
                 voice: 'assets/audio/4.wav',
@@ -788,7 +790,8 @@
                 type: 'image', 
                 src: 'assets/5.png',  
                 content: 'int age = 6;<br>if(age >= 7) {<br>&emsp;&emsp;System.out.println("Puwede na siyang i-enroll.");<br>} else {<br>&emsp;&emsp;System.out.println("Bata pa masyado.");<br>}', 
-                subtitle: 'Piliin mo lang ‘yung mga 7 years old pataas. ‘Yung mas bata, hindi pa pwede.',
+                subtitle: 'Piliin mo lang \'yung mga 7 years old pataas. \'Yung mas bata, hindi pa pwede.',
+                subtitleTranslation: 'Just choose those who are 7 years old and above. The younger ones aren\'t allowed yet.',
                 speakerName: 'Ma\'am Reyes', 
                 speakerImage: 'assets/reyes.png',
                 voice: 'assets/audio/5.wav'
@@ -798,6 +801,7 @@
                 src: 'assets/5.png',
                 content: 'int age = 6;<br>if(age >= 7) {<br>&emsp;&emsp;System.out.println("Puwede na siyang i-enroll.");<br>} else {<br>&emsp;&emsp;System.out.println("Bata pa masyado.");<br>}', 
                 question: 'O, Axle, kung 6 years old pa lang, anong ipi-print ng program?',
+                questionTranslation: 'So, Axle, if the student is only 6 years old, what will the program print?',
                 speakerName: 'Ma\'am Reyes',
                 speakerImage: 'assets/reyes.png',
                 choices: [
@@ -818,6 +822,7 @@
                 src: 'assets/5.png',  
                 content: 'int grade = 8;<br>switch(grade) {<br>&emsp;&emsp;case 7: System.out.println("Grade 7 bin."); break;<br>&emsp;&emsp;case 8: System.out.println("Grade 8 bin."); break;<br>&emsp;&emsp;case 9: System.out.println("Grade 9 bin."); break;<br>&emsp;&emsp;default: default: System.out.println("Grade not found.");<br>}',
                 subtitle: 'Axle, ilagay ang record sa tamang bin ayon sa grade.',
+                subtitleTranslation: 'Axle, place the record into the correct bin according to grade.',
                 speakerName: 'Ma\'am Reyes', 
                 speakerImage: 'assets/reyes.png',
                 voice: 'assets/audio/7.wav'
@@ -827,6 +832,7 @@
                 src: 'assets/5.png',
                 content: 'int grade = 8;<br>switch(grade) {<br>&emsp;&emsp;case 7: System.out.println("Grade 7 bin."); break;<br>&emsp;&emsp;case 8: System.out.println("Grade 8 bin."); break;<br>&emsp;&emsp;case 9: System.out.println("Grade 9 bin."); break;<br>&emsp;&emsp;default: default: System.out.println("Grade not found.");<br>}', 
                 question: 'Kung ang grade ay 8, anong output ang lalabas?',
+                questionTranslation: 'If the grade is 8, what output will appear?',
                 speakerName: 'Ma\'am Reyes',
                 speakerImage: 'assets/reyes.png',
                 choices: [
@@ -847,6 +853,7 @@
                 src: 'assets/5.png',  
                 content: 'for(int i = 1; i <= 10; i++) {<br>&emsp;&emsp;System.out.println("Naglagay ng worksheet sa Desk #" + i);<br>}',
                 subtitle: 'Lagyan mo ng tig-iisang worksheet bawat desk.',
+                subtitleTranslation: 'Put one worksheet on each desk.',
                 speakerName: 'Ma\'am Reyes', 
                 speakerImage: 'assets/reyes.png',
                 voice: 'assets/audio/9.wav'
@@ -855,7 +862,8 @@
                 type: 'dialogue',
                 src: 'assets/5.png',
                 content: 'for(int i = 1; i <= 10; i++) {<br>&emsp;&emsp;System.out.println("Naglagay ng worksheet sa Desk #" + i);<br>}', 
-                question: 'Axle, ilang beses uulit ang loop na ‘to?',
+                question: 'Axle, ilang beses uulit ang loop na \'to?',
+                questionTranslation: 'Axle, how many times will this loop repeat?',
                 speakerName: 'Ma\'am Reyes',
                 speakerImage: 'assets/reyes.png',
                 choices: [
@@ -876,6 +884,7 @@
                 src: 'assets/5.png',  
                 content: 'int submitted = 0, total = 5;<br>while(submitted < total) {<br>&emsp;&emsp;System.out.println("Naghihintay ng papel...");<br>&emsp;&emsp;submitted++;<br>}',
                 subtitle: 'Hintayin mo lang lahat ng submissions bago isara.',
+                subtitleTranslation: 'Just wait for all submissions before you close it.',
                 speakerName: 'Ma\'am Reyes', 
                 speakerImage: 'assets/reyes.png',
                 voice: 'assets/audio/11.wav'
@@ -885,6 +894,7 @@
                 src: 'assets/5.png',
                 content: 'int submitted = 0, total = 5;<br>while(submitted < total) {<br>&emsp;&emsp;System.out.println("Naghihintay ng papel...");<br>&emsp;&emsp;submitted++;<br>}', 
                 question: 'Anong mangyayari kung hindi pa kumpleto ang limang submissions?',
+                questionTranslation: 'What happens if the five submissions aren\'t complete yet?',
                 speakerName: 'Ma\'am Reyes',
                 speakerImage: 'assets/reyes.png',
                 choices: [

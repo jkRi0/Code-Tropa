@@ -763,14 +763,15 @@
                 type: 'video', 
                 src: 'assets/1.mp4', 
                 subtitle: 'Tapat ng tanghali ay inutusan si axle dalhin ang mga tupperware na ginamit nung fiesta sa kanyang kuya Justin',
+                subtitleTranslation: 'Just before noon, Axle was sent to bring back the tupperware used during the fiesta for his kuya Justin.',
                 voice: 'assets/audio/1.mp3'
             },
             { 
                 type: 'video', 
                 src: 'assets/2.mp4', 
                 subtitle: [
-                { text: " ", time: 0 },
-                    { text: "Kuya justin?!", time: 3000, voice: 'assets/audio/2.mp3'}
+                { text: " ", time: 0, translation: " " },
+                    { text: "Kuya justin?!", translation: "Kuya Justin?!", time: 3000, voice: 'assets/audio/2.mp3'}
                 ], 
                 speakerName: 'Axle',
                 speakerImage: 'assets/axle.png',
@@ -779,8 +780,8 @@
                 type: 'video', 
                 src: 'assets/3.mp4', 
                 subtitle: [
-                { text: " ", time: 0 },
-                    { text: "Uy Axle!.  Ginagawa mo dito?", time: 2000 , voice: 'assets/audio/3.mp3'}
+                { text: " ", time: 0, translation: " " },
+                    { text: "Uy Axle!.  Ginagawa mo dito?", translation: "Hey Axle! What are you doing here?", time: 2000 , voice: 'assets/audio/3.mp3'}
                 ], 
                 speakerName: 'Justin',
                 speakerImage: 'assets/justin.png'
@@ -789,6 +790,7 @@
                 type: 'video', 
                 src: 'assets/4.mp4', 
                 subtitle: 'Inutusan lang po ni nanay ibalik ito... pero Kuya, pwede pa ba magpaturo sayo tungkol sa java?', 
+                subtitleTranslation: 'Mom just asked me to return these… but Kuya, can you still teach me about Java?',
                 speakerName: 'Axle', 
                 speakerImage: 'assets/axle.png',
                 voice: 'assets/audio/4.mp3'
@@ -797,6 +799,7 @@
                 type: 'video', 
                 src: 'assets/5.mp4', 
                 subtitle: 'Oo naman. Actually kahit sa simpleng benta, pwede mo i-apply ang programming logic… lalo na expressions at operators. Katulad dito', 
+                subtitleTranslation: 'Of course. Actually, even in simple selling, you can apply programming logic… especially expressions and operators. Like this.',
                 speakerName: 'Justin', 
                 speakerImage: 'assets/justin.png',
                 voice: 'assets/audio/5.mp3'
@@ -805,6 +808,7 @@
                 type: 'image', 
                 src: 'assets/6.png',  
                 subtitle: 'Halimbawa, 2 adobo na ₱50 at 1 gulay na ₱30. Paano mo kukuwentahin?', 
+                subtitleTranslation: 'For example, 2 adobo at ₱50 each and 1 vegetable dish at ₱30. How would you calculate it?',
                 speakerName: 'Justin', 
                 speakerImage: 'assets/justin.png',
                 voice: 'assets/audio/6-note.mp3'
@@ -813,6 +817,7 @@
                 type: 'image', 
                 src: 'assets/6.png', 
                 subtitle: 'Uhm… multiply tapos add?', 
+                subtitleTranslation: 'Uhm… multiply then add?',
                 speakerName: 'Axle', 
                 speakerImage: 'assets/axle.png',
                 voice: 'assets/audio/7-note.mp3'
@@ -822,6 +827,7 @@
                 src: 'assets/6.png', 
                 content: '<pre>int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty * adoboPrice) + (gulayQty * gulayPrice);</pre>', 
                 subtitle: 'Correct. Sa Java, ganito \'yan.', 
+                subtitleTranslation: 'Correct. In Java, it looks like this.',
                 speakerName: 'Justin', 
                 speakerImage: 'assets/justin.png',
                 voice: 'assets/audio/8-note.mp3'
@@ -831,6 +837,7 @@
                 src: 'assets/6.png', 
                 content: 'int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty <span style="color: red;">*</span> adoboPrice) + (gulayQty <span style="color: red;">*</span> gulayPrice);', 
                 subtitle: ' \'*\' ang multiplication', 
+                subtitleTranslation: '\'*\' is multiplication',
                 speakerName: 'Justin', 
                 speakerImage: 'assets/justin.png',
                 voice: 'assets/audio/9.mp3'
@@ -840,6 +847,7 @@
                 src: 'assets/6.png', 
                 content: 'int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty * adoboPrice) <span style="color: red;">+</span> (gulayQty * gulayPrice);', 
                 subtitle: ' \'+\' ang addition', 
+                subtitleTranslation: '\'+\' is addition',
                 speakerName: 'Justin', 
                 speakerImage: 'assets/justin.png',
                 voice: 'assets/audio/10.mp3'
@@ -849,6 +857,7 @@
                 src: 'assets/6.png', 
                 content: 'int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = <span style="color: red;">(</span>adoboQty * adoboPrice <span style="color: red;">)</span>+<span style="color: red;">(</span>gulayQty * gulayPrice <span style="color: red;">)</span>;', 
                 subtitle: 'Kuya, bakit may parentheses? At kailangan po ba lagi ng int?', 
+                subtitleTranslation: 'Kuya, why are there parentheses? And do we always need int?',
                 speakerName: 'Axle', 
                 speakerImage: 'assets/axle.png',
                 voice: 'assets/audio/11.mp3'
@@ -858,8 +867,8 @@
                 src: 'assets/6.png', 
                 content: 'int adoboQty = 2;<br>int adoboPrice = 50;<br>int gulayQty = 1;<br>int gulayPrice = 30;<br>int total = (adoboQty * adoboPrice) + (gulayQty * gulayPrice);', 
                 subtitle: [
-                    { text: "Good question. Gamit tayo ng int kapag whole number, pero pwede rin double kung may cents o decimals.", time: 0 },
-                    { text: "At 'yung parentheses, kagaya lang din ng PEMDAS (Parentheses, Exponents, Multiplication, Division, Addition, and Subtraction) sa Math… para mas klaro sa computer kung ano ang uunahin.", time: 6000 }
+                    { text: "Good question. Gamit tayo ng int kapag whole number, pero pwede rin double kung may cents o decimals.", translation: "Good question. We use int for whole numbers, but double works if there are cents or decimals.", time: 0 },
+                    { text: "At 'yung parentheses, kagaya lang din ng PEMDAS (Parentheses, Exponents, Multiplication, Division, Addition, and Subtraction) sa Math… para mas klaro sa computer kung ano ang uunahin.", translation: "And the parentheses, just like PEMDAS in Math (Parentheses, Exponents, Multiplication, Division, Addition, Subtraction)… it tells the computer what to do first.", time: 6000 }
                 ], 
                 speakerName: 'Justin',
                 speakerImage: 'assets/justin.png',
@@ -870,6 +879,7 @@
                 src: 'assets/6.png', 
                 content: '<pre>int adoboStock = 10;<br>adoboStock = adoboStock - adoboQty;</pre>', 
                 subtitle: 'At eto pa.', 
+                subtitleTranslation: 'And here\'s more.',
                 speakerName: 'Justin', 
                 speakerImage: 'assets/justin.png',
                 voice: 'assets/audio/13.mp3'
@@ -878,6 +888,7 @@
                 type: 'image', src: 'assets/6.png', 
                 content: 'int adoboStock = 10;<br>adoboStock = adoboStock - adoboQty;', 
                 subtitle: 'Ang haba naman. Pwede bang shortcut?', 
+                subtitleTranslation: 'So long… Is there a shortcut?',
                 speakerName: 'Axle', 
                 speakerImage: 'assets/axle.png',
                 voice: 'assets/audio/14.mp3'
@@ -887,6 +898,7 @@
                 src: 'assets/6.png', 
                 content: 'int adoboStock = 10;<br><pre>adoboStock -= adoboQty;</pre>', 
                 subtitle: 'Pwede! Gamit ka ng -= (shorthand assignment operator)', 
+                subtitleTranslation: 'Yes! Use -=.',
                 speakerName: 'Justin', 
                 speakerImage: 'assets/justin.png',
                 voice: 'assets/audio/15.mp3'
@@ -896,6 +908,7 @@
                 src: 'assets/6.png', 
                 content: 'int adoboStock = 10;<br>adoboStock -= adoboQty;', 
                 subtitle: 'Ahhh gets! Parang bawas o dagdag na automatic!', 
+                subtitleTranslation: 'Ahhh got it! Like automatic subtract or add!',
                 speakerName: 'Axle', 
                 speakerImage: 'assets/axle.png',
                 voice: 'assets/audio/16.mp3'
@@ -904,6 +917,7 @@
                 type: 'dialogue',
                 src: 'assets/6.png',
                 question: 'Axle, kung gusto mong dagdagan naman ang stock, anong shorthand assignment operator ang gagamitin mo?',
+                questionTranslation: 'Axle, if you want to increase stock, what operator would you use?',
                 speakerName: 'Justin',
                 speakerImage: 'assets/justin.png',
                 choices: [
@@ -923,6 +937,7 @@
                 type: 'image', src: 'assets/6.png', 
                 content: 'int adoboStock = 10;<br>adoboStock -= adoboQty;', 
                 subtitle: 'Operators lang \'yan, pero malaking tulong sa mga computation sa Java. Next time, try natin \'yung division at modulo.', 
+                subtitleTranslation: 'Good job! These are just operators, but they really help with computations in Java. Next time, we\'ll try division and modulo.',
                 speakerName: 'Justin', 
                 speakerImage: 'assets/justin.png',
                 voice: 'assets/audio/17.mp3'
