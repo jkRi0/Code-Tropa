@@ -317,105 +317,84 @@
                 this.init();
             }
 
-            init() {
-                // Define all video URLs to preload
-                this.videoUrls = [
-                    // Main background video
-                    '../assets/bg.mp4',
-                    // '../assets/sample.mp4',
-                    
-                    // Java Story Mode Videos
-                    './1sm/1j/ep1/assets/1.mp4',
-                    './1sm/1j/ep1/assets/2.mp4',
-                    './1sm/1j/ep1/assets/3.mp4',
-                    './1sm/1j/ep1/assets/4.mp4',
-                    './1sm/1j/ep1/assets/5.mp4',
-                    './1sm/1j/ep1/assets/6.mp4',
-                    './1sm/1j/ep1/assets/7.mp4',
-                    './1sm/1j/ep1/assets/8.mp4',
-                    './1sm/1j/ep1/assets/9.mp4',
-                    './1sm/1j/ep1/assets/10.mp4',
-                    './1sm/1j/ep1/assets/11.mp4',
-                    
-                    './1sm/1j/ep2/assets/1.mp4',
-                    './1sm/1j/ep2/assets/2.mp4',
-                    './1sm/1j/ep2/assets/3.mp4',
-                    './1sm/1j/ep2/assets/5.mp4',
-                    './1sm/1j/ep2/assets/6.mp4',
-                    './1sm/1j/ep2/assets/7.mp4',
-                    './1sm/1j/ep2/assets/8.mp4',
-                    './1sm/1j/ep2/assets/9.mp4',
-                    './1sm/1j/ep2/assets/10.mp4',
-                    './1sm/1j/ep2/assets/11.mp4',
-                    
-                    './1sm/1j/ep3/assets/1.mp4',
-                    './1sm/1j/ep3/assets/2.mp4',
-                    './1sm/1j/ep3/assets/3.mp4',
-                    './1sm/1j/ep3/assets/4.mp4',
-                    './1sm/1j/ep3/assets/5.mp4',
-                    
-                    './1sm/1j/ep4/assets/1.mp4',
-                    './1sm/1j/ep4/assets/2.mp4',
-                    './1sm/1j/ep4/assets/3.mp4',
-                    './1sm/1j/ep4/assets/4.mp4',
-                    
-                    './1sm/1j/ep5/assets/1.mp4',
-                    './1sm/1j/ep5/assets/2.mp4',
-                    './1sm/1j/ep5/assets/3.mp4',
-                    './1sm/1j/ep5/assets/4.mp4',
-                    './1sm/1j/ep5/assets/5.mp4',
-                    
-                    './1sm/1j/ep6/assets/1.mp4',
-                    './1sm/1j/ep6/assets/2.mp4',
-                    './1sm/1j/ep6/assets/3.mp4',
-                    './1sm/1j/ep6/assets/4.mp4',
-                    './1sm/1j/ep6/assets/5.mp4',
-                    
-                    // C++ Story Mode Videos
-                    './1sm/2cP/ep1/assets/1.mp4',
-                    './1sm/2cP/ep1/assets/2.mp4',
-                    './1sm/2cP/ep1/assets/3.mp4',
-                    './1sm/2cP/ep1/assets/4.mp4',
-                    './1sm/2cP/ep1/assets/5.mp4',
-                    './1sm/2cP/ep1/assets/6.mp4',
-                    './1sm/2cP/ep1/assets/7.mp4',
-                    './1sm/2cP/ep1/assets/8.mp4',
-                    './1sm/2cP/ep1/assets/9.mp4',
-                    
-                    './1sm/2cP/ep2/assets/1.mp4',
-                    './1sm/2cP/ep2/assets/2.mp4',
-                    './1sm/2cP/ep2/assets/3.mp4',
-                    './1sm/2cP/ep2/assets/4.mp4',
-                    './1sm/2cP/ep2/assets/5.mp4',
-                    
-                    './1sm/2cP/ep3/assets/1.mp4',
-                    './1sm/2cP/ep3/assets/2.mp4',
-                    './1sm/2cP/ep3/assets/3.mp4',
-                    './1sm/2cP/ep3/assets/4.mp4',
-                    './1sm/2cP/ep3/assets/5.mp4',
-                    
-                    './1sm/2cP/ep4/assets/1.mp4',
-                    './1sm/2cP/ep4/assets/2.mp4',
-                    './1sm/2cP/ep4/assets/3.mp4',
-                    './1sm/2cP/ep4/assets/4.mp4',
-                    './1sm/2cP/ep4/assets/5.mp4',
-                    
-                    // C# Story Mode Videos
-                    './1sm/3cS/ep1/assets/1.mp4',
-                    './1sm/3cS/ep1/assets/2.mp4',
-                    './1sm/3cS/ep1/assets/3.mp4',
-                    './1sm/3cS/ep1/assets/4.mp4',
-                    './1sm/3cS/ep1/assets/5.mp4',
-                    './1sm/3cS/ep1/assets/6.mp4',
-                    './1sm/3cS/ep1/assets/7.mp4',
-                    './1sm/3cS/ep1/assets/8.mp4',
-                    './1sm/3cS/ep1/assets/9.mp4',
-                    './1sm/3cS/ep1/assets/10.mp4',
-                    './1sm/3cS/ep1/assets/11.mp4'
-                ];
-                
+            async init() {
+                // Dynamically discover all video URLs (same logic as service worker)
+                this.videoUrls = await this.discoverAllVideos();
                 this.totalVideos = this.videoUrls.length;
+                
+                if (this.totalVideos === 0) {
+                    document.getElementById('statusText').textContent = 'No videos found. Proceeding...';
+                    setTimeout(() => this.completePreloading(), 1000);
+                    return;
+                }
+                
                 this.startPreloading();
+            }
+
+            async discoverAllVideos() {
+                const discoveredVideos = [];
+                
+                // Programming languages: 1j (Java), 2cP (C++), 3cS (C#)
+                const languages = ['1j', '2cP', '3cS'];
+                // Episodes: ep1 through ep7
+                const episodes = ['ep1', 'ep2', 'ep3', 'ep4', 'ep5', 'ep6', 'ep7'];
+                // Common video numbers (1-20)
+                const videoNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+                // Tutorial videos (tut1 through tut20)
+                const tutorialVideoNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+                
+                // Generate all possible video paths
+                const videoPatterns = [];
+                
+                // Add background video
+                videoPatterns.push('../assets/bg.mp4');
+                
+                // Generate paths for all languages, episodes, and videos
+                for (const lang of languages) {
+                    for (const ep of episodes) {
+                        const basePath = `./1sm/${lang}/${ep}/assets/`;
+                        
+                        // Add numbered videos
+                        for (const num of videoNumbers) {
+                            videoPatterns.push(`${basePath}${num}.mp4`);
+                        }
+                        
+                        // Add tutorial videos
+                        for (const tutNum of tutorialVideoNumbers) {
+                            videoPatterns.push(`${basePath}tut${tutNum}.mp4`);
+                        }
+                    }
+                }
+                
+                document.getElementById('statusText').textContent = `Discovering videos (checking ${videoPatterns.length} paths)...`;
+                
+                // Check each video path and add if it exists
+                const batchSize = 10;
+                for (let i = 0; i < videoPatterns.length; i += batchSize) {
+                    const batch = videoPatterns.slice(i, i + batchSize);
+                    const batchPromises = batch.map(async (videoUrl) => {
+                        try {
+                            const response = await fetch(videoUrl, { method: 'HEAD' });
+                            if (response.ok) {
+                                discoveredVideos.push(videoUrl);
+                                return videoUrl;
+                            }
+                        } catch (error) {
+                            // Video doesn't exist, skip silently
+                        }
+                        return null;
+                    });
+                    
+                    await Promise.all(batchPromises);
+                    
+                    // Update status during discovery
+                    if (i % 50 === 0) {
+                        document.getElementById('statusText').textContent = 
+                            `Discovering videos... (${discoveredVideos.length} found so far)`;
+                    }
+                }
+                
+                return discoveredVideos;
             }
 
             async startPreloading() {

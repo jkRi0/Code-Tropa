@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 16, 2025 at 03:10 AM
+-- Generation Time: Nov 23, 2025 at 06:42 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -46,7 +46,8 @@ CREATE TABLE `assessments` (
 INSERT INTO `assessments` (`id`, `user_id`, `test_type`, `language`, `answers`, `score`, `total_questions`, `correct_answers`, `completed_at`) VALUES
 (7, 25, 'pretest', 'java', '[1,1,0]', 67, 3, 2, '2025-11-02 20:10:49'),
 (8, 25, 'pretest', 'java', '[1,1,1]', 67, 3, 2, '2025-11-02 20:14:22'),
-(9, 25, 'pretest', 'c#', '[1,1,2,2,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]', 11, 35, 4, '2025-11-02 20:15:36');
+(9, 25, 'pretest', 'c#', '[1,1,2,2,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]', 11, 35, 4, '2025-11-02 20:15:36'),
+(10, 26, 'pretest', 'java', '[0,1,1]', 33, 3, 1, '2025-11-16 23:30:20');
 
 -- --------------------------------------------------------
 
@@ -71,12 +72,12 @@ CREATE TABLE `performance` (
 --
 
 INSERT INTO `performance` (`id`, `userId`, `progressId`, `accuracy`, `efficiency`, `readability`, `timeTaken`, `success`, `failed`) VALUES
-(1, 1, 1, 100, 100, 100, 0, 1, 0),
+(1, 1, 1, 0, 0, 0, 0, 0, 1),
 (2, 2, 2, 88, 75, 80, 150, 1, 0),
 (3, 3, 3, 70, 65, 60, 200, 1, 1),
 (4, 4, 4, 85, 70, 75, 110, 1, 0),
 (5, 5, 5, 95, 90, 88, 95, 1, 0),
-(6, 1, 1, 100, 100, 100, 0, 1, 0),
+(6, 1, 1, 0, 0, 0, 0, 0, 1),
 (7, 2, 2, 85, 75, 80, 140, 1, 0),
 (8, 3, 3, 88, 70, 78, 150, 1, 0),
 (9, 4, 4, 92, 85, 90, 100, 1, 0),
@@ -93,7 +94,7 @@ INSERT INTO `performance` (`id`, `userId`, `progressId`, `accuracy`, `efficiency
 (25, 15, 15, 90, 89, 88, 100, 1, 0),
 (26, 16, 27, 0, 0, 0, 0, 0, 0),
 (27, 16, 28, 0, 0, 0, 0, 0, 0),
-(32, 1, 36, 0, 0, 0, 20, 0, 1),
+(32, 1, 36, 7, 0, 0, 20, 0, 1),
 (33, 1, 37, 0, 0, 0, 0, 0, 1),
 (46, 25, 50, 0, 0, 0, 0, 0, 0),
 (47, 25, 51, 0, 0, 0, 0, 0, 0),
@@ -103,7 +104,15 @@ INSERT INTO `performance` (`id`, `userId`, `progressId`, `accuracy`, `efficiency
 (51, 1, 55, 40, 10, 30, 20, 1, 0),
 (52, 1, 56, 40, 10, 30, 20, 1, 0),
 (53, 1, 57, 40, 10, 30, 0, 1, 0),
-(54, 1, 58, 40, 10, 30, 0, 1, 0);
+(54, 1, 58, 40, 10, 30, 0, 1, 0),
+(55, 1, 65, 0, 0, 0, 20, 0, 1),
+(56, 1, 66, 0, 0, 0, 20, 0, 1),
+(57, 26, 67, 0, 0, 0, 0, 0, 0),
+(58, 26, 68, 0, 0, 0, 0, 0, 0),
+(59, 26, 69, 5, 0, 0, 15, 0, 1),
+(60, 26, 70, 19, 0, 0, 20, 0, 1),
+(61, 1, 71, 0, 0, 0, 0, 0, 1),
+(62, 1, 72, 38, 10, 21, 20, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -170,7 +179,15 @@ INSERT INTO `progress` (`id`, `userId`, `type`, `language`, `chapter`, `episode`
 (61, 1, 'story', 'c++', 3, 1, NULL, NULL, 100, '[value-10]'),
 (62, 1, 'story', 'c#', 1, 3, NULL, NULL, 100, '[value-10]'),
 (63, 1, 'story', 'c#', 2, 2, NULL, NULL, 100, '[value-10]'),
-(64, 1, 'story', 'c#', 3, 1, NULL, NULL, 100, '[value-10]');
+(64, 1, 'story', 'c#', 3, 1, NULL, NULL, 100, '[value-10]'),
+(65, 1, 'challenge', 'java', NULL, NULL, '', 1, 20, 'public class MyClass {\n    public static void main(String[] args) {\n        System.out.println(\"Hello Java!\");\n    }\n}'),
+(66, 1, 'challenge', 'java', NULL, NULL, '', 1, 20, 'public class MyClass {\n    public static void main(String[] args) {\n        System.out.println(\"Hello Java!\");\n    }\n}'),
+(67, 26, 'story', 'java', 0, 0, NULL, NULL, 0, ''),
+(68, 26, 'challenge', 'java', NULL, NULL, '', 0, 0, ''),
+(69, 26, 'challenge', 'c++', NULL, NULL, '', 1, 20, '#include <iostream>\n\nint main() {\n    std::cout << \"Hello C++!\" << std::endl;\n    return 0;\n}'),
+(70, 26, 'challenge', 'c++', NULL, NULL, 'easy', 1, 39, '#include <iostream>\n\nint main() {\n    std::cout << \"Hello C++!\" << std::endl;\n    return 0;\n}'),
+(71, 1, 'story', 'java', 1, 7, NULL, NULL, 20, NULL),
+(72, 1, 'challenge', 'c#', NULL, NULL, 'easy', 1, 89, 'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine(\"Tahooo!\");\n        Console.WriteLine(\"Taho: 15\");\n        Console.WriteLine(\"Syrup: 5\");\n    }\n}');
 
 -- --------------------------------------------------------
 
@@ -284,7 +301,8 @@ INSERT INTO `saving` (`id`, `userId`, `language`, `chapter`, `episode`, `scene`)
 (24, 14, 'java', 3, 1, 1),
 (25, 15, 'c++', 3, 2, 2),
 (26, 16, 'java', 0, 0, 0),
-(35, 25, 'java', 0, 0, 0);
+(35, 25, 'java', 0, 0, 0),
+(36, 26, 'java', 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -323,7 +341,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `programmingLanguage`, `creat
 (14, 'leaJava', '$2y$10$R9vN8uDjSHVQb7rK38VmGeyh8o7c/FHMP0xTQwD1r5F6zQ1.D7xPu', 'java', '2025-10-04 06:34:49', 0, NULL),
 (15, 'oscarC', '$2y$10$UoRmE3.N6KX9s5m6XebSYeQ8Wm5dS/U7Ry1Yb2eqw7KxjGUKhZ0ce', 'c++', '2025-10-04 06:34:49', 0, NULL),
 (16, 'Hans-Axle', '$2y$10$CxbXWgEcAjlCJNYrAVa/K.HyvNF9ExzplVrgYwcyYo0r.dqGWqBGq', 'java', '2025-10-13 06:46:42', 0, NULL),
-(25, 'qwe', '$2y$10$zWGDwIrd2/BfKimEGU9Qk.u7Pa8W61Ks6EI2ta2jhPTGwO2XvaK1m', 'java', '2025-11-02 20:09:26', 1, 'c#');
+(25, 'qwe', '$2y$10$zWGDwIrd2/BfKimEGU9Qk.u7Pa8W61Ks6EI2ta2jhPTGwO2XvaK1m', 'java', '2025-11-02 20:09:26', 1, 'c#'),
+(26, 'carl', '$2y$10$/V/m9nGCWeMyxgdLN/NMQuiAieYLxe2u.Rx00LaPiXUNlg5Ul3kNC', 'c++', '2025-11-16 23:29:59', 1, 'java');
 
 --
 -- Indexes for dumped tables
@@ -384,19 +403,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `assessments`
 --
 ALTER TABLE `assessments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `performance`
 --
 ALTER TABLE `performance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `progress`
 --
 ALTER TABLE `progress`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT for table `rewards`
@@ -408,13 +427,13 @@ ALTER TABLE `rewards`
 -- AUTO_INCREMENT for table `saving`
 --
 ALTER TABLE `saving`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- Constraints for dumped tables
