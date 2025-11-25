@@ -152,34 +152,36 @@ function switchTips(language) {
     // Tips switched
 }
 
-// Function to fetch and display current programming language
+// Function to fetch and display current programming language from localStorage
 function fetchCurrentLanguage() {
-    fetch('../../../2be/get_current_language.php')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            const languageElement = document.getElementById('selectedLanguage');
-            if (data.currentLanguage) {
-                // Capitalize first letter and display
-                const language = data.currentLanguage.charAt(0).toUpperCase() + data.currentLanguage.slice(1);
-                languageElement.textContent = language;
-                
-                // Wait a bit for Monaco editor to be ready, then switch language
-                setTimeout(() => {
-                    switchLanguage(data.currentLanguage);
-                }, 100);
-            } else {
-                languageElement.textContent = 'Not set';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching current language:', error);
-            document.getElementById('selectedLanguage').textContent = 'Error loading';
-        });
+    const languageElement = document.getElementById('selectedLanguage');
+    
+    // Get language from localStorage, default to 'java' if not set
+    let currentLanguage = localStorage.getItem('selectedLanguage') || 'java';
+    
+    // Normalize the language value (handle variations)
+    currentLanguage = currentLanguage.toLowerCase().trim();
+    
+    // Handle common variations
+    if (currentLanguage === 'cpp' || currentLanguage === 'c++') {
+        currentLanguage = 'c++';
+    } else if (currentLanguage === 'csharp' || currentLanguage === 'c#' || currentLanguage === 'c #') {
+        currentLanguage = 'c#';
+    } else if (currentLanguage === 'java') {
+        currentLanguage = 'java';
+    } else {
+        // If language is not recognized, default to java
+        currentLanguage = 'java';
+    }
+    
+    // Capitalize first letter and display
+    const displayLanguage = currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
+    languageElement.textContent = displayLanguage;
+    
+    // Wait a bit for Monaco editor to be ready, then switch language
+    setTimeout(() => {
+        switchLanguage(currentLanguage);
+    }, 100);
 }
 
 // Load and display selected challenge data from localStorage

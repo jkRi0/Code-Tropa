@@ -43,9 +43,7 @@
     <div class="code-editor-div">
         <div id="monaco-container" style="width: 100%; height: 100%;"></div>
     </div>
-    <div class="output-terminal" id="outputTerminal">
-        Output/terminal
-    </div>
+    <div class="output-terminal" id="outputTerminal">OUTPUT TERMINAL >>></div>
 
     <!-- Mobile Controls -->
     <div class="mobile-controls">
@@ -89,6 +87,14 @@
 
     <!-- External JavaScript Files -->
     <!-- <script type="module" src="./1j/analysis_grammars/grammarLoader.js"></script> -->
+    <!-- Compiler files (loaded before codeAnalyzer.js) -->
+    <script src="compiler/javaCompiler2.js"></script>
+    <script src="compiler/cppCompiler2.js"></script>
+    <script src="codeSimulation.js"></script>
+
+    <script src="compiler/javaCompiler.js"></script>
+    <script src="compiler/cppCompiler.js"></script>
+    <script src="compiler/csharpCompiler.js"></script>
     <script src="codeAnalyzer.js"></script>
     <script src="monacoEditor.js"></script>
     <script src="challengeData.js"></script>

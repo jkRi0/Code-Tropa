@@ -1,23 +1,17 @@
 // Monaco Editor initialization and compilation functionality
 require.config({ paths: { 'vs': '../../../../node_modules/monaco-editor/min/vs' }});
 require(['vs/editor/editor.main'], function() {
-    // Use shared functions from challengeData.js (will be available globally)
-    
-    // Get current language from the page (will be set by language switching)
-    const selectedLanguageSpan = document.getElementById('selectedLanguage');
-    const currentLanguage = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
-    
+    // Initialize with default language - switchMonacoLanguage will update it when ready
     var editor = monaco.editor.create(document.getElementById('monaco-container'), {
-        value: window.getDefaultCode(currentLanguage),
-        language: window.getMonacoLanguage(currentLanguage),
+        value: window.getDefaultCode('java'),
+        language: window.getMonacoLanguage('java'),
         theme: "vs-dark",
         automaticLayout: true,
         fontSize: 16,
         minimap: { enabled: false }
     });
     window.editor = editor; // Make editor globally accessible
-
-    const outputTerminal = document.getElementById('outputTerminal');
+    window.monaco = monaco; // Make monaco globally accessible for language switching
 
     // Keep console.log and console.error in browser console only
     // (Removed redirection to output terminal to keep it clean for program output)
@@ -37,15 +31,25 @@ require(['vs/editor/editor.main'], function() {
         const language = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
         
         const result = window.compileCode(code, difficulty, language);
+
+        const output = window.simulateCode(code, language);
+
+        console.log('Simulation result:', output);
         console.log('Compilation result:', result); // Debug log
-        
-        if (result.success) {
+
+
+        // const astText = result.ast ? `\n\nAST (JavaParser):\n${result.ast}` : '';
+        if (result.success&&output[0]!=' ') {
             outputTerminal.style.color = '#00ff00';
-            outputTerminal.textContent = `Program Output:\n${result.output}`;
+            outputTerminal.textContent = `OUTPUT TERMINAL >>>${result.output}\n\n${output}`;
         } else {
             outputTerminal.style.color = '#ff0000';
             outputTerminal.textContent = "❌ Compile-time errors found:\n" + 
-                result.errors.map((err, i) => `${i + 1}. [${err.severity.toUpperCase()}] Line ${err.line}: ${err.title} - ${err.desc}`).join('\n');
+                result.errors.map((err, i) => `${i + 1}. [${err.severity.toUpperCase()}] Line ${err.line}: ${err.title} - ${err.desc}`).join('\n')+
+                '\n'+(output[0]==' '?output:'');
+            // if (astText) {
+            //     outputTerminal.textContent += astText;
+            // }
         }
     });
 });
