@@ -396,11 +396,54 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
         const result = window.compileCode(code, difficulty, language); // Pass difficulty and language
         window.hideLoadingAnimation(); // Hide loading animation
 
-        if (result.scoring) {
-            window.showScoringModal(result.scoring);
+        // Get solution code
+        const solutionCode = window.tahoSolutions && window.tahoSolutions[difficulty] ? window.tahoSolutions[difficulty] : null;
+        
+        // Calculate scoring if compilation succeeded and solution exists
+        let scoring = null;
+        if (result.success && solutionCode && typeof window.calculateScore === 'function') {
+            // Get outputs by executing both codes
+            let submittedOutput = result.output || '';
+            let solutionOutput = '';
             
-            // Get solution code for AI feedback
-            const solutionCode = window.tahoSolutions[difficulty];
+            // Try to get outputs from code execution
+            if (typeof window.simulateCode === 'function') {
+                try {
+                    // Get submitted code output
+                    const submittedResult = window.simulateCode(code, language);
+                    if (submittedResult && typeof submittedResult === 'string') {
+                        submittedOutput = submittedResult;
+                    } else if (submittedResult && submittedResult.outputs) {
+                        submittedOutput = submittedResult.outputs.join('\n');
+                    }
+                    
+                    // Get solution code output
+                    const solutionResult = window.simulateCode(solutionCode, language);
+                    if (solutionResult && typeof solutionResult === 'string') {
+                        solutionOutput = solutionResult;
+                    } else if (solutionResult && solutionResult.outputs) {
+                        solutionOutput = solutionResult.outputs.join('\n');
+                    }
+                } catch (e) {
+                    console.warn('Could not execute codes for output comparison:', e);
+                }
+            }
+            
+            // Calculate score
+            scoring = window.calculateScore(
+                code,
+                solutionCode,
+                difficulty,
+                submittedOutput,
+                solutionOutput
+            );
+        }
+
+        if (scoring) {
+            // Add scoring to result object for consistency
+            result.scoring = scoring;
+            
+            window.showScoringModal(scoring);
             
             // Save progress (upsert by higher score)
             try {
@@ -471,13 +514,22 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
                 document.getElementById('geminiAiFeedback').textContent = "Failed to load AI feedback.";
             });
         } else {
-            // Handle cases where scoring might not be available (e.g., compile errors)
-            // For now, we can just show a message in the output terminal
+            // Handle cases where scoring might not be available
             const outputTerminal = document.getElementById('outputTerminal');
             outputTerminal.style.color = '#ff0000'; // Make error message red
-            outputTerminal.textContent = "❌ Scoring not available due to compilation issues or missing solution.";
-            if (result.errors && result.errors.length > 0) {
-                outputTerminal.textContent += "\nErrors: " + result.errors.map(err => err.title + " at line " + err.line).join("; ");
+            
+            if (!result.success) {
+                // Compilation errors
+                outputTerminal.textContent = "❌ Compilation errors found. Please fix the errors before scoring.";
+                if (result.errors && result.errors.length > 0) {
+                    outputTerminal.textContent += "\nErrors: " + result.errors.map(err => err.title + " at line " + err.line).join("; ");
+                }
+            } else if (!solutionCode) {
+                // Missing solution
+                outputTerminal.textContent = "❌ Scoring not available: Solution code not found for this difficulty level.";
+            } else {
+                // Other issues
+                outputTerminal.textContent = "❌ Scoring not available. Please try again.";
             }
         }
     }, 1500); // Simulate 1.5 seconds of analysis time

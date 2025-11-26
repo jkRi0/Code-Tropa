@@ -120,9 +120,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update criteria scores display
         criteriaScoresDisplay.innerHTML = '';
+        const currentDifficulty = document.querySelector('#selectedDifficulty')?.textContent.toLowerCase() || 'easy';
+        const currentRubrics = rubricsCriteria[currentDifficulty] || rubricsCriteria.easy;
+        
         for (const criterion in scoringData.criteriaScores) {
             const scoreItem = document.createElement('div');
-            scoreItem.innerHTML = `<strong>${criterion.charAt(0).toUpperCase() + criterion.slice(1)}:</strong> ${scoringData.criteriaScores[criterion]}%`;
+            const rawScore = scoringData.criteriaScores[criterion];
+            const weight = currentRubrics[criterion]?.weight || 0;
+            const percentage = weight > 0 ? Math.round((rawScore / weight) * 100) : 0;
+            scoreItem.innerHTML = `<strong>${criterion.charAt(0).toUpperCase() + criterion.slice(1)}:</strong> ${percentage}% `;
             criteriaScoresDisplay.appendChild(scoreItem);
         }
         
@@ -275,12 +281,173 @@ document.addEventListener('DOMContentLoaded', function() {
     window.rubricsCriteria = rubricsCriteria; // Keep this for codeAnalyzer.js
 
     // Placeholder for Gemini API Key (User should replace this with their actual key)
-    const GEMINI_API_KEY = "AIzaSyB34RNQAx1CxGgjt6FJ6apeKSnsj2GJtf0";
-    // const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
+    // const GEMINI_API_KEY = "AIzaSyCcmfxMW3JBt457VnjHa3eY3oAdBddIOLI";
+    const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
+
+    /**
+     * Generate heuristic feedback based on scoring analysis
+     * @param {string} submittedCode - The submitted code
+     * @param {string} solutionCode - The solution code
+     * @param {string} difficulty - Difficulty level
+     * @param {object} scoringResult - Scoring result with analysis data
+     * @returns {string} Heuristic feedback message
+     */
+    function generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult) {
+        const feedback = [];
+        const analysis = scoringResult.analysis || {};
+        const criteriaScores = scoringResult.criteriaScores || {};
+        const rubrics = rubricsCriteria[difficulty] || rubricsCriteria.easy;
+        
+        // Analyze code patterns
+        const hasComments = /\/\/|\/\*/.test(submittedCode);
+        const hasLoops = /\b(for|while|do)\s*\(/.test(submittedCode);
+        const hasMethods = /\b(public|private|static)?\s*\w+\s+\w+\s*\(/.test(submittedCode);
+        const variableNames = (submittedCode.match(/\b(int|String|double|float|boolean|char)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*[=;]/g) || [])
+            .map(m => m.match(/\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*[=;]/)?.[1])
+            .filter(Boolean);
+        const meaningfulVars = variableNames.filter(v => v.length >= 3 && !/^[ijklmn]$/.test(v));
+        
+        // ACCURACY FEEDBACK
+        // Note: criteriaScores contain raw points, not percentages
+        const accuracyScore = criteriaScores.accuracy || 0;
+        const accuracyWeight = rubrics.accuracy.weight;
+        const accuracyPercent = accuracyWeight > 0 ? Math.round((accuracyScore / accuracyWeight) * 100) : 0;
+        
+        if (accuracyPercent === 100) {
+            feedback.push("✅ **Accuracy (100%)**: Excellent! Your code produces the correct output and matches the expected solution.");
+        } else if (accuracyPercent >= 80) {
+            feedback.push(`⚠️ **Accuracy (${accuracyPercent}%)**: Your code is mostly correct but has some differences.`);
+            if (analysis.accuracy) {
+                if (analysis.accuracy.outputSimilarity !== null && analysis.accuracy.outputSimilarity < 1.0) {
+                    const similarity = Math.round(analysis.accuracy.outputSimilarity * 100);
+                    feedback.push(`   - Output similarity: ${similarity}% - Your output is close but not exactly matching.`);
+                }
+                if (analysis.accuracy.codeSimilarity < 0.8) {
+                    feedback.push(`   - Code structure similarity: ${Math.round(analysis.accuracy.codeSimilarity * 100)}% - Consider reviewing the solution's approach.`);
+                }
+            }
+        } else if (accuracyPercent >= 50) {
+            feedback.push(`❌ **Accuracy (${accuracyPercent}%)**: Your code has significant differences from the expected solution.`);
+            if (analysis.accuracy) {
+                if (analysis.accuracy.outputSimilarity !== null) {
+                    feedback.push(`   - Output match: ${Math.round(analysis.accuracy.outputSimilarity * 100)}%`);
+                }
+                feedback.push(`   - Code structure: ${Math.round(analysis.accuracy.codeSimilarity * 100)}% similar`);
+            }
+            feedback.push("   - Review the solution code to understand the correct approach.");
+        } else {
+            feedback.push(`❌ **Accuracy (${accuracyPercent}%)**: Your code doesn't match the expected solution.`);
+            feedback.push("   - Please review the requirements and objectives of the challenge.");
+        }
+        
+        // EFFICIENCY FEEDBACK
+        // Note: criteriaScores contain raw points, not percentages
+        const efficiencyScore = criteriaScores.efficiency || 0;
+        const efficiencyWeight = rubrics.efficiency.weight;
+        const efficiencyPercent = efficiencyWeight > 0 ? Math.round((efficiencyScore / efficiencyWeight) * 100) : 0;
+        
+        if (efficiencyPercent === 100) {
+            feedback.push("✅ **Efficiency (100%)**: Great! Your code uses efficient algorithms and optimal complexity.");
+        } else if (efficiencyPercent >= 70) {
+            feedback.push(`⚠️ **Efficiency (${efficiencyPercent}%)**: Your code is reasonably efficient but could be improved.`);
+            if (analysis.efficiency) {
+                const complexityDiff = analysis.efficiency.complexityDiff;
+                if (complexityDiff > 0) {
+                    feedback.push(`   - Your code has ${complexityDiff} more complexity points than the solution.`);
+                    if (analysis.efficiency.submitted.loops > analysis.efficiency.solution.loops) {
+                        feedback.push(`   - Consider reducing the number of loops (you have ${analysis.efficiency.submitted.loops} loops).`);
+                    }
+                    if (analysis.efficiency.submitted.nestedDepth > analysis.efficiency.solution.nestedDepth) {
+                        feedback.push(`   - Your code has deeper nesting (depth: ${analysis.efficiency.submitted.nestedDepth}). Try to flatten the structure.`);
+                    }
+                }
+            }
+        } else {
+            feedback.push(`❌ **Efficiency (${efficiencyPercent}%)**: Your code has efficiency issues.`);
+            if (analysis.efficiency) {
+                feedback.push(`   - Complexity: ${analysis.efficiency.submitted.complexity} (solution: ${analysis.efficiency.solution.complexity})`);
+                if (analysis.efficiency.submitted.loops > 3) {
+                    feedback.push(`   - Too many loops (${analysis.efficiency.submitted.loops}). Consider combining or optimizing loops.`);
+                }
+                if (analysis.efficiency.submitted.nestedDepth > 3) {
+                    feedback.push(`   - Deep nesting (${analysis.efficiency.submitted.nestedDepth} levels). Break into smaller functions.`);
+                }
+            }
+        }
+        
+        // READABILITY FEEDBACK
+        // Note: criteriaScores contain raw points, not percentages
+        const readabilityScore = criteriaScores.readability || 0;
+        const readabilityWeight = rubrics.readability.weight;
+        const readabilityPercent = readabilityWeight > 0 ? Math.round((readabilityScore / readabilityWeight) * 100) : 0;
+        
+        if (readabilityPercent === 100) {
+            feedback.push("✅ **Readability (100%)**: Excellent! Your code is well-documented and follows clean code practices.");
+        } else if (readabilityPercent >= 70) {
+            feedback.push(`⚠️ **Readability (${readabilityPercent}%)**: Your code is readable but could use improvements.`);
+            if (analysis.readability) {
+                if (!analysis.readability.submitted.hasComments) {
+                    feedback.push("   - Add comments to explain your code logic.");
+                } else if (analysis.readability.submitted.commentRatio < 0.1) {
+                    feedback.push(`   - Low comment ratio (${Math.round(analysis.readability.submitted.commentRatio * 100)}%). Add more meaningful comments.`);
+                }
+                if (analysis.readability.submitted.cleanCodeScore < 30) {
+                    feedback.push("   - Improve code organization and naming conventions.");
+                }
+            }
+        } else {
+            feedback.push(`❌ **Readability (${readabilityPercent}%)**: Your code needs significant readability improvements.`);
+            if (analysis.readability) {
+                if (!analysis.readability.submitted.hasComments) {
+                    feedback.push("   - ❌ Missing comments: Add comments to explain what your code does.");
+                }
+                if (meaningfulVars.length < variableNames.length * 0.7) {
+                    feedback.push(`   - ⚠️ Variable naming: Use more descriptive names (${meaningfulVars.length}/${variableNames.length} variables have meaningful names).`);
+                }
+                if (analysis.readability.submitted.cleanCodeScore < 20) {
+                    feedback.push("   - Improve code formatting, indentation, and structure.");
+                }
+            }
+        }
+        
+        // CODE PATTERNS FEEDBACK
+        const patterns = [];
+        if (hasLoops && !/\bfor\s*\([^)]*:\s*/.test(submittedCode)) {
+            patterns.push("Consider using enhanced for-loops where appropriate.");
+        }
+        if (hasMethods && submittedCode.split(/\{/).length > 5) {
+            patterns.push("Your code has many nested blocks - consider breaking into smaller methods.");
+        }
+        if (variableNames.length > 0 && meaningfulVars.length / variableNames.length < 0.5) {
+            patterns.push("Use more descriptive variable names (e.g., 'userName' instead of 'n').");
+        }
+        if (!hasComments && submittedCode.length > 200) {
+            patterns.push("Add comments to explain complex logic sections.");
+        }
+        
+        if (patterns.length > 0) {
+            feedback.push("\n💡 **Suggestions**:");
+            patterns.forEach(p => feedback.push(`   - ${p}`));
+        }
+        
+        // OVERALL SUMMARY
+        const totalScore = scoringResult.totalScore || 0;
+        if (totalScore >= 80) {
+            feedback.push("\n🎉 **Overall**: Great work! You've passed the challenge. Keep practicing to improve further!");
+        } else if (totalScore >= 60) {
+            feedback.push("\n📝 **Overall**: You're on the right track! Focus on the areas mentioned above to improve your score.");
+        } else {
+            feedback.push("\n📚 **Overall**: Review the solution code and requirements. Practice the concepts and try again!");
+        }
+        
+        return feedback.join('\n');
+    }
 
     async function getGeminiFeedback(submittedCode, solutionCode, difficulty, scoringResult) {
+        // Try Gemini first, fall back to heuristic feedback
         if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-            return "Please replace 'YOUR_GEMINI_API_KEY_HERE' in modalManager.js with your actual Gemini API key to receive AI feedback.";
+            // No API key, use heuristic feedback
+            return generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
         }
 
         const prompt = `
@@ -320,14 +487,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!response.ok) {
                 const errorData = await response.json();
                 console.error("Gemini API error:", errorData);
-                return `Error generating AI feedback: ${errorData.error.message || response.statusText}`;
+                // Fall back to heuristic feedback on error
+                return generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
             }
 
             const data = await response.json();
             return data.candidates[0].content.parts[0].text;
         } catch (error) {
             console.error("Error calling Gemini API:", error);
-            return `Failed to get AI feedback: ${error.message}`;
+            // Fall back to heuristic feedback on error
+            return generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
         }
     }
 
