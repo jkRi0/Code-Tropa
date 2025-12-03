@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Monaco Editor script -->
+    <script src="../../../../node_modules/monaco-editor/min/vs/loader.js"></script>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-content">
+            <div class="splash-level" id="splashLevel">Loading...</div>
+            <div class="splash-difficulty" id="splashDifficulty">Loading...</div>
+            <div class="splash-subtitle">Challenge Starting...</div>
+        </div>
+    </div>
+    
+    <!-- Verification Panel -->
+    <div class="verification-panel" id="verificationPanel">
+        <h2>Challenge Selection Verification</h2>
+        <div class="verification-info">
+            <p><strong>Selected Level:</strong> <span id="selectedLevel">Loading...</span></p>
+            <p><strong>Selected Difficulty:</strong> <span id="selectedDifficulty">Loading...</span></p>
+            <p><strong>Programming Language:</strong> <span id="selectedLanguage">Loading...</span></p>
+            <p><strong>Selected At:</strong> <span id="selectedTime">Loading...</span></p>
+        </div>
+    </div>
+    
+    <div class="image-container">
+        <button id="backButton" class="back-btn">← Back</button>
+        <img src="" alt="Challenge Image">
+        <div class="objectives-container"></div>
+        <div class="control-buttons">
+            <button id="runCodeBtn" class="control-btn">Run Code</button>
+            <button id="submitCodeBtn" class="control-btn">Submit Code</button>
+            <button id="showRubricsBtn" class="control-btn">Show Rubrics</button>
+            <button id="showTipsBtn" class="control-btn">Show Tips</button>
+        </div>
+    </div>
+    <div class="code-editor-div">
+        <div id="monaco-container" style="width: 100%; height: 100%;"></div>
+    </div>
+    <div class="output-terminal" id="outputTerminal">OUTPUT TERMINAL >>></div>
+
+    <!-- Badge Display Container -->
+    <div class="badge-container" id="badgeContainer" style="display: none;">
+        <div class="badge-display">
+            <span class="close-badge" id="closeBadge">&times;</span>
+            <img src="" alt="Episode Badge" class="badge-image" id="badgeImage">
+            <div class="badge-text">
+                <h3>CONGRATULATIONS!</h3>
+                <p id="badgeMessage">You've earned the Episode Badge!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Controls -->
+    <div class="mobile-controls">
+        <button class="toggle-btn toggle-editor-btn" id="toggleEditor">Editor</button>
+        <button class="toggle-btn toggle-terminal-btn" id="toggleTerminal">Terminal</button>
+    </div>
+
+    <!-- Rubrics Modal -->
+    <div id="rubricsModal" class="rubrics-modal">
+        <div class="rubrics-content">
+            <span class="close-rubrics">&times;</span>
+            <h2>Code Submission Rubrics</h2>
+            <div class="rubrics-grid">
+                <div class="rubrics-header">
+                    <div>Criteria</div>
+                    <div>Weight</div>
+                    <div>Description</div>
+                </div>
+                <div class="rubrics-body">
+                    <!-- Rubrics rows will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="total-score">
+                <p>Total Possible Score: <span id="totalPossibleScore">100</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips Modal -->
+    <div id="tipsModal" class="tips-modal">
+        <div class="tips-content">
+            <span class="close-tips">&times;</span>
+            <h2>Challenge Tip</h2>
+            <div id="tipQuestion" class="tip-question"></div>
+            <div id="tipOptions" class="tip-options"></div>
+            <button id="submitAnswerBtn" class="btn-submit-answer">Submit Answer</button>
+            <div id="tipFeedback" class="tip-feedback"></div>
+            <div id="tipContent" class="tip-content"></div>
+        </div>
+    </div>
+
+    <!-- External JavaScript Files -->
+    <!-- <script type="module" src="./1j/analysis_grammars/grammarLoader.js"></script> -->
+    <!-- Compiler files (loaded before codeAnalyzer.js) -->
+    <script src="compiler/javaCompiler2.js"></script>
+    <script src="compiler/cppCompiler2.js"></script>
+    <script src="compiler/csharpCompiler2.js"></script>
+    <script src="codeSimulation.js"></script>
+
+    <script src="compiler/javaCompiler.js"></script>
+    <script src="compiler/cppCompiler.js"></script>
+    <script src="compiler/csharpCompiler.js"></script>
+    <script src="codeAnalyzer.js"></script>
+    <script src="monacoEditor.js"></script>
+    <script src="challengeData.js"></script>
+    <script src="modalManager.js"></script>
+    <script src="tips.js"></script>
+    <script src="mobileControls.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSelectedChallengeData();
+            const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
+            if (selectedData && selectedData.level) {
+                const levelNumber = selectedData.level.replace('lev', ''); // Extract only the number
+                // Remove any existing scripts first
+                removeExistingScripts();
+                // Load with default Java language initially, will be switched when language is fetched
+                loadLevelScripts(levelNumber, 'java');
+            }
+            
+            // Add click handler to close badge when clicked
+            const badgeContainer = document.getElementById('badgeContainer');
+            const closeBadgeBtn = document.getElementById('closeBadge');
+            
+            if (badgeContainer) {
+                badgeContainer.addEventListener('click', function(e) {
+                    if (e.target === badgeContainer) {
+                        badgeContainer.style.display = 'none';
+                    }
+                });
+            }
+            
+            if (closeBadgeBtn) {
+                closeBadgeBtn.addEventListener('click', function() {
+                    badgeContainer.style.display = 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
+<!-- Scoring Modal -->
+<div id="scoringModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeScoringModal">&times;</span>
+        <h2>Scoring Results</h2>
+        <div class="score-details">
+            <p>Total Score: <span id="finalTotalScore"></span>%</p>
+            <div id="passFailStatus" class="pass-fail-status"></div>
+            <div id="criteriaScoresDisplay">
+                <!-- Individual criteria scores will be displayed here -->
+            </div>
+        </div>
+        <div class="ai-feedback-container">
+            <h3>Gemini AI Feedback</h3>
+            <div id="geminiAiFeedback">Loading AI Feedback...</div>
+        </div>
+        <div class="scoring-actions" id="scoringActions">
+            <!-- Action buttons will be populated by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Loading Animation -->
+<div id="loadingAnimation" class="loading-animation">
+    <div class="spinner"></div>
+    <p>Analyzing code...</p>
+</div>

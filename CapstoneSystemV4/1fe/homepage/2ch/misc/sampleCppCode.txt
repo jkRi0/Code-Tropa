@@ -1,0 +1,138 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Method returning a value
+// int addNumbers(int a, int b) {
+//     return a + b;
+// }
+
+// // Method with no return
+// void printMessage(const string& msg) {
+//     cout << "Message: " << msg << endl;
+// }
+
+// string getMessage() {
+//     return "This is a message from the method!";
+// }
+
+int main() {
+
+    // === PRIMITIVES ===
+    int8_t byteVar = 10;     // C++ doesn't have exact 'byte', so int8_t is closest
+    short shortVar = 300;
+    int intVar = 50000;
+    long longVar = 90000000000LL;
+
+    float floatVar = 3.14f;
+    double doubleVar = 3.14159265359;
+
+    char charVar = 'A';
+    bool boolVar = true;
+
+    // === NON-PRIMITIVES ===
+    string stringVar = "Hello Java!";
+    int wrapperInt = 42;
+    double wrapperDouble = 10.5;
+    bool wrapperBoolean = false;
+
+    // Print primitives
+    cout << "=== PRIMITIVES ===" << endl;
+    cout << "byte: " << (int)byteVar << endl; // Cast to int for readable output
+    cout << "short: " << shortVar << endl;
+    cout << "int: " << intVar << endl;
+    cout << "long: " << longVar << endl;
+    cout << "float: " << floatVar << endl;
+    cout << "double: " << doubleVar << endl;
+    cout << "char: " << charVar << endl;
+    cout << "boolean: " << boolalpha << boolVar << endl;
+
+    cout << "\n=== NON-PRIMITIVES ===" << endl;
+    cout << "String: " << stringVar << endl;
+    cout << "Integer wrapper: " << wrapperInt << endl;
+    cout << "Double wrapper: " << wrapperDouble << endl;
+    cout << "Boolean wrapper: " << boolalpha << wrapperBoolean << endl;
+
+    cout << "\n123" << "456" << endl;
+    cout << " 123" << 456;
+    cout << (123 + 456) << endl;
+
+    // === ARRAYS ===
+    int numArray[] = {1, 2, 3, 4, 5};
+    string strArray[] = {"One", "Two", "Three"};
+    int matrix[2][3] = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+
+    cout << "\n1D Array: ";
+    for (int num : numArray) cout << num << " ";
+    cout << endl;
+
+    cout << "String Array: ";
+    for (const string& s : strArray) cout << s << " ";
+    cout << endl;
+
+    cout << "2D Array:" << endl;
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 3; j++) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    // === CONTROL FLOW ===
+    int value = 10;
+    if (value > 5) {
+        cout << "\nValue is greater than 5" << endl;
+    } else {
+        cout << "\nValue is 5 or less" << endl;
+    }
+
+    int day = 3;
+    switch (day) {
+        case 1: cout << "Monday" << endl; break;
+        case 2: cout << "Tuesday" << endl; break;
+        case 3: cout << "Wednesday" << endl; break;
+        default: cout << "Another day" << endl;
+    }
+
+    // === LOOPS ===
+    cout << "\nFor Loop: ";
+    for (int i = 1; i <= 5; i++) cout << i << " ";
+    cout << endl;
+
+    cout << "While Loop: ";
+    int w = 1;
+    while (w <= 5) {
+        cout << w << " ";
+        w++;
+    }
+    cout << endl;
+
+    cout << "Do-While Loop: ";
+    int d = 1;
+    do {
+        cout << d << " ";
+        d++;
+    } while (d <= 5);
+    cout << endl;
+
+    cout << "Enhanced For Loop (numArray): ";
+    for (int num : numArray) cout << num << " ";
+    cout << endl;
+
+    // === SIMPLE CALCULATION INSIDE MAIN ===
+    int sum = 10 + 20;
+    cout << "\nSum of 10 + 20 = " << sum << endl;
+
+    // string message = "This is a message inside main!";
+    // cout << message << endl;
+
+    // cout << "Sum via method: " << addNumbers(10, 20) << endl;
+    // printMessage("This is a custom message!");
+
+    // cout << "Message from method: " << getMessage() << endl;
+
+    return 0;
+}

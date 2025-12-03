@@ -1,0 +1,170 @@
+public class DataTypesDemo {
+
+    // Primitive data type declarations
+    byte byteVar = 10;
+    short shortVar = 300;
+    int intVar = 50000;
+    long longVar = 90000000000L;
+
+    float floatVar = 3.14f;
+    double doubleVar = 3.14159265359;
+
+    char charVar = 'A';
+    boolean boolVar = true;
+
+    // Non-primitive types
+    String stringVar = "Hello Java!";
+    Integer wrapperInt = 42;
+    Double wrapperDouble = 10.5;
+    Boolean wrapperBoolean = false;
+
+    // Arrays
+    int[] numArray = {1, 2, 3, 4, 5};
+    String[] strArray = {"One", "Two", "Three"};
+
+    int[][] matrix = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+
+    int[] numbers;
+    numbers = new int[5];   // now the array has size 5
+    int[] numbers1 = new int[5];
+    numbers[0]=23;
+    
+    for(int i=0;i<numbers.length;i++){
+        System.out.println(numbers[i]);
+    }
+
+    public static void main(String[] args) {
+        DataTypesDemo demo = new DataTypesDemo();
+        demo.showPrimitives();
+        demo.showArrays();
+        demo.showControlFlow();
+        demo.showLoops();
+
+        System.out.println("Sum via method: " + demo.addNumbers(10, 20));
+        demo.printMessage("This is a custom message!");
+    }
+
+    // Demonstrating primitive data types
+    void showPrimitives() {
+        System.out.println("=== PRIMITIVES ===");
+        System.out.println("byte: " + byteVar);
+        System.out.println("short: " + shortVar);
+        System.out.println("int: " + intVar);
+        System.out.println("long: " + longVar);
+        System.out.println("float: " + floatVar);
+        System.out.println("double: " + doubleVar);
+        System.out.println("char: " + charVar);
+        System.out.println("boolean: " + boolVar);
+
+        System.out.println("\n=== NON-PRIMITIVES ===");
+        System.out.println("String: " + stringVar);
+        System.out.println("Integer wrapper: " + wrapperInt);
+        System.out.println("Double wrapper: " + wrapperDouble);
+        System.out.println("Boolean wrapper: " + wrapperBoolean);
+    }
+
+    // Demonstrating arrays
+    void showArrays() {
+        System.out.println("\n=== ARRAYS ===");
+
+        System.out.print("1D Array: ");
+        for (int num : numArray) {
+            System.out.print(num + " ");
+        }
+        System.out.println();
+
+        System.out.print("String Array: ");
+        for (String s : strArray) {
+            System.out.print(s + " ");
+        }
+        System.out.println();
+
+        System.out.println("2D Array:");
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    // Demonstrating control statements
+    void showControlFlow() {
+        System.out.println("\n=== CONTROL FLOW ===");
+
+        int value = 10;
+
+        // If-Else
+        if (value > 5) {
+            System.out.println("Value is greater than 5");
+        } else {
+            System.out.println("Value is 5 or less");
+        }
+
+        // Switch
+        int day = 3;
+        switch (day) {
+            case 1:
+                System.out.println("Monday");
+                break;
+            case 2:
+                System.out.println("Tuesday");
+                break;
+            case 3:
+                System.out.println("Wednesday");
+                break;
+            default:
+                System.out.println("Another day");
+        }
+    }
+
+    // Demonstrating loops
+    void showLoops() {
+        System.out.println("\n=== LOOPS ===");
+
+        // For Loop
+        System.out.print("For Loop: ");
+        for (int i = 1; i <= 5; i++) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+
+        // While Loop
+        System.out.print("While Loop: ");
+        int w = 1;
+        while (w <= 5) {
+            System.out.print(w + " ");
+            w++;
+        }
+        System.out.println();
+
+        // Do-While Loop
+        System.out.print("Do-While Loop: ");
+        int d = 1;
+        do {
+            System.out.print(d + " ");
+            d++;
+        } while (d <= 5);
+        System.out.println();
+
+        // Enhanced For Loop
+        System.out.print("Enhanced For (numArray): ");
+        for (int num : numArray) {
+            System.out.print(num + " ");
+        }
+        System.out.println();
+    }
+
+    // Method returning a value
+    int addNumbers(int a, int b) {
+        return a + b;
+    }
+
+    // Method with no return
+    void printMessage(String msg) {
+        System.out.println("Message: " + msg);
+    }
+}

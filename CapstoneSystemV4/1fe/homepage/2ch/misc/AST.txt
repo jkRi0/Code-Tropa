@@ -1,0 +1,1557 @@
+compilationUnit: <EOF>
+  typeDeclaration
+    classOrInterfaceModifier: public
+    classDeclaration: class
+      identifier: DataTypesDemo
+      classBody: { }
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType
+                primitiveType: byte
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: byteVar
+                  variableInitializer
+                    expression
+                      primary
+                        literal
+                          integerLiteral: 10
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType
+                primitiveType: short
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: shortVar
+                  variableInitializer
+                    expression
+                      primary
+                        literal
+                          integerLiteral: 300
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType
+                primitiveType: int
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: intVar
+                  variableInitializer
+                    expression
+                      primary
+                        literal
+                          integerLiteral: 50000
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType
+                primitiveType: long
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: longVar
+                  variableInitializer
+                    expression
+                      primary
+                        literal
+                          integerLiteral: 90000000000L
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType
+                primitiveType: float
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: floatVar
+                  variableInitializer
+                    expression
+                      primary
+                        literal
+                          floatLiteral: 3.14f
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType
+                primitiveType: double
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: doubleVar
+                  variableInitializer
+                    expression
+                      primary
+                        literal
+                          floatLiteral: 3.14159265359
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType
+                primitiveType: char
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: charVar
+                  variableInitializer
+                    expression
+                      primary
+                        literal: 'A'
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType
+                primitiveType: boolean
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: boolVar
+                  variableInitializer
+                    expression
+                      primary
+                        literal: true
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType
+                classOrInterfaceType
+                  classType
+                    typeIdentifier: String
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: stringVar
+                  variableInitializer
+                    expression
+                      primary
+                        literal: "Hello Java!"
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType
+                classOrInterfaceType
+                  classType
+                    typeIdentifier: Integer
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: wrapperInt
+                  variableInitializer
+                    expression
+                      primary
+                        literal
+                          integerLiteral: 42
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType
+                classOrInterfaceType
+                  classType
+                    typeIdentifier: Double
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: wrapperDouble
+                  variableInitializer
+                    expression
+                      primary
+                        literal
+                          floatLiteral: 10.5
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType
+                classOrInterfaceType
+                  classType
+                    typeIdentifier: Boolean
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: wrapperBoolean
+                  variableInitializer
+                    expression
+                      primary
+                        literal: false
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType: [ ]
+                primitiveType: int
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: numArray
+                  variableInitializer
+                    arrayInitializer: { , , , , }
+                      variableInitializer
+                        expression
+                          primary
+                            literal
+                              integerLiteral: 1
+                      variableInitializer
+                        expression
+                          primary
+                            literal
+                              integerLiteral: 2
+                      variableInitializer
+                        expression
+                          primary
+                            literal
+                              integerLiteral: 3
+                      variableInitializer
+                        expression
+                          primary
+                            literal
+                              integerLiteral: 4
+                      variableInitializer
+                        expression
+                          primary
+                            literal
+                              integerLiteral: 5
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType: [ ]
+                classOrInterfaceType
+                  classType
+                    typeIdentifier: String
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: strArray
+                  variableInitializer
+                    arrayInitializer: { , , }
+                      variableInitializer
+                        expression
+                          primary
+                            literal: "One"
+                      variableInitializer
+                        expression
+                          primary
+                            literal: "Two"
+                      variableInitializer
+                        expression
+                          primary
+                            literal: "Three"
+        classBodyDeclaration
+          memberDeclaration
+            fieldDeclaration: ;
+              typeType: [ ] [ ]
+                primitiveType: int
+              variableDeclarators
+                variableDeclarator: =
+                  variableDeclaratorId
+                    identifier: matrix
+                  variableInitializer
+                    arrayInitializer: { , }
+                      variableInitializer
+                        arrayInitializer: { , , }
+                          variableInitializer
+                            expression
+                              primary
+                                literal
+                                  integerLiteral: 1
+                          variableInitializer
+                            expression
+                              primary
+                                literal
+                                  integerLiteral: 2
+                          variableInitializer
+                            expression
+                              primary
+                                literal
+                                  integerLiteral: 3
+                      variableInitializer
+                        arrayInitializer: { , , }
+                          variableInitializer
+                            expression
+                              primary
+                                literal
+                                  integerLiteral: 4
+                          variableInitializer
+                            expression
+                              primary
+                                literal
+                                  integerLiteral: 5
+                          variableInitializer
+                            expression
+                              primary
+                                literal
+                                  integerLiteral: 6
+        classBodyDeclaration
+          modifier
+            classOrInterfaceModifier: public
+          modifier
+            classOrInterfaceModifier: static
+          memberDeclaration
+            methodDeclaration
+              typeTypeOrVoid: void
+              identifier: main
+              formalParameters
+                null
+                  formalParameter
+                    typeType: [ ]
+                      classOrInterfaceType
+                        classType
+                          typeIdentifier: String
+                    variableDeclaratorId
+                      identifier: args
+              methodBody
+                block: { }
+                  blockStatement: ;
+                    localVariableDeclaration
+                      typeType
+                        classOrInterfaceType
+                          classType
+                            typeIdentifier: DataTypesDemo
+                      variableDeclarators
+                        variableDeclarator: =
+                          variableDeclaratorId
+                            identifier: demo
+                          variableInitializer
+                            expression: new
+                              creator
+                                createdName
+                                  identifier: DataTypesDemo
+                                classCreatorRest
+                                  arguments
+                                    null
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression
+                          primary
+                            identifier: demo
+                        methodCall
+                          identifier: showPrimitives
+                          arguments
+                            null
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression
+                          primary
+                            identifier: demo
+                        methodCall
+                          identifier: showArrays
+                          arguments
+                            null
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression
+                          primary
+                            identifier: demo
+                        methodCall
+                          identifier: showControlFlow
+                          arguments
+                            null
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression
+                          primary
+                            identifier: demo
+                        methodCall
+                          identifier: showLoops
+                          arguments
+                            null
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "Sum via method: "
+                                  expression: .
+                                    expression
+                                      primary
+                                        identifier: demo
+                                    methodCall
+                                      identifier: addNumbers
+                                      arguments
+                                        null
+                                          expressionList: ,
+                                            expression
+                                              primary
+                                                literal
+                                                  integerLiteral: 10
+                                            expression
+                                              primary
+                                                literal
+                                                  integerLiteral: 20
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression
+                          primary
+                            identifier: demo
+                        methodCall
+                          identifier: printMessage
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "This is a custom message!"
+        classBodyDeclaration
+          memberDeclaration
+            methodDeclaration
+              typeTypeOrVoid: void
+              identifier: showPrimitives
+              formalParameters
+                null
+              methodBody
+                block: { }
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "=== PRIMITIVES ==="
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "byte: "
+                                  expression
+                                    primary
+                                      identifier: byteVar
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "short: "
+                                  expression
+                                    primary
+                                      identifier: shortVar
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "int: "
+                                  expression
+                                    primary
+                                      identifier: intVar
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "long: "
+                                  expression
+                                    primary
+                                      identifier: longVar
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "float: "
+                                  expression
+                                    primary
+                                      identifier: floatVar
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "double: "
+                                  expression
+                                    primary
+                                      identifier: doubleVar
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "char: "
+                                  expression
+                                    primary
+                                      identifier: charVar
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "boolean: "
+                                  expression
+                                    primary
+                                      identifier: boolVar
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "\n=== NON-PRIMITIVES ==="
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "String: "
+                                  expression
+                                    primary
+                                      identifier: stringVar
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "Integer wrapper: "
+                                  expression
+                                    primary
+                                      identifier: wrapperInt
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "Double wrapper: "
+                                  expression
+                                    primary
+                                      identifier: wrapperDouble
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "Boolean wrapper: "
+                                  expression
+                                    primary
+                                      identifier: wrapperBoolean
+        classBodyDeclaration
+          memberDeclaration
+            methodDeclaration
+              typeTypeOrVoid: void
+              identifier: showArrays
+              formalParameters
+                null
+              methodBody
+                block: { }
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "\n=== ARRAYS ==="
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: print
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "1D Array: "
+                  blockStatement
+                    statement: for
+                      null
+                        forControl
+                          enhancedForControl: :
+                            typeType
+                              primitiveType: int
+                            variableDeclaratorId
+                              identifier: num
+                            expression
+                              primary
+                                identifier: numArray
+                      statement
+                        block: { }
+                          blockStatement
+                            statement: ;
+                              expression: .
+                                expression: .
+                                  expression
+                                    primary
+                                      identifier: System
+                                  identifier: out
+                                methodCall
+                                  identifier: print
+                                  arguments
+                                    null
+                                      expressionList
+                                        expression: +
+                                          expression
+                                            primary
+                                              identifier: num
+                                          expression
+                                            primary
+                                              literal: " "
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: print
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "String Array: "
+                  blockStatement
+                    statement: for
+                      null
+                        forControl
+                          enhancedForControl: :
+                            typeType
+                              classOrInterfaceType
+                                classType
+                                  typeIdentifier: String
+                            variableDeclaratorId
+                              identifier: s
+                            expression
+                              primary
+                                identifier: strArray
+                      statement
+                        block: { }
+                          blockStatement
+                            statement: ;
+                              expression: .
+                                expression: .
+                                  expression
+                                    primary
+                                      identifier: System
+                                  identifier: out
+                                methodCall
+                                  identifier: print
+                                  arguments
+                                    null
+                                      expressionList
+                                        expression: +
+                                          expression
+                                            primary
+                                              identifier: s
+                                          expression
+                                            primary
+                                              literal: " "
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "2D Array:"
+                  blockStatement
+                    statement: for
+                      null
+                        forControl: ; ;
+                          forInit
+                            localVariableDeclaration
+                              typeType
+                                primitiveType: int
+                              variableDeclarators
+                                variableDeclarator: =
+                                  variableDeclaratorId
+                                    identifier: i
+                                  variableInitializer
+                                    expression
+                                      primary
+                                        literal
+                                          integerLiteral: 0
+                          expression: <
+                            expression
+                              primary
+                                identifier: i
+                            expression: .
+                              expression
+                                primary
+                                  identifier: matrix
+                              identifier: length
+                          expressionList
+                            expression: ++
+                              expression
+                                primary
+                                  identifier: i
+                      statement
+                        block: { }
+                          blockStatement
+                            statement: for
+                              null
+                                forControl: ; ;
+                                  forInit
+                                    localVariableDeclaration
+                                      typeType
+                                        primitiveType: int
+                                      variableDeclarators
+                                        variableDeclarator: =
+                                          variableDeclaratorId
+                                            identifier: j
+                                          variableInitializer
+                                            expression
+                                              primary
+                                                literal
+                                                  integerLiteral: 0
+                                  expression: <
+                                    expression
+                                      primary
+                                        identifier: j
+                                    expression: .
+                                      expression: [ ]
+                                        expression
+                                          primary
+                                            identifier: matrix
+                                        expression
+                                          primary
+                                            identifier: i
+                                      identifier: length
+                                  expressionList
+                                    expression: ++
+                                      expression
+                                        primary
+                                          identifier: j
+                              statement
+                                block: { }
+                                  blockStatement
+                                    statement: ;
+                                      expression: .
+                                        expression: .
+                                          expression
+                                            primary
+                                              identifier: System
+                                          identifier: out
+                                        methodCall
+                                          identifier: print
+                                          arguments
+                                            null
+                                              expressionList
+                                                expression: +
+                                                  expression: [ ]
+                                                    expression: [ ]
+                                                      expression
+                                                        primary
+                                                          identifier: matrix
+                                                      expression
+                                                        primary
+                                                          identifier: i
+                                                    expression
+                                                      primary
+                                                        identifier: j
+                                                  expression
+                                                    primary
+                                                      literal: " "
+                          blockStatement
+                            statement: ;
+                              expression: .
+                                expression: .
+                                  expression
+                                    primary
+                                      identifier: System
+                                  identifier: out
+                                methodCall
+                                  identifier: println
+                                  arguments
+                                    null
+        classBodyDeclaration
+          memberDeclaration
+            methodDeclaration
+              typeTypeOrVoid: void
+              identifier: showControlFlow
+              formalParameters
+                null
+              methodBody
+                block: { }
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "\n=== CONTROL FLOW ==="
+                  blockStatement: ;
+                    localVariableDeclaration
+                      typeType
+                        primitiveType: int
+                      variableDeclarators
+                        variableDeclarator: =
+                          variableDeclaratorId
+                            identifier: value
+                          variableInitializer
+                            expression
+                              primary
+                                literal
+                                  integerLiteral: 10
+                  blockStatement
+                    statement: if else
+                      null
+                        expression: >
+                          expression
+                            primary
+                              identifier: value
+                          expression
+                            primary
+                              literal
+                                integerLiteral: 5
+                      statement
+                        block: { }
+                          blockStatement
+                            statement: ;
+                              expression: .
+                                expression: .
+                                  expression
+                                    primary
+                                      identifier: System
+                                  identifier: out
+                                methodCall
+                                  identifier: println
+                                  arguments
+                                    null
+                                      expressionList
+                                        expression
+                                          primary
+                                            literal: "Value is greater than 5"
+                      statement
+                        block: { }
+                          blockStatement
+                            statement: ;
+                              expression: .
+                                expression: .
+                                  expression
+                                    primary
+                                      identifier: System
+                                  identifier: out
+                                methodCall
+                                  identifier: println
+                                  arguments
+                                    null
+                                      expressionList
+                                        expression
+                                          primary
+                                            literal: "Value is 5 or less"
+                  blockStatement: ;
+                    localVariableDeclaration
+                      typeType
+                        primitiveType: int
+                      variableDeclarators
+                        variableDeclarator: =
+                          variableDeclaratorId
+                            identifier: day
+                          variableInitializer
+                            expression
+                              primary
+                                literal
+                                  integerLiteral: 3
+                  blockStatement
+                    statement: switch { }
+                      null
+                        expression
+                          primary
+                            identifier: day
+                      switchBlockStatementGroup: :
+                        switchLabel: case
+                          expression
+                            primary
+                              literal
+                                integerLiteral: 1
+                        blockStatement
+                          statement: ;
+                            expression: .
+                              expression: .
+                                expression
+                                  primary
+                                    identifier: System
+                                identifier: out
+                              methodCall
+                                identifier: println
+                                arguments
+                                  null
+                                    expressionList
+                                      expression
+                                        primary
+                                          literal: "Monday"
+                        blockStatement
+                          statement: break ;
+                      switchBlockStatementGroup: :
+                        switchLabel: case
+                          expression
+                            primary
+                              literal
+                                integerLiteral: 2
+                        blockStatement
+                          statement: ;
+                            expression: .
+                              expression: .
+                                expression
+                                  primary
+                                    identifier: System
+                                identifier: out
+                              methodCall
+                                identifier: println
+                                arguments
+                                  null
+                                    expressionList
+                                      expression
+                                        primary
+                                          literal: "Tuesday"
+                        blockStatement
+                          statement: break ;
+                      switchBlockStatementGroup: :
+                        switchLabel: case
+                          expression
+                            primary
+                              literal
+                                integerLiteral: 3
+                        blockStatement
+                          statement: ;
+                            expression: .
+                              expression: .
+                                expression
+                                  primary
+                                    identifier: System
+                                identifier: out
+                              methodCall
+                                identifier: println
+                                arguments
+                                  null
+                                    expressionList
+                                      expression
+                                        primary
+                                          literal: "Wednesday"
+                        blockStatement
+                          statement: break ;
+                      switchBlockStatementGroup: :
+                        switchLabel: default
+                        blockStatement
+                          statement: ;
+                            expression: .
+                              expression: .
+                                expression
+                                  primary
+                                    identifier: System
+                                identifier: out
+                              methodCall
+                                identifier: println
+                                arguments
+                                  null
+                                    expressionList
+                                      expression
+                                        primary
+                                          literal: "Another day"
+        classBodyDeclaration
+          memberDeclaration
+            methodDeclaration
+              typeTypeOrVoid: void
+              identifier: showLoops
+              formalParameters
+                null
+              methodBody
+                block: { }
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "\n=== LOOPS ==="
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: print
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "For Loop: "
+                  blockStatement
+                    statement: for
+                      null
+                        forControl: ; ;
+                          forInit
+                            localVariableDeclaration
+                              typeType
+                                primitiveType: int
+                              variableDeclarators
+                                variableDeclarator: =
+                                  variableDeclaratorId
+                                    identifier: i
+                                  variableInitializer
+                                    expression
+                                      primary
+                                        literal
+                                          integerLiteral: 1
+                          expression: <=
+                            expression
+                              primary
+                                identifier: i
+                            expression
+                              primary
+                                literal
+                                  integerLiteral: 5
+                          expressionList
+                            expression: ++
+                              expression
+                                primary
+                                  identifier: i
+                      statement
+                        block: { }
+                          blockStatement
+                            statement: ;
+                              expression: .
+                                expression: .
+                                  expression
+                                    primary
+                                      identifier: System
+                                  identifier: out
+                                methodCall
+                                  identifier: print
+                                  arguments
+                                    null
+                                      expressionList
+                                        expression: +
+                                          expression
+                                            primary
+                                              identifier: i
+                                          expression
+                                            primary
+                                              literal: " "
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: print
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "While Loop: "
+                  blockStatement: ;
+                    localVariableDeclaration
+                      typeType
+                        primitiveType: int
+                      variableDeclarators
+                        variableDeclarator: =
+                          variableDeclaratorId
+                            identifier: w
+                          variableInitializer
+                            expression
+                              primary
+                                literal
+                                  integerLiteral: 1
+                  blockStatement
+                    statement: while
+                      null
+                        expression: <=
+                          expression
+                            primary
+                              identifier: w
+                          expression
+                            primary
+                              literal
+                                integerLiteral: 5
+                      statement
+                        block: { }
+                          blockStatement
+                            statement: ;
+                              expression: .
+                                expression: .
+                                  expression
+                                    primary
+                                      identifier: System
+                                  identifier: out
+                                methodCall
+                                  identifier: print
+                                  arguments
+                                    null
+                                      expressionList
+                                        expression: +
+                                          expression
+                                            primary
+                                              identifier: w
+                                          expression
+                                            primary
+                                              literal: " "
+                          blockStatement
+                            statement: ;
+                              expression: ++
+                                expression
+                                  primary
+                                    identifier: w
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: print
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "Do-While Loop: "
+                  blockStatement: ;
+                    localVariableDeclaration
+                      typeType
+                        primitiveType: int
+                      variableDeclarators
+                        variableDeclarator: =
+                          variableDeclaratorId
+                            identifier: d
+                          variableInitializer
+                            expression
+                              primary
+                                literal
+                                  integerLiteral: 1
+                  blockStatement
+                    statement: do while ;
+                      statement
+                        block: { }
+                          blockStatement
+                            statement: ;
+                              expression: .
+                                expression: .
+                                  expression
+                                    primary
+                                      identifier: System
+                                  identifier: out
+                                methodCall
+                                  identifier: print
+                                  arguments
+                                    null
+                                      expressionList
+                                        expression: +
+                                          expression
+                                            primary
+                                              identifier: d
+                                          expression
+                                            primary
+                                              literal: " "
+                          blockStatement
+                            statement: ;
+                              expression: ++
+                                expression
+                                  primary
+                                    identifier: d
+                      null
+                        expression: <=
+                          expression
+                            primary
+                              identifier: d
+                          expression
+                            primary
+                              literal
+                                integerLiteral: 5
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: print
+                          arguments
+                            null
+                              expressionList
+                                expression
+                                  primary
+                                    literal: "Enhanced For : "
+                                      numArray
+                  blockStatement
+                    statement: for
+                      null
+                        forControl
+                          enhancedForControl: :
+                            typeType
+                              primitiveType: int
+                            variableDeclaratorId
+                              identifier: num
+                            expression
+                              primary
+                                identifier: numArray
+                      statement
+                        block: { }
+                          blockStatement
+                            statement: ;
+                              expression: .
+                                expression: .
+                                  expression
+                                    primary
+                                      identifier: System
+                                  identifier: out
+                                methodCall
+                                  identifier: print
+                                  arguments
+                                    null
+                                      expressionList
+                                        expression: +
+                                          expression
+                                            primary
+                                              identifier: num
+                                          expression
+                                            primary
+                                              literal: " "
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+        classBodyDeclaration
+          memberDeclaration
+            methodDeclaration
+              typeTypeOrVoid
+                typeType
+                  primitiveType: int
+              identifier: addNumbers
+              formalParameters
+                ,
+                  formalParameter
+                    typeType
+                      primitiveType: int
+                    variableDeclaratorId
+                      identifier: a
+                  formalParameterList
+                    formalParameter
+                      typeType
+                        primitiveType: int
+                      variableDeclaratorId
+                        identifier: b
+              methodBody
+                block: { }
+                  blockStatement
+                    statement: return ;
+                      expression: +
+                        expression
+                          primary
+                            identifier: a
+                        expression
+                          primary
+                            identifier: b
+        classBodyDeclaration
+          memberDeclaration
+            methodDeclaration
+              typeTypeOrVoid: void
+              identifier: printMessage
+              formalParameters
+                null
+                  formalParameter
+                    typeType
+                      classOrInterfaceType
+                        classType
+                          typeIdentifier: String
+                    variableDeclaratorId
+                      identifier: msg
+              methodBody
+                block: { }
+                  blockStatement
+                    statement: ;
+                      expression: .
+                        expression: .
+                          expression
+                            primary
+                              identifier: System
+                          identifier: out
+                        methodCall
+                          identifier: println
+                          arguments
+                            null
+                              expressionList
+                                expression: +
+                                  expression
+                                    primary
+                                      literal: "Message: "
+                                  expression
+                                    primary
+                                      identifier: msg

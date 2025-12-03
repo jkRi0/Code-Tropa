@@ -1,0 +1,484 @@
+JAVA COMPILER FEATURES
+======================
+
+This document lists all the features implemented in javaCompiler2.js
+to simulate Java code execution and validate Java syntax.
+
+1. VARIABLE DECLARATION EXTRACTION AND VALIDATION
+   -------------------------------------------------
+   Feature: Extracts and validates variable declarations with initialization
+   Implementation: Uses regex pattern to find variable declarations
+   
+   Supported Types:
+   - Primitives: byte, short, int, long, float, double, char, boolean
+   - Wrappers: String, Integer, Double, Boolean
+   
+   Example:
+   Input:  int x = 5;
+   Output: Extracted and validated for type compatibility
+
+2. LITERAL VALIDATION
+   -------------------
+   Feature: Validates literal values against their declared types
+   Implementation: Type-specific validation functions
+   
+   Validations Performed:
+   - byte: Range -128 to 127, must be integer
+   - short: Range -32768 to 32767, must be integer
+   - int/Integer: Range -2147483648 to 2147483647, must be integer
+   - long: Must be integer (supports 'L' suffix)
+   - float: Must be numeric (supports 'f' suffix)
+   - double/Double: Must be numeric
+   - char: Must be single character in single quotes
+   - boolean/Boolean: Must be true or false
+   - String: Must be in double quotes
+   
+   Example:
+   Input:  byte b = 200;  // Out of range
+   Output: Error: byte out of range (-128..127)
+
+3. SYSTEM.OUT PRINTING
+   --------------------
+   Feature: Simulates System.out.print() and System.out.println()
+   Implementation: Converts to JavaScript __print() and __println() functions
+   
+   Supported Methods:
+   - System.out.print(value)
+   - System.out.println(value)
+   
+   Validation:
+   - Only print and println are supported
+   - Other System.out methods generate errors
+   - Validates method calls for syntax errors
+   
+   Example:
+   Input:  System.out.println("Hello");
+   Output: "Hello\n" (printed to output)
+
+4. ARRAY HANDLING
+   ---------------
+   Feature: Comprehensive array support with bounds checking
+   Implementation: JavaScript Proxy-based array wrapper
+   
+   Array Features:
+   - Single-dimensional arrays: int[] arr = {1, 2, 3};
+   - Multi-dimensional arrays: int[][] matrix = {{1,2}, {3,4}};
+   - Array initialization with literals
+   - Array access with bounds checking
+   - Array length property
+   - Enhanced for loops (for-each)
+   
+   Array Bounds Checking:
+   - Validates array index access
+   - Throws ArrayIndexOutOfBoundsException for invalid indices
+   - Prevents negative indices
+   - Prevents indices >= array.length
+   
+   Example:
+   Input:  int[] arr = {1, 2, 3};
+          System.out.println(arr[5]);  // Out of bounds
+   Output: Error: ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 3
+
+5. ENHANCED FOR LOOPS (FOR-EACH)
+   -------------------------------
+   Feature: Converts Java enhanced for loops to JavaScript for-of loops
+   Implementation: Regex pattern matching and replacement
+   
+   Supported Patterns:
+   - for (type var : array) { ... }
+   - for (final type var : array) { ... }
+   
+   Example:
+   Input:  for (int num : numArray) System.out.println(num);
+   Output: for (const num of numArray) __println(num);
+
+6. METHOD EXTRACTION AND CONVERSION
+   ---------------------------------
+   Feature: Extracts method definitions and converts them to JavaScript functions
+   Implementation: Pattern matching for method signatures
+   
+   Method Features:
+   - Extracts method name, parameters, return type
+   - Converts method body to JavaScript
+   - Validates return types
+   - Supports static and non-static methods
+   - Supports access modifiers (public, private, protected)
+   
+   Method Validation:
+   - Validates return type names
+   - Checks for missing return statements
+   - Validates return value types
+   - Checks void methods don't return values
+   
+   Example:
+   Input:  public static int add(int a, int b) { return a + b; }
+   Output: function add(a, b) { return __validateMethodReturn("add", "int", a + b, 0); }
+
+7. RETURN TYPE VALIDATION
+   -----------------------
+   Feature: Validates method return values match declared return types
+   Implementation: Runtime type checking in __validateMethodReturn()
+   
+   Type Checking:
+   - Numeric types: byte, short, int, long, float, double
+   - Integer types: Must be integers (byte, short, int, long)
+   - Floating types: Can be any number (float, double)
+   - Boolean: Must be boolean value
+   - char: Must be single character string
+   - String: Must be string value
+   - Wrapper types: Integer, Double, Boolean
+   - void: Cannot return any value
+   
+   Example:
+   Input:  public static int getValue() { return "hello"; }
+   Output: Error: incompatible return type: expected int but received String
+
+8. STATIC METHOD VALIDATION
+   -------------------------
+   Feature: Validates that non-static methods are not called from static context
+   Implementation: Checks method invocations in main method
+   
+   Validation:
+   - Main method is static
+   - Only static methods can be called from static context
+   - Non-static method calls generate errors
+   
+   Example:
+   Input:  public void instanceMethod() { ... }
+          public static void main(String[] args) { instanceMethod(); }
+   Output: Error: non-static method instanceMethod() cannot be referenced from a static context
+
+9. SYNTAX VALIDATION
+   ------------------
+   Feature: Validates Java syntax before execution
+   Implementation: Multiple validation checks
+   
+   Validations:
+   - Unclosed string literals (double quotes)
+   - Unclosed character literals (single quotes)
+   - Malformed for loops (missing semicolons)
+   - Unmatched brackets ([ and ])
+   - Invalid System.out calls
+   - Missing System in System.out calls
+   
+   Example:
+   Input:  String s = "unclosed string;
+   Output: Error: unclosed string literal
+
+10. JAVA TO JAVASCRIPT TRANSFORMATION
+    -----------------------------------
+    Feature: Converts Java code to executable JavaScript
+    Implementation: Multiple transformation passes
+    
+    Transformations:
+    - Variable declarations: type varName → let varName
+    - Array declarations: int[] arr → let arr = __wrapArray(...)
+    - Enhanced for loops: for (type var : arr) → for (const var of arr)
+    - System.out.println → __println()
+    - System.out.print → __print()
+    - Method calls: Converted to JavaScript function calls
+    - String concatenation: + operator preserved
+    - Numeric suffixes: Removed (L, f, F)
+    
+    Example:
+    Input:  int x = 5;
+            System.out.println(x);
+    Output: let x = 5;
+            __println(x);
+
+11. ARRAY PROXY WRAPPER
+    --------------------
+    Feature: Wraps JavaScript arrays to behave like Java arrays
+    Implementation: JavaScript Proxy with custom handlers
+    
+    Features:
+    - Fixed-length arrays (prevents push, pop, shift, unshift, splice)
+    - Bounds checking on access
+    - Bounds checking on assignment
+    - Length property protection
+    - Multi-dimensional array support
+    - Iterator support for enhanced for loops
+    
+    Restrictions:
+    - Cannot modify array length
+    - Cannot use array mutating methods
+    - All access must be within bounds
+
+12. METHOD PARAMETER CONVERSION
+    ----------------------------
+    Feature: Converts Java method parameters to JavaScript function parameters
+    Implementation: Extracts parameter names, removes type information
+    
+    Example:
+    Input:  public static void method(int a, String b, double c)
+    Output: function method(a, b, c)
+
+13. MAIN METHOD EXTRACTION
+    ------------------------
+    Feature: Extracts and executes the main method body
+    Implementation: Finds "public static void main(String[] args)" and extracts body
+    
+    Requirements:
+    - Must have public static void main(String[] args)
+    - Extracts code between opening and closing braces
+    - Converts to JavaScript and executes
+    
+    Example:
+    Input:  public static void main(String[] args) { ... }
+    Output: Extracted body converted to JavaScript and executed
+
+14. OUTPUT COLLECTION
+    -------------------
+    Feature: Collects all System.out.print/println output
+    Implementation: __print() and __println() functions accumulate output
+    
+    Output Format:
+    - __print() adds to current line
+    - __println() adds current line to outputs array and starts new line
+    - Final output is array of strings (one per line)
+    
+    Example:
+    Input:  System.out.print("Hello ");
+            System.out.print("World");
+            System.out.println("!");
+    Output: ["Hello World!"]
+
+15. ERROR HANDLING
+    ---------------
+    Feature: Comprehensive error reporting
+    Implementation: Error messages formatted like Java compiler
+    
+    Error Types:
+    - Syntax errors (unclosed strings, malformed loops)
+    - Type errors (invalid literals, incompatible return types)
+    - Runtime errors (array bounds, method call errors)
+    - Validation errors (missing returns, static context errors)
+    
+    Error Format:
+    - SourceLabel:LineNumber: error: message
+    - Example: MainDemo.java:5: error: byte out of range (-128..127)
+
+16. TYPE SYSTEM
+    ------------
+    Feature: Java type system simulation
+    Implementation: Type checking and conversion
+    
+    Supported Types:
+    - Primitives: byte, short, int, long, float, double, char, boolean
+    - Wrappers: String, Integer, Double, Boolean
+    - Arrays: All types support arrays
+    
+    Type Conversions:
+    - Numeric types: JavaScript numbers
+    - String: JavaScript strings
+    - char: Single character strings
+    - boolean: JavaScript booleans
+    - Arrays: JavaScript arrays wrapped in Proxy
+
+17. EXPRESSION EVALUATION
+    ----------------------
+    Feature: Evaluates mathematical expressions in literal values
+    Implementation: Safe expression evaluator
+    
+    Supported:
+    - Simple arithmetic: +, -, *, /, %
+    - Parentheses: ( and )
+    - Numeric literals with suffixes (L, f, F)
+    
+    Example:
+    Input:  int x = 10 + 20;
+    Output: x = 30
+
+18. STRING LITERAL HANDLING
+    ------------------------
+    Feature: Proper handling of string literals with escape sequences
+    Implementation: Unquote and escape sequence processing
+    
+    Supported Escape Sequences:
+    - \n: Newline
+    - \t: Tab
+    - \r: Carriage return
+    - \\: Backslash
+    - \": Double quote
+    - \': Single quote
+    
+    Example:
+    Input:  String s = "Hello\nWorld";
+    Output: "Hello\nWorld" (with actual newline)
+
+19. CHARACTER LITERAL HANDLING
+    ---------------------------
+    Feature: Validates and processes character literals
+    Implementation: Single quote validation and escape sequence handling
+    
+    Requirements:
+    - Must be exactly one character
+    - Must use single quotes
+    - Supports escape sequences
+    
+    Example:
+    Input:  char c = 'A';  // Valid
+    Input:  char c = 'AB'; // Error: must be exactly one character
+
+20. ARRAY INITIALIZATION
+    ---------------------
+    Feature: Supports array initialization with literal values
+    Implementation: Converts Java array syntax to JavaScript
+    
+    Supported Formats:
+    - int[] arr = {1, 2, 3};
+    - String[] strs = {"one", "two"};
+    - int[][] matrix = {{1,2}, {3,4}};
+    
+    Example:
+    Input:  int[] arr = {1, 2, 3, 4, 5};
+    Output: let arr = __wrapArray([1, 2, 3, 4, 5], "int");
+
+21. CONTROL FLOW
+    -------------
+    Feature: Supports Java control flow statements
+    Implementation: Preserved in JavaScript conversion
+    
+    Supported:
+    - if/else statements
+    - for loops (traditional and enhanced)
+    - while loops
+    - do-while loops
+    - switch statements
+    
+    Example:
+    Input:  if (x > 5) { ... } else { ... }
+    Output: if (x > 5) { ... } else { ... }
+
+22. METHOD CALL VALIDATION
+    ------------------------
+    Feature: Validates method calls and parameters
+    Implementation: Checks method existence and static context
+    
+    Validations:
+    - Method must be defined
+    - Static methods can be called from static context
+    - Non-static methods cannot be called from static context
+    - Parameter count matching (basic check)
+    
+    Example:
+    Input:  public static void main(String[] args) { undefinedMethod(); }
+    Output: Error: undefinedMethod is not defined (runtime error)
+
+23. SOURCE LABEL EXTRACTION
+    ------------------------
+    Feature: Extracts class name for error reporting
+    Implementation: Finds class declaration and uses name
+    
+    Format:
+    - Extracts: public class ClassName { ... }
+    - Uses: ClassName.java as source label
+    - Default: MainDemo.java if no class found
+    
+    Example:
+    Input:  public class MyClass { ... }
+    Output: Error messages use "MyClass.java" as source label
+
+24. MULTI-DIMENSIONAL ARRAY SUPPORT
+    ---------------------------------
+    Feature: Full support for multi-dimensional arrays
+    Implementation: Recursive array wrapping
+    
+    Features:
+    - Nested array initialization
+    - Multi-dimensional array access
+    - Bounds checking at each dimension
+    - Enhanced for loops over multi-dimensional arrays
+    
+    Example:
+    Input:  int[][] matrix = {{1,2,3}, {4,5,6}};
+            System.out.println(matrix[0][1]);
+    Output: 2
+
+25. ARRAY CREATION (NEW KEYWORD)
+    -----------------------------
+    Feature: Supports array creation with new keyword
+    Implementation: Converts to __createArray() function
+    
+    Format:
+    - new type[size] → __createArray("type", size)
+    - Initializes with default values
+    - Validates size is non-negative integer
+    
+    Example:
+    Input:  int[] arr = new int[10];
+    Output: let arr = __createArray("int", 10);
+
+26. DEFAULT ARRAY VALUES
+    ---------------------
+    Feature: Provides default values for array elements
+    Implementation: __defaultArrayValue() function
+    
+    Default Values:
+    - Numeric types (byte, short, int, long, float, double): 0
+    - boolean/Boolean: false
+    - char: '\u0000' (null character)
+    - String: null
+    - Other types: null
+    
+    Example:
+    Input:  int[] arr = new int[5];
+    Output: Array with 5 zeros: [0, 0, 0, 0, 0]
+
+27. BRACKET BALANCE CHECKING
+    -------------------------
+    Feature: Validates matching brackets in code
+    Implementation: Tracks opening and closing brackets
+    
+    Validations:
+    - Checks for unmatched '[' brackets
+    - Checks for unexpected ']' brackets
+    - Reports line numbers for bracket errors
+    
+    Example:
+    Input:  int[] arr = {1, 2, 3;  // Missing closing bracket
+    Output: Error: ']' expected
+
+28. FOR LOOP VALIDATION
+    --------------------
+    Feature: Validates for loop syntax
+    Implementation: Checks for proper semicolon placement
+    
+    Validations:
+    - Traditional for loops must have 2 semicolons
+    - Enhanced for loops use colon (:)
+    - Reports malformed for loops
+    
+    Example:
+    Input:  for (int i = 0 i < 10; i++)  // Missing semicolon
+    Output: Error: malformed for loop - missing ';' in for statement
+
+29. COMMENTS HANDLING
+    ------------------
+    Feature: Properly handles Java comments
+    Implementation: Skips comment lines in validation
+    
+    Supported:
+    - Single-line comments: // comment
+    - Comments are ignored in syntax validation
+    - Comments are preserved in code transformation
+    
+    Example:
+    Input:  // This is a comment
+            int x = 5;
+    Output: Comment ignored, x = 5 processed
+
+30. STRING CONCATENATION
+    ---------------------
+    Feature: Supports Java string concatenation with + operator
+    Implementation: Preserved in JavaScript conversion
+    
+    Features:
+    - String + String concatenation
+    - String + number conversion
+    - Multiple concatenations in one expression
+    
+    Example:
+    Input:  System.out.println("Value: " + x);
+    Output: "Value: 5" (if x = 5)
+

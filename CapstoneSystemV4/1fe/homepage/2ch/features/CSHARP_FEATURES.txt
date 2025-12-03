@@ -1,0 +1,672 @@
+C# COMPILER FEATURES
+====================
+
+This document lists all the features implemented in csharpCompiler2.js
+to simulate C# code execution and validate C# syntax.
+
+1. VARIABLE DECLARATION EXTRACTION AND VALIDATION
+   -------------------------------------------------
+   Feature: Extracts and validates variable declarations with initialization
+   Implementation: Uses regex pattern to find variable declarations
+   
+   Supported Types:
+   - Primitives: byte, sbyte, short, ushort, int, uint, long, ulong, float, double, char, bool
+   - Non-primitives: string
+   
+   Example:
+   Input:  int x = 5;
+   Output: Extracted and validated for type compatibility
+
+2. LITERAL VALIDATION
+   -------------------
+   Feature: Validates literal values against their declared types
+   Implementation: Type-specific validation functions
+   
+   Validations Performed:
+   - byte: Range 0 to 255, must be integer
+   - sbyte: Range -128 to 127, must be integer
+   - short: Range -32768 to 32767, must be integer
+   - ushort: Range 0 to 65535, must be integer
+   - int: Range -2147483648 to 2147483647, must be integer
+   - uint: Range 0 to 4294967295, must be integer
+   - long: Must be integer (supports 'L' suffix)
+   - ulong: Range 0 to 18446744073709551615, must be integer
+   - float: Must be numeric (supports 'f' suffix)
+   - double: Must be numeric
+   - char: Must be single character in single quotes
+   - bool: Must be true or false
+   - string: Must be in double quotes
+   
+   Example:
+   Input:  byte b = 300;  // Out of range
+   Output: Error: byte out of range (0..255)
+
+3. CONSOLE OUTPUT
+   ---------------
+   Feature: Simulates Console.Write() and Console.WriteLine()
+   Implementation: Converts to JavaScript __print() and __println() functions
+   
+   Supported Methods:
+   - Console.Write(value)
+   - Console.WriteLine(value)
+   
+   Validation:
+   - Only Write and WriteLine are supported
+   - Other Console methods generate errors
+   - Validates method calls for syntax errors
+   - Checks for missing Console prefix
+   - Checks for double dots (Console..)
+   - Checks for missing method name after Console.
+   
+   Example:
+   Input:  Console.WriteLine("Hello");
+   Output: "Hello\n" (printed to output)
+
+4. ARRAY HANDLING
+   ---------------
+   Feature: Comprehensive array support with bounds checking
+   Implementation: JavaScript Proxy-based array wrapper
+   
+   Array Features:
+   - Single-dimensional arrays: int[] arr = {1, 2, 3};
+   - Jagged arrays (array of arrays): int[][] matrix = {{1,2}, {3,4}};
+   - Rectangular arrays: int[,] matrix = {{1,2}, {3,4}};
+   - Array initialization with literals
+   - Array access with bounds checking
+   - Array Length property (capitalized, C# style)
+   - Array length property (lowercase, JavaScript compatibility)
+   - Foreach loops (for-each iteration)
+   
+   Array Bounds Checking:
+   - Validates array index access
+   - Throws IndexOutOfRangeException for invalid indices
+   - Prevents negative indices
+   - Prevents indices >= array.length
+   
+   Example:
+   Input:  int[] arr = {1, 2, 3};
+          Console.WriteLine(arr[5]);  // Out of bounds
+   Output: Error: IndexOutOfRangeException: Index was outside the bounds of the array. Index: 5, Length: 3
+
+5. RECTANGULAR ARRAYS (C# SPECIFIC)
+   ----------------------------------
+   Feature: C# rectangular multi-dimensional arrays
+   Implementation: Converts C# comma syntax to JavaScript nested arrays
+   
+   Supported Syntax:
+   - int[,] matrix = {{1,2}, {3,4}};
+   - Access: matrix[i, j] → converted to matrix[i][j]
+   
+   Conversion:
+   - Converts brace initialization to bracket notation
+   - Handles nested structures correctly
+   - Converts comma-separated access to bracket notation
+   
+   Example:
+   Input:  int[,] matrix = {{1,2,3}, {4,5,6}};
+          Console.WriteLine(matrix[0, 1]);
+   Output: 2
+
+6. JAGGED ARRAYS
+   --------------
+   Feature: Array of arrays (jagged arrays)
+   Implementation: Nested array wrapping
+   
+   Supported Syntax:
+   - int[][] jagged = {{1,2}, {3,4,5}};
+   - Access: jagged[0][1]
+   
+   Example:
+   Input:  int[][] jagged = {{1,2}, {3,4,5}};
+          Console.WriteLine(jagged[0][1]);
+   Output: 2
+
+7. FOREACH LOOPS (C# SPECIFIC)
+   -----------------------------
+   Feature: Converts C# foreach loops to JavaScript for-of loops
+   Implementation: Regex pattern matching and replacement
+   
+   Supported Patterns:
+   - foreach (type var in collection) { ... }
+   - foreach (var var in collection) { ... }
+   
+   Example:
+   Input:  foreach (int num in numArray) Console.WriteLine(num);
+   Output: for (const num of numArray) __println(num);
+
+8. METHOD EXTRACTION AND CONVERSION
+   ---------------------------------
+   Feature: Extracts method definitions and converts them to JavaScript functions
+   Implementation: Pattern matching for method signatures
+   
+   Method Features:
+   - Extracts method name, parameters, return type
+   - Converts method body to JavaScript
+   - Validates return types
+   - Supports static and non-static methods
+   - Supports access modifiers (public, private, protected, internal)
+   
+   Method Validation:
+   - Validates return type names
+   - Checks for missing return statements
+   - Validates return value types
+   - Checks void methods don't return values
+   
+   Example:
+   Input:  public static int Add(int a, int b) { return a + b; }
+   Output: function Add(a, b) { return __validateMethodReturn("Add", "int", a + b, 0); }
+
+9. RETURN TYPE VALIDATION
+   -----------------------
+   Feature: Validates method return values match declared return types
+   Implementation: Runtime type checking in __validateMethodReturn()
+   
+   Type Checking:
+   - Numeric types: byte, sbyte, short, ushort, int, uint, long, ulong, float, double
+   - Integer types: Must be integers (byte, sbyte, short, ushort, int, uint, long, ulong)
+   - Floating types: Can be any number (float, double)
+   - Boolean: Must be boolean value
+   - char: Must be single character string
+   - string: Must be string value
+   - void: Cannot return any value
+   
+   Example:
+   Input:  public static int GetValue() { return "hello"; }
+   Output: Error: incompatible return type: expected int but received string
+
+10. STATIC METHOD VALIDATION
+    -------------------------
+    Feature: Validates that non-static methods are not called from static context
+    Implementation: Checks method invocations in main method
+    
+    Validation:
+    - Main method is static
+    - Only static methods can be called from static context
+    - Non-static method calls generate errors
+    
+    Example:
+    Input:  public void InstanceMethod() { ... }
+           public static void Main(string[] args) { InstanceMethod(); }
+    Output: Error: non-static method InstanceMethod() cannot be referenced from a static context
+
+11. SYNTAX VALIDATION
+    ------------------
+    Feature: Validates C# syntax before execution
+    Implementation: Multiple validation checks
+    
+    Validations:
+    - Unclosed string literals (double quotes)
+    - Unclosed character literals (single quotes)
+    - Malformed for loops (missing semicolons)
+    - Unmatched brackets ([ and ])
+    - Invalid Console calls
+    - Missing Console prefix in Console calls
+    - Missing semicolons after statements
+    - Console.Write/WriteLine calls without semicolons
+    
+    Example:
+    Input:  string s = "unclosed string;
+    Output: Error: unclosed string literal
+
+12. MISSING SEMICOLON DETECTION
+    -----------------------------
+    Feature: Detects missing semicolons after statements
+    Implementation: Pattern matching for statements that should end with semicolon
+    
+    Detects:
+    - Console.Write/WriteLine calls without semicolon
+    - Variable assignments without semicolon
+    - Method calls without semicolon
+    
+    Example:
+    Input:  Console.Write("Hello")
+           Console.WriteLine("World");
+    Output: Error: Expected ';' at line with Console.Write
+
+13. C# TO JAVASCRIPT TRANSFORMATION
+    ---------------------------------
+    Feature: Converts C# code to executable JavaScript
+    Implementation: Multiple transformation passes
+    
+    Transformations:
+    - Variable declarations: type varName → let varName
+    - Array declarations: int[] arr → let arr = __wrapArray(...)
+    - Rectangular arrays: int[,] matrix → let matrix = __wrapArray([[...]], "int")
+    - Jagged arrays: int[][] jagged → let jagged = __wrapArray([[...]], "int")
+    - Foreach loops: foreach (type var in arr) → for (const var of arr)
+    - Console.WriteLine → __println()
+    - Console.Write → __print()
+    - Method calls: Converted to JavaScript function calls
+    - String concatenation: + operator preserved
+    - Numeric suffixes: Removed (L, l, f, F)
+    - Comma array access: matrix[i, j] → matrix[i][j]
+    
+    Example:
+    Input:  int x = 5;
+           Console.WriteLine(x);
+    Output: let x = 5;
+           __println(x);
+
+14. ARRAY PROXY WRAPPER
+    --------------------
+    Feature: Wraps JavaScript arrays to behave like C# arrays
+    Implementation: JavaScript Proxy with custom handlers
+    
+    Features:
+    - Fixed-length arrays (prevents push, pop, shift, unshift, splice)
+    - Bounds checking on access
+    - Bounds checking on assignment
+    - Length property protection (both Length and length)
+    - Multi-dimensional array support
+    - Iterator support for foreach loops
+    
+    Restrictions:
+    - Cannot modify array length
+    - Cannot use array mutating methods
+    - All access must be within bounds
+
+15. METHOD PARAMETER CONVERSION
+    ----------------------------
+    Feature: Converts C# method parameters to JavaScript function parameters
+    Implementation: Extracts parameter names, removes type information
+    
+    Example:
+    Input:  public static void Method(int a, string b, double c)
+    Output: function Method(a, b, c)
+
+16. MAIN METHOD EXTRACTION
+    ------------------------
+    Feature: Extracts and executes the main method body
+    Implementation: Finds various Main method signatures and extracts body
+    
+    Supported Main Signatures:
+    - static void Main()
+    - static void Main(string[] args)
+    - static int Main(string[] args)
+    - public static void Main()
+    - public static void Main(string[] args)
+    - public static int Main(string[] args)
+    
+    Requirements:
+    - Must have static Main method
+    - Extracts code between opening and closing braces
+    - Converts to JavaScript and executes
+    
+    Example:
+    Input:  static void Main(string[] args) { ... }
+    Output: Extracted body converted to JavaScript and executed
+
+17. OUTPUT COLLECTION
+    -------------------
+    Feature: Collects all Console.Write/WriteLine output
+    Implementation: __print() and __println() functions accumulate output
+    
+    Output Format:
+    - __print() adds to current line
+    - __println() adds current line to outputs array and starts new line
+    - Final output is array of strings (one per line)
+    
+    Example:
+    Input:  Console.Write("Hello ");
+           Console.Write("World");
+           Console.WriteLine("!");
+    Output: ["Hello World!"]
+
+18. ERROR HANDLING
+    ---------------
+    Feature: Comprehensive error reporting with line numbers
+    Implementation: Error messages formatted like C# compiler
+    
+    Error Types:
+    - Syntax errors (unclosed strings, malformed loops, missing semicolons)
+    - Type errors (invalid literals, incompatible return types)
+    - Runtime errors (array bounds, method call errors)
+    - Validation errors (missing returns, static context errors)
+    
+    Error Format:
+    - SourceLabel:LineNumber: error: message
+    - Shows problematic line with context
+    - Marks error line with >>> indicator
+    - Example: Program.cs:5: error: byte out of range (0..255)
+    
+    Error Context:
+    - Shows 3 lines before and 2 lines after error
+    - Highlights the exact problematic line
+    - Maps JavaScript errors back to original C# code when possible
+
+19. TYPE SYSTEM
+    ------------
+    Feature: C# type system simulation
+    Implementation: Type checking and conversion
+    
+    Supported Types:
+    - Primitives: byte, sbyte, short, ushort, int, uint, long, ulong, float, double, char, bool
+    - Non-primitives: string
+    - Arrays: All types support arrays (single, jagged, rectangular)
+    
+    Type Conversions:
+    - Numeric types: JavaScript numbers
+    - string: JavaScript strings
+    - char: Single character strings
+    - bool: JavaScript booleans
+    - Arrays: JavaScript arrays wrapped in Proxy
+
+20. EXPRESSION EVALUATION
+    ----------------------
+    Feature: Evaluates mathematical expressions in literal values
+    Implementation: Safe expression evaluator
+    
+    Supported:
+    - Simple arithmetic: +, -, *, /, %
+    - Parentheses: ( and )
+    - Numeric literals with suffixes (L, l, f, F)
+    
+    Example:
+    Input:  int x = 10 + 20;
+    Output: x = 30
+
+21. STRING LITERAL HANDLING
+    ------------------------
+    Feature: Proper handling of string literals with escape sequences
+    Implementation: Unquote and escape sequence processing
+    
+    Supported Escape Sequences:
+    - \n: Newline
+    - \t: Tab
+    - \r: Carriage return
+    - \\: Backslash
+    - \": Double quote
+    - \': Single quote
+    
+    Example:
+    Input:  string s = "Hello\nWorld";
+    Output: "Hello\nWorld" (with actual newline)
+
+22. CHARACTER LITERAL HANDLING
+    ---------------------------
+    Feature: Validates and processes character literals
+    Implementation: Single quote validation and escape sequence handling
+    
+    Requirements:
+    - Must be exactly one character
+    - Must use single quotes
+    - Supports escape sequences
+    
+    Example:
+    Input:  char c = 'A';  // Valid
+    Input:  char c = 'AB'; // Error: must be exactly one character
+
+23. ARRAY INITIALIZATION
+    ---------------------
+    Feature: Supports array initialization with literal values
+    Implementation: Converts C# array syntax to JavaScript
+    
+    Supported Formats:
+    - int[] arr = {1, 2, 3};
+    - string[] strs = {"one", "two"};
+    - int[][] jagged = {{1,2}, {3,4}};
+    - int[,] matrix = {{1,2}, {3,4}};
+    
+    Example:
+    Input:  int[] arr = {1, 2, 3, 4, 5};
+    Output: let arr = __wrapArray([1, 2, 3, 4, 5], "int");
+
+24. CONTROL FLOW
+    --------------
+    Feature: Supports C# control flow statements
+    Implementation: Preserved in JavaScript conversion
+    
+    Supported:
+    - if/else statements
+    - for loops (traditional)
+    - foreach loops (converted to for-of)
+    - while loops
+    - do-while loops
+    - switch statements
+    
+    Example:
+    Input:  if (x > 5) { ... } else { ... }
+    Output: if (x > 5) { ... } else { ... }
+
+25. METHOD CALL VALIDATION
+    ------------------------
+    Feature: Validates method calls and parameters
+    Implementation: Checks method existence and static context
+    
+    Validations:
+    - Method must be defined
+    - Static methods can be called from static context
+    - Non-static methods cannot be called from static context
+    - Parameter count matching (basic check)
+    
+    Example:
+    Input:  static void Main(string[] args) { UndefinedMethod(); }
+    Output: Error: UndefinedMethod is not defined (runtime error)
+
+26. SOURCE LABEL EXTRACTION
+    ------------------------
+    Feature: Extracts class name for error reporting
+    Implementation: Finds class declaration and uses name
+    
+    Format:
+    - Extracts: class ClassName { ... }
+    - Uses: ClassName.cs as source label
+    - Default: Program.cs if no class found
+    
+    Example:
+    Input:  class MyClass { ... }
+    Output: Error messages use "MyClass.cs" as source label
+
+27. MULTI-DIMENSIONAL ARRAY SUPPORT
+    ---------------------------------
+    Feature: Full support for multi-dimensional arrays
+    Implementation: Recursive array wrapping
+    
+    Features:
+    - Nested array initialization
+    - Multi-dimensional array access
+    - Bounds checking at each dimension
+    - Foreach loops over multi-dimensional arrays
+    - Rectangular arrays (int[,])
+    - Jagged arrays (int[][])
+    
+    Example:
+    Input:  int[,] matrix = {{1,2,3}, {4,5,6}};
+           Console.WriteLine(matrix[0, 1]);
+    Output: 2
+
+28. ARRAY CREATION (NEW KEYWORD)
+    -----------------------------
+    Feature: Supports array creation with new keyword
+    Implementation: Converts to __createArray() function
+    
+    Format:
+    - new type[size] → __createArray("type", size)
+    - Initializes with default values
+    - Validates size is non-negative integer
+    
+    Example:
+    Input:  int[] arr = new int[10];
+    Output: let arr = __createArray("int", 10);
+
+29. DEFAULT ARRAY VALUES
+    ---------------------
+    Feature: Provides default values for array elements
+    Implementation: __defaultArrayValue() function
+    
+    Default Values:
+    - Numeric types (byte, sbyte, short, ushort, int, uint, long, ulong, float, double): 0
+    - bool: false
+    - char: '\u0000' (null character)
+    - string: null
+    - Other types: null
+    
+    Example:
+    Input:  int[] arr = new int[5];
+    Output: Array with 5 zeros: [0, 0, 0, 0, 0]
+
+30. BRACKET BALANCE CHECKING
+    -------------------------
+    Feature: Validates matching brackets in code
+    Implementation: Tracks opening and closing brackets
+    
+    Validations:
+    - Checks for unmatched '[' brackets
+    - Checks for unexpected ']' brackets
+    - Reports line numbers for bracket errors
+    
+    Example:
+    Input:  int[] arr = {1, 2, 3;  // Missing closing bracket
+    Output: Error: Expected ']'
+
+31. FOR LOOP VALIDATION
+    --------------------
+    Feature: Validates for loop syntax
+    Implementation: Checks for proper semicolon placement
+    
+    Validations:
+    - Traditional for loops must have 2 semicolons
+    - Foreach loops use 'in' keyword
+    - Reports malformed for loops
+    
+    Example:
+    Input:  for (int i = 0 i < 10; i++)  // Missing semicolon
+    Output: Error: Invalid expression term ')'
+
+32. COMMENTS HANDLING
+    ------------------
+    Feature: Properly handles C# comments
+    Implementation: Skips comment lines in validation
+    
+    Supported:
+    - Single-line comments: // comment
+    - Comments are ignored in syntax validation
+    - Comments are preserved in code transformation
+    
+    Example:
+    Input:  // This is a comment
+           int x = 5;
+    Output: Comment ignored, x = 5 processed
+
+33. STRING CONCATENATION
+    ---------------------
+    Feature: Supports C# string concatenation with + operator
+    Implementation: Preserved in JavaScript conversion
+    
+    Features:
+    - string + string concatenation
+    - string + number conversion
+    - Multiple concatenations in one expression
+    
+    Example:
+    Input:  Console.WriteLine("Value: " + x);
+    Output: "Value: 5" (if x = 5)
+
+34. COMMA-SEPARATED ARRAY ACCESS
+    ------------------------------
+    Feature: Converts C# rectangular array access syntax
+    Implementation: Converts matrix[i, j] to matrix[i][j]
+    
+    Supported Patterns:
+    - matrix[i, j] → matrix[i][j]
+    - matrix[0, 1] → matrix[0][1]
+    - matrix[i, 0] → matrix[i][0]
+    - matrix[0, j] → matrix[0][j]
+    
+    Validation:
+    - Skips type declarations (int[,] arr)
+    - Only matches actual array access
+    - Prevents double conversion
+    
+    Example:
+    Input:  int[,] matrix = {{1,2}, {3,4}};
+           Console.WriteLine(matrix[0, 1]);
+    Output: 2
+
+35. UNSIGNED INTEGER TYPES
+    ------------------------
+    Feature: Support for C# unsigned integer types
+    Implementation: Type validation and range checking
+    
+    Supported Types:
+    - byte: 0 to 255
+    - ushort: 0 to 65535
+    - uint: 0 to 4294967295
+    - ulong: 0 to 18446744073709551615
+    
+    Example:
+    Input:  uint x = 4294967295;  // Valid
+    Input:  uint x = -1;           // Error: out of range
+
+36. ERROR LINE NUMBER MAPPING
+    ---------------------------
+    Feature: Maps JavaScript errors back to original C# line numbers
+    Implementation: Tracks line numbers through transformation
+    
+    Features:
+    - Extracts line numbers from JavaScript errors
+    - Maps to original C# source code
+    - Shows context around error (3 lines before, 2 after)
+    - Highlights error line with >>> marker
+    
+    Example:
+    Input:  Error at line 15 in generated code:
+           >>> 15: Console.Write("Hello")
+           16: Console.WriteLine("World");
+    Output: Shows exact C# line with error
+
+37. VAR KEYWORD SUPPORT
+    --------------------
+    Feature: Supports C# var keyword in foreach loops
+    Implementation: Pattern matching for var keyword
+    
+    Supported:
+    - foreach (var item in collection)
+    - Converts to: for (const item of collection)
+    
+    Example:
+    Input:  foreach (var num in numbers) Console.WriteLine(num);
+    Output: for (const num of numbers) __println(num);
+
+38. ARRAY LENGTH PROPERTY
+    ----------------------
+    Feature: Supports both C# and JavaScript array length access
+    Implementation: Proxy handler provides both properties
+    
+    Supported:
+    - array.Length (C# style, capitalized)
+    - array.length (JavaScript style, lowercase)
+    
+    Example:
+    Input:  int[] arr = {1, 2, 3};
+           Console.WriteLine(arr.Length);
+    Output: 3
+
+39. ITERATOR SUPPORT
+    -----------------
+    Feature: Array iterator support for foreach loops
+    Implementation: Symbol.iterator in Proxy handler
+    
+    Features:
+    - Enables for-of loops in JavaScript
+    - Works with foreach conversion
+    - Supports iteration over multi-dimensional arrays
+    
+    Example:
+    Input:  foreach (int num in arr) { ... }
+    Output: Uses iterator to iterate over array elements
+
+40. TYPE-SPECIFIC ARRAY WRAPPING
+    -----------------------------
+    Feature: Maintains type information for arrays
+    Implementation: __wrapArray() function stores type
+    
+    Features:
+    - Preserves type information for validation
+    - Enables type-specific default values
+    - Supports type checking in array operations
+    
+    Example:
+    Input:  int[] arr = {1, 2, 3};
+    Output: __wrapArray([1, 2, 3], "int")
+

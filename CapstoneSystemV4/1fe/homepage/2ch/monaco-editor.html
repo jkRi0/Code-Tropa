@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monaco Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #monaco-container {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <!-- Monaco Editor script -->
+    <script src="../../../../node_modules/monaco-editor/min/vs/loader.js"></script>
+</head>
+<body>
+    <div id="monaco-container"></div>
+
+    <script>
+        // Helper functions (copied from challengeData.js or accessed via parent)
+        function getDefaultCode(language) {
+            switch(language.toLowerCase()) {
+                case 'c++':
+                case 'cpp':
+                    return [
+                        '#include <iostream>',
+                        '',
+                        'int main() {',
+                        '    std::cout << "Hello C++!" << std::endl;',
+                        '    return 0;',
+                        '}'
+                    ].join('\n');
+                case 'c#':
+                case 'csharp':
+                    return [
+                        'using System;',
+                        '',
+                        'class Program {',
+                        '    static void Main() {',
+                        '        Console.WriteLine("Hello C#!");',
+                        '    }',
+                        '}'
+                    ].join('\n');
+                case 'java':
+                default:
+                    return [
+                        'public class MyClass {',
+                        '    public static void main(String[] args) {',
+                        '        System.out.println("Hello Java!");',
+                        '    }',
+                        '}'
+                    ].join('\n');
+            }
+        }
+
+        function getMonacoLanguage(language) {
+            switch(language.toLowerCase()) {
+                case 'c++':
+                case 'cpp':
+                    return 'cpp';
+                case 'c#':
+                case 'csharp':
+                    return 'csharp';
+                case 'java':
+                default:
+                    return 'java';
+            }
+        }
+
+        // Monaco Editor initialization
+        require.config({ paths: { 'vs': '../../../../node_modules/monaco-editor/min/vs' }});
+
+        // Configure Monaco to use the correct worker path
+        window.MonacoEnvironment = {
+            getWorkerUrl: function(moduleId, label) {
+                return new URL('../../../../node_modules/monaco-editor/min/vs/assets/editor.worker-DM0G1eFj.js', window.location).href;
+            }
+        };
+
+        let editor = null;
+        let monacoInstance = null;
+
+        require(['vs/editor/editor.main'], function() {
+            // Initialize with default language
+            editor = monaco.editor.create(document.getElementById('monaco-container'), {
+                value: getDefaultCode('java'),
+                language: getMonacoLanguage('java'),
+                theme: "vs-dark",
+                automaticLayout: true,
+                fontSize: 16,
+                minimap: { enabled: false }
+            });
+            monacoInstance = monaco;
+
+            // Notify parent that editor is ready
+            window.parent.postMessage({ type: 'editor-ready' }, '*');
+
+            // Listen for messages from parent window
+            window.addEventListener('message', function(event) {
+                if (event.data.type === 'get-code') {
+                    // Get code directly from Monaco editor instance
+                    const code = editor.getValue();
+                    console.log('[Monaco Editor] Getting code from editor:', code.length, 'characters');
+                    console.log('[Monaco Editor] First 100 chars:', code.substring(0, 100));
+                    // Send code back to parent
+                    window.parent.postMessage({
+                        type: 'code-response',
+                        code: code
+                    }, '*');
+                } else if (event.data.type === 'set-language') {
+                    // Switch language
+                    const language = event.data.language;
+                    const monacoLanguage = getMonacoLanguage(language);
+                    const defaultCode = getDefaultCode(language);
+                    
+                    monacoInstance.editor.setModelLanguage(editor.getModel(), monacoLanguage);
+                    editor.setValue(defaultCode);
+                    
+                    // Notify parent that language was switched
+                    window.parent.postMessage({
+                        type: 'language-switched',
+                        language: language
+                    }, '*');
+                } else if (event.data.type === 'set-code') {
+                    // Set code directly
+                    editor.setValue(event.data.code);
+                }
+            });
+
+            // Listen for editor content changes and notify parent
+            editor.onDidChangeModelContent(function() {
+                window.parent.postMessage({
+                    type: 'code-changed',
+                    code: editor.getValue()
+                }, '*');
+            });
+        });
+    </script>
+</body>
+</html>
+

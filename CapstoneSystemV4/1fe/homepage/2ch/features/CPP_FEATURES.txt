@@ -1,0 +1,188 @@
+FEATURES ACCORDING TO GITHUB:  https://github.com/felixhao28/JSCPP
+
+Which features are implemented?
+   (Most) operators
+   Primitive types
+   Variables
+   Arrays
+   Multidimensional array with initializers.
+   Pointers
+   If...else control flow
+   Switch...case control flow
+   Declarations inside switch block.
+   For loop
+   While loop
+   Do...while loop
+   Functions
+   Variable scopes
+   Preprocessor directives
+   Macro
+   Include
+
+Which notable features are not implemented yet?
+   Goto statements
+   Object-oriented features
+   Namespaces
+   Multiple files support
+
+How is the performance?
+   If you want to run C++ programs effciently, compile your C++ code to LLVM-bitcode and then use Emscripten.
+
+Which libraries are supported?
+   iostream (only cin and cout and endl)
+   cmath
+   cctype
+   cstring
+   cstdio (partial)
+   cstdlib (partial)
+
+
+
+
+
+
+C++ PREPROCESSING FEATURES
+===========================
+
+This document lists all the preprocessing features implemented in cppCompiler2.js
+to convert unsupported C++ features to formats compatible with JSCPP compiler.
+
+1. NAMESPACE QUALIFIER REMOVAL
+   ----------------------------
+   Feature: Removes std:: namespace qualifiers
+   Reason: JSCPP doesn't support namespace qualifiers (namespaces are not implemented)
+   Implementation: Removes all occurrences of 'std::' from the code
+   
+   Examples:
+   - std::cout → cout
+   - std::endl → endl
+   - std::string → string (then converted to const char* by feature #2)
+   - std::cin → cin
+   
+   Note: This is done at the very beginning of preprocessing, before any other
+   transformations, to ensure all namespace qualifiers are removed regardless of context.
+
+2. INCLUDE DIRECTIVES
+   -------------------
+   Feature: Keeps #include <string> directives for code mimicry
+   Reason: For realistic C++ code appearance, even though string is converted to const char*
+   Implementation: All #include directives are preserved as-is
+   
+   Note: The #include <string> is kept in the code for mimicry purposes, but the actual
+   string type is converted to const char* during preprocessing, so the include is not
+   functionally required by JSCPP.
+
+3. STRING TYPE CONVERSION
+   -----------------------
+   Feature: Converts 'string' type to 'const char*'
+   Reason: JSCPP doesn't support the std::string or string type
+   Implementation: Multiple regex patterns handle different string type declarations
+   
+   Patterns Handled:
+   - string varName = "value";           → const char* varName = "value";
+   - string varName;                     → const char* varName = "";
+   - const string& varName               → const char* varName
+   - string& varName                     → char* varName
+   - string* varName                     → const char** varName
+   - string functionName(...)            → const char* functionName(...)
+   - string arrayName[]                  → const char* arrayName[]
+
+4. STRING ARRAY TO INDIVIDUAL VARIABLES
+   -------------------------------------
+   Feature: Converts string arrays to individual const char* variables
+   Reason: JSCPP doesn't support const char* arrays initialized with string literals
+   Implementation: 
+   - Splits array declaration into individual variables with indexed names
+   - Tracks array names and sizes for later access conversion
+   
+   Example:
+   Input:  string strArray[] = {"One", "Two", "Three"};
+   Output: const char* strArray_0 = "One";
+           const char* strArray_1 = "Two";
+           const char* strArray_2 = "Three";
+   
+   Array Access Conversion:
+   - Constant indices: strArray[0] → strArray_0 (direct variable access)
+   - Dynamic indices: strArray[i] → ternary expression selecting correct variable
+   
+   Example for dynamic access:
+   Input:  strArray[i]
+   Output: (i == 0 ? strArray_0 : i == 1 ? strArray_1 : i == 2 ? strArray_2 : "")
+
+5. RANGE-BASED FOR LOOP CONVERSION
+   ---------------------------------
+   Feature: Converts C++11 range-based for loops to traditional for loops
+   Reason: JSCPP doesn't support C++11 range-based for loops
+   Implementation: Multiple regex patterns handle different loop variations
+   
+   Patterns Handled:
+   
+   a) String Arrays (converted to individual variables):
+      - for (const char* var : arrayName) statement;
+      - for (const string& var : arrayName) statement;
+      - for (const char* var : arrayName) { ... }
+      - for (const string& var : arrayName) { ... }
+      
+      Example:
+      Input:  for (const string& s : strArray) cout << s << " ";
+      Output: { const char* s = strArray_0; cout << s << " "; }
+              { const char* s = strArray_1; cout << s << " "; }
+              { const char* s = strArray_2; cout << s << " "; }
+   
+   b) Regular Arrays (using sizeof):
+      - for (type var : array) statement;
+      - for (const type var : array) statement;
+      - for (type var : array) { ... }
+      - for (const type& var : array) statement;
+      - for (const type& var : array) { ... }
+      
+      Example:
+      Input:  for (int num : numArray) cout << num << " ";
+      Output: for (int __i_num = 0; __i_num < sizeof(numArray)/sizeof(numArray[0]); __i_num++) {
+                  int num = numArray[__i_num]; cout << num << " ";
+              }
+   
+   Special Handling:
+   - String arrays are converted to individual blocks (one per element)
+   - Regular arrays use sizeof() to determine array size
+   - Index variables are prefixed with __i_ to avoid conflicts
+
+6. CONVERSION ORDER
+   ----------------
+   The preprocessing follows a specific order to ensure correct conversions:
+   
+   1. Remove std:: namespace qualifiers (first step, before any other transformations)
+   2. Keep all #include directives (for code mimicry)
+   3. Convert string arrays to individual variables
+   4. Convert string array access (arrayName[index])
+   5. Convert range-based for loops over string arrays
+   6. Convert string types (string → const char*)
+   7. Convert range-based for loops over regular arrays
+   
+   This order ensures that:
+   - String arrays are handled before general string type conversion
+   - Range-based for loops over string arrays are converted before general loop conversion
+   - String type conversion happens before general range-based for loop conversion
+
+7. ERROR HANDLING
+   --------------
+   - Uninitialized string arrays are commented out with a note
+   - Out-of-bounds array access returns empty string ("")
+   - Converted string arrays are tracked to prevent double conversion
+
+8. LIMITATIONS
+   ------------
+   - String arrays must be initialized with string literals
+   - Uninitialized string arrays are not supported
+   - Dynamic array sizing is not supported (must use constant size)
+   - String array access with complex expressions may not work correctly
+   - Range-based for loops with braces containing multiple statements may have issues
+
+9. TECHNICAL DETAILS
+   ------------------
+   - Uses regex patterns for pattern matching and replacement
+   - Maintains a stringArrayInfo object to track converted arrays
+   - Index variables use __i_ prefix to avoid naming conflicts
+   - Ternary expressions are used for dynamic array access
+   - Direct variable access is used for constant array indices
+
