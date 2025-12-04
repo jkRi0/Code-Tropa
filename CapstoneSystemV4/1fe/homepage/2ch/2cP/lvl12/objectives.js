@@ -36,18 +36,18 @@ window.examples = window.examples || {
 // Expected output:
 Simbang Gabi Attendance Tracker
 ===============================
-Day 1: December 16 - ✅ Attended
-Day 2: December 17 - ❌ Missed
-Day 3: December 18 - ✅ Attended
+Day 1: December 16 - Attended
+Day 2: December 17 - Missed
+Day 3: December 18 - Attended
 ===============================`,
     
     average: `
 // Expected output:
 Simbang Gabi Attendance Tracker
 ===============================
-Day 1: December 16 - ✅ Attended
-Day 2: December 17 - ❌ Missed
-Day 3: December 18 - ✅ Attended
+Day 1: December 16 - Attended
+Day 2: December 17 - Missed
+Day 3: December 18 - Attended
 ===============================
 
 Attendance Summary:
@@ -61,11 +61,11 @@ Completion: 66.7%
 // Expected output:
 Simbang Gabi Attendance Tracker
 ===============================
-Day 1: December 16 - ✅ Attended
-Day 2: December 17 - ❌ Missed
-Day 3: December 18 - ✅ Attended
-Day 4: December 19 - ✅ Attended
-Day 5: December 20 - ❌ Missed
+Day 1: December 16 - Attended
+Day 2: December 17 - Missed
+Day 3: December 18 - Attended
+Day 4: December 19 - Attended
+Day 5: December 20 - Missed
 ===============================
 
 Detailed Analysis:

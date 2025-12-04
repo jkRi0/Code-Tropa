@@ -55,55 +55,53 @@ int main() {
     std::string destinations[5] = {"Quiapo", "Makati", "Cubao", "Ortigas", "BGC"};
     int fares[5] = {12, 15, 18, 20, 25};
     
+    // Passenger data arrays
+    std::string passengerDestinations[4] = {"Makati", "Cubao", "Ortigas", "BGC"};
+    std::string passengerTypes[4] = {"Regular", "Student", "Senior", "Regular"};
+    
+    int totalFare = 0;
+    int totalDiscount = 0;
+    
     std::cout << "Jeepney Fare Calculator" << std::endl;
     std::cout << "======================" << std::endl;
     
-    // Get user input
-    std::string userDestination;
-    std::cout << "Enter destination: ";
-    std::getline(std::cin, userDestination);
-    
-    std::string discountEligible;
-    std::cout << "Are you a senior/student? (y/n): ";
-    std::getline(std::cin, discountEligible);
-    
-    // Convert to lowercase for comparison
-    std::transform(discountEligible.begin(), discountEligible.end(), 
-                   discountEligible.begin(), ::tolower);
-    
-    // Validate destination and find fare
-    int destinationIndex = -1;
-    for (int i = 0; i < 5; i++) {
-        if (destinations[i] == userDestination) {
-            destinationIndex = i;
-            break;
+    // Loop through passengers and calculate fares
+    for (int i = 0; i < 4; i++) {
+        // Find destination index
+        int destIndex = -1;
+        for (int j = 0; j < 5; j++) {
+            if (destinations[j] == passengerDestinations[i]) {
+                destIndex = j;
+                break;
+            }
+        }
+        
+        if (destIndex != -1) {
+            int regularFare = fares[destIndex];
+            int discount = 0;
+            
+            // Apply discount using conditional statements
+            if (passengerTypes[i] == "Student" || passengerTypes[i] == "Senior") {
+                discount = (int)(regularFare * 0.20); // 20% discount
+            }
+            
+            int finalFare = regularFare - discount;
+            totalFare += finalFare;
+            totalDiscount += discount;
+            
+            std::cout << "Passenger " << (i + 1) << ": " << passengerDestinations[i] 
+                      << " - " << passengerTypes[i] << " - ₱" << finalFare;
+            if (discount > 0) {
+                std::cout << " (20% discount)";
+            }
+            std::cout << std::endl;
         }
     }
     
-    if (destinationIndex == -1) {
-        std::cout << "❌ Invalid destination! Please choose from:" << std::endl;
-        for (int i = 0; i < 5; i++) {
-            std::cout << "- " << destinations[i] << std::endl;
-        }
-    } else {
-        int regularFare = fares[destinationIndex];
-        double discount = 0.0;
-        
-        if (discountEligible == "y") {
-            discount = regularFare * 0.20; // 20% discount
-        }
-        
-        double finalFare = regularFare - discount;
-        
-        std::cout << std::endl;
-        std::cout << "Destination: " << userDestination << std::endl;
-        std::cout << "Regular Fare: ₱" << regularFare << std::endl;
-        if (discount > 0) {
-            std::cout << "Discount (20%): ₱" << (int)discount << std::endl;
-        }
-        std::cout << "Final Fare: ₱" << (int)finalFare << std::endl;
-    }
-    
+    std::cout << "======================" << std::endl;
+    std::cout << "Total Fare: ₱" << totalFare << std::endl;
+    std::cout << "Total Discount: ₱" << totalDiscount << std::endl;
+    std::cout << "Final Total: ₱" << totalFare << std::endl;
     std::cout << "======================" << std::endl;
     
     return 0;

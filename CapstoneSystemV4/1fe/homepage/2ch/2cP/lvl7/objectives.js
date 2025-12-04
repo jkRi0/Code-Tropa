@@ -13,10 +13,10 @@ window.objectivesData = window.objectivesData || {
     average: {
         title: "Level 7 - Pamamanhikan Planner (Average) - C++",
         objectives: [
-            "Use parameters to assign specific gift tasks to participants",
-            "Create functions that assign different gift responsibilities",
-            "Create a system that:\n  - Takes participant names as input\n  - Assigns gift tasks (flowers, food, jewelry)\n  - Displays assignment confirmations",
-            "Use multiple functions with different parameters and return values"
+            "Use functions with parameters to assign specific gift tasks to participants",
+            "Create functions that take participant names and gift types as parameters",
+            "Create a system that:\n  - Uses a function with parameters to assign gift tasks\n  - Assigns different gifts (flowers, food, jewelry) to different participants\n  - Displays assignment confirmations for each participant",
+            "Use multiple functions with different parameters"
         ]
     },
     difficult: {
@@ -47,25 +47,25 @@ Pamamanhikan Gift Assignment
 ===========================
 Participant: Juan
 Assigned Gift: Flowers
-Status: ✅ Task assigned successfully
+Status: Task assigned successfully
 
 Participant: Maria
 Assigned Gift: Food
-Status: ✅ Task assigned successfully
+Status: Task assigned successfully
 
 Participant: Pedro
 Assigned Gift: Jewelry
-Status: ✅ Task assigned successfully`,
+Status: Task assigned successfully`,
     
     difficult: `
 // Expected output:
 Pamamanhikan Gift Validation
 ===========================
 Required Gifts Checklist:
-✅ Flowers - Assigned to: Juan
-✅ Food - Assigned to: Maria
-✅ Jewelry - Assigned to: Pedro
-✅ Traditional Items - Assigned to: Ana
+Flowers - Assigned to: Juan
+Food - Assigned to: Maria
+Jewelry - Assigned to: Pedro
+Traditional Items - Assigned to: Ana
 
 All gifts accounted for!
 Pamamanhikan is ready to proceed.

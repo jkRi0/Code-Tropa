@@ -14,10 +14,11 @@ window.objectivesData = window.objectivesData || {
     average: {
         title: "Level 4 - Barangay Curfew Check (Average) - C++",
         objectives: [
-            "Add conditional checks for exemptions",
+            "Add conditional checks for exemptions using nested if-else",
+            "Declare variables for age and current hour",
             "Check for minors (age < 18) and senior citizens (age >= 65)",
-            "Create a system that:\n  - Takes age as input\n  - Checks if time is after 10 PM\n  - Applies exemption rules\n  - Displays appropriate messages",
-            "Use nested if-else statements and std::cin for input"
+            "Create a system that:\n  - Uses variables to store age and time\n  - Checks if time is after 10 PM\n  - Applies exemption rules with nested conditionals\n  - Displays appropriate messages based on conditions",
+            "Use nested if-else statements for complex conditions"
         ]
     },
     difficult: {
@@ -39,31 +40,31 @@ window.examples = window.examples || {
 Barangay Curfew Check
 ====================
 Current Time: 22:30
-⚠️ CURFEW VIOLATION! It's past 10 PM.`,
+CURFEW VIOLATION! It's past 10 PM.`,
     
     average: `
-// Expected output (with age input: 16):
+// Expected output:
 Barangay Curfew Check
 ====================
-Enter your age: 16
+Age: 16
 Current Time: 22:30
-✅ EXEMPTION: Minors are exempt from curfew.`,
+EXEMPTION: Minors are exempt from curfew.`,
     
     difficult: `
 // Expected output:
 Barangay Curfew Check Report
 ============================
 Resident: Juan (25) - Work
-Status: ⚠️ VIOLATION - No valid reason
+Status: VIOLATION - No valid reason
 
 Resident: Maria (16) - School
-Status: ✅ EXEMPT - Minor
+Status: EXEMPT - Minor
 
 Resident: Pedro (70) - Medical
-Status: ✅ EXEMPT - Senior citizen
+Status: EXEMPT - Senior citizen
 
 Resident: Ana (30) - Emergency
-Status: ✅ VALID - Emergency reason
+Status: VALID - Emergency reason
 
 Total Violations: 1
 `

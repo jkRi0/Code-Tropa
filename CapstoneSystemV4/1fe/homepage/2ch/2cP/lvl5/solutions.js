@@ -44,7 +44,7 @@ void assignRole(const std::string& name, int age) {
     
     std::cout << "Helper: " << name << " (" << age << ")" << std::endl;
     std::cout << "Assigned Role: " << role << std::endl;
-    std::cout << "Status: ✅ Role assigned successfully" << std::endl;
+    std::cout << "Status: Role assigned successfully" << std::endl;
     std::cout << std::endl;
 }
 
@@ -113,7 +113,7 @@ int main() {
     for (size_t i = 0; i < helpers.size(); i++) {
         std::string role = assignAvailableRole(helpers[i], ages[i], requiredRoles, roleFilled);
         if (!role.empty()) {
-            std::cout << "✅ " << role << ": " << helpers[i] << " (" << ages[i] << ")" << std::endl;
+            std::cout << role << ": " << helpers[i] << " (" << ages[i] << ")" << std::endl;
         }
     }
     

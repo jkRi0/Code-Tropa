@@ -30,10 +30,11 @@
 **Topics Covered:**
 - ✅ Variables and Data Types (string, double, int)
 - ✅ Operators (arithmetic: *, +)
+- ✅ Arrays (difficult: arrays for products, prices, stock)
 - ✅ Control Flow (difficult: if statements for threshold checks)
-- ⚠️ **Note:** Uses std::cin for input (acceptable as basic I/O)
+- ✅ Loops (difficult: loops to process arrays)
 
-**Status:** ✅ **ALIGNED** - std::cin is acceptable for basic input/output
+**Status:** ✅ **ALIGNED** - All topics within scope, no user input required
 
 ---
 
@@ -55,9 +56,8 @@
 - ✅ Variables and Data Types (int for age and time)
 - ✅ Arrays (difficult: residents data)
 - ✅ Loops (difficult: loops to process residents)
-- ⚠️ **Note:** Uses std::cin for input (acceptable as basic I/O)
 
-**Status:** ✅ **ALIGNED** - All topics within scope
+**Status:** ✅ **ALIGNED** - All topics within scope, no user input required
 
 ---
 
@@ -69,22 +69,20 @@
 - ✅ Arrays (difficult: helper names and ages)
 - ✅ Control Flow (difficult: conditionals in functions)
 - ✅ Loops (difficult: loops with functions)
-- ⚠️ **Note:** Uses std::cin for input (acceptable as basic I/O)
 
-**Status:** ✅ **ALIGNED** - All topics within scope
+**Status:** ✅ **ALIGNED** - All topics within scope, no user input required
 
 ---
 
 ### **Level 6 - Jeepney Fare Calculator**
 **Topics Covered:**
-- ✅ Arrays (all difficulties: destinations, fares)
+- ✅ Arrays (all difficulties: destinations, fares, passenger data)
 - ✅ Loops (all difficulties: for loops)
 - ✅ Control Flow (difficult: conditionals for discounts)
 - ✅ Operators (difficult: arithmetic for fare calculations)
 - ✅ String Operations (difficult: string comparison for validation)
-- ⚠️ **Note:** Uses std::cin for input (acceptable as basic I/O)
 
-**Status:** ✅ **ALIGNED** - All topics within scope
+**Status:** ✅ **ALIGNED** - All topics within scope, no user input required
 
 ---
 
@@ -95,9 +93,8 @@
 - ✅ Return values (difficult: boolean return)
 - ✅ Arrays (difficult: gifts and participants)
 - ✅ Loops (difficult: loops with functions)
-- ⚠️ **Note:** Uses std::cin for input (acceptable as basic I/O)
 
-**Status:** ✅ **ALIGNED** - All topics within scope
+**Status:** ✅ **ALIGNED** - All topics within scope, no user input required
 
 ---
 
@@ -115,14 +112,14 @@
 
 ### **Level 9 - Fiesta Poster Maker**
 **Topics Covered:**
-- ✅ String Operations (toUpperCase(), length(), substring())
+- ✅ String Operations (length(), string operations, character analysis)
 - ✅ Arrays (difficult: multiple slogans)
 - ✅ Loops (difficult: loops to process slogans)
 - ✅ String concatenation
-- ✅ **FIXED:** Removed #include <algorithm> header
-- ⚠️ **Note:** Uses std::cin for input (acceptable as basic I/O)
+- ✅ **FIXED:** Removed #include <algorithm> header (if not needed)
+- ✅ **FIXED:** Removed user input requirement
 
-**Status:** ✅ **ALIGNED** - Fixed: Removed unnecessary algorithm header
+**Status:** ✅ **ALIGNED** - Fixed: Removed unnecessary algorithm header and user input
 
 ---
 
@@ -282,7 +279,8 @@
 - **All levels** properly use only core programming topics
 - **No advanced C++ features** found in objectives.js files (std::sort, rand, algorithm library, etc.)
 - **Manual sorting algorithms** are used (bubble sort, selection sort) which is good
-- **std::cin and std::cout** are acceptable as basic input/output (part of basic syntax)
+- **No user input required** - All levels use predefined variables, arrays, or function parameters
+- **std::cout** is used for output (part of basic syntax)
 - **iomanip** is acceptable for basic output formatting
 
 ---
@@ -312,9 +310,11 @@
 
 ## Notes on Acceptable Features:
 
-- ✅ **std::cin / std::cout:** Basic input/output - part of basic syntax
+- ✅ **std::cout:** Basic output - part of basic syntax
 - ✅ **iomanip:** Basic output formatting - acceptable for formatting
 - ✅ **Manual sorting:** Bubble sort, selection sort - within scope
+- ✅ **Predefined variables/arrays:** All data is predefined - no user input required
+- ❌ **std::cin:** User input - removed from all levels
 - ❌ **std::sort():** Advanced library function - removed
 - ❌ **rand():** Random number generation - removed
 - ❌ **#include <algorithm>:** Advanced library - removed when not needed

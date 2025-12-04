@@ -29,7 +29,7 @@ int main() {
 void assignGiftTask(const std::string& participantName, const std::string& giftType) {
     std::cout << "Participant: " << participantName << std::endl;
     std::cout << "Assigned Gift: " << giftType << std::endl;
-    std::cout << "Status: ✅ Task assigned successfully" << std::endl;
+    std::cout << "Status: Task assigned successfully" << std::endl;
     std::cout << std::endl;
 }
 
@@ -69,9 +69,9 @@ bool validateGifts(const std::vector<std::string>& requiredGifts,
         const std::string& participant = participants[i];
         
         if (!participant.empty()) {
-            std::cout << "✅ " << gift << " - Assigned to: " << participant << std::endl;
+            std::cout << gift << " - Assigned to: " << participant << std::endl;
         } else {
-            std::cout << "❌ " << gift << " - NOT ASSIGNED" << std::endl;
+            std::cout << gift << " - NOT ASSIGNED" << std::endl;
             allPresent = false;
         }
     }
@@ -85,7 +85,7 @@ void handleMissingGifts(const std::vector<std::string>& requiredGifts,
     std::cout << "Missing Gift Report:" << std::endl;
     for (size_t i = 0; i < requiredGifts.size(); i++) {
         if (participants[i].empty()) {
-            std::cout << "⚠️ " << requiredGifts[i] << " needs to be assigned" << std::endl;
+            std::cout << requiredGifts[i] << " needs to be assigned" << std::endl;
         }
     }
 }
@@ -107,7 +107,7 @@ int main() {
         std::cout << "Pamamanhikan is ready to proceed." << std::endl;
     } else {
         std::cout << std::endl;
-        std::cout << "⚠️ Some gifts are missing. Please check assignments." << std::endl;
+        std::cout << "Some gifts are missing. Please check assignments." << std::endl;
         handleMissingGifts(requiredGifts, assignedParticipants);
     }
     

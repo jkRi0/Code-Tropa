@@ -64,53 +64,39 @@ int main() {
 #include <iomanip>
 
 int main() {
-    // Product names
-    std::string suka = "Vinegar";
-    std::string itlog = "Eggs";
-    std::string tinapay = "Bread";
+    // Use arrays to store product data
+    std::string products[3] = {"Vinegar", "Eggs", "Bread"};
+    double prices[3] = {25.50, 8.00, 35.00};
+    int stock[3] = {15, 25, 10};
     
-    // Prices
-    double sukaPrice = 25.50;
-    double itlogPrice = 8.00;
-    double tinapayPrice = 35.00;
-    
-    // Get new stock levels from user
-    int sukaStock, itlogStock, tinapayStock;
-    
-    std::cout << "Enter new stock for " << suka << ": ";
-    std::cin >> sukaStock;
-    
-    std::cout << "Enter new stock for " << itlog << ": ";
-    std::cin >> itlogStock;
-    
-    std::cout << "Enter new stock for " << tinapay << ": ";
-    std::cin >> tinapayStock;
-    
-    // Calculate values
-    double sukaValue = sukaPrice * sukaStock;
-    double itlogValue = itlogPrice * itlogStock;
-    double tinapayValue = tinapayPrice * tinapayStock;
-    
-    // Display updated inventory
-    std::cout << std::endl << "Updated Inventory:" << std::endl;
-    std::cout << std::fixed << std::setprecision(2);
-    std::cout << suka << ": " << sukaStock << " units @ ₱" << sukaPrice << " = ₱" << sukaValue << std::endl;
-    std::cout << itlog << ": " << itlogStock << " units @ ₱" << itlogPrice << " = ₱" << itlogValue << std::endl;
-    std::cout << tinapay << ": " << tinapayStock << " units @ ₱" << tinapayPrice << " = ₱" << tinapayValue << std::endl;
-    
-    // Check for restock alerts (threshold = 20)
     int threshold = 20;
-    std::cout << std::endl;
+    double totalValue = 0;
+    int restockCount = 0;
     
-    if (sukaStock < threshold) {
-        std::cout << "⚠️ RESTOCK ALERT: " << suka << " is below threshold (" << sukaStock << " < " << threshold << ")" << std::endl;
+    // Display inventory report using loops
+    std::cout << "Sari-Sari Store Inventory Report" << std::endl;
+    std::cout << "================================" << std::endl;
+    
+    for (int i = 0; i < 3; i++) {
+        double itemValue = prices[i] * stock[i];
+        totalValue += itemValue;
+        
+        std::cout << std::fixed << std::setprecision(2);
+        std::cout << products[i] << ": " << stock[i] << " units @ ₱" << prices[i] << " = ₱" << itemValue << std::endl;
+        
+        // Check if stock is below threshold using conditional statements
+        if (stock[i] < threshold) {
+            std::cout << "RESTOCK ALERT: Below threshold (" << stock[i] << " < " << threshold << ")" << std::endl;
+            restockCount++;
+        } else {
+            std::cout << "Stock OK" << std::endl;
+        }
+        std::cout << std::endl;
     }
-    if (itlogStock < threshold) {
-        std::cout << "⚠️ RESTOCK ALERT: " << itlog << " is below threshold (" << itlogStock << " < " << threshold << ")" << std::endl;
-    }
-    if (tinapayStock < threshold) {
-        std::cout << "⚠️ RESTOCK ALERT: " << tinapay << " is below threshold (" << tinapayStock << " < " << threshold << ")" << std::endl;
-    }
+    
+    std::cout << "Total Inventory Value: ₱" << std::fixed << std::setprecision(2) << totalValue << std::endl;
+    std::cout << "Items Needing Restock: " << restockCount << std::endl;
+    std::cout << "================================" << std::endl;
     
     return 0;
 }`

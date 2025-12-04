@@ -61,9 +61,9 @@ Vinegar: 15 units @ ₱25.50 = ₱382.50
 Eggs: 25 units @ ₱8.00 = ₱200.00
 Bread: 10 units @ ₱35.00 = ₱350.00
 
-⚠️ RESTOCK ALERT: Vinegar is below threshold (15 < 20)
-⚠️ RESTOCK ALERT: Eggs is below threshold (25 < 20)
-⚠️ RESTOCK ALERT: Bread is below threshold (10 < 20)
+RESTOCK ALERT: Vinegar is below threshold (15 < 20)
+RESTOCK ALERT: Eggs is below threshold (25 < 20)
+RESTOCK ALERT: Bread is below threshold (10 < 20)
 `
 };
 

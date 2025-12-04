@@ -14,7 +14,7 @@ int main() {
     
     // Print each day's attendance status using a loop
     for (int i = 0; i < 3; i++) {
-        std::string status = attended[i] ? "✅ Attended" : "❌ Missed";
+        std::string status = attended[i] ? "Attended" : "Missed";
         std::cout << "Day " << (i + 1) << ": " << days[i] << " - " << status << std::endl;
     }
     
@@ -38,7 +38,7 @@ int main() {
     
     // Display attendance data
     for (int i = 0; i < 3; i++) {
-        std::string status = attended[i] ? "✅ Attended" : "❌ Missed";
+        std::string status = attended[i] ? "Attended" : "Missed";
         std::cout << "Day " << (i + 1) << ": " << days[i] << " - " << status << std::endl;
     }
     
@@ -82,7 +82,7 @@ int main() {
     
     // Display attendance data
     for (int i = 0; i < 5; i++) {
-        std::string status = attended[i] ? "✅ Attended" : "❌ Missed";
+        std::string status = attended[i] ? "Attended" : "Missed";
         std::cout << "Day " << (i + 1) << ": " << days[i] << " - " << status << std::endl;
     }
     
