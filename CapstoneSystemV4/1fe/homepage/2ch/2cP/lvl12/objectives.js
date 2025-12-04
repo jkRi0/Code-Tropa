@@ -7,23 +7,24 @@ window.objectivesData = window.objectivesData || {
             "Include necessary headers (iostream, string)",
             "Store 3 consecutive days and their attendance status",
             "Use parallel arrays: string days[] and bool attended[]",
-            "Print each day's attendance status using a loop"
+            "Use a for loop to print each day's attendance status",
+            "Use conditional (if-else) to display 'Attended' or 'Missed'"
         ]
     },
     average: {
         title: "Level 12 - Simbang Gabi Checker (Average) - C++",
         objectives: [
-            "Count total attended days and calculate completion percentage",
-            "Create a system that:\n  - Counts how many days were attended\n  - Calculates completion percentage\n  - Displays attendance summary",
-            "Use loops and mathematical calculations"
+            "Use loops to count attended days and calculate percentage",
+            "Create a system that:\n  - Uses a loop to count how many days were attended (count true values)\n  - Calculates missed days (total - attended)\n  - Calculates completion percentage (attended ÷ total × 100)\n  - Displays attendance summary with counts and percentage",
+            "Use loops, conditionals, and mathematical calculations"
         ]
     },
     difficult: {
         title: "Level 12 - Simbang Gabi Checker (Difficult) - C++",
         objectives: [
-            "Track consecutive attendance streaks and provide encouragement messages",
-            "Create a system that:\n  - Tracks consecutive attendance streaks\n  - Identifies longest streak\n  - Provides encouragement based on attendance\n  - Shows detailed attendance analysis",
-            "Use complex logic, streak tracking, and conditional messaging"
+            "Use loops and conditionals to track streaks and provide encouragement",
+            "Create a system that:\n  - Uses loops to track consecutive attendance streaks\n  - Identifies current streak and longest streak\n  - Uses conditional statements to provide encouragement messages based on completion percentage\n  - Shows detailed attendance analysis with streak information",
+            "Use loops, nested conditionals, streak tracking logic, and string operations"
         ]
     }
 };

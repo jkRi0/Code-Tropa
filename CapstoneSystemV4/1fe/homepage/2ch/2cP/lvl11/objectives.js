@@ -21,9 +21,9 @@ window.objectivesData = window.objectivesData || {
     difficult: {
         title: "Level 11 - Barangay Population Analyzer (Difficult) - C++",
         objectives: [
-            "Find the barangay with the highest/lowest population and categorize by size",
-            "Create a system that:\n  - Identifies barangay with highest population\n  - Identifies barangay with lowest population\n  - Categorizes barangays by size (small, medium, large)\n  - Displays detailed analysis report",
-            "Use complex logic, comparisons, and categorization"
+            "Use loops and conditionals to find highest/lowest and categorize barangays",
+            "Create a system that:\n  - Uses loops to find barangay with highest population\n  - Uses loops to find barangay with lowest population\n  - Uses conditional statements to categorize by size (small < 16,000, medium 16,000-20,000, large > 20,000)\n  - Counts barangays in each category\n  - Displays detailed analysis with all statistics",
+            "Use loops, conditionals, comparisons, and multiple calculations"
         ]
     }
 };

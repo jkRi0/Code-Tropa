@@ -5,7 +5,8 @@ window.objectivesData = window.objectivesData || {
         objectives: [
             "Create a C++ program with main function",
             "Include necessary headers (iostream)",
-            "Check if current time is after 10 PM (22:00)",
+            "Declare a variable for current hour (e.g., int currentHour = 22)",
+            "Check if current time is after 10 PM (22:00) using if statement",
             "If true, display a curfew violation message",
             "Use simple conditional statements (if-else) and std::cout"
         ]

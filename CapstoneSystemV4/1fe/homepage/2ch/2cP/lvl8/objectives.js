@@ -13,9 +13,9 @@ window.objectivesData = window.objectivesData || {
     average: {
         title: "Level 8 - Tikbalang Path Puzzle (Average) - C++",
         objectives: [
-            "Add random choices with different outcomes",
-            "Use rand() function to generate random moves",
-            "Create a system that:\n  - Generates random moves (straight, offer gift, hide)\n  - Shows different outcomes for each move\n  - Uses if-else statements for move consequences",
+            "Use arrays to store different move types and their outcomes",
+            "Use conditional statements to determine outcomes based on moves",
+            "Create a system that:\n  - Uses arrays to store moves and outcomes\n  - Loops through moves\n  - Uses if-else statements to show different outcomes for each move type\n  - Displays move and outcome for each step",
             "Use loops and conditional statements together"
         ]
     },

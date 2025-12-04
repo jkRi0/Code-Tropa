@@ -22,10 +22,11 @@ window.objectivesData = window.objectivesData || {
     difficult: {
         title: "Level 2 - Sari-Sari Store Inventory (Difficult) - C++",
         objectives: [
-            "Allow input to update stock levels using std::cin",
-            "Check if any stock falls below threshold (e.g., 20 items)",
-            "Print a restock alert for items below threshold",
-            "Create a system that:\n  - Prompts user to enter new stock quantities\n  - Updates the inventory\n  - Displays current inventory status\n  - Shows restock alerts for low stock items"
+            "Use arrays to store multiple products, prices, and stock levels",
+            "Check if any stock falls below threshold (e.g., 20 items) using loops",
+            "Print restock alerts for items below threshold",
+            "Create a system that:\n  - Uses arrays to store product names, prices, and stock\n  - Calculates inventory value for each item using loops\n  - Checks stock levels against threshold using conditional statements\n  - Displays inventory report with restock alerts for low stock items",
+            "Use arrays, loops, and conditional statements together"
         ]
     }
 };

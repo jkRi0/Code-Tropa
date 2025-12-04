@@ -22,9 +22,9 @@ window.objectivesData = window.objectivesData || {
     difficult: {
         title: "Level 6 - Jeepney Fare Calculator (Difficult) - C++",
         objectives: [
-            "Apply senior/student discounts and validate if entered destination exists",
-            "Create a system that:\n  - Takes user input for destination\n  - Validates destination exists in the list\n  - Applies 20% discount for seniors/students\n  - Calculates final fare with discount",
-            "Use input validation, conditional logic, and array searching with std::cin"
+            "Use arrays and loops to apply discounts for multiple passengers",
+            "Create a system that:\n  - Uses arrays to store destinations, fares, and passenger types\n  - Loops through passengers to calculate fares\n  - Uses conditional statements to apply 20% discount for seniors/students\n  - Calculates individual and total fares with discounts\n  - Displays detailed fare breakdown",
+            "Use arrays, loops, conditional logic, and string operations"
         ]
     }
 };

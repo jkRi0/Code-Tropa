@@ -14,8 +14,8 @@ window.objectivesData = window.objectivesData || {
         title: "Level 10 - Larong Kalye Leaderboard (Average) - Java",
         objectives: [
             "Sort and print the top 3 scores",
-            "Create a system that:\n  - Sorts players by score (highest first)\n  - Displays ranked leaderboard\n  - Shows position, name, and score",
-            "Use Arrays.sort() and custom sorting logic"
+            "Create a system that:\n  - Uses loops to sort players by score (highest first) using manual sorting\n  - Displays ranked leaderboard\n  - Shows position, name, and score",
+            "Use manual sorting (bubble sort or selection sort) with loops and conditionals"
         ]
     },
     difficult: {

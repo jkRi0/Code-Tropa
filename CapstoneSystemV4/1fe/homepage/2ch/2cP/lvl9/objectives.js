@@ -4,7 +4,7 @@ window.objectivesData = window.objectivesData || {
         title: "Level 9 - Fiesta Poster Maker (Easy) - C++",
         objectives: [
             "Create a C++ program with main function",
-            "Include necessary headers (iostream, string, algorithm)",
+            "Include necessary headers (iostream, string)",
             "Convert a slogan to uppercase and add decorative characters",
             "Use string methods and string concatenation",
             "Print the formatted slogan with borders using std::cout"
@@ -13,17 +13,17 @@ window.objectivesData = window.objectivesData || {
     average: {
         title: "Level 9 - Fiesta Poster Maker (Average) - C++",
         objectives: [
-            "Accept a user-input slogan, count characters and words",
-            "Create a system that:\n  - Takes slogan input from user\n  - Counts total characters\n  - Counts total words\n  - Displays character and word statistics",
-            "Use std::cin for input and string methods for analysis"
+            "Use string methods to analyze a slogan: count characters and words",
+            "Create a system that:\n  - Uses a string variable to store slogan\n  - Uses length() method to count total characters\n  - Uses manual counting or string operations to count words\n  - Displays character and word statistics",
+            "Use string methods: length(), string operations, and character analysis"
         ]
     },
     difficult: {
         title: "Level 9 - Fiesta Poster Maker (Difficult) - C++",
         objectives: [
-            "Sanitize slogans by removing offensive words, align output, and auto-suggest better slogans",
-            "Create a system that:\n  - Filters out inappropriate words\n  - Aligns text output properly\n  - Suggests improvements based on length and clarity\n  - Generates multiple slogan variations",
-            "Use arrays, loops, and complex string manipulation"
+            "Use arrays and string methods to process multiple slogans and format output",
+            "Create a system that:\n  - Uses arrays to store multiple slogans\n  - Uses loops to process each slogan\n  - Uses string methods (length(), substr(), string operations) to format\n  - Generates formatted poster output with borders\n  - Displays multiple slogan variations",
+            "Use arrays, loops, and complex string manipulation methods"
         ]
     }
 };

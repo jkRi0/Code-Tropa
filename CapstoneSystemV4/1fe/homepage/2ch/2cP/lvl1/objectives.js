@@ -12,22 +12,24 @@ window.objectivesData = window.objectivesData || {
     average: {
         title: "Level 1 - Taho Time! (Average) - C++",
         objectives: [
-            "Format the printed output with newlines and tabs for better readability",
-            "Add single-line comments (//) explaining each line of code",
-            "Add a multi-line comment (/* */) describing the taho vendor tradition",
-            "Print a complete menu with proper spacing and formatting",
+            "Declare variables to store prices: int tahoPrice = 15 and int syrupPrice = 5",
+            "Calculate the total price by adding tahoPrice and syrupPrice",
+            "Format the output with proper spacing and menu structure",
+            "Print the vendor's call, menu items with prices, and the calculated total",
+            "Add comments explaining your code",
             "Use std::cout and std::endl for output"
         ]
     },
     difficult: {
         title: "Level 1 - Taho Time! (Difficult) - C++",
         objectives: [
-            "Debug a provided set of print statements with various syntax errors:",
-            "- Missing quotes in string literals",
-            "- Misplaced semicolons",
-            "- Incorrect string concatenation",
-            "<pre class=\"code-to-debug\">\n#include <iostream>\n\nint main() {\n    std::cout << Tahooo! << std::endl;\n    std::cout << \"Taho: ₱15\" << std::endl;\n    std::cout << \"Syrup: ₱5\" << std::endl;\n    std::cout << \"Total: \" + 15 + 5 + \"₱\" << std::endl;\n    \n    return 0;\n}</pre>",
-            "Ensure correct output formatting and proper syntax"
+            "Declare variables for at least 3 menu items with their prices:\n  - Taho: ₱15\n  - Syrup: ₱5\n  - Extra Taho: ₱10",
+            "Declare quantity variables for each item (e.g., int tahoQty = 2, int syrupQty = 1, int extraTahoQty = 1)",
+            "Calculate subtotals for each item (price × quantity)",
+            "Calculate the grand total by adding all subtotals",
+            "Display a formatted receipt showing:\n  - Vendor's call\n  - Itemized list with quantities and subtotals\n  - Grand total",
+            "Use proper string concatenation and formatting for professional output",
+            "Add comments explaining your code"
         ]
     }
 };
@@ -48,14 +50,22 @@ Syrup: ₱5`,
 ================
 Taho:     ₱15
 Syrup:    ₱5
+================
+Total:    ₱20
 ================`,
     
     difficult: `
 // Expected output:
 Tahooo!
-Taho: ₱15
-Syrup: ₱5
-Total: 20₱
+====================
+   TAHO ORDER
+====================
+Taho (x2):      ₱30
+Syrup (x1):     ₱5
+Extra Taho (x1): ₱10
+====================
+Grand Total:    ₱45
+====================
 `
 };
 

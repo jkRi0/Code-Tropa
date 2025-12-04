@@ -5,25 +5,26 @@ window.objectivesData = window.objectivesData || {
         objectives: [
             "Create a C++ program with main function",
             "Include necessary headers (iostream, string)",
-            "Store 3 Filipino names and their lengths in arrays",
-            "Use parallel arrays: string names[] and int lengths[]",
-            "Print each name and its length using a loop"
+            "Store 3 Filipino names in an array",
+            "Declare an array: string names[]",
+            "Use a for loop to print each name",
+            "Use the length() method to get and display each name's character count"
         ]
     },
     average: {
         title: "Level 14 - Filipino Names Analyzer (Average) - C++",
         objectives: [
-            "Count vowels and consonants in each name",
-            "Create a system that:\n  - Counts vowels (a, e, i, o, u) in each name\n  - Counts consonants in each name\n  - Displays vowel and consonant counts for each name",
-            "Use loops and character analysis"
+            "Use nested loops and string methods to count vowels and consonants",
+            "Create a system that:\n  - Uses nested loops (outer for names, inner for characters)\n  - Uses string indexing or character access to check each character\n  - Uses conditional statements to check if character is vowel (a, e, i, o, u)\n  - Counts vowels and consonants for each name\n  - Displays vowel and consonant counts for each name",
+            "Use nested loops, string methods, and character analysis"
         ]
     },
     difficult: {
         title: "Level 14 - Filipino Names Analyzer (Difficult) - C++",
         objectives: [
-            "Identify common Filipino name patterns and generate name suggestions",
-            "Create a system that:\n  - Identifies common Filipino name patterns (e.g., Maria, Jose, etc.)\n  - Generates name suggestions based on patterns\n  - Analyzes name popularity and cultural significance\n  - Displays detailed name analysis",
-            "Use complex string analysis, pattern recognition, and cultural context"
+            "Use functions, string operations, and arrays to analyze names and generate suggestions",
+            "Create a system that:\n  - Uses functions to identify name patterns (e.g., check if name equals 'Maria' or 'Jose')\n  - Uses functions to determine cultural significance based on name patterns\n  - Uses arrays to store and display name suggestions\n  - Uses loops to process all names and display detailed analysis",
+            "Use functions with return values, string comparisons, arrays, and loops"
         ]
     }
 };
