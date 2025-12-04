@@ -21,10 +21,10 @@ window.objectivesData = window.objectivesData || {
     difficult: {
         title: "Level 3 - Fiesta Budget Planner (Difficult) - Java",
         objectives: [
-            "Given a ₱5,000 budget and a list of item prices, use decision logic to determine which items to include",
-            "Implement a greedy approach to maximize items within budget",
-            "Create a system that:\n  - Lists available items with prices\n  - Sorts items by value (price per item)\n  - Selects items to fit within ₱5,000 budget\n  - Displays selected items and remaining budget",
-            "Use conditional statements and loops to optimize selection"
+            "Given a ₱5,000 budget and arrays of item names and prices, use loops and conditionals to select items",
+            "Implement selection logic to maximize items within budget using arrays and loops",
+            "Create a system that:\n  - Uses arrays to store item names and prices\n  - Iterates through items using loops\n  - Uses conditional statements to check if item fits budget\n  - Tracks selected items and calculates remaining budget\n  - Displays selected items and remaining budget",
+            "Use arrays, loops, and conditional statements to optimize selection"
         ]
     }
 };
@@ -74,6 +74,7 @@ Selected Items:
 - Sound System: ₱2,000
 Total Selected: ₱3,000
 Remaining Budget: ₱2,000
+=====================================
 `
 };
 

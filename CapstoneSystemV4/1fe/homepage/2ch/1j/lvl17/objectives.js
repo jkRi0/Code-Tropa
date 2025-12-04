@@ -5,25 +5,26 @@ window.objectivesData = window.objectivesData || {
         objectives: [
             "Create a Java class named 'PalarongBarangay'",
             "Add a main method to start your program",
-            "Store 3 barangay teams and their medal counts in arrays",
-            "Use parallel arrays: String[] teams and int[] medals",
-            "Print each team's name and medal count using a loop"
+            "Declare parallel arrays: String[] teams and int[] medals",
+            "Store 3 barangay teams and their total medal counts in the arrays",
+            "Use a for loop to print each team's name and medal count",
+            "No calculations needed - just display the data"
         ]
     },
     average: {
         title: "Level 17 - Palarong Barangay Medal Tally (Average) - Java",
         objectives: [
-            "Calculate total medals and determine the winning team",
-            "Create a system that:\n  - Calculates total medals for each team\n  - Determines the winning team\n  - Displays medal standings and winner",
-            "Use loops and conditional logic"
+            "Use loops and conditionals to find winner and sort standings",
+            "Create a system that:\n  - Uses loops to find team with highest medal count\n  - Uses bubble sort algorithm to sort teams by medal count\n  - Displays ranked standings (1st, 2nd, 3rd place)",
+            "Use loops, conditionals, and sorting algorithms"
         ]
     },
     difficult: {
         title: "Level 17 - Palarong Barangay Medal Tally (Difficult) - Java",
         objectives: [
-            "Track different medal types and generate detailed standings",
-            "Create a system that:\n  - Tracks gold, silver, and bronze medals separately\n  - Calculates weighted scores (gold=3, silver=2, bronze=1)\n  - Generates detailed standings with tie-breaking\n  - Displays comprehensive medal analysis",
-            "Use complex logic, weighted scoring, and tie-breaking algorithms"
+            "Use multiple arrays and loops to track medal types and calculate weighted scores",
+            "Create a system that:\n  - Uses arrays to track gold, silver, and bronze medals separately\n  - Uses loops to calculate weighted scores (gold×3 + silver×2 + bronze×1)\n  - Uses bubble sort to rank teams by weighted score\n  - Displays detailed medal analysis with all medal types and final standings",
+            "Use multiple arrays, nested loops, weighted calculations, and sorting"
         ]
     }
 };

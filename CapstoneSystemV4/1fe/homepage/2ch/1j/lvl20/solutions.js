@@ -65,78 +65,81 @@ public class JeepneyFareMatrix {
 }`,
 
     difficult: `
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-
 public class JeepneyFareMatrix {
-    static class Route {
-        String name;
-        double baseFare;
-        double distance;
-        double totalFare;
-        
-        public Route(String name, double baseFare, double distance) {
-            this.name = name;
-            this.baseFare = baseFare;
-            this.distance = distance;
-            this.totalFare = calculateTotalFare();
-        }
-        
-        private double calculateTotalFare() {
-            double distanceFare = distance * 1.0; // ₱1.00 per km
-            double subtotal = baseFare + distanceFare;
-            double discount = subtotal * 0.20; // 20% student discount
-            return subtotal - discount;
-        }
-    }
-    
     public static void main(String[] args) {
-        List<Route> routes = Arrays.asList(
-            new Route("Quiapo to Cubao", 12.00, 8.5),
-            new Route("Cubao to Makati", 15.00, 10.2),
-            new Route("Makati to Alabang", 18.00, 12.8)
-        );
+        String[] routes = {"Quiapo to Cubao", "Cubao to Makati", "Makati to Alabang"};
+        double[] baseFares = {12.00, 15.00, 18.00};
+        double[] distances = {8.5, 10.2, 12.8};
+        double[] totalFares = new double[routes.length];
         
         System.out.println("Jeepney Fare Matrix Calculator");
         System.out.println("=============================");
         
-        for (int i = 0; i < routes.size(); i++) {
-            Route route = routes.get(i);
-            System.out.printf("Route %d: %s - Base Fare: ₱%.2f%n", 
-                i + 1, route.name, route.baseFare);
+        for (int i = 0; i < routes.length; i++) {
+            System.out.println("Route " + (i + 1) + ": " + routes[i] + " - Base Fare: ₱" + String.format("%.2f", baseFares[i]));
         }
         
         System.out.println("=============================");
         System.out.println();
         
-        // Sort by total fare to find cheapest and most expensive
-        routes.sort(Comparator.comparingDouble(route -> route.totalFare));
+        // Calculate total fares for each route
+        for (int i = 0; i < routes.length; i++) {
+            double distanceFare = distances[i] * 1.0; // ₱1.00 per km
+            double subtotal = baseFares[i] + distanceFare;
+            double discount = subtotal * 0.20; // 20% student discount
+            totalFares[i] = subtotal - discount;
+        }
+        
+        // Sort by total fare using bubble sort (cheapest first)
+        for (int i = 0; i < totalFares.length - 1; i++) {
+            for (int j = 0; j < totalFares.length - 1 - i; j++) {
+                if (totalFares[j] > totalFares[j + 1]) {
+                    // Swap total fares
+                    double tempFare = totalFares[j];
+                    totalFares[j] = totalFares[j + 1];
+                    totalFares[j + 1] = tempFare;
+                    
+                    // Swap base fares
+                    double tempBase = baseFares[j];
+                    baseFares[j] = baseFares[j + 1];
+                    baseFares[j + 1] = tempBase;
+                    
+                    // Swap distances
+                    double tempDist = distances[j];
+                    distances[j] = distances[j + 1];
+                    distances[j + 1] = tempDist;
+                    
+                    // Swap routes
+                    String tempRoute = routes[j];
+                    routes[j] = routes[j + 1];
+                    routes[j + 1] = tempRoute;
+                }
+            }
+        }
         
         System.out.println("Fare Optimization Analysis:");
-        System.out.printf("Cheapest Route: %s (₱%.2f)%n", 
-            routes.get(0).name, routes.get(0).totalFare);
-        System.out.printf("Most Expensive Route: %s (₱%.2f)%n", 
-            routes.get(routes.size() - 1).name, routes.get(routes.size() - 1).totalFare);
+        System.out.println("Cheapest Route: " + routes[0] + " (₱" + String.format("%.2f", totalFares[0]) + ")");
+        System.out.println("Most Expensive Route: " + routes[routes.length - 1] + " (₱" + String.format("%.2f", totalFares[routes.length - 1]) + ")");
         
-        double averageFare = routes.stream()
-            .mapToDouble(route -> route.totalFare)
-            .average()
-            .orElse(0.0);
-        System.out.printf("Average Fare: ₱%.2f%n", averageFare);
+        // Calculate average fare
+        double total = 0;
+        for (int i = 0; i < totalFares.length; i++) {
+            total += totalFares[i];
+        }
+        double averageFare = total / totalFares.length;
+        System.out.println("Average Fare: ₱" + String.format("%.2f", averageFare));
         
         System.out.println();
         System.out.println("Route Recommendations:");
-        System.out.println("- For Budget Travel: " + routes.get(0).name);
-        System.out.println("- For Speed: " + routes.get(1).name);
-        System.out.println("- For Comfort: " + routes.get(2).name);
+        System.out.println("- For Budget Travel: " + routes[0]);
+        System.out.println("- For Speed: " + routes[1]);
+        System.out.println("- For Comfort: " + routes[2]);
         
         System.out.println();
         System.out.println("Fare History:");
-        System.out.printf("- Lowest recorded fare: ₱%.2f%n", routes.get(0).totalFare);
-        System.out.printf("- Highest recorded fare: ₱%.2f%n", routes.get(routes.size() - 1).totalFare);
-        System.out.printf("- Average fare: ₱%.2f%n", averageFare);
+        System.out.println("- Lowest recorded fare: ₱" + String.format("%.2f", totalFares[0]));
+        System.out.println("- Highest recorded fare: ₱" + String.format("%.2f", totalFares[routes.length - 1]));
+        System.out.println("- Average fare: ₱" + String.format("%.2f", averageFare));
         System.out.println("=============================");
     }
 }`

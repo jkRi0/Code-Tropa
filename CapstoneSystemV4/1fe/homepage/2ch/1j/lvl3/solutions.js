@@ -64,61 +64,45 @@ public class FiestaPlanner {
 }`,
 
     difficult: `
-import java.util.*;
-
 public class FiestaPlanner {
     public static void main(String[] args) {
         // Budget constraint
         int budget = 5000;
         
-        // Available items with prices
+        // Available items with prices stored in arrays
         String[] items = {"Banderitas", "Lechon", "Sound System", "Balloons", "Candles"};
         int[] prices = {500, 3000, 2000, 300, 200};
         
-        // Create list of items with their prices for sorting
-        List<Item> itemList = new ArrayList<>();
-        for (int i = 0; i < items.length; i++) {
-            itemList.add(new Item(items[i], prices[i]));
-        }
-        
-        // Sort by price (ascending) for greedy approach
-        Collections.sort(itemList, (a, b) -> Integer.compare(a.price, b.price));
-        
-        // Greedy selection
-        List<Item> selectedItems = new ArrayList<>();
+        // Track selected items
+        boolean[] selected = new boolean[items.length];
         int totalCost = 0;
         
         System.out.println("Fiesta Budget Optimizer (₱" + budget + " Budget)");
         System.out.println("=====================================");
         System.out.println("Available Items:");
         
-        for (int i = 0; i < itemList.size(); i++) {
-            System.out.println((i + 1) + ". " + itemList.get(i).name + " - ₱" + itemList.get(i).price);
+        // Display available items
+        for (int i = 0; i < items.length; i++) {
+            System.out.println((i + 1) + ". " + items[i] + " - ₱" + prices[i]);
         }
         
         System.out.println();
         System.out.println("Selected Items:");
         
-        for (Item item : itemList) {
-            if (totalCost + item.price <= budget) {
-                selectedItems.add(item);
-                totalCost += item.price;
-                System.out.println("- " + item.name + ": ₱" + item.price);
+        // Select items that fit within budget (greedy approach - select cheapest first)
+        // Simple selection: iterate and add items that fit
+        for (int i = 0; i < items.length; i++) {
+            // Check if item fits in remaining budget
+            if (totalCost + prices[i] <= budget) {
+                selected[i] = true;
+                totalCost += prices[i];
+                System.out.println("- " + items[i] + ": ₱" + prices[i]);
             }
         }
         
         System.out.println("Total Selected: ₱" + totalCost);
         System.out.println("Remaining Budget: ₱" + (budget - totalCost));
-    }
-    
-    static class Item {
-        String name;
-        int price;
-        
-        Item(String name, int price) {
-            this.name = name;
-            this.price = price;
-        }
+        System.out.println("=====================================");
     }
 }`
 };

@@ -1,44 +1,48 @@
 (function() {
     const tipsData = {
-        ep2: {
+        ep1: {
             easy: {
-                question: "What is the main method in C#?",
+                question: "What is the correct way to include System namespace in C#?",
                 options: {
-                    a: "A variable declaration",
-                    b: "The program entry point",
-                    c: "A data type",
-                    d: "A loop structure"
+                    a: "#include System",
+                    b: "using System;",
+                    c: "import System",
+                    d: "require System"
                 },
                 correctAnswer: "b",
                 tips: [
-                    "Start with: `using System;`",
+                    "Start with: `using System;` for basic functionality",
                     "Create main method: `static void Main(string[] args) { ... }`",
                     "Use Console.WriteLine() for output: `Console.WriteLine(\"Hello World\");`",
                     "C# is case-sensitive, so be careful with capitalization",
-                    "Use semicolons to end statements"
+                    "Use semicolons to end statements: `;`",
+                    "Add comments with `//` for single-line or `/* */` for multi-line",
+                    "Example structure: `using System;` then `class Program { static void Main() { ... } }`"
                 ]
             }
         },
-        ep3: {
+        ep2: {
             easy: {
-                question: "What data type should you use for storing text in C#?",
+                question: "What data type should you use for storing whole numbers in C#?",
                 options: {
-                    a: "int",
-                    b: "string",
+                    a: "string",
+                    b: "int",
                     c: "double",
                     d: "bool"
                 },
                 correctAnswer: "b",
                 tips: [
-                    "Use string for text: `string name = \"Hello\";`",
-                    "Use Console.WriteLine() to display strings",
-                    "You can concatenate with + operator: `Console.WriteLine(\"Hello \" + name);`",
+                    "Use `int` for whole numbers: `int kiloBigas = 25;`",
+                    "Use `double` for decimal numbers: `double presyoBangus = 180.50;`",
+                    "Use `string` for text: `string gulay = \"Talong\";`",
+                    "Use `bool` for true/false values: `bool available = true;`",
                     "Remember to use double quotes for string literals",
-                    "Strings are immutable in C#"
+                    "Variable names should be descriptive: kiloBigas, presyoBangus, gulay",
+                    "Display variables with Console.WriteLine: `Console.WriteLine(\"Total: \" + total);`"
                 ]
             }
         },
-        ep4: {
+        ep3: {
             easy: {
                 question: "What operator should you use to add numbers in C#?",
                 options: {
@@ -49,17 +53,21 @@
                 },
                 correctAnswer: "b",
                 tips: [
-                    "Use + for addition: `int sum = a + b;`",
-                    "You can add multiple numbers: `int total = a + b + c;`",
-                    "Use parentheses for order: `int result = (a + b) * c;`",
-                    "Display with Console.WriteLine(): `Console.WriteLine(\"Sum: \" + sum);`",
-                    "Test your calculations with different values"
+                    "Use + for addition: `double fare = baseFare + (distance * 5);`",
+                    "Use - for subtraction: `int difference = a - b;`",
+                    "Use * for multiplication: `int product = a * b;`",
+                    "Use / for division: `int quotient = a / b;`",
+                    "Use % for modulus (remainder): `int remainder = a % b;`",
+                    "Use comparison operators: `>`, `<`, `==`, `<=`, `>=`",
+                    "Use logical operators: `&&` (AND), `||` (OR), `!` (NOT)",
+                    "Example: `if (trikeAvailable && affordable) { Console.WriteLine(\"Sakay na!\"); }`",
+                    "Example: `Console.WriteLine(bayad >= fare);` // comparison operator"
                 ]
             }
         },
-        ep5: {
+        ep4: {
             easy: {
-                question: "What control structure should you use to make decisions in C#?",
+                question: "Which control structure should you use to make decisions based on conditions in C#?",
                 options: {
                     a: "for loop",
                     b: "if statement",
@@ -68,11 +76,36 @@
                 },
                 correctAnswer: "b",
                 tips: [
-                    "Use if for decisions: `if (condition) { ... }`",
+                    "Use if for decisions: `if (time >= 22 && age < 18) { ... }`",
                     "Add else for alternatives: `if (condition) { ... } else { ... }`",
-                    "Use comparison operators: ==, !=, <, >, <=, >=",
+                    "Use else if for multiple conditions: `if (condition1) { ... } else if (condition2) { ... }`",
+                    "Use comparison operators: `==`, `!=`, `<`, `>`, `<=`, `>=`",
+                    "Use logical operators to combine conditions: `&&` (AND), `||` (OR)",
                     "Test conditions with different values",
-                    "Use curly braces for code blocks"
+                    "Use curly braces {} for code blocks",
+                    "Example: `if (time >= 22 && age < 18) { Console.WriteLine(\"Curfew! Pauwiin agad.\"); }`"
+                ]
+            }
+        },
+        ep5: {
+            easy: {
+                question: "How do you convert a string to uppercase in C#?",
+                options: {
+                    a: "Using the + operator",
+                    b: "Using the .ToUpper() method",
+                    c: "Using the * operator",
+                    d: "Using the / operator"
+                },
+                correctAnswer: "b",
+                tips: [
+                    "Use .ToUpper() to convert to uppercase: `string name = \"mArIa\"; Console.WriteLine(name.ToUpper());`",
+                    "Use .Length to get string length: `int len = message.Length;`",
+                    "Use .Substring() to extract parts: `string part = message.Substring(0, 20);`",
+                    "Use .Replace() to modify strings: `string newMsg = message.Replace(\"birthday\", \"anniversary\");`",
+                    "Use .Contains() to check for text: `if (message.Contains(\"maria\")) { ... }`",
+                    "String methods: Length, ToUpper(), Substring(), Replace(), Contains()",
+                    "Example: `if (message.Length > 20) { Console.WriteLine(message.Substring(0, 20) + \"...\"); }`",
+                    "You can chain string methods: `message.ToUpper().Replace(\"A\", \"B\");`"
                 ]
             }
         },

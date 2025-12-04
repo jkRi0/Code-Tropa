@@ -5,25 +5,26 @@ window.objectivesData = window.objectivesData || {
         objectives: [
             "Create a Java class named 'AlbularyoPotionLog'",
             "Add a main method to start your program",
-            "Store 3 potion names and their effects in arrays",
-            "Use parallel arrays: String[] potions and String[] effects",
-            "Print each potion and its effect using a loop"
+            "Declare parallel arrays: String[] potions and String[] effects",
+            "Store 3 potion names and their effects in the arrays",
+            "Use a for loop to print each potion and its effect",
+            "No calculations needed - just display the data"
         ]
     },
     average: {
         title: "Level 16 - Albularyo Potion Log (Average) - Java",
         objectives: [
-            "Track potion usage and calculate success rates",
-            "Create a system that:\n  - Tracks how many times each potion was used\n  - Calculates success rates for each potion\n  - Displays usage statistics and success rates",
-            "Use loops and mathematical calculations"
+            "Use arrays and loops to track usage and calculate success rates",
+            "Create a system that:\n  - Uses arrays to store usage counts and success counts\n  - Uses loops to calculate success rate for each potion (success ÷ usage × 100)\n  - Displays each potion with its usage count and success rate percentage",
+            "Use arrays, loops, and percentage calculations"
         ]
     },
     difficult: {
         title: "Level 16 - Albularyo Potion Log (Difficult) - Java",
         objectives: [
-            "Analyze potion effectiveness and generate recommendations",
-            "Create a system that:\n  - Analyzes potion effectiveness based on usage data\n  - Generates recommendations for potion combinations\n  - Tracks patient outcomes and treatment success\n  - Displays detailed potion analysis and recommendations",
-            "Use complex logic, data analysis, and recommendation algorithms"
+            "Use multiple arrays and loops to analyze effectiveness and generate recommendations",
+            "Create a system that:\n  - Uses arrays to store additional data (best for conditions, dosages)\n  - Uses loops to display detailed analysis for each potion\n  - Uses string operations to format recommendations\n  - Displays comprehensive potion analysis with effectiveness data and recommendations",
+            "Use multiple arrays, loops, string operations, and formatted output"
         ]
     }
 };

@@ -5,25 +5,26 @@ window.objectivesData = window.objectivesData || {
         objectives: [
             "Create a Java class named 'FilipinoMenuGenerator'",
             "Add a main method to start your program",
-            "Store 3 Filipino dishes and their prices in arrays",
-            "Use parallel arrays: String[] dishes and double[] prices",
-            "Print each dish and its price using a loop"
+            "Declare parallel arrays: String[] dishes and double[] prices",
+            "Store 3 Filipino dishes and their prices in the arrays",
+            "Use a for loop to print each dish and its price",
+            "Format prices using String.format() to show 2 decimal places"
         ]
     },
     average: {
         title: "Level 13 - Filipino Family Menu Generator (Average) - Java",
         objectives: [
-            "Calculate total cost and apply family discount",
-            "Create a system that:\n  - Calculates total cost of all dishes\n  - Applies 10% family discount\n  - Displays original total and discounted total",
-            "Use loops and mathematical calculations"
+            "Use loops to calculate total cost and apply discount",
+            "Create a system that:\n  - Uses a loop to sum all dish prices\n  - Calculates 10% family discount (total × 0.10)\n  - Calculates final total (original - discount)\n  - Displays original total, discount amount, and final total",
+            "Use loops, arithmetic operators, and percentage calculations"
         ]
     },
     difficult: {
         title: "Level 13 - Filipino Family Menu Generator (Difficult) - Java",
         objectives: [
-            "Generate personalized menu recommendations and calculate per-person cost",
-            "Create a system that:\n  - Generates personalized recommendations based on preferences\n  - Calculates cost per person for family meals\n  - Suggests additional dishes based on budget\n  - Displays detailed menu analysis",
-            "Use complex logic, recommendations, and budget calculations"
+            "Use arrays and loops to add recommendations and calculate per-person cost",
+            "Create a system that:\n  - Uses additional arrays to store recommended dishes and prices\n  - Uses loops to calculate total with recommendations\n  - Applies family discount to the new total\n  - Calculates cost per person (final total ÷ number of people)\n  - Displays detailed menu analysis with all calculations",
+            "Use multiple arrays, nested loops, and complex calculations"
         ]
     }
 };

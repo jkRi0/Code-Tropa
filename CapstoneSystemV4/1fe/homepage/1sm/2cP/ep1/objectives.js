@@ -3,10 +3,10 @@ window.objectivesData = window.objectivesData || {
     easy: {
         title: "Episode 1 - Fiesta Syntax!",
         objectives: [
-            "Identify valid C++ syntax.",
+            "Create a complete C++ program with proper syntax.",
             "Understand program structure (#include, int main(), { }, return 0;).",
-            "Differentiate between code and comments.",
-            "Practice using single-line // and multi-line /* ... */ comments."
+            "Use cout to display messages to the console.",
+            "Add comments to explain your code using // and /* ... */."
         ]
     }
 };
@@ -14,24 +14,21 @@ window.objectivesData = window.objectivesData || {
 window.examples = window.examples || {
     easy: `
 // Challenge Scenario:
-// The Barangay Captain asks Axle to fix the fiesta program announcement code.
-// The draft code is messy—some parts are missing semicolons, others need proper comments.
+// The Barangay Captain asks Ica to create a fiesta program announcement.
+// Write a complete C++ program that displays a welcome message for the fiesta.
 
-// Player Task: Correct the program below by:
-// - Adding the missing semicolons.
-// - Placing comments to explain each part.
-// - Making sure it compiles properly.
+// Player Task: Create a C++ program that:
+// - Includes the necessary header file
+// - Uses the standard namespace
+// - Has a main function
+// - Displays at least 2 messages about the fiesta
+// - Includes comments explaining each part
+// - Returns 0 at the end
 
-// Draft (Fix This):
-#include <iostream>
-using namespace std
-
-int main() {
-    cout << "Welcome sa Fiesta 2025!" << endl
-    cout << "Handog ng Barangay San Juan" << endl
-
-    return 0
-}`
+// Expected Output:
+Welcome sa Fiesta 2025!
+Handog ng Barangay San Juan
+Mabuhay ang mga bisita!`
 };
 
 window.displayObjectives = window.displayObjectives || function(difficulty) {

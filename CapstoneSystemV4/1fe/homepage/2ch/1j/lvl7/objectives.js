@@ -13,19 +13,19 @@ window.objectivesData = window.objectivesData || {
     average: {
         title: "Level 7 - Pamamanhikan Planner (Average) - Java",
         objectives: [
-            "Use parameters to assign specific gift tasks to participants",
-            "Create functions that assign different gift responsibilities",
-            "Create a system that:\n  - Takes participant names as input\n  - Assigns gift tasks (flowers, food, jewelry)\n  - Displays assignment confirmations",
-            "Use multiple methods with different parameters and return values"
+            "Use functions with parameters to assign specific gift tasks to participants",
+            "Create functions that take participant names and gift types as parameters",
+            "Create a system that:\n  - Uses a function with parameters to assign gift tasks\n  - Assigns different gifts (flowers, food, jewelry) to different participants\n  - Displays assignment confirmations for each participant",
+            "Use multiple methods with different parameters"
         ]
     },
     difficult: {
         title: "Level 7 - Pamamanhikan Planner (Difficult) - Java",
         objectives: [
-            "Ensure all expected gifts are present using functions",
-            "Handle cases where roles or items are missing",
-            "Create a system that:\n  - Maintains a checklist of required gifts\n  - Validates all gifts are present\n  - Handles missing items gracefully\n  - Generates completion reports",
-            "Use arrays, loops, and complex function logic with error handling"
+            "Use arrays and functions to validate all expected gifts are present",
+            "Create a function that returns boolean to check if all gifts are assigned",
+            "Create a system that:\n  - Uses arrays to store required gifts and assigned participants\n  - Uses a function with return value to validate all gifts are present\n  - Uses loops to check each gift\n  - Generates completion report showing which gifts are assigned",
+            "Use arrays, loops, and functions with return values"
         ]
     }
 };
@@ -47,25 +47,25 @@ Pamamanhikan Gift Assignment
 ===========================
 Participant: Juan
 Assigned Gift: Flowers
-Status: ✅ Task assigned successfully
+Status: Task assigned successfully
 
 Participant: Maria
 Assigned Gift: Food
-Status: ✅ Task assigned successfully
+Status: Task assigned successfully
 
 Participant: Pedro
 Assigned Gift: Jewelry
-Status: ✅ Task assigned successfully`,
+Status: Task assigned successfully`,
     
     difficult: `
 // Expected output:
 Pamamanhikan Gift Validation
 ===========================
 Required Gifts Checklist:
-✅ Flowers - Assigned to: Juan
-✅ Food - Assigned to: Maria
-✅ Jewelry - Assigned to: Pedro
-✅ Traditional Items - Assigned to: Ana
+Flowers - Assigned to: Juan
+Food - Assigned to: Maria
+Jewelry - Assigned to: Pedro
+Traditional Items - Assigned to: Ana
 
 All gifts accounted for!
 Pamamanhikan is ready to proceed.

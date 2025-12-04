@@ -1,18 +1,27 @@
 window.objectivesData = window.objectivesData || {
     easy: {
-        title: "Episode 5 - Java (Easy)",
+        title: "Episode 5 - Java String Operations",
         objectives: [
-            "Create a class 'Person' with fields name and age",
-            "Add a constructor to set both fields",
-            "Instantiate and print the fields in main"
+            "Use String concatenation with the + operator to combine text",
+            "Apply String methods like substring() to extract parts of text",
+            "Understand how to manipulate and format strings in Java",
+            "Your task is to help Axle create formatted messages using string operations"
         ]
     }
 };
 
 window.examples = window.examples || {
     easy: `
+// Challenge Scenario:
+// Kuya Pao is teaching Axle about String operations in Java.
+// Write Java code that demonstrates:
+// - String concatenation to create greetings
+// - Using substring() to extract parts of names
+
 // Expected output:
-Axle, 18`
+Hello, Axle!
+Full Name: Axle Rivera
+First Name: Axle`
 };
 
 window.displayObjectives = window.displayObjectives || function(difficulty) {

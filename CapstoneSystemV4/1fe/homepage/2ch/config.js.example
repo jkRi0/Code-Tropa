@@ -1,0 +1,12 @@
+// Configuration Template for Gemini API Key
+// 
+// INSTRUCTIONS:
+// 1. Copy this file and rename it to "config.js" (without .example)
+// 2. Replace "YOUR_GEMINI_API_KEY_HERE" with your actual Gemini API key
+// 3. The config.js file is gitignored and will NOT be committed to GitHub
+// 4. On InfinityFree, upload config.js with your actual API key
+
+window.APP_CONFIG = window.APP_CONFIG || {
+    GEMINI_API_KEY: "YOUR_GEMINI_API_KEY_HERE"
+};
+

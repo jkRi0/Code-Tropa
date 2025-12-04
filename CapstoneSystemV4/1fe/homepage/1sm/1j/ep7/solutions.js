@@ -2,13 +2,20 @@ window.tahoSolutions = window.tahoSolutions || {
     easy: `
 public class Main {
     public static void main(String[] args) {
-        int day = 3;
-        switch (day) {
-            case 1: System.out.println("Mon"); break;
-            case 2: System.out.println("Tue"); break;
-            case 3: System.out.println("Wed"); break;
-            default: System.out.println("Other");
-        }
+        // Call the method multiple times with different parameters
+        String enemy1 = transformToAswang("Aling Rosa");
+        System.out.println(enemy1);
+        
+        String enemy2 = transformToAswang("Pedro");
+        System.out.println(enemy2);
+        
+        String enemy3 = transformToAswang("Maria");
+        System.out.println(enemy3);
+    }
+    
+    // Method that takes a String parameter and returns a String
+    public static String transformToAswang(String name) {
+        return name + " the Aswang";
     }
 }`
 };

@@ -19,30 +19,31 @@ public class TikbalangEscape {
 }`,
 
     average: `
-import java.util.*;
-
 public class TikbalangEscape {
     public static void main(String[] args) {
-        Random random = new Random();
-        String[] possibleMoves = {"straight", "offer gift", "hide"};
+        // Array of moves and their outcomes
+        String[] moves = {"offer gift", "straight", "hide"};
+        String[] outcomes = {
+            "Tikbalang accepts gift! Safe passage.",
+            "You find a hidden path!",
+            "You successfully hide from danger!"
+        };
         
         System.out.println("Tikbalang Forest Adventure");
         System.out.println("=========================");
         
-        // Add random choices with different outcomes
-        for (int i = 1; i <= 3; i++) {
-            int randomIndex = random.nextInt(possibleMoves.length);
-            String move = possibleMoves[randomIndex];
+        // Loop through moves and show outcomes using conditionals
+        for (int i = 0; i < moves.length; i++) {
+            String move = moves[i];
+            System.out.println("Move " + (i + 1) + ": " + move);
             
-            System.out.println("Move " + i + ": " + move);
-            
-            // Show different outcomes for each move
+            // Use conditional to determine outcome
             if (move.equals("straight")) {
-                System.out.println("Outcome: You find a hidden path!");
+                System.out.println("Outcome: " + outcomes[1]);
             } else if (move.equals("offer gift")) {
-                System.out.println("Outcome: Tikbalang accepts gift! Safe passage.");
+                System.out.println("Outcome: " + outcomes[0]);
             } else if (move.equals("hide")) {
-                System.out.println("Outcome: You successfully hide from danger!");
+                System.out.println("Outcome: " + outcomes[2]);
             }
             System.out.println();
         }
@@ -52,34 +53,35 @@ public class TikbalangEscape {
 }`,
 
     difficult: `
-import java.util.*;
-
 public class TikbalangEscape {
     public static void main(String[] args) {
-        Random random = new Random();
-        Scanner scanner = new Scanner(System.in);
-        
         // Game state
         int health = 100;
-        ArrayList<String> pathHistory = new ArrayList<>();
-        String[] possibleMoves = {"straight", "left", "right", "offer gift", "hide"};
+        String[] moves = {"straight", "left", "offer gift"};
+        String[] pathHistory = new String[5];
+        int moveCount = 0;
         
         System.out.println("Tikbalang Escape Game");
         System.out.println("===================");
         
-        // Game loop - continue until health reaches 0 or escape
-        while (health > 0 && pathHistory.size() < 5) {
+        // Game loop - process moves using arrays
+        for (int i = 0; i < moves.length && health > 0; i++) {
+            String move = moves[i];
+            pathHistory[moveCount] = move;
+            moveCount++;
+            
             System.out.println("Health: " + health);
-            System.out.println("Path History: " + pathHistory);
+            System.out.print("Path History: [");
+            for (int j = 0; j < moveCount; j++) {
+                System.out.print(pathHistory[j]);
+                if (j < moveCount - 1) System.out.print(", ");
+            }
+            System.out.println("]");
             System.out.println();
             
-            // Generate random move
-            int randomIndex = random.nextInt(possibleMoves.length);
-            String move = possibleMoves[randomIndex];
+            System.out.println("Move " + moveCount + ": " + move);
             
-            System.out.println("Move " + (pathHistory.size() + 1) + ": " + move);
-            
-            // Apply move consequences
+            // Apply move consequences using conditionals
             if (move.equals("straight")) {
                 System.out.println("Outcome: Safe path! Health: " + health);
             } else if (move.equals("left") || move.equals("right")) {
@@ -89,12 +91,7 @@ public class TikbalangEscape {
                 System.out.println("Outcome: Tikbalang accepts! You escape!");
                 System.out.println("Final Health: " + health);
                 break;
-            } else if (move.equals("hide")) {
-                System.out.println("Outcome: Successfully hidden! Health: " + health);
             }
-            
-            // Add to path history
-            pathHistory.add(move);
             System.out.println();
             
             // Check for game end conditions
@@ -105,7 +102,6 @@ public class TikbalangEscape {
         }
         
         System.out.println("===================");
-        scanner.close();
     }
 }`
 };

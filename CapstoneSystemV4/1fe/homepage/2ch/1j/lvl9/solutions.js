@@ -21,25 +21,21 @@ public class FiestaPoster {
 }`,
 
     average: `
-import java.util.Scanner;
-
 public class FiestaPoster {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        // Store slogan in variable
+        String slogan = "Mabuhay ang Fiesta ng Bayan";
         
         System.out.println("Fiesta Poster Maker");
         System.out.println("==================");
         
-        // Accept user-input slogan
-        System.out.print("Enter slogan: ");
-        String slogan = scanner.nextLine();
-        
-        // Count characters and words
+        // Count characters using length() method
         int characterCount = slogan.length();
+        
+        // Count words by splitting string
         String[] words = slogan.split("\\s+");
         int wordCount = words.length;
         
-        System.out.println();
         System.out.println("Slogan Analysis:");
         System.out.println("================");
         System.out.println("Original: " + slogan);
@@ -47,79 +43,40 @@ public class FiestaPoster {
         System.out.println("Characters: " + characterCount);
         System.out.println("Words: " + wordCount);
         System.out.println("================");
-        
-        scanner.close();
     }
 }`,
 
     difficult: `
-import java.util.Scanner;
-
 public class FiestaPoster {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        // Array of slogans to process
+        String[] slogans = {
+            "Mabuhay ang Fiesta ng Bayan",
+            "Mabuhay ang Masayang Fiesta!",
+            "Fiesta ng Bayan, Pagkakaisa!"
+        };
         
         System.out.println("Fiesta Poster Maker");
         System.out.println("==================");
         
-        // Accept user-input slogan
-        System.out.print("Enter slogan: ");
-        String slogan = scanner.nextLine();
-        
-        // Sanitize slogan (remove offensive words)
-        String sanitizedSlogan = sanitizeSlogan(slogan);
-        
-        // Count characters and words
-        int characterCount = sanitizedSlogan.length();
-        String[] words = sanitizedSlogan.split("\\s+");
-        int wordCount = words.length;
-        
-        System.out.println();
-        System.out.println("Slogan Analysis:");
-        System.out.println("================");
-        System.out.println("Original: " + slogan);
-        System.out.println("Sanitized: " + sanitizedSlogan);
-        System.out.println("Characters: " + characterCount + " | Words: " + wordCount);
-        
-        // Create formatted poster
-        System.out.println();
-        System.out.println("Formatted Poster:");
-        System.out.println("==================");
-        String formattedSlogan = "*** " + sanitizedSlogan.toUpperCase() + " ***";
-        System.out.println(formattedSlogan);
-        System.out.println("==================");
-        
-        // Auto-suggest better slogans
-        System.out.println();
-        System.out.println("Suggestions:");
-        generateSuggestions(sanitizedSlogan);
-        System.out.println("==================");
-        
-        scanner.close();
-    }
-    
-    // Function to sanitize slogans by removing offensive words
-    public static String sanitizeSlogan(String slogan) {
-        String[] offensiveWords = {"bad", "ugly", "hate"};
-        String sanitized = slogan;
-        
-        for (String word : offensiveWords) {
-            sanitized = sanitized.replaceAll("(?i)" + word, "[FILTERED]");
-        }
-        
-        return sanitized;
-    }
-    
-    // Function to generate slogan suggestions
-    public static void generateSuggestions(String slogan) {
-        String[] suggestions = {
-            "Mabuhay ang Masayang Fiesta!",
-            "Fiesta ng Bayan, Pagkakaisa!",
-            "Masayang Fiesta, Masayang Bayan!"
-        };
-        
-        for (String suggestion : suggestions) {
-            System.out.println("- Consider: \"" + suggestion + "\"");
+        // Loop through slogans and format each
+        for (int i = 0; i < slogans.length; i++) {
+            String slogan = slogans[i];
+            
+            // Count characters and words using String methods
+            int characterCount = slogan.length();
+            String[] words = slogan.split("\\s+");
+            int wordCount = words.length;
+            
+            // Format poster using String methods
+            String formattedSlogan = "*** " + slogan.toUpperCase() + " ***";
+            
+            System.out.println("Slogan " + (i + 1) + ":");
+            System.out.println("==================");
+            System.out.println(formattedSlogan);
+            System.out.println("Characters: " + characterCount + " | Words: " + wordCount);
+            System.out.println("==================");
+            System.out.println();
         }
     }
 }`

@@ -1,18 +1,27 @@
 window.objectivesData = window.objectivesData || {
     easy: {
-        title: "Episode 7 - Java (Easy)",
+        title: "Episode 7 - Java Methods and Functions",
         objectives: [
-            "Declare an int day = 3",
-            "Use switch-case to print a day name",
-            "Provide a default case"
+            "Create methods (functions) to organize code into reusable blocks",
+            "Use method parameters to pass data to functions",
+            "Return values from methods using the return statement",
+            "Call methods from the main method to execute code",
+            "Understand how methods help avoid code repetition",
+            "Your task is to help Manong Code create reusable functions"
         ]
     }
 };
 
 window.examples = window.examples || {
     easy: `
+// Challenge Scenario:
+// Manong Code is teaching Axle about methods/functions in Java.
+// Write Java code that creates a method and calls it from main.
+
 // Expected output:
-Wed`
+Aling Rosa the Aswang
+Pedro the Aswang
+Maria the Aswang`
 };
 
 window.displayObjectives = window.displayObjectives || function(difficulty) {

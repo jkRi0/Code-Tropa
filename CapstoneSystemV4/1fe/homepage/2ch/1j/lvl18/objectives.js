@@ -5,25 +5,26 @@ window.objectivesData = window.objectivesData || {
         objectives: [
             "Create a Java class named 'MissBarangayScoring'",
             "Add a main method to start your program",
-            "Store 3 contestants and their scores in arrays",
-            "Use parallel arrays: String[] contestants and double[] scores",
-            "Print each contestant's name and score using a loop"
+            "Declare parallel arrays: String[] contestants and double[] scores",
+            "Store 3 contestants and their total scores in the arrays",
+            "Use a for loop to print each contestant's name and score",
+            "No calculations needed - just display the data"
         ]
     },
     average: {
         title: "Level 18 - Miss Barangay Scoring System (Average) - Java",
         objectives: [
-            "Calculate average scores and determine the winner",
-            "Create a system that:\n  - Calculates average scores for each contestant\n  - Determines the winner based on highest average\n  - Displays scoring results and winner announcement",
-            "Use loops and mathematical calculations"
+            "Use loops and conditionals to find winner and sort rankings",
+            "Create a system that:\n  - Uses loops to find contestant with highest score\n  - Uses bubble sort algorithm to sort contestants by score\n  - Displays ranked results (1st, 2nd, 3rd place)\n  - Announces the winner",
+            "Use loops, conditionals, and sorting algorithms"
         ]
     },
     difficult: {
         title: "Level 18 - Miss Barangay Scoring System (Difficult) - Java",
         objectives: [
-            "Implement weighted scoring and generate detailed rankings",
-            "Create a system that:\n  - Implements weighted scoring (talent=40%, beauty=30%, intelligence=30%)\n  - Generates detailed rankings with tie-breaking\n  - Tracks performance across different categories\n  - Displays comprehensive scoring analysis",
-            "Use complex logic, weighted calculations, and ranking algorithms"
+            "Use multiple arrays and loops to implement weighted scoring and detailed rankings",
+            "Create a system that:\n  - Uses arrays to store talent, beauty, and intelligence scores separately\n  - Uses loops to calculate weighted scores (talent×0.40 + beauty×0.30 + intelligence×0.30)\n  - Uses bubble sort to rank contestants by weighted score\n  - Displays detailed scoring analysis showing category breakdowns and final rankings",
+            "Use multiple arrays, nested loops, weighted calculations, and sorting"
         ]
     }
 };

@@ -21,9 +21,9 @@ window.objectivesData = window.objectivesData || {
     difficult: {
         title: "Level 6 - Jeepney Fare Calculator (Difficult) - Java",
         objectives: [
-            "Apply senior/student discounts and validate if entered destination exists",
-            "Create a system that:\n  - Takes user input for destination\n  - Validates destination exists in the list\n  - Applies 20% discount for seniors/students\n  - Calculates final fare with discount",
-            "Use input validation, conditional logic, and array searching"
+            "Use arrays and loops to apply discounts for multiple passengers",
+            "Create a system that:\n  - Uses arrays to store destinations, fares, and passenger types\n  - Loops through passengers to calculate fares\n  - Uses conditional statements to apply 20% discount for seniors/students\n  - Calculates individual and total fares with discounts\n  - Displays detailed fare breakdown",
+            "Use arrays, loops, conditional logic, and string operations"
         ]
     }
 };
@@ -54,16 +54,17 @@ Destination: BGC - ₱25
 Total Fare: ₱90`,
     
     difficult: `
-// Expected output (with input: "Makati", "Student"):
+// Expected output:
 Jeepney Fare Calculator
 ======================
-Enter destination: Makati
-Are you a senior/student? (y/n): y
-
-Destination: Makati
-Regular Fare: ₱15
-Discount (20%): ₱3
-Final Fare: ₱12
+Passenger 1: Makati - Regular - ₱15
+Passenger 2: Cubao - Student - ₱14 (20% discount)
+Passenger 3: Ortigas - Senior - ₱16 (20% discount)
+Passenger 4: BGC - Regular - ₱25
+======================
+Total Fare: ₱70
+Total Discount: ₱7
+Final Total: ₱63
 ======================
 `
 };

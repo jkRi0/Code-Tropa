@@ -12,7 +12,7 @@ public class SimbangGabiChecker {
         
         // Print each day's attendance status using a loop
         for (int i = 0; i < days.length; i++) {
-            String status = attended[i] ? "✅ Attended" : "❌ Missed";
+            String status = attended[i] ? "Attended" : "Missed";
             System.out.println("Day " + (i + 1) + ": " + days[i] + " - " + status);
         }
         
@@ -32,7 +32,7 @@ public class SimbangGabiChecker {
         
         // Display attendance data
         for (int i = 0; i < days.length; i++) {
-            String status = attended[i] ? "✅ Attended" : "❌ Missed";
+            String status = attended[i] ? "Attended" : "Missed";
             System.out.println("Day " + (i + 1) + ": " + days[i] + " - " + status);
         }
         
@@ -72,7 +72,7 @@ public class SimbangGabiChecker {
         
         // Display attendance data
         for (int i = 0; i < days.length; i++) {
-            String status = attended[i] ? "✅ Attended" : "❌ Missed";
+            String status = attended[i] ? "Attended" : "Missed";
             System.out.println("Day " + (i + 1) + ": " + days[i] + " - " + status);
         }
         

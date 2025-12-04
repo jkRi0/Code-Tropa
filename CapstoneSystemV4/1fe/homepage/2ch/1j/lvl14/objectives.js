@@ -5,25 +5,26 @@ window.objectivesData = window.objectivesData || {
         objectives: [
             "Create a Java class named 'FilipinoNamesAnalyzer'",
             "Add a main method to start your program",
-            "Store 3 Filipino names and their lengths in arrays",
-            "Use parallel arrays: String[] names and int[] lengths",
-            "Print each name and its length using a loop"
+            "Declare an array: String[] names",
+            "Store 3 Filipino names in the array",
+            "Use a for loop to print each name",
+            "Use the length() method to get and display each name's character count"
         ]
     },
     average: {
         title: "Level 14 - Filipino Names Analyzer (Average) - Java",
         objectives: [
-            "Count vowels and consonants in each name",
-            "Create a system that:\n  - Counts vowels (a, e, i, o, u) in each name\n  - Counts consonants in each name\n  - Displays vowel and consonant counts for each name",
-            "Use loops and character analysis"
+            "Use nested loops and string methods to count vowels and consonants",
+            "Create a system that:\n  - Uses nested loops (outer for names, inner for characters)\n  - Uses charAt() or toCharArray() to access each character\n  - Uses conditional statements to check if character is vowel (a, e, i, o, u)\n  - Counts vowels and consonants for each name\n  - Displays vowel and consonant counts for each name",
+            "Use nested loops, string methods, and character analysis"
         ]
     },
     difficult: {
         title: "Level 14 - Filipino Names Analyzer (Difficult) - Java",
         objectives: [
-            "Identify common Filipino name patterns and generate name suggestions",
-            "Create a system that:\n  - Identifies common Filipino name patterns (e.g., Maria, Jose, etc.)\n  - Generates name suggestions based on patterns\n  - Analyzes name popularity and cultural significance\n  - Displays detailed name analysis",
-            "Use complex string analysis, pattern recognition, and cultural context"
+            "Use methods, string operations, and arrays to analyze names and generate suggestions",
+            "Create a system that:\n  - Uses methods to identify name patterns (e.g., check if name equals 'Maria' or 'Jose')\n  - Uses methods to determine cultural significance based on name patterns\n  - Uses arrays to store and display name suggestions\n  - Uses loops to process all names and display detailed analysis",
+            "Use methods with return values, string comparisons, arrays, and loops"
         ]
     }
 };

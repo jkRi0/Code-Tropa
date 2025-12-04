@@ -5,7 +5,8 @@ window.objectivesData = window.objectivesData || {
         objectives: [
             "Create a Java class named 'CurfewChecker'",
             "Add a main method to start your program",
-            "Check if current time is after 10 PM (22:00)",
+            "Declare a variable for current hour (e.g., int currentHour = 22)",
+            "Check if current time is after 10 PM (22:00) using if statement",
             "If true, display a curfew violation message",
             "Use simple conditional statements (if-else)"
         ]
@@ -13,19 +14,20 @@ window.objectivesData = window.objectivesData || {
     average: {
         title: "Level 4 - Barangay Curfew Check (Average) - Java",
         objectives: [
-            "Add conditional checks for exemptions",
+            "Add conditional checks for exemptions using nested if-else",
+            "Declare variables for age and current hour",
             "Check for minors (age < 18) and senior citizens (age >= 65)",
-            "Create a system that:\n  - Takes age as input\n  - Checks if time is after 10 PM\n  - Applies exemption rules\n  - Displays appropriate messages",
+            "Create a system that:\n  - Uses variables to store age and time\n  - Checks if time is after 10 PM\n  - Applies exemption rules with nested conditionals\n  - Displays appropriate messages based on conditions",
             "Use nested if-else statements for complex conditions"
         ]
     },
     difficult: {
         title: "Level 4 - Barangay Curfew Check (Difficult) - Java",
         objectives: [
-            "Iterate over a list of residents with name, age, and reason for being outside",
-            "Apply layered conditionals to determine who is violating curfew",
-            "Create a system that:\n  - Stores resident data in arrays\n  - Checks each resident against curfew rules\n  - Considers exemptions and valid reasons\n  - Generates violation reports",
-            "Use loops and complex conditional logic"
+            "Use arrays to store multiple residents with name, age, and reason",
+            "Iterate over residents using loops and apply conditionals to determine violations",
+            "Create a system that:\n  - Uses arrays to store resident names, ages, and reasons\n  - Loops through each resident\n  - Uses conditional statements to check curfew rules\n  - Considers exemptions (minors, seniors) and valid reasons (Medical, Emergency)\n  - Generates violation report with counts",
+            "Use arrays, loops, and complex conditional logic"
         ]
     }
 };
@@ -37,32 +39,32 @@ window.examples = window.examples || {
 // Expected output:
 Barangay Curfew Check
 ====================
-Current Time: 22:30
-⚠️ CURFEW VIOLATION! It's past 10 PM.`,
+Current Time: 22:00
+CURFEW VIOLATION! It's past 10 PM.`,
     
     average: `
-// Expected output (with age input: 16):
+// Expected output:
 Barangay Curfew Check
 ====================
-Enter your age: 16
-Current Time: 22:30
-✅ EXEMPTION: Minors are exempt from curfew.`,
+Age: 16
+Current Time: 22:00
+EXEMPTION: Minors are exempt from curfew.`,
     
     difficult: `
 // Expected output:
 Barangay Curfew Check Report
 ============================
 Resident: Juan (25) - Work
-Status: ⚠️ VIOLATION - No valid reason
+Status: VIOLATION - No valid reason
 
 Resident: Maria (16) - School
-Status: ✅ EXEMPT - Minor
+Status: EXEMPT - Minor
 
 Resident: Pedro (70) - Medical
-Status: ✅ EXEMPT - Senior citizen
+Status: EXEMPT - Senior citizen
 
 Resident: Ana (30) - Emergency
-Status: ✅ VALID - Emergency reason
+Status: VALID - Emergency reason
 
 Total Violations: 1
 `

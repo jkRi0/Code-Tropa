@@ -21,10 +21,10 @@ window.objectivesData = window.objectivesData || {
     difficult: {
         title: "Level 2 - Sari-Sari Store Inventory (Difficult) - Java",
         objectives: [
-            "Allow input to update stock levels using Scanner",
-            "Check if any stock falls below threshold (e.g., 20 items)",
-            "Print a restock alert for items below threshold",
-            "Create a system that:\n  - Prompts user to enter new stock quantities\n  - Updates the inventory\n  - Displays current inventory status\n  - Shows restock alerts for low stock items"
+            "Use arrays to store multiple products, prices, and stock levels",
+            "Check if any stock falls below threshold (e.g., 20 items) using loops",
+            "Print restock alerts for items below threshold",
+            "Create a system that:\n  - Uses arrays to store product names, prices, and stock\n  - Calculates inventory value for each item using loops\n  - Checks stock levels against threshold using conditional statements\n  - Displays inventory report with restock alerts for low stock items"
         ]
     }
 };
@@ -49,19 +49,21 @@ Bread: 30 units @ ₱35.00 = ₱1,050.00
 Total Inventory Value: ₱3,125.00`,
     
     difficult: `
-// Expected output (after user input):
-Enter new stock for Vinegar: 15
-Enter new stock for Eggs: 25
-Enter new stock for Bread: 10
-
-Updated Inventory:
+// Expected output:
+Sari-Sari Store Inventory Report
+================================
 Vinegar: 15 units @ ₱25.50 = ₱382.50
-Eggs: 25 units @ ₱8.00 = ₱200.00
-Bread: 10 units @ ₱35.00 = ₱350.00
+RESTOCK ALERT: Below threshold (15 < 20)
 
-⚠️ RESTOCK ALERT: Vinegar is below threshold (15 < 20)
-⚠️ RESTOCK ALERT: Eggs is below threshold (25 < 20)
-⚠️ RESTOCK ALERT: Bread is below threshold (10 < 20)
+Eggs: 25 units @ ₱8.00 = ₱200.00
+Stock OK
+
+Bread: 10 units @ ₱35.00 = ₱350.00
+RESTOCK ALERT: Below threshold (10 < 20)
+
+Total Inventory Value: ₱932.50
+Items Needing Restock: 2
+================================
 `
 };
 

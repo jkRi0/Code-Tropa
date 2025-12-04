@@ -34,7 +34,7 @@ public class PamamanhikanPlanner {
     public static void assignGiftTask(String participantName, String giftType) {
         System.out.println("Participant: " + participantName);
         System.out.println("Assigned Gift: " + giftType);
-        System.out.println("Status: ✅ Task assigned successfully");
+        System.out.println("Status: Task assigned successfully");
         System.out.println();
     }
     
@@ -50,60 +50,49 @@ public class PamamanhikanPlanner {
 }`,
 
     difficult: `
-import java.util.*;
-
 public class PamamanhikanPlanner {
     public static void main(String[] args) {
-        // Required gifts for pamamanhikan
+        // Required gifts for pamamanhikan stored in arrays
         String[] requiredGifts = {"Flowers", "Food", "Jewelry", "Traditional Items"};
         String[] assignedParticipants = {"Juan", "Maria", "Pedro", "Ana"};
         
         System.out.println("Pamamanhikan Gift Validation");
         System.out.println("===========================");
         
-        // Validate all gifts are present
+        // Validate all gifts are present using function with return value
         boolean allGiftsPresent = validateGifts(requiredGifts, assignedParticipants);
         
+        System.out.println();
         if (allGiftsPresent) {
-            System.out.println();
             System.out.println("All gifts accounted for!");
             System.out.println("Pamamanhikan is ready to proceed.");
         } else {
-            System.out.println();
-            System.out.println("⚠️ Some gifts are missing. Please check assignments.");
+            System.out.println("ALERT: Some gifts are missing. Please check assignments.");
         }
         
         System.out.println("===========================");
     }
     
-    // Function to validate all expected gifts are present
+    // Function to validate all expected gifts are present (returns boolean)
     public static boolean validateGifts(String[] requiredGifts, String[] participants) {
         System.out.println("Required Gifts Checklist:");
         
         boolean allPresent = true;
+        // Loop through gifts to check assignments
         for (int i = 0; i < requiredGifts.length; i++) {
             String gift = requiredGifts[i];
             String participant = participants[i];
             
+            // Check if participant is assigned using string comparison
             if (participant != null && !participant.isEmpty()) {
-                System.out.println("✅ " + gift + " - Assigned to: " + participant);
+                System.out.println(gift + " - Assigned to: " + participant);
             } else {
-                System.out.println("❌ " + gift + " - NOT ASSIGNED");
+                System.out.println(gift + " - NOT ASSIGNED");
                 allPresent = false;
             }
         }
         
         return allPresent;
-    }
-    
-    // Function to handle missing gifts
-    public static void handleMissingGifts(String[] requiredGifts, String[] participants) {
-        System.out.println("Missing Gift Report:");
-        for (int i = 0; i < requiredGifts.length; i++) {
-            if (participants[i] == null || participants[i].isEmpty()) {
-                System.out.println("⚠️ " + requiredGifts[i] + " needs to be assigned");
-            }
-        }
     }
 }`
 };

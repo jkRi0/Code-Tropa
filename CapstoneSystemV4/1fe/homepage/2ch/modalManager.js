@@ -281,16 +281,12 @@ document.addEventListener('DOMContentLoaded', function() {
     window.rubricsCriteria = rubricsCriteria; // Keep this for codeAnalyzer.js
 
 
-    // AIzaSyAUxatfYls6PcG7pqDWwwHxCQPoCT7TQB0
-    // Placeholder for Gemini API Key (User should replace this with their actual key)
-    var build = {
-        "asddqweeq":"AIzaSyAUxat",
-        "qwefafaassd":"DWwwHxCQP",
-        "asdql;mml":"fYls6PcG7pq",
-        "3489hnk,njkasd":"oCT7TQB0",
-    }
-    const GEMINI_API_KEY = build["asddqweeq"]+build["asdql;mml"]+build["qwefafaassd"]+build["3489hnk,njkasd"];
-    // const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
+    // Load Gemini API Key from config.js (gitignored file)
+    // The config.js file is not committed to GitHub for security
+    // Make sure config.js is loaded before this script in index.html
+    const GEMINI_API_KEY = (window.APP_CONFIG && window.APP_CONFIG.GEMINI_API_KEY) 
+        ? window.APP_CONFIG.GEMINI_API_KEY 
+        : "YOUR_GEMINI_API_KEY_HERE";
 
     /**
      * Generate heuristic feedback based on scoring analysis

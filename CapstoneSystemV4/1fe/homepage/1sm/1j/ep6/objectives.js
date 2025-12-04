@@ -1,18 +1,31 @@
-// Placeholder objectives for Java Storymode Episode 6
 window.objectivesData = window.objectivesData || {
     easy: {
-        title: "Episode 6 - Java (Easy)",
+        title: "Episode 6 - Java Arrays",
         objectives: [
-            "Read an integer variable",
-            "Print 'Positive' if > 0, 'Negative' if < 0, 'Zero' otherwise"
+            "Declare and initialize arrays to store multiple values",
+            "Access array elements using index notation (array[index])",
+            "Use arrays to store related data like player names and scores",
+            "Understand how parallel arrays work (matching indices for related data)",
+            "Your task is to help Kuya Caloy track game scores using arrays"
         ]
     }
 };
 
 window.examples = window.examples || {
     easy: `
-// Expected output (for 5):
-Positive`
+// Challenge Scenario:
+// Kuya Caloy needs help tracking scores for mini-games during the fiesta.
+// Write Java code that uses arrays to store player names and their scores.
+
+// Expected output:
+Fiesta Game Scores
+==================
+Turn ni: Marco
+Score ni Jenny: 2
+All Players:
+Liza: 3
+Marco: 5
+Jenny: 2`
 };
 
 window.displayObjectives = window.displayObjectives || function(difficulty) {

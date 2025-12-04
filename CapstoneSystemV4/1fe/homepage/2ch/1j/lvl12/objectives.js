@@ -5,25 +5,26 @@ window.objectivesData = window.objectivesData || {
         objectives: [
             "Create a Java class named 'SimbangGabiChecker'",
             "Add a main method to start your program",
-            "Store 3 consecutive days and their attendance status",
-            "Use parallel arrays: String[] days and boolean[] attended",
-            "Print each day's attendance status using a loop"
+            "Declare parallel arrays: String[] days and boolean[] attended",
+            "Store 3 consecutive days and their attendance status (true/false)",
+            "Use a for loop to print each day's attendance status",
+            "Use conditional (if-else) to display 'Attended' or 'Missed'"
         ]
     },
     average: {
         title: "Level 12 - Simbang Gabi Checker (Average) - Java",
         objectives: [
-            "Count total attended days and calculate completion percentage",
-            "Create a system that:\n  - Counts how many days were attended\n  - Calculates completion percentage\n  - Displays attendance summary",
-            "Use loops and mathematical calculations"
+            "Use loops to count attended days and calculate percentage",
+            "Create a system that:\n  - Uses a loop to count how many days were attended (count true values)\n  - Calculates missed days (total - attended)\n  - Calculates completion percentage (attended ÷ total × 100)\n  - Displays attendance summary with counts and percentage",
+            "Use loops, conditionals, and mathematical calculations"
         ]
     },
     difficult: {
         title: "Level 12 - Simbang Gabi Checker (Difficult) - Java",
         objectives: [
-            "Track consecutive attendance streaks and provide encouragement messages",
-            "Create a system that:\n  - Tracks consecutive attendance streaks\n  - Identifies longest streak\n  - Provides encouragement based on attendance\n  - Shows detailed attendance analysis",
-            "Use complex logic, streak tracking, and conditional messaging"
+            "Use loops and conditionals to track streaks and provide encouragement",
+            "Create a system that:\n  - Uses loops to track consecutive attendance streaks\n  - Identifies current streak and longest streak\n  - Uses conditional statements to provide encouragement messages based on completion percentage\n  - Shows detailed attendance analysis with streak information",
+            "Use loops, nested conditionals, streak tracking logic, and string operations"
         ]
     }
 };
@@ -35,18 +36,18 @@ window.examples = window.examples || {
 // Expected output:
 Simbang Gabi Attendance Tracker
 ===============================
-Day 1: December 16 - ✅ Attended
-Day 2: December 17 - ❌ Missed
-Day 3: December 18 - ✅ Attended
+Day 1: December 16 - Attended
+Day 2: December 17 - Missed
+Day 3: December 18 - Attended
 ===============================`,
     
     average: `
 // Expected output:
 Simbang Gabi Attendance Tracker
 ===============================
-Day 1: December 16 - ✅ Attended
-Day 2: December 17 - ❌ Missed
-Day 3: December 18 - ✅ Attended
+Day 1: December 16 - Attended
+Day 2: December 17 - Missed
+Day 3: December 18 - Attended
 ===============================
 
 Attendance Summary:
@@ -60,11 +61,11 @@ Completion: 66.7%
 // Expected output:
 Simbang Gabi Attendance Tracker
 ===============================
-Day 1: December 16 - ✅ Attended
-Day 2: December 17 - ❌ Missed
-Day 3: December 18 - ✅ Attended
-Day 4: December 19 - ✅ Attended
-Day 5: December 20 - ❌ Missed
+Day 1: December 16 - Attended
+Day 2: December 17 - Missed
+Day 3: December 18 - Attended
+Day 4: December 19 - Attended
+Day 5: December 20 - Missed
 ===============================
 
 Detailed Analysis:

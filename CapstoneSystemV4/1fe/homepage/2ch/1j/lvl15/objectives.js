@@ -5,25 +5,26 @@ window.objectivesData = window.objectivesData || {
         objectives: [
             "Create a Java class named 'TricycleDispatch'",
             "Add a main method to start your program",
-            "Store 3 tricycle drivers and their availability status",
-            "Use parallel arrays: String[] drivers and boolean[] available",
-            "Print each driver's name and availability status using a loop"
+            "Declare parallel arrays: String[] drivers and boolean[] available",
+            "Store 3 tricycle drivers and their availability status (true/false)",
+            "Use a for loop to print each driver's name and availability",
+            "Use conditional (if-else) to display 'Available' or 'Busy'"
         ]
     },
     average: {
         title: "Level 15 - Tricycle Dispatch System (Average) - Java",
         objectives: [
-            "Assign passengers to available drivers and calculate fare",
-            "Create a system that:\n  - Assigns passengers to available drivers\n  - Calculates fare based on distance\n  - Displays assignment and fare information",
-            "Use loops and conditional logic"
+            "Use loops and conditionals to assign passengers and calculate fares",
+            "Create a system that:\n  - Uses arrays to store passenger names and distances\n  - Uses nested loops to find available drivers\n  - Uses conditional statements to check driver availability\n  - Calculates fare (distance × rate, e.g., ₱10 per km)\n  - Displays assignment and fare information",
+            "Use loops, conditionals, and arithmetic calculations"
         ]
     },
     difficult: {
         title: "Level 15 - Tricycle Dispatch System (Difficult) - Java",
         objectives: [
-            "Optimize driver assignments and track earnings",
-            "Create a system that:\n  - Optimizes driver assignments based on distance\n  - Tracks driver earnings and performance\n  - Handles multiple passengers and routes\n  - Displays detailed dispatch analytics",
-            "Use complex logic, optimization algorithms, and performance tracking"
+            "Use arrays and loops to optimize assignments and track performance",
+            "Create a system that:\n  - Uses loops to find closest available driver for each passenger\n  - Uses arrays to track driver earnings and trip counts\n  - Uses loops to update driver performance data\n  - Calculates fares for multiple passengers\n  - Displays detailed dispatch analytics with driver performance",
+            "Use multiple arrays, nested loops, conditionals, and performance tracking"
         ]
     }
 };

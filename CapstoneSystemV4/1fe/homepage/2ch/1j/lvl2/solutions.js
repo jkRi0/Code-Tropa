@@ -51,58 +51,41 @@ public class SariSariStore {
 }`,
 
     difficult: `
-import java.util.Scanner;
-
 public class SariSariStore {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        // Use arrays to store product data
+        String[] products = {"Vinegar", "Eggs", "Bread"};
+        double[] prices = {25.50, 8.00, 35.00};
+        int[] stock = {15, 25, 10};
         
-        // Product names
-        String suka = "Vinegar";
-        String itlog = "Eggs";
-        String tinapay = "Bread";
-        
-        // Prices
-        double sukaPrice = 25.50;
-        double itlogPrice = 8.00;
-        double tinapayPrice = 35.00;
-        
-        // Get new stock levels from user
-        System.out.print("Enter new stock for " + suka + ": ");
-        int sukaStock = scanner.nextInt();
-        
-        System.out.print("Enter new stock for " + itlog + ": ");
-        int itlogStock = scanner.nextInt();
-        
-        System.out.print("Enter new stock for " + tinapay + ": ");
-        int tinapayStock = scanner.nextInt();
-        
-        // Calculate values
-        double sukaValue = sukaPrice * sukaStock;
-        double itlogValue = itlogPrice * itlogStock;
-        double tinapayValue = tinapayPrice * tinapayStock;
-        
-        // Display updated inventory
-        System.out.println("\nUpdated Inventory:");
-        System.out.printf("%s: %d units @ ₱%.2f = ₱%.2f%n", suka, sukaStock, sukaPrice, sukaValue);
-        System.out.printf("%s: %d units @ ₱%.2f = ₱%.2f%n", itlog, itlogStock, itlogPrice, itlogValue);
-        System.out.printf("%s: %d units @ ₱%.2f = ₱%.2f%n", tinapay, tinapayStock, tinapayPrice, tinapayValue);
-        
-        // Check for restock alerts (threshold = 20)
         int threshold = 20;
-        System.out.println();
+        double totalValue = 0;
+        int restockCount = 0;
         
-        if (sukaStock < threshold) {
-            System.out.println("⚠️ RESTOCK ALERT: " + suka + " is below threshold (" + sukaStock + " < " + threshold + ")");
-        }
-        if (itlogStock < threshold) {
-            System.out.println("⚠️ RESTOCK ALERT: " + itlog + " is below threshold (" + itlogStock + " < " + threshold + ")");
-        }
-        if (tinapayStock < threshold) {
-            System.out.println("⚠️ RESTOCK ALERT: " + tinapay + " is below threshold (" + tinapayStock + " < " + threshold + ")");
+        // Display inventory report using loops
+        System.out.println("Sari-Sari Store Inventory Report");
+        System.out.println("================================");
+        
+        for (int i = 0; i < products.length; i++) {
+            double itemValue = prices[i] * stock[i];
+            totalValue += itemValue;
+            
+            System.out.printf("%s: %d units @ ₱%.2f = ₱%.2f%n", 
+                products[i], stock[i], prices[i], itemValue);
+            
+            // Check if stock is below threshold
+            if (stock[i] < threshold) {
+                System.out.println("RESTOCK ALERT: Below threshold (" + stock[i] + " < " + threshold + ")");
+                restockCount++;
+            } else {
+                System.out.println("Stock OK");
+            }
+            System.out.println();
         }
         
-        scanner.close();
+        System.out.println("Total Inventory Value: ₱" + String.format("%.2f", totalValue));
+        System.out.println("Items Needing Restock: " + restockCount);
+        System.out.println("================================");
     }
 }`
 };

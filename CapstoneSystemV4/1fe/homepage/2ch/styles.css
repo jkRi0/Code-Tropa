@@ -524,8 +524,8 @@ body {
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     font-family: 'Segoe UI', Arial, sans-serif;
     color: #333;
-    background: transparent;
-    background-color: #ffffffdb;
+    /* background: transparent; */
+    background-color: #ffffffec;
     box-sizing: border-box;
     /* Force scrollbar to always be visible */
     scrollbar-gutter: stable;

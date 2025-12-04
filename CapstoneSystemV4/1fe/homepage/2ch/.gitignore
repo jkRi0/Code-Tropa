@@ -1,0 +1,6 @@
+# Ignore config files with API keys
+config.js
+
+# Keep the example file for reference
+!config.js.example
+

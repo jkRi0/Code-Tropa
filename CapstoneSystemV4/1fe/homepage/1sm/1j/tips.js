@@ -44,39 +44,45 @@
         },
         ep4: {
             easy: {
-                question: "What operator should you use to add numbers in Java?",
+                question: "Which control structure should you use to repeat code a specific number of times in Java?",
                 options: {
-                    a: "Multiplication (*)",
-                    b: "Addition (+)",
-                    c: "Division (/)",
-                    d: "Modulus (%)"
+                    a: "if statement",
+                    b: "for loop",
+                    c: "switch statement",
+                    d: "while loop"
                 },
                 correctAnswer: "b",
                 tips: [
-                    "Use + for addition: `int sum = a + b;`",
-                    "You can add multiple numbers: `int total = a + b + c;`",
-                    "Use parentheses to control order: `int result = (a + b) * c;`",
-                    "Display results with System.out.println()",
-                    "Test your calculations with different values"
+                    "Use if-else for decisions: `if (arrivalTime.equals(\"7:05 AM\")) { ... } else { ... }`",
+                    "Use switch for multiple choices: `switch(rowNumber) { case 1: group = \"A\"; break; }`",
+                    "Use for loops for fixed repetitions: `for (int i = 1; i <= 4; i++) { System.out.println(\"Student \" + i + \" seated.\"); }`",
+                    "Use while loops for dynamic conditions: `while (cardsGiven < totalCards) { cardsGiven++; }`",
+                    "Remember to use break in switch cases to prevent fall-through",
+                    "Curly braces {} are required for code blocks in if, for, and while",
+                    "For loops: `for (initialization; condition; increment) { ... }`",
+                    "While loops: `while (condition) { ... }` - check condition before each iteration"
                 ]
             }
         },
         ep5: {
             easy: {
-                question: "What control structure should you use to make decisions in Java?",
+                question: "How do you combine two strings together in Java?",
                 options: {
-                    a: "for loop",
-                    b: "if statement",
-                    c: "while loop",
-                    d: "switch statement"
+                    a: "Using the + operator",
+                    b: "Using the * operator",
+                    c: "Using the - operator",
+                    d: "Using the / operator"
                 },
-                correctAnswer: "b",
+                correctAnswer: "a",
                 tips: [
-                    "Use if for simple decisions: `if (condition) { ... }`",
-                    "Add else for alternative actions: `if (condition) { ... } else { ... }`",
-                    "Use comparison operators: ==, !=, <, >, <=, >=",
-                    "Test your conditions with different values",
-                    "Remember to use curly braces for code blocks"
+                    "Use + for string concatenation: `String greeting = \"Hello, \" + name + \"!\";`",
+                    "You can concatenate multiple strings: `String full = first + \" \" + last;`",
+                    "Use substring() to extract parts: `String firstName = fullName.substring(0, 5);`",
+                    "substring(start, end) extracts from start index (inclusive) to end index (exclusive)",
+                    "String indices start at 0: \"Axle\" has indices 0='A', 1='x', 2='l', 3='e'",
+                    "Example: `\"Axle Rivera\".substring(0, 5)` returns \"Axle\" (indices 0-4)",
+                    "You can concatenate strings with variables: `String message = \"Name: \" + name;`",
+                    "String methods: length() for size, toUpperCase() for uppercase, substring() for extraction"
                 ]
             }
         },

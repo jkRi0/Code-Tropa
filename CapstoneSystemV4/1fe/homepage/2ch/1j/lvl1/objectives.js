@@ -5,28 +5,31 @@ window.objectivesData = window.objectivesData || {
         objectives: [
             "Create a Java class named 'TahoVendor'",
             "Add a main method to start your program",
-            "Print 'Tahooo!' as the vendor's call",
-            "Print a simple price list with two items:\n  - Taho: ₱15\n  - Syrup: ₱5"
+            "Use System.out.println() to print 'Tahooo!' as the vendor's call",
+            "Print a simple price list with two items:\n  - Taho: ₱15\n  - Syrup: ₱5",
+            "No variables or calculations needed - just print statements"
         ]
     },
     average: {
         title: "Level 1 - Taho Time! (Average) - Java",
         objectives: [
-            "Format the printed output with newlines and tabs for better readability",
-            "Add single-line comments (//) explaining each line of code",
-            "Add a multi-line comment (/* */) describing the taho vendor tradition",
-            "Print a complete menu with proper spacing and formatting"
+            "Declare variables to store prices: int tahoPrice = 15 and int syrupPrice = 5",
+            "Calculate the total price by adding tahoPrice and syrupPrice",
+            "Format the output with proper spacing and menu structure",
+            "Print the vendor's call, menu items with prices, and the calculated total",
+            "Add comments explaining your code"
         ]
     },
     difficult: {
         title: "Level 1 - Taho Time! (Difficult) - Java",
         objectives: [
-            "Debug a provided set of print statements with various syntax errors:",
-            "- Missing quotes in string literals",
-            "- Misplaced semicolons",
-            "- Incorrect string concatenation",
-            "<pre class=\"code-to-debug\">\npublic class TahoVendor {\n    public static void main(String[] args) {\n        System.out.println(Tahooo!);\n        System.out.println(\"Taho: ₱15\");\n        System.out.println(\"Syrup: ₱5\");\n        System.out.println(\"Total: \" + 15 + 5 + \"₱\");\n    }\n}</pre>",
-            "Ensure correct output formatting and proper syntax"
+            "Create a complete taho ordering system with multiple menu items",
+            "Declare variables for at least 3 menu items with their prices:\n  - Taho: ₱15\n  - Syrup: ₱5\n  - Extra Taho: ₱10",
+            "Declare quantity variables for each item (e.g., int tahoQty = 2, int syrupQty = 1, int extraTahoQty = 1)",
+            "Calculate subtotals for each item (price × quantity)",
+            "Calculate the grand total by adding all subtotals",
+            "Display a formatted receipt showing:\n  - Vendor's call\n  - Itemized list with quantities and subtotals\n  - Grand total",
+            "Use proper string concatenation and formatting for professional output"
         ]
     }
 };
@@ -47,14 +50,22 @@ Syrup: ₱5`,
 ================
 Taho:     ₱15
 Syrup:    ₱5
+================
+Total:    ₱20
 ================`,
     
     difficult: `
 // Expected output:
 Tahooo!
-Taho: ₱15
-Syrup: ₱5
-Total: 20₱
+====================
+   TAHO ORDER
+====================
+Taho (x2):      ₱30
+Syrup (x1):     ₱5
+Extra Taho (x1): ₱10
+====================
+Grand Total:    ₱45
+====================
 `
 };
 

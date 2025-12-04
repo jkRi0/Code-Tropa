@@ -5,25 +5,26 @@ window.objectivesData = window.objectivesData || {
         objectives: [
             "Create a Java class named 'BarangayAnalyzer'",
             "Add a main method to start your program",
-            "Store 3 barangay names and populations in arrays",
-            "Use parallel arrays: String[] barangays and int[] populations",
-            "Print each barangay's name and population using a loop"
+            "Declare parallel arrays: String[] barangays and int[] populations",
+            "Store 3 barangay names and their populations in the arrays",
+            "Use a for loop to print each barangay's name and population",
+            "No calculations needed - just display the data"
         ]
     },
     average: {
         title: "Level 11 - Barangay Population Analyzer (Average) - Java",
         objectives: [
-            "Calculate and display the total population and average",
-            "Create a system that:\n  - Calculates total population across all barangays\n  - Calculates average population\n  - Displays summary statistics",
-            "Use loops and mathematical calculations"
+            "Use loops to calculate total and average population",
+            "Create a system that:\n  - Uses a loop to sum all population values\n  - Calculates average population (total ÷ number of barangays)\n  - Displays each barangay with its population\n  - Shows summary statistics (total and average)",
+            "Use loops, arithmetic operators, and mathematical calculations"
         ]
     },
     difficult: {
         title: "Level 11 - Barangay Population Analyzer (Difficult) - Java",
         objectives: [
-            "Find the barangay with the highest/lowest population and categorize by size",
-            "Create a system that:\n  - Identifies barangay with highest population\n  - Identifies barangay with lowest population\n  - Categorizes barangays by size (small, medium, large)\n  - Displays detailed analysis report",
-            "Use complex logic, comparisons, and categorization"
+            "Use loops and conditionals to find highest/lowest and categorize barangays",
+            "Create a system that:\n  - Uses loops to find barangay with highest population\n  - Uses loops to find barangay with lowest population\n  - Uses conditional statements to categorize by size (small < 16,000, medium 16,000-20,000, large > 20,000)\n  - Counts barangays in each category\n  - Displays detailed analysis with all statistics",
+            "Use loops, conditionals, comparisons, and multiple calculations"
         ]
     }
 };

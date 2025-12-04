@@ -40,61 +40,61 @@ public class JeepneyFare {
 }`,
 
     difficult: `
-import java.util.Scanner;
-
 public class JeepneyFare {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
         // Parallel arrays for destinations and fares
         String[] destinations = {"Quiapo", "Makati", "Cubao", "Ortigas", "BGC"};
         int[] fares = {12, 15, 18, 20, 25};
         
+        // Passenger data arrays
+        String[] passengerDestinations = {"Makati", "Cubao", "Ortigas", "BGC"};
+        String[] passengerTypes = {"Regular", "Student", "Senior", "Regular"};
+        
+        int totalFare = 0;
+        int totalDiscount = 0;
+        
         System.out.println("Jeepney Fare Calculator");
         System.out.println("======================");
         
-        // Get user input
-        System.out.print("Enter destination: ");
-        String userDestination = scanner.nextLine();
-        
-        System.out.print("Are you a senior/student? (y/n): ");
-        String discountEligible = scanner.nextLine().toLowerCase();
-        
-        // Validate destination and find fare
-        int destinationIndex = -1;
-        for (int i = 0; i < destinations.length; i++) {
-            if (destinations[i].equalsIgnoreCase(userDestination)) {
-                destinationIndex = i;
-                break;
-            }
-        }
-        
-        if (destinationIndex == -1) {
-            System.out.println("❌ Invalid destination! Please choose from:");
-            for (String dest : destinations) {
-                System.out.println("- " + dest);
-            }
-        } else {
-            int regularFare = fares[destinationIndex];
-            double discount = 0.0;
-            
-            if (discountEligible.equals("y")) {
-                discount = regularFare * 0.20; // 20% discount
+        // Loop through passengers and calculate fares
+        for (int i = 0; i < passengerDestinations.length; i++) {
+            // Find destination index
+            int destIndex = -1;
+            for (int j = 0; j < destinations.length; j++) {
+                if (destinations[j].equals(passengerDestinations[i])) {
+                    destIndex = j;
+                    break;
+                }
             }
             
-            double finalFare = regularFare - discount;
-            
-            System.out.println();
-            System.out.println("Destination: " + userDestination);
-            System.out.println("Regular Fare: ₱" + regularFare);
-            if (discount > 0) {
-                System.out.println("Discount (20%): ₱" + (int)discount);
+            if (destIndex != -1) {
+                int regularFare = fares[destIndex];
+                int discount = 0;
+                
+                // Apply discount using conditional
+                if (passengerTypes[i].equals("Student") || passengerTypes[i].equals("Senior")) {
+                    discount = (int)(regularFare * 0.20); // 20% discount
+                }
+                
+                int finalFare = regularFare - discount;
+                totalFare += finalFare;
+                totalDiscount += discount;
+                
+                System.out.print("Passenger " + (i + 1) + ": " + passengerDestinations[i] + 
+                    " - " + passengerTypes[i] + " - ₱" + finalFare);
+                if (discount > 0) {
+                    System.out.println(" (20% discount)");
+                } else {
+                    System.out.println();
+                }
             }
-            System.out.println("Final Fare: ₱" + (int)finalFare);
         }
         
         System.out.println("======================");
-        scanner.close();
+        System.out.println("Total Fare: ₱" + totalFare);
+        System.out.println("Total Discount: ₱" + totalDiscount);
+        System.out.println("Final Total: ₱" + totalFare);
+        System.out.println("======================");
     }
 }`
 };

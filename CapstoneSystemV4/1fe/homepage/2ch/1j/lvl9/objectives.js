@@ -13,17 +13,17 @@ window.objectivesData = window.objectivesData || {
     average: {
         title: "Level 9 - Fiesta Poster Maker (Average) - Java",
         objectives: [
-            "Accept a user-input slogan, count characters and words",
-            "Create a system that:\n  - Takes slogan input from user\n  - Counts total characters\n  - Counts total words\n  - Displays character and word statistics",
-            "Use Scanner for input and String methods for analysis"
+            "Use String methods to analyze a slogan: count characters and words",
+            "Create a system that:\n  - Uses a String variable to store slogan\n  - Uses length() method to count total characters\n  - Uses split() or manual counting to count words\n  - Displays character and word statistics",
+            "Use String methods: length(), toUpperCase(), and string operations"
         ]
     },
     difficult: {
         title: "Level 9 - Fiesta Poster Maker (Difficult) - Java",
         objectives: [
-            "Sanitize slogans by removing offensive words, align output, and auto-suggest better slogans",
-            "Create a system that:\n  - Filters out inappropriate words\n  - Aligns text output properly\n  - Suggests improvements based on length and clarity\n  - Generates multiple slogan variations",
-            "Use arrays, loops, and complex string manipulation"
+            "Use arrays and string methods to process multiple slogans and format output",
+            "Create a system that:\n  - Uses arrays to store multiple slogans\n  - Uses loops to process each slogan\n  - Uses String methods (toUpperCase(), length(), substring()) to format\n  - Generates formatted poster output with borders\n  - Displays multiple slogan variations",
+            "Use arrays, loops, and complex string manipulation methods"
         ]
     }
 };
@@ -42,11 +42,9 @@ Formatted:
 ==================`,
     
     average: `
-// Expected output (with input: "Mabuhay ang Fiesta ng Bayan"):
+// Expected output:
 Fiesta Poster Maker
 ==================
-Enter slogan: Mabuhay ang Fiesta ng Bayan
-
 Slogan Analysis:
 ================
 Original: Mabuhay ang Fiesta ng Bayan
@@ -59,22 +57,22 @@ Words: 5
 // Expected output:
 Fiesta Poster Maker
 ==================
-Enter slogan: Mabuhay ang Fiesta ng Bayan
-
-Slogan Analysis:
-================
-Original: Mabuhay ang Fiesta ng Bayan
-Sanitized: Mabuhay ang Fiesta ng Bayan
-Characters: 25 | Words: 5
-
-Formatted Poster:
+Slogan 1:
 ==================
 *** MABUHAY ANG FIESTA NG BAYAN ***
+Characters: 25 | Words: 5
 ==================
 
-Suggestions:
-- Consider: "Mabuhay ang Masayang Fiesta!"
-- Consider: "Fiesta ng Bayan, Pagkakaisa!"
+Slogan 2:
+==================
+*** MABUHAY ANG MASAYANG FIESTA! ***
+Characters: 26 | Words: 4
+==================
+
+Slogan 3:
+==================
+*** FIESTA NG BAYAN, PAGKAKAISA! ***
+Characters: 28 | Words: 4
 ==================
 `
 };
