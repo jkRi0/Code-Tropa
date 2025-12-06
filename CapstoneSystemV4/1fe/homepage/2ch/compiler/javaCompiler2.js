@@ -278,7 +278,7 @@ function getSourceLabel(src) {
     return `${className}.java`;
 }
 
-function extractDeclarations(src) {
+function extractDeclarations(src, sourceLabel = "MainDemo.java") {
     const declarationPattern =
         /\b(byte|short|int|long|float|double|char|boolean|String|Integer|Double|Boolean)\s+([A-Za-z_]\w*)\s*=\s*([^;]+);/g;
     const declarations = {};
@@ -288,6 +288,8 @@ function extractDeclarations(src) {
     while ((match = declarationPattern.exec(src)) !== null) {
         const [, type, name, value] = match;
         const trimmedValue = value.trim();
+        // Calculate line number for this declaration
+        const lineNum = src.slice(0, match.index).split("\n").length;
 
         // Only validate if the value is a simple literal
         if (
@@ -299,7 +301,7 @@ function extractDeclarations(src) {
             const validation = validateLiteral(type, trimmedValue);
             if (!validation.isValid) {
                 errors.push(
-                    `Invalid value for ${type} ${name}: ${validation.message}`,
+                    `${sourceLabel}:${lineNum}: error: Invalid value for ${type} ${name}: ${validation.message}`,
                 );
             }
             declarations[name] = {
@@ -1012,12 +1014,15 @@ function findStaticInvocationErrors(mainBody, methods, sourceLabel) {
         if (method.isStatic) {
             return;
         }
-        const pattern = new RegExp(`(^|[^.\\w])${method.name}\\s*\\(`, "m");
+        const pattern = new RegExp(`(^|[^.\\w])${method.name}\\s*\\(`, "gm");
+        let match;
         pattern.lastIndex = 0;
-        if (pattern.test(mainBody)) {
+        while ((match = pattern.exec(mainBody)) !== null) {
+            // Calculate line number in main body
+            const lineNum = mainBody.slice(0, match.index).split("\n").length;
             const paramsSignature = normalizeParamSignature(method.params);
             errors.push(
-                `${sourceLabel}: error: non-static method ${method.name}(${paramsSignature}) cannot be referenced from a static context`,
+                `${sourceLabel}:${lineNum}: error: non-static method ${method.name}(${paramsSignature}) cannot be referenced from a static context`,
             );
         }
     });
@@ -1028,7 +1033,11 @@ function findStaticInvocationErrors(mainBody, methods, sourceLabel) {
 function executeJavaMain(src, sourceLabel) {
     const mainBody = extractMainMethodBody(src);
     if (!mainBody) {
-        throw new Error(`Error: "main" method not found in class, please define the main method as: public static void main(String[] args)`);}
+        // Try to find the class declaration to get a better line number
+        const classMatch = src.match(/\bclass\s+(\w+)/);
+        const classLine = classMatch ? src.slice(0, classMatch.index).split("\n").length : 1;
+        throw new Error(`${sourceLabel}:${classLine}: error: "main" method not found in class, please define the main method as: public static void main(String[] args)`);
+    }
 
     const methodConversion = convertMethodsToJs(src, sourceLabel);
     const methodErrors = [...methodConversion.errors];
@@ -1272,7 +1281,16 @@ function executeJavaMain(src, sourceLabel) {
             errors: [],
         };
     } catch (error) {
-        throw new Error(`Failed to execute Java snippet: ${error.message}`);
+        // Preserve line numbers from original error if present
+        const errorMsg = error.message || String(error);
+        // If error already has source label and line, preserve it
+        if (errorMsg.includes(`${sourceLabel}:`) && errorMsg.includes(':')) {
+            throw new Error(errorMsg);
+        }
+        // Otherwise, try to extract line number from error or use line 1
+        const lineMatch = errorMsg.match(/:(\d+):/);
+        const lineNum = lineMatch ? lineMatch[1] : '1';
+        throw new Error(`${sourceLabel}:${lineNum}: error: Failed to execute Java snippet: ${errorMsg}`);
     }
 }
 
@@ -1499,7 +1517,7 @@ function simulateSystemOutPrinting(src) {
         return ' ' + temp;
     }
     
-    const { errors } = extractDeclarations(cleanedSrc);
+    const { errors } = extractDeclarations(cleanedSrc, sourceLabel);
     const systemOutErrors = findInvalidSystemOutCalls(cleanedSrc, sourceLabel);
     const allErrors = [...errors, ...systemOutErrors];
     let executionResult = { outputs: [], methods: [], errors: [] };
