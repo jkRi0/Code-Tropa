@@ -324,6 +324,263 @@ function analyzeReadability(code) {
 }
 
 // ================================
+// OBJECTIVES COMPLIANCE CHECKING
+// ================================
+
+/**
+ * Check if submitted code meets the objectives/requirements
+ * @param {string} code - Submitted code
+ * @param {string} difficulty - Difficulty level (easy, average, difficult)
+ * @param {string} language - Programming language (java, c++, c#)
+ * @returns {object} Objectives compliance analysis
+ */
+function checkObjectivesCompliance(code, difficulty, language = 'java') {
+    if (!code || !window.objectivesData || !window.objectivesData[difficulty]) {
+        return {
+            complianceScore: 0,
+            metObjectives: [],
+            missedObjectives: [],
+            totalObjectives: 0
+        };
+    }
+
+    const objectives = window.objectivesData[difficulty].objectives || [];
+    const metObjectives = [];
+    const missedObjectives = [];
+    const codeLower = code.toLowerCase();
+    const normalizedCode = code.replace(/\s+/g, ' ').toLowerCase();
+
+    // Language-specific patterns
+    const patterns = {
+        java: {
+            class: /\b(public\s+)?class\s+(\w+)/,
+            main: /\bpublic\s+static\s+void\s+main\s*\(/,
+            println: /\bSystem\.out\.(println|print)\s*\(/,
+            variable: /\b(int|String|double|float|boolean|char)\s+(\w+)\s*[=;]/,
+            comment: /\/\/|\/\*[\s\S]*?\*\//,
+            loop: /\b(for|while|do)\s*\(/,
+            array: /\b\w+\s*\[\s*\]/,
+            method: /\b(public|private|static)?\s*\w+\s+\w+\s*\(/
+        },
+        'c++': {
+            class: /\bclass\s+(\w+)/,
+            main: /\bint\s+main\s*\(/,
+            cout: /\bstd::cout|cout\s*<</,
+            variable: /\b(int|string|double|float|bool|char)\s+(\w+)\s*[=;]/,
+            comment: /\/\/|\/\*[\s\S]*?\*\//,
+            loop: /\b(for|while|do)\s*\(/,
+            array: /\b\w+\s*\[\s*\]/,
+            function: /\b\w+\s+\w+\s*\(/
+        },
+        'c#': {
+            class: /\b(public\s+)?class\s+(\w+)/,
+            main: /\bstatic\s+void\s+Main\s*\(/,
+            console: /\bConsole\.(WriteLine|Write)\s*\(/,
+            variable: /\b(int|string|double|float|bool|char)\s+(\w+)\s*[=;]/,
+            comment: /\/\/|\/\*[\s\S]*?\*\//,
+            loop: /\b(for|while|do)\s*\(/,
+            array: /\b\w+\s*\[\s*\]/,
+            method: /\b(public|private|static)?\s*\w+\s+\w+\s*\(/
+        }
+    };
+
+    const langPatterns = patterns[language.toLowerCase()] || patterns.java;
+
+    objectives.forEach((objective, index) => {
+        const objLower = objective.toLowerCase();
+        let isMet = false;
+        let confidence = 0;
+
+        // Check for specific requirements in objectives
+        // 1. Class name requirement (e.g., "create a class named 'PrintPattern'" or "class 'PrintPattern'")
+        if (objLower.includes('class')) {
+            // Try multiple patterns for class name extraction
+            let classNameMatch = objLower.match(/class\s+(?:named\s+)?['"]?(\w+)['"]?/);
+            if (!classNameMatch) {
+                classNameMatch = objLower.match(/named\s+['"]?(\w+)['"]?/);
+            }
+            if (!classNameMatch && objLower.includes("'")) {
+                // Extract name from quotes
+                classNameMatch = objLower.match(/['"](\w+)['"]/);
+            }
+            
+            if (classNameMatch) {
+                const className = classNameMatch[1];
+                // Check for exact class name match (case-insensitive)
+                const classPattern = new RegExp(`\\bclass\\s+${className}\\b`, 'i');
+                const classMatch = code.match(classPattern);
+                if (classMatch) {
+                    isMet = true;
+                    confidence = 1.0;
+                } else {
+                    // Check if any class exists but with wrong name
+                    const anyClassMatch = code.match(langPatterns.class);
+                    if (anyClassMatch) {
+                        // Class exists but wrong name - this is a miss
+                        confidence = 0.2; // Very low confidence since name doesn't match
+                    }
+                }
+            } else if (objLower.includes('class') && !objLower.includes('named')) {
+                // Just check if any class exists
+                if (langPatterns.class.test(code)) {
+                    isMet = true;
+                    confidence = 0.7;
+                }
+            }
+        }
+
+        // 2. Method/Function name requirement (e.g., "create a 'printPattern' method" or "function named 'printPattern'")
+        if ((objLower.includes('method') || objLower.includes('function')) && !objLower.includes('main')) {
+            // Try to extract method/function name
+            let methodNameMatch = objLower.match(/(?:method|function)\s+(?:named\s+)?['"]?(\w+)['"]?/);
+            if (!methodNameMatch) {
+                methodNameMatch = objLower.match(/['"](\w+)['"]\s+(?:method|function)/);
+            }
+            if (!methodNameMatch && objLower.includes("'")) {
+                // Extract name from quotes
+                methodNameMatch = objLower.match(/['"](\w+)['"]/);
+            }
+            
+            if (methodNameMatch) {
+                const methodName = methodNameMatch[1];
+                // Check for exact method/function name match
+                // Pattern: methodName( or methodName ( or void methodName( or int methodName( etc.
+                const methodPattern = new RegExp(`\\b(?:void|int|String|double|float|boolean|char|\\w+)\\s+${methodName}\\s*\\(`, 'i');
+                const methodMatch = code.match(methodPattern);
+                if (methodMatch) {
+                    isMet = true;
+                    confidence = 1.0;
+                } else {
+                    // Check if any method exists but with wrong name
+                    const anyMethodMatch = code.match(langPatterns.method || langPatterns.function);
+                    if (anyMethodMatch) {
+                        // Method exists but wrong name - this is a miss
+                        confidence = 0.2; // Very low confidence since name doesn't match
+                    }
+                }
+            } else if ((objLower.includes('method') || objLower.includes('function')) && !objLower.includes('named')) {
+                // Just check if any method/function exists
+                const methodPattern = langPatterns.method || langPatterns.function;
+                if (methodPattern && methodPattern.test(code)) {
+                    isMet = true;
+                    confidence = 0.7;
+                }
+            }
+        }
+
+        // 3. Main method/function requirement
+        if (objLower.includes('main') && (objLower.includes('method') || objLower.includes('function'))) {
+            if (langPatterns.main.test(code)) {
+                isMet = true;
+                confidence = 1.0;
+            }
+        }
+
+        // 4. Print/output statements
+        if (objLower.includes('print') || objLower.includes('display') || objLower.includes('output')) {
+            if (langPatterns.println || langPatterns.cout || langPatterns.console) {
+                const printPattern = langPatterns.println || langPatterns.cout || langPatterns.console;
+                if (printPattern.test(code)) {
+                    isMet = true;
+                    confidence = 0.8;
+                }
+            }
+        }
+
+        // 5. Variable declaration
+        if (objLower.includes('declare') && objLower.includes('variable')) {
+            const varMatches = code.match(langPatterns.variable);
+            if (varMatches && varMatches.length > 0) {
+                isMet = true;
+                confidence = 0.9;
+            }
+        }
+
+        // 6. Calculations/arithmetic
+        if (objLower.includes('calculate') || objLower.includes('compute') || objLower.includes('total')) {
+            if (/\b[\w]+\s*[+\-*/]\s*[\w]+/.test(code)) {
+                isMet = true;
+                confidence = 0.8;
+            }
+        }
+
+        // 7. Arrays
+        if (objLower.includes('array') || objLower.includes('arrays')) {
+            if (langPatterns.array.test(code)) {
+                isMet = true;
+                confidence = 0.9;
+            }
+        }
+
+        // 8. Loops
+        if (objLower.includes('loop') || objLower.includes('iterate') || objLower.includes('for') || objLower.includes('while')) {
+            if (langPatterns.loop.test(code)) {
+                isMet = true;
+                confidence = 0.9;
+            }
+        }
+
+        // 9. Comments
+        if (objLower.includes('comment')) {
+            if (langPatterns.comment.test(code)) {
+                isMet = true;
+                confidence = 0.8;
+            }
+        }
+
+        // 10. Conditional statements
+        if (objLower.includes('if') || objLower.includes('conditional') || objLower.includes('else')) {
+            if (/\bif\s*\(/.test(code)) {
+                isMet = true;
+                confidence = 0.9;
+            }
+        }
+
+        // 11. String operations
+        if (objLower.includes('string') && (objLower.includes('concatenat') || objLower.includes('format') || objLower.includes('length'))) {
+            if (/\+\s*["']|\.length\(\)|\.substring\(|\.toUpperCase\(\)|\.toLowerCase\(\)/.test(code)) {
+                isMet = true;
+                confidence = 0.8;
+            }
+        }
+
+        // 12. General keyword matching (fallback)
+        if (!isMet) {
+            // Extract key terms from objective
+            const keyTerms = objLower
+                .replace(/[^\w\s]/g, ' ')
+                .split(/\s+/)
+                .filter(term => term.length > 3 && !['the', 'and', 'with', 'that', 'this', 'your', 'code'].includes(term));
+            
+            // Check if code contains these terms
+            const matchedTerms = keyTerms.filter(term => normalizedCode.includes(term));
+            if (matchedTerms.length >= keyTerms.length * 0.5) {
+                isMet = true;
+                confidence = 0.5;
+            }
+        }
+
+        if (isMet && confidence >= 0.5) {
+            metObjectives.push({ objective, confidence });
+        } else {
+            missedObjectives.push({ objective, confidence: 0 });
+        }
+    });
+
+    const totalObjectives = objectives.length;
+    const complianceScore = totalObjectives > 0 ? (metObjectives.length / totalObjectives) : 0;
+
+    return {
+        complianceScore,
+        metObjectives,
+        missedObjectives,
+        totalObjectives,
+        metCount: metObjectives.length,
+        missedCount: missedObjectives.length
+    };
+}
+
+// ================================
 // MAIN SCORING FUNCTION
 // ================================
 
@@ -375,7 +632,15 @@ function calculateScore(submittedCode, solutionCode, difficulty, submittedOutput
     }
 
     // ================================
-    // ACCURACY SCORING (using n-gram comparison)
+    // OBJECTIVES COMPLIANCE CHECK
+    // ================================
+    const selectedLanguageSpan = document.getElementById('selectedLanguage');
+    const language = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
+    const objectivesCompliance = checkObjectivesCompliance(submittedCode, difficulty, language);
+    console.log('Objectives Compliance:', objectivesCompliance);
+
+    // ================================
+    // ACCURACY SCORING (using n-gram comparison + objectives compliance)
     // ================================
     let accuracyScore = 0;
     let exactCodeMatch = false;
@@ -387,14 +652,15 @@ function calculateScore(submittedCode, solutionCode, difficulty, submittedOutput
     const normalizedSolution = normalizeCodeForStrictCompare(solutionCode);
     exactCodeMatch = normalizedSubmitted === normalizedSolution;
     
+    let baseAccuracyScore = 0;
     if (exactCodeMatch) {
-        accuracyScore = rubrics.accuracy.weight;
+        baseAccuracyScore = rubrics.accuracy.weight;
         console.log('Accuracy: Exact code match - full points');
     } else if (actualSubmittedOutput && actualSolutionOutput) {
         // Use n-gram comparison for output matching
         outputSimilarity = compareOutputsWithNGrams(actualSubmittedOutput, actualSolutionOutput);
-        accuracyScore = Math.round(rubrics.accuracy.weight * outputSimilarity);
-        console.log('Accuracy: Output similarity:', outputSimilarity, '- Score:', accuracyScore);
+        baseAccuracyScore = Math.round(rubrics.accuracy.weight * outputSimilarity);
+        console.log('Accuracy: Output similarity:', outputSimilarity, '- Base Score:', baseAccuracyScore);
         
         // Also check for partial code match
         if (outputSimilarity < 1.0) {
@@ -405,7 +671,7 @@ function calculateScore(submittedCode, solutionCode, difficulty, submittedOutput
             );
             // If code is very similar, boost accuracy slightly
             if (codeSimilarity > 0.7) {
-                accuracyScore = Math.min(rubrics.accuracy.weight, Math.round(accuracyScore * 1.1));
+                baseAccuracyScore = Math.min(rubrics.accuracy.weight, Math.round(baseAccuracyScore * 1.1));
                 console.log('Accuracy: Code structure similar, boosted score');
             }
         }
@@ -415,9 +681,31 @@ function calculateScore(submittedCode, solutionCode, difficulty, submittedOutput
             generateNGrams(normalizedSubmitted, 3),
             generateNGrams(normalizedSolution, 3)
         );
-        accuracyScore = Math.round(rubrics.accuracy.weight * codeSimilarity);
-        console.log('Accuracy: Code structure similarity:', codeSimilarity, '- Score:', accuracyScore);
+        baseAccuracyScore = Math.round(rubrics.accuracy.weight * codeSimilarity);
+        console.log('Accuracy: Code structure similarity:', codeSimilarity, '- Base Score:', baseAccuracyScore);
     }
+    
+    // Adjust accuracy score based on objectives compliance
+    // If objectives compliance is high, boost the score
+    // If objectives compliance is low, reduce the score
+    const objectivesWeight = 0.3; // 30% weight for objectives compliance
+    const solutionWeight = 0.7; // 70% weight for solution similarity
+    
+    if (objectivesCompliance.totalObjectives > 0) {
+        const objectivesScore = objectivesCompliance.complianceScore * rubrics.accuracy.weight;
+        accuracyScore = Math.round(
+            (baseAccuracyScore * solutionWeight) + 
+            (objectivesScore * objectivesWeight)
+        );
+        console.log('Accuracy: Combined score (solution:', baseAccuracyScore, 'objectives:', objectivesScore, ') =', accuracyScore);
+    } else {
+        // No objectives available, use base score
+        accuracyScore = baseAccuracyScore;
+        console.log('Accuracy: No objectives available, using base score');
+    }
+    
+    // Ensure accuracy score doesn't exceed maximum
+    accuracyScore = Math.min(rubrics.accuracy.weight, accuracyScore);
     
     criteriaScores.accuracy = accuracyScore;
     score += accuracyScore;
@@ -513,9 +801,11 @@ function calculateScore(submittedCode, solutionCode, difficulty, submittedOutput
             readability: {
                 submitted: submittedReadability,
                 solution: solutionReadability
-            }
+            },
+            objectives: objectivesCompliance
         }
     };
 }
 
 window.calculateScore = calculateScore;
+window.checkObjectivesCompliance = checkObjectivesCompliance;

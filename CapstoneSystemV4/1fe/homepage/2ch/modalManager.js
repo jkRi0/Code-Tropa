@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update pass/fail status
         const passFailStatus = document.getElementById('passFailStatus');
         passFailStatus.className = `pass-fail-status ${hasPassed ? 'passed' : 'failed'}`;
-        passFailStatus.textContent = hasPassed ? '🎉 PASSED!' : '❌ FAILED';
+        passFailStatus.textContent = hasPassed ? 'PASSED!' : 'FAILED';
         
         // Update criteria scores display
         criteriaScoresDisplay.innerHTML = '';
@@ -311,16 +311,34 @@ document.addEventListener('DOMContentLoaded', function() {
             .filter(Boolean);
         const meaningfulVars = variableNames.filter(v => v.length >= 3 && !/^[ijklmn]$/.test(v));
         
-        // ACCURACY FEEDBACK
+        // ACCURACY FEEDBACK (includes objectives compliance)
         // Note: criteriaScores contain raw points, not percentages
         const accuracyScore = criteriaScores.accuracy || 0;
         const accuracyWeight = rubrics.accuracy.weight;
         const accuracyPercent = accuracyWeight > 0 ? Math.round((accuracyScore / accuracyWeight) * 100) : 0;
         
+        // Check objectives compliance
+        const objectivesCompliance = analysis.objectives || null;
+        const objectivesMet = objectivesCompliance ? Math.round(objectivesCompliance.complianceScore * 100) : null;
+        
         if (accuracyPercent === 100) {
-            feedback.push("✅ **Accuracy (100%)**: Excellent! Your code produces the correct output and matches the expected solution.");
+            feedback.push("**Accuracy (100%)**: Excellent! Your code produces the correct output and matches the expected solution.");
+            if (objectivesMet !== null && objectivesMet === 100) {
+                feedback.push("   - All objectives met! Your code fulfills all requirements.");
+            }
         } else if (accuracyPercent >= 80) {
-            feedback.push(`⚠️ **Accuracy (${accuracyPercent}%)**: Your code is mostly correct but has some differences.`);
+            feedback.push(`**Accuracy (${accuracyPercent}%)**: Your code is mostly correct but has some differences.`);
+            if (objectivesCompliance && objectivesCompliance.totalObjectives > 0) {
+                if (objectivesMet >= 80) {
+                    feedback.push(`   - Objectives compliance: ${objectivesMet}% (${objectivesCompliance.metCount}/${objectivesCompliance.totalObjectives} objectives met)`);
+                } else {
+                    feedback.push(`   - Objectives compliance: ${objectivesMet}% (${objectivesCompliance.metCount}/${objectivesCompliance.totalObjectives} objectives met)`);
+                    if (objectivesCompliance.missedObjectives.length > 0) {
+                        const topMissed = objectivesCompliance.missedObjectives.slice(0, 2);
+                        feedback.push(`   - Missing objectives: ${topMissed.map(o => o.objective.substring(0, 50) + '...').join(', ')}`);
+                    }
+                }
+            }
             if (analysis.accuracy) {
                 if (analysis.accuracy.outputSimilarity !== null && analysis.accuracy.outputSimilarity < 1.0) {
                     const similarity = Math.round(analysis.accuracy.outputSimilarity * 100);
@@ -331,16 +349,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         } else if (accuracyPercent >= 50) {
-            feedback.push(`❌ **Accuracy (${accuracyPercent}%)**: Your code has significant differences from the expected solution.`);
+            feedback.push(`**Accuracy (${accuracyPercent}%)**: Your code has significant differences from the expected solution.`);
+            if (objectivesCompliance && objectivesCompliance.totalObjectives > 0) {
+                feedback.push(`   - Objectives compliance: ${objectivesMet}% (${objectivesCompliance.metCount}/${objectivesCompliance.totalObjectives} objectives met)`);
+                if (objectivesCompliance.missedObjectives.length > 0) {
+                    const topMissed = objectivesCompliance.missedObjectives.slice(0, 3);
+                    feedback.push(`   - Missing objectives:`);
+                    topMissed.forEach(obj => {
+                        feedback.push(`     • ${obj.objective.substring(0, 60)}${obj.objective.length > 60 ? '...' : ''}`);
+                    });
+                }
+            }
             if (analysis.accuracy) {
                 if (analysis.accuracy.outputSimilarity !== null) {
                     feedback.push(`   - Output match: ${Math.round(analysis.accuracy.outputSimilarity * 100)}%`);
                 }
                 feedback.push(`   - Code structure: ${Math.round(analysis.accuracy.codeSimilarity * 100)}% similar`);
             }
-            feedback.push("   - Review the solution code to understand the correct approach.");
+            feedback.push("   - Review the solution code and objectives to understand the correct approach.");
         } else {
-            feedback.push(`❌ **Accuracy (${accuracyPercent}%)**: Your code doesn't match the expected solution.`);
+            feedback.push(`**Accuracy (${accuracyPercent}%)**: Your code doesn't match the expected solution.`);
+            if (objectivesCompliance && objectivesCompliance.totalObjectives > 0) {
+                feedback.push(`   - Objectives compliance: ${objectivesMet}% (${objectivesCompliance.metCount}/${objectivesCompliance.totalObjectives} objectives met)`);
+                if (objectivesCompliance.missedObjectives.length > 0) {
+                    feedback.push(`   - Please review these objectives:`);
+                    objectivesCompliance.missedObjectives.slice(0, 3).forEach(obj => {
+                        feedback.push(`     • ${obj.objective.substring(0, 60)}${obj.objective.length > 60 ? '...' : ''}`);
+                    });
+                }
+            }
             feedback.push("   - Please review the requirements and objectives of the challenge.");
         }
         
@@ -351,9 +388,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const efficiencyPercent = efficiencyWeight > 0 ? Math.round((efficiencyScore / efficiencyWeight) * 100) : 0;
         
         if (efficiencyPercent === 100) {
-            feedback.push("✅ **Efficiency (100%)**: Great! Your code uses efficient algorithms and optimal complexity.");
+            feedback.push("**Efficiency (100%)**: Great! Your code uses efficient algorithms and optimal complexity.");
         } else if (efficiencyPercent >= 70) {
-            feedback.push(`⚠️ **Efficiency (${efficiencyPercent}%)**: Your code is reasonably efficient but could be improved.`);
+            feedback.push(`**Efficiency (${efficiencyPercent}%)**: Your code is reasonably efficient but could be improved.`);
             if (analysis.efficiency) {
                 const complexityDiff = analysis.efficiency.complexityDiff;
                 if (complexityDiff > 0) {
@@ -367,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         } else {
-            feedback.push(`❌ **Efficiency (${efficiencyPercent}%)**: Your code has efficiency issues.`);
+            feedback.push(`**Efficiency (${efficiencyPercent}%)**: Your code has efficiency issues.`);
             if (analysis.efficiency) {
                 feedback.push(`   - Complexity: ${analysis.efficiency.submitted.complexity} (solution: ${analysis.efficiency.solution.complexity})`);
                 if (analysis.efficiency.submitted.loops > 3) {
@@ -386,9 +423,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const readabilityPercent = readabilityWeight > 0 ? Math.round((readabilityScore / readabilityWeight) * 100) : 0;
         
         if (readabilityPercent === 100) {
-            feedback.push("✅ **Readability (100%)**: Excellent! Your code is well-documented and follows clean code practices.");
+            feedback.push("**Readability (100%)**: Excellent! Your code is well-documented and follows clean code practices.");
         } else if (readabilityPercent >= 70) {
-            feedback.push(`⚠️ **Readability (${readabilityPercent}%)**: Your code is readable but could use improvements.`);
+            feedback.push(`**Readability (${readabilityPercent}%)**: Your code is readable but could use improvements.`);
             if (analysis.readability) {
                 if (!analysis.readability.submitted.hasComments) {
                     feedback.push("   - Add comments to explain your code logic.");
@@ -400,13 +437,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         } else {
-            feedback.push(`❌ **Readability (${readabilityPercent}%)**: Your code needs significant readability improvements.`);
+            feedback.push(`**Readability (${readabilityPercent}%)**: Your code needs significant readability improvements.`);
             if (analysis.readability) {
                 if (!analysis.readability.submitted.hasComments) {
-                    feedback.push("   - ❌ Missing comments: Add comments to explain what your code does.");
+                    feedback.push("   - Missing comments: Add comments to explain what your code does.");
                 }
                 if (meaningfulVars.length < variableNames.length * 0.7) {
-                    feedback.push(`   - ⚠️ Variable naming: Use more descriptive names (${meaningfulVars.length}/${variableNames.length} variables have meaningful names).`);
+                    feedback.push(`   - Variable naming: Use more descriptive names (${meaningfulVars.length}/${variableNames.length} variables have meaningful names).`);
                 }
                 if (analysis.readability.submitted.cleanCodeScore < 20) {
                     feedback.push("   - Improve code formatting, indentation, and structure.");
@@ -430,18 +467,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (patterns.length > 0) {
-            feedback.push("\n💡 **Suggestions**:");
+            feedback.push("\n**Suggestions**:");
             patterns.forEach(p => feedback.push(`   - ${p}`));
         }
         
         // OVERALL SUMMARY
         const totalScore = scoringResult.totalScore || 0;
         if (totalScore >= 80) {
-            feedback.push("\n🎉 **Overall**: Great work! You've passed the challenge. Keep practicing to improve further!");
+            feedback.push("\n**Overall**: Great work! You've passed the challenge. Keep practicing to improve further!");
         } else if (totalScore >= 60) {
-            feedback.push("\n📝 **Overall**: You're on the right track! Focus on the areas mentioned above to improve your score.");
+            feedback.push("\n**Overall**: You're on the right track! Focus on the areas mentioned above to improve your score.");
         } else {
-            feedback.push("\n📚 **Overall**: Review the solution code and requirements. Practice the concepts and try again!");
+            feedback.push("\n**Overall**: Review the solution code and requirements. Practice the concepts and try again!");
         }
         
         return feedback.join('\n');
@@ -471,7 +508,14 @@ document.addEventListener('DOMContentLoaded', function() {
         Their current score for each criterion is: ${JSON.stringify(scoringResult.criteriaScores, null, 2)}
         Their total score is: ${scoringResult.totalScore}%
         
-        Please provide constructive feedback to the student based on their submitted code, comparing it to the solution and considering their scores. Focus on explaining *why* certain aspects received the score they did and how they can improve. Provide actionable advice for improving their code in terms of accuracy, efficiency, and readability. Keep the feedback concise and encouraging, around 2-3 sentences.
+        The challenge objectives/requirements are:
+        ${scoringResult.analysis && scoringResult.analysis.objectives ? 
+            `Objectives Compliance: ${Math.round(scoringResult.analysis.objectives.complianceScore * 100)}% (${scoringResult.analysis.objectives.metCount}/${scoringResult.analysis.objectives.totalObjectives} met)
+        Met Objectives: ${scoringResult.analysis.objectives.metObjectives.map(o => o.objective).join('; ')}
+        Missing Objectives: ${scoringResult.analysis.objectives.missedObjectives.map(o => o.objective).join('; ')}` 
+            : 'No objectives data available'}
+        
+        Please provide constructive feedback to the student based on their submitted code, comparing it to the solution AND checking if it meets the objectives/requirements. Focus on explaining *why* certain aspects received the score they did and how they can improve. Pay special attention to whether the code meets the stated objectives. Provide actionable advice for improving their code in terms of accuracy (including objectives compliance), efficiency, and readability. Keep the feedback concise and encouraging, around 2-3 sentences.
         `;
 
         try {

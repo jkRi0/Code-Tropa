@@ -163,6 +163,115 @@ const primitiveTypes = new Set([
 
 const nonPrimitiveTypes = new Set(["String", "Integer", "Double", "Boolean"]);
 
+function stripComments(src) {
+    let result = "";
+    let i = 0;
+    let inString = false;
+    let inChar = false;
+    let stringChar = null;
+    let inSingleLineComment = false;
+    let inMultiLineComment = false;
+    let escaped = false;
+
+    while (i < src.length) {
+        const ch = src[i];
+        const next = i < src.length - 1 ? src[i + 1] : null;
+
+        // If we're processing an escaped character in string/char
+        if (escaped && (inString || inChar)) {
+            result += ch;
+            escaped = false;
+            i++;
+            continue;
+        }
+
+        // Check for escape character in string/char
+        if ((inString || inChar) && ch === "\\") {
+            escaped = true;
+            result += ch;
+            i++;
+            continue;
+        }
+
+        // Exit string/char literals (only if not escaped)
+        if (inString && ch === stringChar && !escaped) {
+            inString = false;
+            stringChar = null;
+            result += ch;
+            i++;
+            continue;
+        }
+
+        if (inChar && ch === stringChar && !escaped) {
+            inChar = false;
+            stringChar = null;
+            result += ch;
+            i++;
+            continue;
+        }
+
+        // Enter string/char literals (only if not in comments)
+        if (!inString && !inChar && !inSingleLineComment && !inMultiLineComment) {
+            if (ch === '"' || ch === "'") {
+                inString = ch === '"';
+                inChar = ch === "'";
+                stringChar = ch;
+                result += ch;
+                i++;
+                continue;
+            }
+        }
+
+        // If we're in a string or char, just add the character
+        if (inString || inChar) {
+            result += ch;
+            i++;
+            continue;
+        }
+
+        // Handle single-line comments
+        if (!inMultiLineComment && ch === '/' && next === '/') {
+            inSingleLineComment = true;
+            i += 2;
+            continue;
+        }
+
+        // Exit single-line comment on newline
+        if (inSingleLineComment) {
+            if (ch === '\n' || ch === '\r') {
+                inSingleLineComment = false;
+                result += ch; // Keep the newline
+            }
+            i++;
+            continue;
+        }
+
+        // Handle multi-line comment start
+        if (!inSingleLineComment && ch === '/' && next === '*') {
+            inMultiLineComment = true;
+            i += 2;
+            continue;
+        }
+
+        // Handle multi-line comment end
+        if (inMultiLineComment) {
+            if (ch === '*' && next === '/') {
+                inMultiLineComment = false;
+                i += 2;
+                continue;
+            }
+            i++;
+            continue;
+        }
+
+        // Regular character - add it to result
+        result += ch;
+        i++;
+    }
+
+    return result;
+}
+
 function getSourceLabel(src) {
     const classMatch = src.match(/\bclass\s+([A-Za-z_]\w*)/);
     const className = classMatch ? classMatch[1] : "MainDemo";
@@ -502,22 +611,71 @@ function findMatchingBrace(src, openBraceIndex) {
     let depth = 0;
     let inString = false;
     let stringChar = null;
+    let inSingleLineComment = false;
+    let inMultiLineComment = false;
 
     for (let i = openBraceIndex; i < src.length; i++) {
         const ch = src[i];
-        const prev = src[i - 1];
+        const prev = i > 0 ? src[i - 1] : null;
+        const next = i < src.length - 1 ? src[i + 1] : null;
 
-        if (inString) {
-            if (ch === stringChar && prev !== "\\") {
-                inString = false;
-                stringChar = null;
-            }
+        // Handle escape sequences in strings
+        if (inString && prev === "\\") {
             continue;
         }
 
-        if ((ch === '"' || ch === "'") && prev !== "\\") {
-            inString = true;
-            stringChar = ch;
+        // Exit string literals
+        if (inString && ch === stringChar) {
+            inString = false;
+            stringChar = null;
+            continue;
+        }
+
+        // Enter string literals
+        if (!inString && !inSingleLineComment && !inMultiLineComment) {
+            if ((ch === '"' || ch === "'") && prev !== "\\") {
+                inString = true;
+                stringChar = ch;
+                continue;
+            }
+        }
+
+        // If we're in a string, skip comment detection
+        if (inString) {
+            continue;
+        }
+
+        // Detect single-line comment start
+        if (!inMultiLineComment && ch === '/' && next === '/') {
+            inSingleLineComment = true;
+            i++; // Skip the second '/'
+            continue;
+        }
+
+        // Exit single-line comment on newline
+        if (inSingleLineComment) {
+            if (ch === '\n' || ch === '\r') {
+                inSingleLineComment = false;
+                // Don't skip the newline - let it be processed normally
+            } else {
+                // Still in comment, skip this character
+                continue;
+            }
+        }
+
+        // Detect multi-line comment start
+        if (!inSingleLineComment && ch === '/' && next === '*') {
+            inMultiLineComment = true;
+            i++; // Skip the '*'
+            continue;
+        }
+
+        // Handle multi-line comment end
+        if (inMultiLineComment) {
+            if (ch === '*' && next === '/') {
+                inMultiLineComment = false;
+                i++; // Skip the '/'
+            }
             continue;
         }
 
@@ -888,7 +1046,11 @@ function executeJavaMain(src, sourceLabel) {
         };
     }
 
-    const jsBody = transformJavaBodyToJs(mainBody);
+    let jsBody = transformJavaBodyToJs(mainBody);
+    // Remove single-line comments from JavaScript (they're not needed for execution)
+    // Split by both actual newlines and escaped \n sequences, filter out comment lines, then rejoin
+    const lines = jsBody.split(/(?:\r?\n|\\n)/);
+    jsBody = lines.filter(line => !line.trim().startsWith('//')).join('\n');
     if (typeof process !== "undefined" && process.env && process.env.DEBUG_JS_BODY) {
         console.log("=== TRANSFORMED MAIN BODY ===");
         console.log(jsBody);
@@ -1126,13 +1288,27 @@ function validateJavaSyntax(src, sourceLabel) {
         // Skip empty lines and comments
         if (!trimmed || trimmed.startsWith('//')) return;
         
-        // Check for unclosed double-quoted strings
+        // Check for unclosed double-quoted strings (skip quotes in comments)
         let inString = false;
+        let inComment = false;
         let escaped = false;
         let stringStart = -1;
         
         for (let i = 0; i < line.length; i++) {
             const char = line[i];
+            const next = i < line.length - 1 ? line[i + 1] : null;
+            
+            // Detect comment start
+            if (!inString && !inComment && char === '/' && next === '/') {
+                inComment = true;
+                i++; // Skip the second '/'
+                continue;
+            }
+            
+            // Skip everything in comments
+            if (inComment) {
+                continue;
+            }
             
             if (escaped) {
                 escaped = false;
@@ -1159,13 +1335,27 @@ function validateJavaSyntax(src, sourceLabel) {
             return;
         }
         
-        // Check for unclosed single-quoted chars
+        // Check for unclosed single-quoted chars (skip quotes in comments)
         let inChar = false;
         let charStart = -1;
+        inComment = false;
         escaped = false;
         
         for (let i = 0; i < line.length; i++) {
             const char = line[i];
+            const next = i < line.length - 1 ? line[i + 1] : null;
+            
+            // Detect comment start
+            if (!inChar && !inComment && char === '/' && next === '/') {
+                inComment = true;
+                i++; // Skip the second '/'
+                continue;
+            }
+            
+            // Skip everything in comments
+            if (inComment) {
+                continue;
+            }
             
             if (escaped) {
                 escaped = false;
@@ -1285,8 +1475,23 @@ function validateJavaSyntax(src, sourceLabel) {
 }
 
 function simulateSystemOutPrinting(src) {
+    // Get source label from original source (before comment stripping)
     const sourceLabel = getSourceLabel(src);
-    const syntaxErrors = validateJavaSyntax(src, sourceLabel);
+    
+    // Strip comments before processing
+    let cleanedSrc;
+    try {
+        cleanedSrc = stripComments(src);
+        // Fallback to original if stripping produces empty or invalid result
+        if (!cleanedSrc || cleanedSrc.trim().length === 0) {
+            cleanedSrc = src;
+        }
+    } catch (error) {
+        // If comment stripping fails, use original source
+        cleanedSrc = src;
+    }
+    
+    const syntaxErrors = validateJavaSyntax(cleanedSrc, sourceLabel);
     
     if (syntaxErrors.length > 0) {
         let temp = '';
@@ -1294,14 +1499,14 @@ function simulateSystemOutPrinting(src) {
         return ' ' + temp;
     }
     
-    const { errors } = extractDeclarations(src);
-    const systemOutErrors = findInvalidSystemOutCalls(src, sourceLabel);
+    const { errors } = extractDeclarations(cleanedSrc);
+    const systemOutErrors = findInvalidSystemOutCalls(cleanedSrc, sourceLabel);
     const allErrors = [...errors, ...systemOutErrors];
     let executionResult = { outputs: [], methods: [], errors: [] };
 
     if (allErrors.length === 0) {
         try {
-            executionResult = executeJavaMain(src, sourceLabel);
+            executionResult = executeJavaMain(cleanedSrc, sourceLabel);
             if (executionResult.errors && executionResult.errors.length > 0) {
                 allErrors.push(...executionResult.errors);
             }
@@ -1318,9 +1523,12 @@ function simulateSystemOutPrinting(src) {
     }
 
     let temp=``;
-    executionResult.outputs.forEach((line) => temp+=line+"\n");
+    if (executionResult.outputs && executionResult.outputs.length > 0) {
+        executionResult.outputs.forEach((line) => temp+=line+"\n");
+    }
     return temp;
 }
 // console.log(simulateSystemOutPrinting(code));
 
 window.simulateJavaOutput = simulateSystemOutPrinting;
+window.javaCompilerVersion = '2.4-comment-stripping';
