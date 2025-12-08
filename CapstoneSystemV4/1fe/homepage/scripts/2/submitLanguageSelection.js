@@ -7,6 +7,7 @@ import { initializeDomContent } from './domContentLoaded.js'; // For refreshing 
 import { refreshBadges } from '../loadBadges.js'; 
 import { fetchProfileData } from '../fetchProfileData.js';
 import { applyStoryModeLocks } from '../lockStoryMode.js'; // For refreshing story mode locks
+import { applyLevelLocks } from '../lockLevels.js'; // For refreshing challenge level locks
 
 export function submitLanguageSelection() {
     // const selectedLanguageInput = document.getElementById('selectedLanguageInput'); // No longer needed
@@ -45,6 +46,10 @@ export function submitLanguageSelection() {
                 // Refresh story mode locks for the new programming language
                 if (typeof applyStoryModeLocks === 'function') {
                     applyStoryModeLocks(); // Refresh unlocked episodes based on new language
+                }
+                // Refresh challenge level locks for the new programming language
+                if (typeof applyLevelLocks === 'function') {
+                    applyLevelLocks(); // Refresh unlocked challenge levels based on new language
                 }
             } else {
                 alert(`Error: ${data.message}`);
