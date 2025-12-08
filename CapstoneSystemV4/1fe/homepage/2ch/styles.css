@@ -593,6 +593,27 @@ body {
     left: 0;
 }
 
+/* Expected Output Styling - Larger font size */
+.objectives-container .example-output {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.objectives-container .example-output pre {
+    font-size: 1.4rem !important; /* Much larger font size */
+    line-height: 1.8 !important;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    color: #333;
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+}
+
 .back-btn {
     position: absolute;
     top: 20px;
