@@ -505,7 +505,8 @@
             justify-content: flex-start;
             padding: 60px 80px 40px 80px;
             box-sizing: border-box;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .challenge-title {
@@ -523,9 +524,17 @@
             text-align: center;
         }
 
+        #questionsContainer {
+            width: 50%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
         .question-container {
             width: 100%;
+            max-width: 100%;
             margin-bottom: 30px;
+            box-sizing: border-box;
         }
 
         .question-number {
@@ -540,12 +549,17 @@
             color: #333;
             margin-bottom: 20px;
             line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .options-container {
             display: flex;
             flex-direction: column;
             gap: 10px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .option {
@@ -559,6 +573,9 @@
             transition: all 0.3s ease;
             font-size: 1.3em;
             color: #333;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            min-width: 0;
         }
 
         .option:hover {
@@ -727,6 +744,121 @@
         .results-container {
             text-align: center;
             margin-top: 20px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Results Modal Styles */
+        .results-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .results-modal.show {
+            display: flex;
+        }
+
+        .results-modal-content {
+            background-color: #fff;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .results-modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .results-modal-header h2 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .results-modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 2em;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .results-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .results-modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background-color: #f8f9fa;
+        }
+
+        .results-modal-body::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .results-modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .results-modal-body::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        .results-modal-body::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .view-results-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .view-results-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
         }
 
         /* Scoring actions styling (from challenges) */
@@ -897,32 +1029,54 @@
             box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
         }
 
-        /* Responsive font sizes for mobile */
-        @media (max-width: 768px) {
+        /* Responsive Design for Challenge Time Section */
+        
+        /* Standard laptops (1366px and below) - Common resolution like 1366x768 */
+        @media (max-width: 1400px) {
             .challenge-paper {
+                padding: 35px 45px 25px 45px;
                 overflow-y: auto;
                 overflow-x: hidden;
             }
             
             .challenge-title {
                 font-size: 2.5em;
+                margin-bottom: 18px;
             }
             
             .challenge-subtitle {
-                font-size: 1.2em;
+                font-size: 1.4em;
+                margin-bottom: 25px;
+            }
+            
+            .question-container {
+                margin-bottom: 25px;
             }
             
             .question-number {
-                font-size: 1.3em;
+                font-size: 1.4em;
+                margin-bottom: 10px;
             }
             
             .question-text {
-                font-size: 1.1em;
+                font-size: 1.2em;
+                margin-bottom: 15px;
+                line-height: 1.35;
             }
             
             .option {
-                font-size: 1em;
-                padding: 10px 15px;
+                font-size: 1.1em;
+                padding: 11px 15px;
+            }
+            
+            .option-letter {
+                min-width: 23px;
+                font-size: 1.05em;
+                margin-right: 13px;
+            }
+            
+            .challenge-buttons {
+                margin-top: 25px;
             }
             
             .challenge-btn {
@@ -931,16 +1085,454 @@
             }
             
             .score-display {
-                font-size: 2em;
+                font-size: 2.2em;
+                margin-bottom: 15px;
             }
             
             .points-earned {
+                font-size: 1.6em;
+                margin-bottom: 25px;
+            }
+            
+            .view-results-btn {
+                font-size: 1.1em;
+                padding: 13px 32px;
+            }
+            
+            .results-modal-content {
+                width: 90%;
+                max-width: 800px;
+            }
+            
+            .results-modal-header {
+                padding: 20px 25px;
+            }
+            
+            .results-modal-header h2 {
+                font-size: 1.8em;
+            }
+            
+            .results-modal-body {
+                padding: 25px;
+            }
+            
+            .badge-display {
+                padding: 25px;
+                max-width: 380px;
+            }
+        }
+        
+        /* Large tablets and smaller laptops (1024px and below) */
+        @media (max-width: 1024px) {
+            .challenge-paper {
+                padding: 50px 60px 30px 60px;
+            }
+            
+            .challenge-title {
+                font-size: 3em;
+                margin-bottom: 25px;
+            }
+            
+            .challenge-subtitle {
+                font-size: 1.6em;
+                margin-bottom: 35px;
+            }
+            
+            .question-number {
+                font-size: 1.6em;
+            }
+            
+            .question-text {
+                font-size: 1.3em;
+            }
+            
+            .option {
+                font-size: 1.2em;
+                padding: 12px 18px;
+            }
+            
+            .challenge-btn {
+                font-size: 1.2em;
+                padding: 14px 35px;
+            }
+            
+            .score-display {
+                font-size: 2.5em;
+            }
+            
+            .points-earned {
+                font-size: 1.8em;
+            }
+            
+            .results-modal-content {
+                width: 85%;
+                max-width: 800px;
+            }
+            
+            .results-modal-header {
+                padding: 20px 25px;
+            }
+            
+            .results-modal-header h2 {
+                font-size: 1.8em;
+            }
+            
+            .results-modal-body {
+                padding: 25px;
+            }
+        }
+        
+        /* Tablets (768px and below) */
+        @media (max-width: 768px) {
+            .challenge-paper {
+                padding: 40px 40px 25px 40px;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+            
+            .challenge-title {
+                font-size: 2.5em;
+                margin-bottom: 20px;
+            }
+            
+            .challenge-subtitle {
+                font-size: 1.3em;
+                margin-bottom: 30px;
+            }
+            
+            .question-container {
+                margin-bottom: 25px;
+            }
+            
+            .question-number {
+                font-size: 1.4em;
+                margin-bottom: 12px;
+            }
+            
+            .question-text {
+                font-size: 1.15em;
+                margin-bottom: 18px;
+            }
+            
+            .option {
+                font-size: 1.05em;
+                padding: 12px 15px;
+            }
+            
+            .option-letter {
+                min-width: 22px;
+                font-size: 1em;
+                margin-right: 12px;
+            }
+            
+            .challenge-buttons {
+                gap: 15px;
+                margin-top: 25px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .challenge-btn {
+                font-size: 1.1em;
+                padding: 12px 28px;
+                min-width: 140px;
+            }
+            
+            .score-display {
+                font-size: 2.2em;
+                margin-bottom: 15px;
+            }
+            
+            .points-earned {
+                font-size: 1.6em;
+                margin-bottom: 25px;
+            }
+            
+            .view-results-btn {
+                font-size: 1.1em;
+                padding: 12px 30px;
+                margin: 15px auto;
+            }
+            
+            .badge-display {
+                padding: 25px;
+                max-width: 350px;
+            }
+            
+            .badge-image {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .badge-text h3 {
                 font-size: 1.5em;
             }
             
+            .badge-text p {
+                font-size: 1em;
+            }
+            
+            .scoring-actions {
+                margin-top: 25px;
+                padding-top: 15px;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            
+            .scoring-action-btn {
+                font-size: 1em;
+                padding: 12px 25px;
+            }
+            
             .end-episode-btn {
+                font-size: 1.3em;
+                padding: 15px 35px;
+            }
+            
+            .results-modal-content {
+                width: 90%;
+                max-width: 700px;
+                max-height: 85vh;
+            }
+            
+            .results-modal-header {
+                padding: 18px 20px;
+            }
+            
+            .results-modal-header h2 {
+                font-size: 1.6em;
+            }
+            
+            .results-modal-close {
+                width: 35px;
+                height: 35px;
+                font-size: 1.8em;
+            }
+            
+            .results-modal-body {
+                padding: 20px;
+            }
+        }
+        
+        /* Small tablets and large phones (600px and below) */
+        @media (max-width: 600px) {
+            .challenge-paper {
+                padding: 30px 25px 20px 25px;
+            }
+            
+            .challenge-title {
+                font-size: 2em;
+                margin-bottom: 15px;
+            }
+            
+            .challenge-subtitle {
+                font-size: 1.1em;
+                margin-bottom: 25px;
+            }
+            
+            .question-container {
+                margin-bottom: 20px;
+            }
+            
+            .question-number {
                 font-size: 1.2em;
-                padding: 15px 40px;
+                margin-bottom: 10px;
+            }
+            
+            .question-text {
+                font-size: 1em;
+                margin-bottom: 15px;
+                line-height: 1.3;
+            }
+            
+            .options-container {
+                gap: 8px;
+            }
+            
+            .option {
+                font-size: 0.95em;
+                padding: 10px 12px;
+            }
+            
+            .option-letter {
+                min-width: 20px;
+                font-size: 0.95em;
+                margin-right: 10px;
+            }
+            
+            .challenge-buttons {
+                gap: 12px;
+                margin-top: 20px;
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .challenge-btn {
+                font-size: 1em;
+                padding: 12px 25px;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .score-display {
+                font-size: 1.8em;
+                margin-bottom: 12px;
+            }
+            
+            .points-earned {
+                font-size: 1.3em;
+                margin-bottom: 20px;
+            }
+            
+            .view-results-btn {
+                font-size: 1em;
+                padding: 12px 25px;
+                margin: 12px auto;
+                width: 90%;
+                max-width: 280px;
+            }
+            
+            .badge-display {
+                padding: 20px;
+                max-width: 300px;
+            }
+            
+            .badge-image {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .badge-text h3 {
+                font-size: 1.3em;
+            }
+            
+            .badge-text p {
+                font-size: 0.9em;
+            }
+            
+            .scoring-actions {
+                margin-top: 20px;
+                padding-top: 15px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .scoring-action-btn {
+                font-size: 0.95em;
+                padding: 12px 20px;
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .end-episode-btn {
+                font-size: 1.1em;
+                padding: 14px 30px;
+                width: 90%;
+                max-width: 250px;
+            }
+            
+            .results-modal-content {
+                width: 95%;
+                max-width: 100%;
+                max-height: 90vh;
+                border-radius: 10px;
+            }
+            
+            .results-modal-header {
+                padding: 15px 18px;
+            }
+            
+            .results-modal-header h2 {
+                font-size: 1.4em;
+            }
+            
+            .results-modal-close {
+                width: 32px;
+                height: 32px;
+                font-size: 1.6em;
+            }
+            
+            .results-modal-body {
+                padding: 15px;
+            }
+        }
+        
+        /* Small phones (480px and below) */
+        @media (max-width: 480px) {
+            .challenge-paper {
+                padding: 25px 15px 15px 15px;
+            }
+            
+            .challenge-title {
+                font-size: 1.8em;
+                margin-bottom: 12px;
+            }
+            
+            .challenge-subtitle {
+                font-size: 1em;
+                margin-bottom: 20px;
+            }
+            
+            .question-number {
+                font-size: 1.1em;
+            }
+            
+            .question-text {
+                font-size: 0.9em;
+            }
+            
+            .option {
+                font-size: 0.85em;
+                padding: 8px 10px;
+            }
+            
+            .option-letter {
+                min-width: 18px;
+                font-size: 0.85em;
+                margin-right: 8px;
+            }
+            
+            .challenge-btn {
+                font-size: 0.95em;
+                padding: 10px 20px;
+            }
+            
+            .score-display {
+                font-size: 1.6em;
+            }
+            
+            .points-earned {
+                font-size: 1.2em;
+            }
+            
+            .view-results-btn {
+                font-size: 0.95em;
+                padding: 10px 20px;
+            }
+            
+            .badge-display {
+                padding: 15px;
+            }
+            
+            .badge-image {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .badge-text h3 {
+                font-size: 1.2em;
+            }
+            
+            .badge-text p {
+                font-size: 0.85em;
+            }
+            
+            .results-modal-header h2 {
+                font-size: 1.2em;
+            }
+            
+            .results-modal-body {
+                padding: 12px;
             }
         }
     </style>
@@ -950,7 +1542,7 @@
     <div class="challenge-container" id="challengeContainer">
         <div class="challenge-paper">
             <h2 class="challenge-title">Challenge Time!</h2>
-            <p class="challenge-subtitle">Test your Java knowledge - 20 points each, total of 100 points</p>
+            <!-- <p class="challenge-subtitle">Test your Java knowledge - 1 point each, total of 5 points</p> -->
             
             <div id="questionsContainer">
                 <!-- Questions will be dynamically generated here -->
@@ -964,6 +1556,9 @@
             <div class="results-container" id="resultsContainer" style="display: none;">
                 <div class="score-display" id="scoreDisplay"></div>
                 <div class="points-earned" id="pointsEarned"></div>
+                
+                <!-- View Results Button -->
+                <button class="view-results-btn" id="viewResultsBtn">View Detailed Results</button>
                 
                 <!-- Badge display for passed challenges -->
                 <div class="badge-container" id="badgeContainer" style="display: none;">
@@ -984,6 +1579,20 @@
             </div>
         </div>
     </div>
+    
+    <!-- Results Modal -->
+    <div class="results-modal" id="resultsModal">
+        <div class="results-modal-content">
+            <div class="results-modal-header">
+                <h2>Quiz Results</h2>
+                <button class="results-modal-close" id="closeResultsModal">&times;</button>
+            </div>
+            <div class="results-modal-body" id="resultsModalBody">
+                <!-- Detailed results will be displayed here -->
+            </div>
+        </div>
+    </div>
+    
     <div class="intro-screen" id="introScreen">
         <div class="intro-text-container">
             <p class="intro-main-text" id="introMainText"></p>
@@ -1332,265 +1941,265 @@
                 speakerImage: 'assets/axle.png',
                 voice: 'assets/audio/2.mp3'
             },
-            { type: 'video', src: 'assets/3.mp4', subtitle: '' },
-            { type: 'video', src: 'assets/4.mp4', subtitle: '' },
-            { 
-                type: 'video', 
-                src: 'assets/5.mp4', 
-                subtitle: 'Maaga pa lang ay gising na ang buong barangay. Ang bawat sulok ng kalsada ay may kulay at galaw... parang buong baryo ay sabay-sabay nagising.',
-                subtitleTranslation: 'Even early in the morning, the entire barangay is awake. Every corner of the street is full of color and motion—like the whole village woke up together.',
-                voice: 'assets/audio/5.mp3'
-            },
-            { 
-                type: 'video', 
-                src: 'assets/6.mp4', 
-                subtitle: 'Lumabas si axle at sinalubong ni Tita Melba',
-                subtitleTranslation: 'Axle stepped out and was greeted by Tita Melba',
-                voice: 'assets/audio/6.mp3'
-            },
-            { 
-                type: 'video', 
-                src: 'assets/7.mp4', 
-                subtitle: 'Ay, gising na ang binata! Axle, kumain ka na dito doon sa pista.',
-                subtitleTranslation: 'Oh, the young man is awake! Axle, come eat here at the fiesta.',
-                speakerName: 'Tita Melba',
-                speakerImage: 'assets/melba.png',
-                voice: 'assets/audio/7.mp3'
-            },
-            { 
-                type: 'video', 
-                src: 'assets/8.mp4', 
-                subtitle: 'Ah.. sige lang po!',
-                subtitleTranslation: 'Ah—okay then!',
-                speakerName: 'Axle',
-                speakerImage: 'assets/axle.png',
-                voice: 'assets/audio/8.mp3'
-            },
-            { 
-                type: 'video', 
-                src: 'assets/8.mp4', 
-                subtitle: [
-                    'Grabe, parang buong barangay naghahanda...',
-                'Pero ang saya rin.',
-                'Kung ganito lang sana kadali ang programming...'
-                ],
-                subtitleTranslation: [
-                    'Wow, the whole barangay is preparing…',
-                    'But it\'s fun.',
-                    'I wish programming was this easy…'
-                ],
-                speakerName: 'Axle',
-                speakerImage: 'assets/axle.png',
-                voice: 'assets/audio/8-1.mp3'
-            },
-            { 
-                type: 'video', 
-                src: 'assets/9.mp4', 
-                subtitle: 'Kuya Justin! Andito ka pala. Kakauwi mo lang ba?',
-                subtitleTranslation: 'Kuya Justin! So you\'re here. Did you just get back?',
-                speakerName: 'Axle',
-                speakerImage: 'assets/axle.png',
-                voice: 'assets/audio/9.mp3'
-            },
-            { 
-                type: 'video', 
-                src: 'assets/9.mp4', 
-                subtitle: 'Oo, kararating lang kahapon. Tinulungan ko lang sila mag-setup ng sound system kanina.',
-                subtitleTranslation: 'Yes, I just arrived yesterday. I just helped them set up the sound system earlier.',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                voice: 'assets/audio/9-1.mp3'
-            },
-            { 
-                type: 'video', 
-                src: 'assets/10.mp4', 
-                subtitle: 'Ah, Kuya… tanong ko lang. Sa course ko kasi may Java agad. Eh… honestly, wala talaga akong alam sa programming. Gusto ko lang sana mag-practice habang bakasyon...',
-                subtitleTranslation: 'Ah, Kuya… I just wanted to ask. In my course, we already have Java. Honestly, I don\'t know anything about programming. I just want to practice while on vacation…',
-                speakerName: 'Axle',
-                speakerImage: 'assets/axle.png',
-                voice: 'assets/audio/10.mp3'
-            },
-            { 
-                type: 'video', 
-                src: 'assets/11.mp4', 
-                subtitle: 'Ganon? Sige, may dala akong laptop.',
-                subtitleTranslation: 'Is that so? Sure, I brought a laptop.',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                voice: 'assets/audio/11.mp3'
-            },
-            { 
-                type: 'image', 
-                src: 'assets/12.png', 
-                subtitle: 'Gusto mo, turuan kita basics habang nagpapahinga tayo? Basic syntax muna.',
-                subtitleTranslation: 'Do you want me to teach you the basics while we rest? Just basic syntax first.',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                voice: 'assets/audio/12.mp3'
-            },
-            { 
-                type: 'image', 
-                src: 'assets/12.png', 
-                subtitle: 'Game ako d\'yan! Baka sakto, magets ko rin sa wakas.',
-                subtitleTranslation: 'I\'m in! Maybe I\'ll finally get it.',
-                speakerName: 'Axle',
-                speakerImage: 'assets/axle.png',
-                voice: 'assets/audio/12-1.mp3'
-            },
-            { 
-                type: 'image', 
-                src: 'assets/laptop.png', 
-                subtitle: 'Okay, ganito muna. Sa Java, ang pinaka-basic na kailangan mong tandaan ay yung structure. Para kang gumagawa ng script na sinusunod ng computer.',
-                subtitleTranslation: 'Okay, first thing. In Java, the most basic thing you need to remember is the structure. It\'s like writing a script that the computer follows.',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                voice: 'assets/audio/13-laptop.mp3'
-            },
-            { 
-                type: 'video', 
-                src: 'assets/tut1.mp4',
-                subtitle: 'Ito ang "class". Parang container ng buong program mo. Ang pangalan nito dapat tugma sa filename.',
-                subtitleTranslation: 'This is the "class". It\'s like a container for your entire program. Its name should match the filename.',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                voice: 'assets/audio/14-laptop.mp3'
-            },
-            {
-                type: 'dialogue',
-                src: 'assets/tut1.png',
-                question: 'Kung ikaw, paano mo ilalarawan ang isang "class" sa Java?',
-                questionTranslation: 'If you were to describe a "class" in Java, how would you put it?',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                choices: [
-                    {
-                        id: 'choice1',
-                        text: 'Parang box na naglalaman ng mga instructions.',
-                        response: 'Tama! Ang class ay parang lalagyan ng mga utos at methods na magkakaugnay.'
-                    },
-                    {
-                        id: 'choice2',
-                        text: 'Parang pangalan lang ng file.',
-                        response: 'Hindi lang pangalan. Ito ang mismong structure kung saan nakapaloob ang code ng program mo.'
-                    }
-                ]
-            },
-            { 
-                type: 'video', 
-                src: 'assets/tut2.mp4',
-                subtitle: '"main" naman ang pinaka-entrance. Pag run mo ng Java program, ito agad ang hinahanap ng computer.',
-                subtitleTranslation: 'The "main" is the entrance. When you run a Java program, this is the first thing the computer looks for.',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                voice: 'assets/audio/15-laptop.mp3'
-            },
-            {
-                type: 'dialogue',
-                src: 'assets/tut2.png',
-                question: 'Alin kaya sa mga parte ng program ang unang hinahanap ng computer kapag nirun mo ang Java code?',
-                questionTranslation: 'Which part of the program does the computer look for first when you run the Java code?',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                choices: [
-                    {
-                        id: 'choice1',
-                        text: 'Ang ‘main’ method.',
-                        response: 'Correct! Diyan talaga nagsisimula ang execution ng program'
-                    },
-                    {
-                        id: 'choice2',
-                        text: 'Yung class name.',
-                        response: 'Hindi. Yung class ay container lang. Ang main method ang unang tinatakbo.'
-                    }
-                ]
-            },
-            { 
-                type: 'video', 
-                src: 'assets/tut3.mp4',
-                subtitle: '"System.out.println" naman ang ginagamit para makapag print ng text o kung ano paman.',
-                subtitleTranslation: '"System.out.println" is used to print text or anything you want on the screen.',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                voice: 'assets/audio/16-laptop.mp3'
-            },
-            {
-                type: 'dialogue',
-                src: 'assets/tut3.png',
-                question: 'Kung gusto mong magpakita ng text sa screen, anong command ang dapat mong gamitin?',
-                questionTranslation: 'If you want to show text on the screen, what command should you use?',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                choices: [
-                    {
-                        id: 'choice1',
-                        text: 'System.out.println.',
-                        response: 'Tama! Iyan ang ginagamit para mag-print ng output sa console.'
-                    },
-                    {
-                        id: 'choice2',
-                        text: 'Display.text();',
-                        response: 'Hindi gano\'n sa Java. Tandaan, ginagamit natin ang System.out.println.'
-                    }
-                ]
-            },
-            { 
-                type: 'image', 
-                src: 'assets/tut3.png',
-                subtitle: 'Kailangan ng semicolon ";" kada statement, parang period. At yung mga braces "{}" parang box, nagsasabi kung saan nagsisimula at nagtatapos ang block ng code.',
-                subtitleTranslation: 'You need a semicolon ";" after every statement, like a period. And braces "{}" are like boxes that show where a block of code starts and ends.',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                voice: 'assets/audio/17-laptop.mp3'
-            },
-            {
-                type: 'dialogue',
-                src: 'assets/tut3.png',
-                question: 'Para saan kaya ang semicolon at braces sa Java code?',
-                questionTranslation: 'What are semicolons and braces for in Java code?',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                choices: [
-                    {
-                        id: 'choice1',
-                        text: 'Ang semicolon ay pangtapos ng utos, at braces ay pang-grupo ng code.',
-                        response: 'Tama! Gamit ang semicolon bilang period at braces bilang marker ng block ng code.'
-                    },
-                    {
-                        id: 'choice2',
-                        text: 'Pang-design lang para magmukhang maayos ang code.',
-                        response: 'Hindi, functional sila. Walang semicolon o braces, hindi tatakbo nang maayos ang program.'
-                    }
-                ]
-            },
-            {
-                type: 'dialogue',
-                src: 'assets/tut3.png',
-                question: 'Bakit kaya importante pa rin ang indentation kung hindi naman ito required?',
-                questionTranslation: 'Why is indentation important if it\'s not required?',
-                speakerName: 'Justin',
-                speakerImage: 'assets/justin.png',
-                choices: [
-                    {
-                        id: 'choice1',
-                        text: 'Para madaling basahin at maayos tingnan ang code.',
-                        response: 'Tama! Malaking tulong \'yan para sa programmer mismo.'
-                    },
-                    {
-                        id: 'choice2',
-                        text: 'Para mas mabilis tumakbo ang program.',
-                        response: 'Hindi para sa bilis, pero para sa readability. Mas madali mong maintindihan ang code kapag maayos ang pagkaka-indent.'
-                    }
-                ]
-            },
-            { 
-                type: 'image', 
-                src: 'assets/12.png', 
-                subtitle: 'Sige kuya maraming salamat. Sa susunod uli',
-                subtitleTranslation: 'Alright, Kuya, thank you so much. Until next time!',
-                speakerName: 'Axle',
-                speakerImage: 'assets/axle.png',
-                voice: 'assets/audio/18-12.mp3'
-            },
+            // { type: 'video', src: 'assets/3.mp4', subtitle: '' },
+            // { type: 'video', src: 'assets/4.mp4', subtitle: '' },
+            // { 
+            //     type: 'video', 
+            //     src: 'assets/5.mp4', 
+            //     subtitle: 'Maaga pa lang ay gising na ang buong barangay. Ang bawat sulok ng kalsada ay may kulay at galaw... parang buong baryo ay sabay-sabay nagising.',
+            //     subtitleTranslation: 'Even early in the morning, the entire barangay is awake. Every corner of the street is full of color and motion—like the whole village woke up together.',
+            //     voice: 'assets/audio/5.mp3'
+            // },
+            // { 
+            //     type: 'video', 
+            //     src: 'assets/6.mp4', 
+            //     subtitle: 'Lumabas si axle at sinalubong ni Tita Melba',
+            //     subtitleTranslation: 'Axle stepped out and was greeted by Tita Melba',
+            //     voice: 'assets/audio/6.mp3'
+            // },
+            // { 
+            //     type: 'video', 
+            //     src: 'assets/7.mp4', 
+            //     subtitle: 'Ay, gising na ang binata! Axle, kumain ka na dito doon sa pista.',
+            //     subtitleTranslation: 'Oh, the young man is awake! Axle, come eat here at the fiesta.',
+            //     speakerName: 'Tita Melba',
+            //     speakerImage: 'assets/melba.png',
+            //     voice: 'assets/audio/7.mp3'
+            // },
+            // { 
+            //     type: 'video', 
+            //     src: 'assets/8.mp4', 
+            //     subtitle: 'Ah.. sige lang po!',
+            //     subtitleTranslation: 'Ah—okay then!',
+            //     speakerName: 'Axle',
+            //     speakerImage: 'assets/axle.png',
+            //     voice: 'assets/audio/8.mp3'
+            // },
+            // { 
+            //     type: 'video', 
+            //     src: 'assets/8.mp4', 
+            //     subtitle: [
+            //         'Grabe, parang buong barangay naghahanda...',
+            //     'Pero ang saya rin.',
+            //     'Kung ganito lang sana kadali ang programming...'
+            //     ],
+            //     subtitleTranslation: [
+            //         'Wow, the whole barangay is preparing…',
+            //         'But it\'s fun.',
+            //         'I wish programming was this easy…'
+            //     ],
+            //     speakerName: 'Axle',
+            //     speakerImage: 'assets/axle.png',
+            //     voice: 'assets/audio/8-1.mp3'
+            // },
+            // { 
+            //     type: 'video', 
+            //     src: 'assets/9.mp4', 
+            //     subtitle: 'Kuya Justin! Andito ka pala. Kakauwi mo lang ba?',
+            //     subtitleTranslation: 'Kuya Justin! So you\'re here. Did you just get back?',
+            //     speakerName: 'Axle',
+            //     speakerImage: 'assets/axle.png',
+            //     voice: 'assets/audio/9.mp3'
+            // },
+            // { 
+            //     type: 'video', 
+            //     src: 'assets/9.mp4', 
+            //     subtitle: 'Oo, kararating lang kahapon. Tinulungan ko lang sila mag-setup ng sound system kanina.',
+            //     subtitleTranslation: 'Yes, I just arrived yesterday. I just helped them set up the sound system earlier.',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     voice: 'assets/audio/9-1.mp3'
+            // },
+            // { 
+            //     type: 'video', 
+            //     src: 'assets/10.mp4', 
+            //     subtitle: 'Ah, Kuya… tanong ko lang. Sa course ko kasi may Java agad. Eh… honestly, wala talaga akong alam sa programming. Gusto ko lang sana mag-practice habang bakasyon...',
+            //     subtitleTranslation: 'Ah, Kuya… I just wanted to ask. In my course, we already have Java. Honestly, I don\'t know anything about programming. I just want to practice while on vacation…',
+            //     speakerName: 'Axle',
+            //     speakerImage: 'assets/axle.png',
+            //     voice: 'assets/audio/10.mp3'
+            // },
+            // { 
+            //     type: 'video', 
+            //     src: 'assets/11.mp4', 
+            //     subtitle: 'Ganon? Sige, may dala akong laptop.',
+            //     subtitleTranslation: 'Is that so? Sure, I brought a laptop.',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     voice: 'assets/audio/11.mp3'
+            // },
+            // { 
+            //     type: 'image', 
+            //     src: 'assets/12.png', 
+            //     subtitle: 'Gusto mo, turuan kita basics habang nagpapahinga tayo? Basic syntax muna.',
+            //     subtitleTranslation: 'Do you want me to teach you the basics while we rest? Just basic syntax first.',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     voice: 'assets/audio/12.mp3'
+            // },
+            // { 
+            //     type: 'image', 
+            //     src: 'assets/12.png', 
+            //     subtitle: 'Game ako d\'yan! Baka sakto, magets ko rin sa wakas.',
+            //     subtitleTranslation: 'I\'m in! Maybe I\'ll finally get it.',
+            //     speakerName: 'Axle',
+            //     speakerImage: 'assets/axle.png',
+            //     voice: 'assets/audio/12-1.mp3'
+            // },
+            // { 
+            //     type: 'image', 
+            //     src: 'assets/laptop.png', 
+            //     subtitle: 'Okay, ganito muna. Sa Java, ang pinaka-basic na kailangan mong tandaan ay yung structure. Para kang gumagawa ng script na sinusunod ng computer.',
+            //     subtitleTranslation: 'Okay, first thing. In Java, the most basic thing you need to remember is the structure. It\'s like writing a script that the computer follows.',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     voice: 'assets/audio/13-laptop.mp3'
+            // },
+            // { 
+            //     type: 'video', 
+            //     src: 'assets/tut1.mp4',
+            //     subtitle: 'Ito ang "class". Parang container ng buong program mo. Ang pangalan nito dapat tugma sa filename.',
+            //     subtitleTranslation: 'This is the "class". It\'s like a container for your entire program. Its name should match the filename.',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     voice: 'assets/audio/14-laptop.mp3'
+            // },
+            // {
+            //     type: 'dialogue',
+            //     src: 'assets/tut1.png',
+            //     question: 'Kung ikaw, paano mo ilalarawan ang isang "class" sa Java?',
+            //     questionTranslation: 'If you were to describe a "class" in Java, how would you put it?',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     choices: [
+            //         {
+            //             id: 'choice1',
+            //             text: 'Parang box na naglalaman ng mga instructions.',
+            //             response: 'Tama! Ang class ay parang lalagyan ng mga utos at methods na magkakaugnay.'
+            //         },
+            //         {
+            //             id: 'choice2',
+            //             text: 'Parang pangalan lang ng file.',
+            //             response: 'Hindi lang pangalan. Ito ang mismong structure kung saan nakapaloob ang code ng program mo.'
+            //         }
+            //     ]
+            // },
+            // { 
+            //     type: 'video', 
+            //     src: 'assets/tut2.mp4',
+            //     subtitle: '"main" naman ang pinaka-entrance. Pag run mo ng Java program, ito agad ang hinahanap ng computer.',
+            //     subtitleTranslation: 'The "main" is the entrance. When you run a Java program, this is the first thing the computer looks for.',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     voice: 'assets/audio/15-laptop.mp3'
+            // },
+            // {
+            //     type: 'dialogue',
+            //     src: 'assets/tut2.png',
+            //     question: 'Alin kaya sa mga parte ng program ang unang hinahanap ng computer kapag nirun mo ang Java code?',
+            //     questionTranslation: 'Which part of the program does the computer look for first when you run the Java code?',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     choices: [
+            //         {
+            //             id: 'choice1',
+            //             text: 'Ang ‘main’ method.',
+            //             response: 'Correct! Diyan talaga nagsisimula ang execution ng program'
+            //         },
+            //         {
+            //             id: 'choice2',
+            //             text: 'Yung class name.',
+            //             response: 'Hindi. Yung class ay container lang. Ang main method ang unang tinatakbo.'
+            //         }
+            //     ]
+            // },
+            // { 
+            //     type: 'video', 
+            //     src: 'assets/tut3.mp4',
+            //     subtitle: '"System.out.println" naman ang ginagamit para makapag print ng text o kung ano paman.',
+            //     subtitleTranslation: '"System.out.println" is used to print text or anything you want on the screen.',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     voice: 'assets/audio/16-laptop.mp3'
+            // },
+            // {
+            //     type: 'dialogue',
+            //     src: 'assets/tut3.png',
+            //     question: 'Kung gusto mong magpakita ng text sa screen, anong command ang dapat mong gamitin?',
+            //     questionTranslation: 'If you want to show text on the screen, what command should you use?',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     choices: [
+            //         {
+            //             id: 'choice1',
+            //             text: 'System.out.println.',
+            //             response: 'Tama! Iyan ang ginagamit para mag-print ng output sa console.'
+            //         },
+            //         {
+            //             id: 'choice2',
+            //             text: 'Display.text();',
+            //             response: 'Hindi gano\'n sa Java. Tandaan, ginagamit natin ang System.out.println.'
+            //         }
+            //     ]
+            // },
+            // { 
+            //     type: 'image', 
+            //     src: 'assets/tut3.png',
+            //     subtitle: 'Kailangan ng semicolon ";" kada statement, parang period. At yung mga braces "{}" parang box, nagsasabi kung saan nagsisimula at nagtatapos ang block ng code.',
+            //     subtitleTranslation: 'You need a semicolon ";" after every statement, like a period. And braces "{}" are like boxes that show where a block of code starts and ends.',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     voice: 'assets/audio/17-laptop.mp3'
+            // },
+            // {
+            //     type: 'dialogue',
+            //     src: 'assets/tut3.png',
+            //     question: 'Para saan kaya ang semicolon at braces sa Java code?',
+            //     questionTranslation: 'What are semicolons and braces for in Java code?',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     choices: [
+            //         {
+            //             id: 'choice1',
+            //             text: 'Ang semicolon ay pangtapos ng utos, at braces ay pang-grupo ng code.',
+            //             response: 'Tama! Gamit ang semicolon bilang period at braces bilang marker ng block ng code.'
+            //         },
+            //         {
+            //             id: 'choice2',
+            //             text: 'Pang-design lang para magmukhang maayos ang code.',
+            //             response: 'Hindi, functional sila. Walang semicolon o braces, hindi tatakbo nang maayos ang program.'
+            //         }
+            //     ]
+            // },
+            // {
+            //     type: 'dialogue',
+            //     src: 'assets/tut3.png',
+            //     question: 'Bakit kaya importante pa rin ang indentation kung hindi naman ito required?',
+            //     questionTranslation: 'Why is indentation important if it\'s not required?',
+            //     speakerName: 'Justin',
+            //     speakerImage: 'assets/justin.png',
+            //     choices: [
+            //         {
+            //             id: 'choice1',
+            //             text: 'Para madaling basahin at maayos tingnan ang code.',
+            //             response: 'Tama! Malaking tulong \'yan para sa programmer mismo.'
+            //         },
+            //         {
+            //             id: 'choice2',
+            //             text: 'Para mas mabilis tumakbo ang program.',
+            //             response: 'Hindi para sa bilis, pero para sa readability. Mas madali mong maintindihan ang code kapag maayos ang pagkaka-indent.'
+            //         }
+            //     ]
+            // },
+            // { 
+            //     type: 'image', 
+            //     src: 'assets/12.png', 
+            //     subtitle: 'Sige kuya maraming salamat. Sa susunod uli',
+            //     subtitleTranslation: 'Alright, Kuya, thank you so much. Until next time!',
+            //     speakerName: 'Axle',
+            //     speakerImage: 'assets/axle.png',
+            //     voice: 'assets/audio/18-12.mp3'
+            // },
         ];
         let currentSceneIndex = 0;
         let currentSubtitleIndex = 0; // New: to track current subtitle sentence
@@ -1656,9 +2265,48 @@
             }
         ];
 
+        // Shuffle functions for randomizing quiz
+        function shuffleArray(array) {
+            // Fisher-Yates shuffle algorithm
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
 
+        function shuffleQuestions(questions) {
+            // Shuffle the order of questions
+            return shuffleArray(questions);
+        }
 
+        function shuffleQuestionOptions(question) {
+            // Create a copy of the question
+            const shuffledQuestion = {
+                question: question.question,
+                options: [...question.options],
+                correct: question.correct
+            };
+            
+            // Store the correct answer text
+            const correctAnswerText = shuffledQuestion.options[shuffledQuestion.correct];
+            
+            // Shuffle the options array
+            const shuffledOptions = shuffleArray(shuffledQuestion.options);
+            
+            // Find the new index of the correct answer
+            const newCorrectIndex = shuffledOptions.findIndex(option => option === correctAnswerText);
+            
+            // Update the question with shuffled options and new correct index
+            shuffledQuestion.options = shuffledOptions;
+            shuffledQuestion.correct = newCorrectIndex;
+            
+            return shuffledQuestion;
+        }
 
+        // Create a shuffled copy of quiz questions (will be initialized when challenge starts)
+        let shuffledQuizQuestions = [];
 
         function showIntroText() {
             if (currentIntroTextIndex < introTexts.length) {
@@ -2160,12 +2808,26 @@
             const mainBg = document.querySelector('.main-bg');
             challengeContainer.classList.add('show');
             mainBg.classList.add('show');
+            
+            // Shuffle questions and options before displaying
+            // First shuffle the order of questions
+            const shuffledQuestions = shuffleQuestions(quizQuestions);
+            
+            // Then shuffle the options for each question
+            shuffledQuizQuestions = shuffledQuestions.map(question => shuffleQuestionOptions(question));
+            
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            totalScore = 0;
+            
             displayQuestion(0);
         }
 
         function displayQuestion(questionIndex) {
             const questionsContainer = document.getElementById('questionsContainer');
-            const question = quizQuestions[questionIndex];
+            const question = shuffledQuizQuestions[questionIndex];
+            const isLastQuestion = questionIndex === shuffledQuizQuestions.length - 1;
             
             questionsContainer.innerHTML = `
                 <div class="question-container">
@@ -2189,8 +2851,9 @@
                     document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
                     // Add selection to clicked option
                     this.classList.add('selected');
-                    // Enable submit button
-                    document.getElementById('submitBtn').disabled = false;
+                    // Enable button (Next or Submit)
+                    const submitBtn = document.getElementById('submitBtn');
+                    submitBtn.disabled = false;
                 });
             });
 
@@ -2199,12 +2862,17 @@
             const nextBtn = document.getElementById('nextBtn');
             
             submitBtn.disabled = true;
-            submitBtn.style.display = 'inline-block';
-            nextBtn.disabled = false;
-            nextBtn.style.display = 'none';
             
-            // Always show "Submit Answer" for all questions
-            submitBtn.textContent = 'Submit Answer';
+            // Show "Next" for all questions except the last one, which shows "Submit"
+            if (isLastQuestion) {
+                submitBtn.textContent = 'Submit';
+                submitBtn.style.display = 'inline-block';
+                nextBtn.style.display = 'none';
+            } else {
+                submitBtn.textContent = 'Next';
+                submitBtn.style.display = 'inline-block';
+                nextBtn.style.display = 'none';
+            }
         }
 
         function submitAnswer() {
@@ -2212,41 +2880,40 @@
             if (!selectedOption) return;
 
             const selectedIndex = parseInt(selectedOption.dataset.index);
-            const question = quizQuestions[currentQuestionIndex];
-            const isCorrect = selectedIndex === question.correct;
-
-            // Store answer
+            const question = shuffledQuizQuestions[currentQuestionIndex];
+            
+            // Store answer (no feedback shown yet)
             userAnswers[currentQuestionIndex] = selectedIndex;
 
-            // Show correct/incorrect feedback
-            document.querySelectorAll('.option').forEach((option, index) => {
-                option.classList.remove('selected');
-                if (index === question.correct) {
-                    option.classList.add('correct');
-                } else if (index === selectedIndex && !isCorrect) {
-                    option.classList.add('incorrect');
-                }
-            });
-
-            // Update score
-            if (isCorrect) {
-                totalScore += 20;
-            }
-
-            // Show next button or results
-            document.getElementById('submitBtn').style.display = 'none';
-            if (currentQuestionIndex < quizQuestions.length - 1) {
-                document.getElementById('nextBtn').style.display = 'inline-block';
-            } else {
+            const isLastQuestion = currentQuestionIndex === shuffledQuizQuestions.length - 1;
+            
+            if (isLastQuestion) {
+                // Last question: Evaluate all answers and show results
+                evaluateAllAnswers();
                 showResults();
+            } else {
+                // Not last question: Just move to next question (no feedback)
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
             }
         }
 
         function nextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < quizQuestions.length) {
-                displayQuestion(currentQuestionIndex);
-            }
+            // This function is no longer used, but kept for compatibility
+            // All navigation now goes through submitAnswer()
+        }
+        
+        function evaluateAllAnswers() {
+            // Reset total score
+            totalScore = 0;
+            
+            // Evaluate all answers
+            shuffledQuizQuestions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                if (userAnswer !== undefined && userAnswer === question.correct) {
+                    totalScore += 20;
+                }
+            });
         }
 
         function showResults() {
@@ -2255,16 +2922,23 @@
             const scoreDisplay = document.getElementById('scoreDisplay');
             const pointsEarned = document.getElementById('pointsEarned');
 
+            // Hide challenge buttons and show results summary
             questionsContainer.style.display = 'none';
             document.querySelector('.challenge-buttons').style.display = 'none';
             resultsContainer.style.display = 'block';
 
+            // Internal calculation: 20 points per question (100 total for 5 questions)
+            // Display: 1 point per question (5 total) - convert by dividing by 20
+            const displayScore = Math.round(totalScore / 20);
+            const maxDisplayScore = 5;
+            const passThreshold = 4; // 80/100 = 4/5
+            
             const hasPassed = totalScore >= 80;
             
             if (hasPassed) {
-                scoreDisplay.textContent = `PASSED! Score: ${totalScore}/100`;
+                scoreDisplay.textContent = `PASSED! Score: ${displayScore}/${maxDisplayScore}`;
                 scoreDisplay.style.color = '#4CAF50';
-                pointsEarned.textContent = `You earned ${totalScore} points!`;
+                pointsEarned.textContent = `You earned ${displayScore} out of ${maxDisplayScore} points!`;
                 
                 // Show badge for passed challenge
                 document.getElementById('badgeContainer').style.display = 'flex';
@@ -2283,9 +2957,9 @@
                     console.error('Failed to award badge:', err);
                 });
             } else {
-                scoreDisplay.textContent = `❌ FAILED! Score: ${totalScore}/100`;
+                scoreDisplay.textContent = `❌ FAILED! Score: ${displayScore}/${maxDisplayScore}`;
                 scoreDisplay.style.color = '#f44336';
-                pointsEarned.textContent = `You need 80+ points to pass. Try again!`;
+                pointsEarned.textContent = `You need ${passThreshold}+ points to pass. Try again!`;
                 
                 // Hide badge for failed challenge
                 document.getElementById('badgeContainer').style.display = 'none';
@@ -2296,6 +2970,76 @@
 
             // Save progress to database
             saveStoryProgress(totalScore, hasPassed);
+        }
+        
+        function showResultsModal() {
+            const resultsModal = document.getElementById('resultsModal');
+            const resultsModalBody = document.getElementById('resultsModalBody');
+            
+            // Calculate display score (convert from 100-point scale to 5-point scale)
+            const displayScore = Math.round(totalScore / 20);
+            const maxDisplayScore = 5;
+            const correctCount = shuffledQuizQuestions.filter((q, i) => userAnswers[i] !== undefined && userAnswers[i] === q.correct).length;
+            
+            // Generate detailed results HTML with score summary at top
+            const resultsHTML = `
+                <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px;">
+                    <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 10px;">
+                        Score: ${displayScore}/${maxDisplayScore}
+                    </div>
+                    <div style="font-size: 1.2em; opacity: 0.9;">
+                        ${correctCount} out of ${shuffledQuizQuestions.length} questions correct
+                    </div>
+                </div>
+            ` + shuffledQuizQuestions.map((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer !== undefined && userAnswer === question.correct;
+                const answerStatus = isCorrect ? '✓ Correct' : '✗ Incorrect';
+                const answerStatusClass = isCorrect ? 'correct' : 'incorrect';
+                
+                return `
+                    <div class="question-container" style="margin-bottom: 30px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div class="question-number">Question ${index + 1}:</div>
+                            <div style="font-size: 1.2em; font-weight: bold; color: ${isCorrect ? '#4CAF50' : '#f44336'};">
+                                ${answerStatus}
+                            </div>
+                        </div>
+                        <div class="question-text" style="margin-bottom: 20px;">${question.question}</div>
+                        <div class="options-container">
+                            ${question.options.map((option, optIndex) => {
+                                let optionClass = 'option';
+                                let optionStyle = '';
+                                
+                                if (optIndex === question.correct) {
+                                    optionClass += ' correct';
+                                    optionStyle = 'background-color: #4CAF50; color: white; border-color: #45a049;';
+                                } else if (optIndex === userAnswer && !isCorrect) {
+                                    optionClass += ' incorrect';
+                                    optionStyle = 'background-color: #f44336; color: white; border-color: #da190b;';
+                                }
+                                
+                                return `
+                                    <div class="${optionClass}" data-index="${optIndex}" style="${optionStyle}">
+                                        <span class="option-letter">${String.fromCharCode(65 + optIndex)}.</span>
+                                        <span>${option}</span>
+                                        ${optIndex === question.correct ? '<span style="margin-left: 10px; font-weight: bold;">✓ Correct Answer</span>' : ''}
+                                        ${optIndex === userAnswer && !isCorrect ? '<span style="margin-left: 10px; font-weight: bold;">✗ Your Answer</span>' : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            resultsModalBody.innerHTML = resultsHTML;
+            resultsModal.classList.add('show');
+        }
+        
+        function closeResultsModal() {
+            const resultsModal = document.getElementById('resultsModal');
+            resultsModal.classList.remove('show');
         }
 
         // Function to update scoring action buttons based on pass/fail status (from challenges)
@@ -2353,15 +3097,31 @@
             totalScore = 0;
             challengeStarted = false;
 
+            // Reshuffle questions and options for retry
+            const shuffledQuestions = shuffleQuestions(quizQuestions);
+            shuffledQuizQuestions = shuffledQuestions.map(question => shuffleQuestionOptions(question));
+
             // Hide results and show challenge again
+            const questionsContainer = document.getElementById('questionsContainer');
             const resultsContainer = document.getElementById('resultsContainer');
             const challengeContainer = document.getElementById('challengeContainer');
             
+            // Show questions container and hide results
+            questionsContainer.style.display = 'block';
             resultsContainer.style.display = 'none';
             document.querySelector('.challenge-buttons').style.display = 'flex';
             
             // Hide badge
             document.getElementById('badgeContainer').style.display = 'none';
+            
+            // Close results modal if open
+            const resultsModal = document.getElementById('resultsModal');
+            if (resultsModal) {
+                resultsModal.classList.remove('show');
+            }
+            
+            // Display the first question again (with shuffled order)
+            displayQuestion(0);
             
             // Reset scoring actions (buttons will be recreated when results are shown)
             
@@ -2437,12 +3197,43 @@
         // Add event listeners for challenge buttons
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('submitBtn').addEventListener('click', submitAnswer);
-            document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+            // Note: nextBtn is no longer used - submitBtn handles both "Next" and "Submit"
             // Note: endEpisodeBtn and exitBtn are now dynamically created in updateScoringActions()
-            document.getElementById('badgeOkBtn').addEventListener('click', function() {
-                // Hide badge when OK is clicked
-                document.getElementById('badgeContainer').style.display = 'none';
-            });
+            const badgeOkBtn = document.getElementById('badgeOkBtn');
+            if (badgeOkBtn) {
+                badgeOkBtn.addEventListener('click', function() {
+                    // Hide badge when OK is clicked
+                    document.getElementById('badgeContainer').style.display = 'none';
+                });
+            }
+            
+            // Results modal event listeners
+            const viewResultsBtn = document.getElementById('viewResultsBtn');
+            if (viewResultsBtn) {
+                viewResultsBtn.addEventListener('click', showResultsModal);
+            }
+            
+            const closeResultsModalBtn = document.getElementById('closeResultsModal');
+            if (closeResultsModalBtn) {
+                closeResultsModalBtn.addEventListener('click', closeResultsModal);
+            }
+            
+            const resultsModal = document.getElementById('resultsModal');
+            if (resultsModal) {
+                // Close modal when clicking outside
+                resultsModal.addEventListener('click', function(e) {
+                    if (e.target === resultsModal) {
+                        closeResultsModal();
+                    }
+                });
+                
+                // Close modal with Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && resultsModal.classList.contains('show')) {
+                        closeResultsModal();
+                    }
+                });
+            }
         });
 
     </script>

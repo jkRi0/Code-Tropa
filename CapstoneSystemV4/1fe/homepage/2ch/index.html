@@ -311,7 +311,7 @@
 
                 // const astText = result.ast ? `\n\nAST (JavaParser):\n${result.ast}` : '';
                 if (result.success&&output[0]!=' ') {
-                    outputTerminal.style.color = '#3fb950'; // Modern green for success
+                    outputTerminal.style.color = 'rgb(0 255 36)'; // Modern green for success
                     outputTerminal.textContent = `$ ${result.output}\n\n${output}`;
                 } else {
                     outputTerminal.style.color = '#f85149'; // Modern red for errors

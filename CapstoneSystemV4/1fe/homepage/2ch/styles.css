@@ -277,7 +277,7 @@ body {
     color: #6e7681;
 }
 
-/* Output Terminal */
+/* Output Terminal */ 
 .output-terminal {
     flex: 1;
     background-color: #0d1117;
@@ -298,7 +298,7 @@ body {
 }
 
 .output-terminal::-webkit-scrollbar-track {
-    background: #161b22;
+    background: #172216;
 }
 
 .output-terminal::-webkit-scrollbar-thumb {
