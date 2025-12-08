@@ -6,7 +6,6 @@
     <title>Challenge Page</title>
     <link rel="stylesheet" href="../2ch/styles.css">
     <!-- Monaco Editor script -->
-    <script src="../../../../node_modules/monaco-editor/min/vs/loader.js"></script>
     <style>
         .connection-status {
             position: fixed;
@@ -209,6 +208,19 @@
                     type: 'set-code',
                     code: code
                 }, '*');
+            } else {
+                // Wait for editor to be ready
+                const checkReady = setInterval(() => {
+                    if (editorReady && editorIframe) {
+                        editorIframe.contentWindow.postMessage({
+                            type: 'set-code',
+                            code: code
+                        }, '*');
+                        clearInterval(checkReady);
+                    }
+                }, 100);
+                // Clear interval after 5 seconds to prevent infinite waiting
+                setTimeout(() => clearInterval(checkReady), 5000);
             }
         };
 

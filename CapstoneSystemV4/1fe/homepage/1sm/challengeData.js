@@ -81,15 +81,30 @@ window.getMonacoLanguage = function(language) {
 
 // Function to switch Monaco editor language
 function switchMonacoLanguage(language) {
-    if (window.editor) {
-        const monacoLanguage = getMonacoLanguage(language);
-        const defaultCode = getDefaultCode(language);
+    const monacoLanguage = getMonacoLanguage(language);
+    const defaultCode = getDefaultCode(language);
+    
+    // Check if we're using iframe editor (story mode) or direct editor
+    if (window.setEditorCode && window.setEditorLanguage) {
+        // Using iframe editor - communicate via postMessage
+        console.log('Switching Monaco editor language via iframe:', monacoLanguage);
+        console.log('Setting default code for language:', language);
         
+        // Set language first
+        window.setEditorLanguage(monacoLanguage);
+        
+        // Set code using the existing setEditorCode function (which has retry built-in)
+        window.setEditorCode(defaultCode);
+    } else if (window.editor) {
+        // Direct editor access (fallback for non-iframe setups)
         window.monaco.editor.setModelLanguage(window.editor.getModel(), monacoLanguage);
         window.editor.setValue(defaultCode);
-        // Monaco editor language switched
     } else {
-        console.warn('Monaco editor not available yet, will be set when language is loaded');
+        console.warn('Monaco editor not available yet, will retry...');
+        // Retry after a short delay if editor isn't ready
+        setTimeout(() => {
+            switchMonacoLanguage(language);
+        }, 500);
     }
 }
 
