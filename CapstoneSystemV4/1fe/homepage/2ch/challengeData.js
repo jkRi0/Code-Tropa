@@ -579,14 +579,22 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
                 // Handle both string feedback and object with feedback/apiError
                 const feedback = typeof result === 'string' ? result : result.feedback;
                 const apiError = typeof result === 'object' && result.apiError ? result.apiError : null;
+                const errors = typeof result === 'object' && result.errors ? result.errors : null;
                 
                 document.getElementById('geminiAiFeedback').textContent = feedback;
                 
                 // Show or hide error message
                 const errorDiv = document.getElementById('geminiApiError');
                 if (apiError) {
-                    errorDiv.textContent = `Gemini API Error. Heuristic Feedback Used.`;
-                    console.log(apiError);
+                    let errorMessage = `⚠️ Gemini API Error. Using heuristic feedback.`;
+                    if (errors && errors.length > 0) {
+                        const triedModels = errors.map(e => e.model).join(', ');
+                        errorMessage += `\nTried models: ${triedModels}`;
+                        console.log('Models tried:', triedModels);
+                        console.log('Model errors:', errors);
+                    }
+                    errorDiv.textContent = errorMessage;
+                    console.log('API Error:', apiError);
                     errorDiv.style.display = 'block';
                 } else {
                     errorDiv.style.display = 'none';

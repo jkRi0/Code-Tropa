@@ -485,7 +485,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function getGeminiFeedback(submittedCode, solutionCode, difficulty, scoringResult) {
-        // Try Gemini first, fall back to heuristic feedback
+        // List of Gemini models to try in order (most capable first)
+        const GEMINI_MODELS = [
+            'gemini-2.5-flash',
+            'gemini-2.5-pro',
+            'gemini-2.0-flash',
+            'gemini-2.0-flash-001',
+            'gemini-2.0-flash-lite'
+        ];
+
+        // Check if API key is configured
         if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE" || GEMINI_API_KEY.trim() === "") {
             console.warn("Gemini API key not set. Falling back to heuristic feedback.");
             const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
@@ -518,65 +527,229 @@ document.addEventListener('DOMContentLoaded', function() {
         Please provide constructive feedback to the student based on their submitted code, comparing it to the solution AND checking if it meets the objectives/requirements. Focus on explaining *why* certain aspects received the score they did and how they can improve. Pay special attention to whether the code meets the stated objectives. Provide actionable advice for improving their code in terms of accuracy (including objectives compliance), efficiency, and readability. Keep the feedback concise and encouraging, around 2-3 sentences.
         `;
 
-        try {
-            console.log("Calling Gemini API...");
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite-001:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: prompt
+        // Try each model in sequence until one succeeds
+        const errors = [];
+        for (let i = 0; i < GEMINI_MODELS.length; i++) {
+            const model = GEMINI_MODELS[i];
+            try {
+                console.log(`Attempting to call Gemini API with model: ${model} (${i + 1}/${GEMINI_MODELS.length})`);
+                
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
                         }]
-                    }]
-                })
-            });
+                    })
+                });
 
-            console.log("Gemini API response status:", response.status, response.statusText);
+                console.log(`Gemini API response status for ${model}:`, response.status, response.statusText);
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                let errorData;
-                try {
-                    errorData = JSON.parse(errorText);
-                } catch (e) {
-                    errorData = { error: errorText };
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(errorText);
+                    } catch (e) {
+                        errorData = { error: errorText };
+                    }
+                    
+                    const errorMessage = errorData.error?.message || errorData.message || `API Error: ${response.status} ${response.statusText}`;
+                    console.warn(`Model ${model} failed:`, errorMessage);
+                    errors.push({ model, error: errorMessage });
+                    
+                    // If this is not the last model, try the next one
+                    if (i < GEMINI_MODELS.length - 1) {
+                        console.log(`Trying next model...`);
+                        continue;
+                    } else {
+                        // Last model failed, fall back to heuristic
+                        console.error("All Gemini models failed. Falling back to heuristic feedback.");
+                        const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
+                        return { 
+                            feedback: heuristicFeedback, 
+                            apiError: `All models failed. Last error: ${errorMessage}`,
+                            errors: errors
+                        };
+                    }
                 }
-                console.error("Gemini API error:", errorData);
-                console.error("Falling back to heuristic feedback due to API error");
-                // Fall back to heuristic feedback on error, but include error info
-                const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
-                const errorMessage = errorData.error?.message || errorData.message || `API Error: ${response.status} ${response.statusText}`;
-                return { feedback: heuristicFeedback, apiError: errorMessage };
-            }
 
-            const data = await response.json();
-            console.log("Gemini API response data:", data);
-            
-            // Check if response has the expected structure
-            if (data && data.candidates && data.candidates.length > 0 && 
-                data.candidates[0].content && data.candidates[0].content.parts && 
-                data.candidates[0].content.parts.length > 0 && 
-                data.candidates[0].content.parts[0].text) {
-                const feedback = data.candidates[0].content.parts[0].text;
-                console.log("Successfully received Gemini feedback");
-                return feedback;
-            } else {
-                console.error("Unexpected Gemini API response structure:", data);
-                console.error("Falling back to heuristic feedback due to unexpected response structure");
-                const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
-                return { feedback: heuristicFeedback, apiError: "Unexpected API response format" };
+                const data = await response.json();
+                console.log(`Gemini API response data for ${model}:`, data);
+                
+                // Check for errors in the response body (even if HTTP status is 200)
+                if (data.error) {
+                    const errorMessage = data.error.message || data.error.code || "Error in API response";
+                    console.warn(`Model ${model} returned error in response:`, errorMessage);
+                    errors.push({ model, error: errorMessage });
+                    
+                    // If this is not the last model, try the next one
+                    if (i < GEMINI_MODELS.length - 1) {
+                        console.log(`Trying next model due to error in response...`);
+                        continue;
+                    } else {
+                        // Last model returned error, fall back to heuristic
+                        console.error("All Gemini models returned errors. Falling back to heuristic feedback.");
+                        const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
+                        return { 
+                            feedback: heuristicFeedback, 
+                            apiError: `All models failed. Last error: ${errorMessage}`,
+                            errors: errors
+                        };
+                    }
+                }
+                
+                // Check for prompt feedback issues (blocked content, etc.)
+                if (data.promptFeedback && data.promptFeedback.blockReason) {
+                    const blockReason = data.promptFeedback.blockReason;
+                    console.warn(`Model ${model} blocked the prompt. Reason:`, blockReason);
+                    errors.push({ model, error: `Prompt blocked: ${blockReason}` });
+                    
+                    // If this is not the last model, try the next one
+                    if (i < GEMINI_MODELS.length - 1) {
+                        console.log(`Trying next model due to blocked prompt...`);
+                        continue;
+                    } else {
+                        // Last model blocked prompt, fall back to heuristic
+                        console.error("All Gemini models blocked the prompt. Falling back to heuristic feedback.");
+                        const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
+                        return { 
+                            feedback: heuristicFeedback, 
+                            apiError: `All models blocked the prompt. Last reason: ${blockReason}`,
+                            errors: errors
+                        };
+                    }
+                }
+                
+                // Check if candidates array is empty or missing
+                if (!data.candidates || data.candidates.length === 0) {
+                    console.warn(`Model ${model} returned no candidates:`, data);
+                    errors.push({ model, error: "No candidates in response" });
+                    
+                    // If this is not the last model, try the next one
+                    if (i < GEMINI_MODELS.length - 1) {
+                        console.log(`Trying next model due to no candidates...`);
+                        continue;
+                    } else {
+                        // Last model returned no candidates, fall back to heuristic
+                        console.error("All Gemini models returned no candidates. Falling back to heuristic feedback.");
+                        const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
+                        return { 
+                            feedback: heuristicFeedback, 
+                            apiError: "All models returned no candidates",
+                            errors: errors
+                        };
+                    }
+                }
+                
+                // Check if candidate has finishReason that indicates an error
+                if (data.candidates[0].finishReason && 
+                    data.candidates[0].finishReason !== 'STOP' && 
+                    data.candidates[0].finishReason !== 'MAX_TOKENS') {
+                    const finishReason = data.candidates[0].finishReason;
+                    console.warn(`Model ${model} finished with reason:`, finishReason);
+                    errors.push({ model, error: `Finish reason: ${finishReason}` });
+                    
+                    // If this is not the last model, try the next one
+                    if (i < GEMINI_MODELS.length - 1) {
+                        console.log(`Trying next model due to finish reason: ${finishReason}...`);
+                        continue;
+                    } else {
+                        // Last model had problematic finish reason, fall back to heuristic
+                        console.error("All Gemini models had problematic finish reasons. Falling back to heuristic feedback.");
+                        const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
+                        return { 
+                            feedback: heuristicFeedback, 
+                            apiError: `All models had finish reason: ${finishReason}`,
+                            errors: errors
+                        };
+                    }
+                }
+                
+                // Check if response has the expected structure with valid text content
+                if (data.candidates[0].content && data.candidates[0].content.parts && 
+                    data.candidates[0].content.parts.length > 0 && 
+                    data.candidates[0].content.parts[0].text) {
+                    const feedback = data.candidates[0].content.parts[0].text.trim();
+                    
+                    // Check if feedback is empty
+                    if (!feedback || feedback.length === 0) {
+                        console.warn(`Model ${model} returned empty feedback`);
+                        errors.push({ model, error: "Empty feedback text" });
+                        
+                        // If this is not the last model, try the next one
+                        if (i < GEMINI_MODELS.length - 1) {
+                            console.log(`Trying next model due to empty feedback...`);
+                            continue;
+                        } else {
+                            // Last model returned empty feedback, fall back to heuristic
+                            console.error("All Gemini models returned empty feedback. Falling back to heuristic feedback.");
+                            const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
+                            return { 
+                                feedback: heuristicFeedback, 
+                                apiError: "All models returned empty feedback",
+                                errors: errors
+                            };
+                        }
+                    }
+                    
+                    console.log(`Successfully received Gemini feedback from model: ${model}`);
+                    return feedback;
+                } else {
+                    console.warn(`Unexpected Gemini API response structure for ${model}:`, data);
+                    errors.push({ model, error: "Unexpected API response format" });
+                    
+                    // If this is not the last model, try the next one
+                    if (i < GEMINI_MODELS.length - 1) {
+                        console.log(`Trying next model due to unexpected response structure...`);
+                        continue;
+                    } else {
+                        // Last model had unexpected structure, fall back to heuristic
+                        console.error("All Gemini models returned unexpected structure. Falling back to heuristic feedback.");
+                        const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
+                        return { 
+                            feedback: heuristicFeedback, 
+                            apiError: "All models returned unexpected response format",
+                            errors: errors
+                        };
+                    }
+                }
+            } catch (error) {
+                console.error(`Error calling Gemini API with model ${model}:`, error);
+                console.error("Error details:", error.message, error.stack);
+                errors.push({ model, error: error.message || "Network error or API unavailable" });
+                
+                // If this is not the last model, try the next one
+                if (i < GEMINI_MODELS.length - 1) {
+                    console.log(`Trying next model due to error...`);
+                    continue;
+                } else {
+                    // Last model threw an error, fall back to heuristic
+                    console.error("All Gemini models threw errors. Falling back to heuristic feedback.");
+                    const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
+                    const errorMessage = error.message || "Network error or API unavailable";
+                    return { 
+                        feedback: heuristicFeedback, 
+                        apiError: `All models failed. Last error: ${errorMessage}`,
+                        errors: errors
+                    };
+                }
             }
-        } catch (error) {
-            console.error("Error calling Gemini API:", error);
-            console.error("Error details:", error.message, error.stack);
-            // Fall back to heuristic feedback on error, but include error info
-            const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
-            const errorMessage = error.message || "Network error or API unavailable";
-            return { feedback: heuristicFeedback, apiError: errorMessage };
         }
+
+        // This should never be reached, but just in case
+        console.error("Unexpected: All models exhausted without returning. Using heuristic feedback.");
+        const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
+        return { 
+            feedback: heuristicFeedback, 
+            apiError: "All models failed unexpectedly",
+            errors: errors
+        };
     }
 
     window.getGeminiFeedback = getGeminiFeedback;

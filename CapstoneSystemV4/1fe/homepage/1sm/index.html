@@ -4,9 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Challenge Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../2ch/styles.css">
     <!-- Monaco Editor script -->
     <script src="../../../../node_modules/monaco-editor/min/vs/loader.js"></script>
+    <style>
+        .connection-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 10000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .connection-status.online {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .connection-status.offline {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <!-- Splash Screen -->
@@ -33,35 +55,37 @@
         <button id="backButton" class="back-btn">← Back</button>
         <img src="" alt="Challenge Image">
         <div class="objectives-container"></div>
-        <div class="control-buttons">
-            <button id="runCodeBtn" class="control-btn">Run Code</button>
-            <button id="submitCodeBtn" class="control-btn">Submit Code</button>
-            <button id="showRubricsBtn" class="control-btn">Show Rubrics</button>
-            <button id="showTipsBtn" class="control-btn">Show Tips</button>
-        </div>
+        
     </div>
     <div class="code-editor-div">
-        <div id="monaco-container" style="width: 100%; height: 100%;"></div>
+        <iframe id="monaco-editor-iframe" src="../2ch/monaco-editor.html" style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
-    <div class="output-terminal" id="outputTerminal">OUTPUT TERMINAL >>></div>
-
-    <!-- Badge Display Container -->
-    <div class="badge-container" id="badgeContainer" style="display: none;">
-        <div class="badge-display">
-            <span class="close-badge" id="closeBadge">&times;</span>
-            <img src="" alt="Episode Badge" class="badge-image" id="badgeImage">
-            <div class="badge-text">
-                <h3>CONGRATULATIONS!</h3>
-                <p id="badgeMessage">You've earned the Episode Badge!</p>
+    <div class="terminal-container">
+        <div class="terminal-resize-handle" id="terminalResizeHandle"></div>
+        <div class="terminal-header">
+            <div class="terminal-title">
+                <span class="terminal-icon">▶</span>
+                <span>Terminal</span>
+            </div>
+            <div class="control-buttons">
+                <button id="runCodeBtn" class="control-btn">Run Code</button>
+                <button id="submitCodeBtn" class="control-btn">Submit Code</button>
+                <button id="showRubricsBtn" class="control-btn">Show Rubrics</button>
+                <button id="showTipsBtn" class="control-btn">Show Tips</button>
             </div>
         </div>
+        <!-- <div class="terminal-input-section">
+            <label for="terminalInput" class="input-label">Input:</label>
+            <input type="text" id="terminalInput" class="terminal-input" placeholder="Enter input for your code (if required)...">
+        </div> -->
+        <div class="output-terminal" id="outputTerminal">$ Ready to run code...</div>
     </div>
 
     <!-- Mobile Controls -->
-    <div class="mobile-controls">
+    <!-- <div class="mobile-controls">
         <button class="toggle-btn toggle-editor-btn" id="toggleEditor">Editor</button>
         <button class="toggle-btn toggle-terminal-btn" id="toggleTerminal">Terminal</button>
-    </div>
+    </div> -->
 
     <!-- Rubrics Modal -->
     <div id="rubricsModal" class="rubrics-modal">
@@ -100,22 +124,97 @@
     <!-- External JavaScript Files -->
     <!-- <script type="module" src="./1j/analysis_grammars/grammarLoader.js"></script> -->
     <!-- Compiler files (loaded before codeAnalyzer.js) -->
-    <script src="compiler/javaCompiler2.js"></script>
-    <script src="compiler/cppCompiler2.js"></script>
-    <script src="compiler/csharpCompiler2.js"></script>
-    <script src="codeSimulation.js"></script>
+    <script src="../2ch/compiler/javaCompiler2.js"></script>
+    <script src="../2ch/compiler/cppCompiler2.js"></script>
+    <script src="../2ch/compiler/csharpCompiler2.js"></script>
+    <script src="../2ch/codeSimulation.js"></script>
 
-    <script src="compiler/javaCompiler.js"></script>
-    <script src="compiler/cppCompiler.js"></script>
-    <script src="compiler/csharpCompiler.js"></script>
-    <script src="codeAnalyzer.js"></script>
-    <script src="monacoEditor.js"></script>
+    <script src="../2ch/compiler/javaCompiler.js"></script>
+    <script src="../2ch/compiler/cppCompiler.js"></script>
+    <script src="../2ch/compiler/csharpCompiler.js"></script>
+    <script src="../2ch/codeAnalyzer.js"></script>
     <script src="challengeData.js"></script>
     <script src="modalManager.js"></script>
     <script src="tips.js"></script>
-    <script src="mobileControls.js"></script>
     <script>
+        // Monaco Editor iframe communication setup (same as challenge mode)
+        let editorIframe = null;
+        let editorReady = false;
+        let pendingCodeRequest = null;
+
+        // Listen for messages from the iframe editor
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'editor-ready') {
+                editorReady = true;
+                console.log('Monaco editor in iframe is ready');
+                // If there's a pending code request, handle it now
+                if (pendingCodeRequest) {
+                    pendingCodeRequest();
+                    pendingCodeRequest = null;
+                }
+            } else if (event.data.type === 'code-response') {
+                // Handle code response from iframe
+                if (window.onCodeReceived) {
+                    window.onCodeReceived(event.data.code);
+                    window.onCodeReceived = null;
+                }
+            } else if (event.data.type === 'language-switched') {
+                console.log('Language switched in iframe:', event.data.language);
+            } else if (event.data.type === 'code-changed') {
+                // Optional: handle code changes in real-time if needed
+            }
+        });
+
+        // Function to get code from iframe editor
+        window.getEditorCode = function() {
+            return new Promise((resolve) => {
+                if (editorReady && editorIframe) {
+                    window.onCodeReceived = resolve;
+                    editorIframe.contentWindow.postMessage({ type: 'get-code' }, '*');
+                } else {
+                    // Wait for editor to be ready
+                    pendingCodeRequest = function() {
+                        window.onCodeReceived = resolve;
+                        editorIframe.contentWindow.postMessage({ type: 'get-code' }, '*');
+                    };
+                }
+            });
+        };
+
+        // Function to set language in iframe editor
+        window.setEditorLanguage = function(language) {
+            if (editorReady && editorIframe) {
+                editorIframe.contentWindow.postMessage({
+                    type: 'set-language',
+                    language: language
+                }, '*');
+            } else {
+                // Wait for editor to be ready
+                const checkReady = setInterval(() => {
+                    if (editorReady && editorIframe) {
+                        editorIframe.contentWindow.postMessage({
+                            type: 'set-language',
+                            language: language
+                        }, '*');
+                        clearInterval(checkReady);
+                    }
+                }, 100);
+            }
+        };
+
+        // Function to set code in iframe editor
+        window.setEditorCode = function(code) {
+            if (editorReady && editorIframe) {
+                editorIframe.contentWindow.postMessage({
+                    type: 'set-code',
+                    code: code
+                }, '*');
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', function() {
+            editorIframe = document.getElementById('monaco-editor-iframe');
+            
             loadSelectedChallengeData();
             const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
             if (selectedData && selectedData.level) {
@@ -125,6 +224,41 @@
                 // Load with default Java language initially, will be switched when language is fetched
                 loadLevelScripts(levelNumber, 'java');
             }
+            
+            // Run Code Button Event Listener
+            document.getElementById('runCodeBtn').addEventListener('click', async function() {
+                // Get code from Monaco editor in iframe
+                console.log('Requesting code from Monaco editor iframe...');
+                const code = await window.getEditorCode();
+                console.log('Code received from Monaco editor iframe!');
+                
+                const outputTerminal = document.getElementById('outputTerminal');
+                
+                const selectedDifficultySpan = document.getElementById('selectedDifficulty');
+                const difficulty = selectedDifficultySpan ? selectedDifficultySpan.textContent.toLowerCase() : 'easy';
+                
+                // Get current language
+                const selectedLanguageSpan = document.getElementById('selectedLanguage');
+                const language = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
+
+                const result = await window.compileCode(code, difficulty, language);
+
+                const output = await window.simulateCode(code, language);
+
+                console.log('Simulation result:', output);
+                console.log('Compilation result:', result); // Debug log
+
+                // const astText = result.ast ? `\n\nAST (JavaParser):\n${result.ast}` : '';
+                if (result.success && output[0] != ' ') {
+                    outputTerminal.style.color = '#3fb950'; // Modern green for success
+                    outputTerminal.textContent = `$ ${result.output}\n\n${output}`;
+                } else {
+                    outputTerminal.style.color = '#f85149'; // Modern red for errors
+                    outputTerminal.textContent = "❌ Errors found:\n" + 
+                        result.errors.map((err, i) => `${i + 1}. [${err.severity.toUpperCase()}] Line ${err.line}: ${err.title} - ${err.desc}`).join('\n')+
+                        '\n\n'+(output[0]==' '?output:'');
+                }
+            });
             
             // Add click handler to close badge when clicked
             const badgeContainer = document.getElementById('badgeContainer');

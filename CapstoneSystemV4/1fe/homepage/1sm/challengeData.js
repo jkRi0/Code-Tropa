@@ -419,7 +419,16 @@ document.getElementById('backButton').addEventListener('click', function() {
 });
 
 document.getElementById('submitCodeBtn').addEventListener('click', async function() {
-    const code = window.editor.getValue(); // Assuming 'editor' is the global Monaco editor instance
+    // Get code from Monaco editor in iframe (same as runCodeBtn)
+    let code;
+    if (window.getEditorCode) {
+        code = await window.getEditorCode();
+    } else if (window.editor) {
+        code = window.editor.getValue(); // Fallback to direct editor access
+    } else {
+        console.error('Editor not available');
+        return;
+    }
     const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
     
     console.log('=== DIFFICULTY DEBUG ===');
@@ -438,7 +447,7 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
         const selectedLanguageSpan = document.getElementById('selectedLanguage');
         const language = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
         
-        const result = window.compileCode(code, difficulty, language); // Pass difficulty and language
+        const result = await window.compileCode(code, difficulty, language); // Pass difficulty and language
         window.hideLoadingAnimation(); // Hide loading animation
 
         // Get solution code
