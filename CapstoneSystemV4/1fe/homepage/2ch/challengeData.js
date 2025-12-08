@@ -1,3 +1,25 @@
+/**
+ * Detect if we're in Story Mode or Challenge Mode
+ * Story Mode: levels start with "ep" (ep1, ep2, etc.)
+ * Challenge Mode: levels start with "lev" (lev1, lev2, etc.)
+ * 
+ * This allows the same challengeData.js to work for both modes
+ */
+function detectMode() {
+    try {
+        const selectedData = localStorage.getItem('selectedChallenge');
+        if (selectedData) {
+            const data = JSON.parse(selectedData);
+            if (data.level && data.level.startsWith('ep')) {
+                return 'story';
+            }
+        }
+    } catch (e) {
+        console.warn('Could not detect mode, defaulting to challenge mode');
+    }
+    return 'challenge'; // Default to challenge mode
+}
+
 // Function to switch language and reload appropriate resources
 function switchLanguage(language) {
     // Update language display immediately
@@ -12,14 +34,16 @@ function switchLanguage(language) {
     
     // Wait a bit for scripts to be fully removed before loading new ones
     setTimeout(async () => {
-        // Get current level from localStorage
+        // Get current level/episode from localStorage
         const selectedData = localStorage.getItem('selectedChallenge');
         if (selectedData) {
             const data = JSON.parse(selectedData);
-            const levelNumber = data.level.replace('lev', '');
+            // STORY MODE: Handle episode tokens (ep1, ep2, etc.)
+            // CHALLENGE MODE: Handle level tokens (lev1, lev2, etc.)
+            const levelOrEpisodeToken = data.level; // Keep full token (ep1 or lev1)
             
-            // Reload level scripts with new language
-            loadLevelScripts(levelNumber, language);
+            // Reload level/episode scripts with new language
+            loadLevelScripts(levelOrEpisodeToken, language);
             
             // Switch Monaco editor language (with retry if editor not ready)
             switchMonacoLanguage(language);
@@ -143,10 +167,15 @@ function switchAnalysisGrammar(language) {
             break;
     }
     
+    // STORY MODE: Load from challenge mode directory (../2ch/)
+    // CHALLENGE MODE: Load from current directory (./)
+    const isStoryMode = detectMode() === 'story';
+    const basePath = isStoryMode ? '../2ch' : '.';
+    
     // Load new grammar script
     const grammarScript = document.createElement('script');
     grammarScript.type = 'module';
-    grammarScript.src = `./${grammarFolder}/grammarLoader.js`;
+    grammarScript.src = `${basePath}/${grammarFolder}/grammarLoader.js`;
     
     // Wait for the script to load and ANTLR4 to be ready
     grammarScript.onload = async function() {
@@ -175,6 +204,7 @@ function switchAnalysisGrammar(language) {
     
     grammarScript.onerror = function(error) {
         console.error('Failed to load grammar script:', error);
+        console.error('Attempted to load from:', grammarScript.src);
     };
     
     document.head.appendChild(grammarScript);
@@ -203,9 +233,15 @@ function switchTips(language) {
             break;
     }
     
+    // STORY MODE: Load from story mode directory (./)
+    // CHALLENGE MODE: Load from challenge mode directory (./)
+    // Note: Tips are in the same directory structure for both modes
+    const isStoryMode = detectMode() === 'story';
+    const basePath = isStoryMode ? '.' : '.';
+    
     // Load new tips script
     const tipsScript = document.createElement('script');
-    tipsScript.src = `./${tipsFolder}/tips.js`;
+    tipsScript.src = `${basePath}/${tipsFolder}/tips.js`;
     document.body.appendChild(tipsScript);
     
     // Tips switched
@@ -249,14 +285,31 @@ function loadSelectedChallengeData() {
         const selectedData = localStorage.getItem('selectedChallenge');
         if (selectedData) {
             const data = JSON.parse(selectedData);
-            const splashLevelNumber = data.level.replace('lev', 'level');
+            const isStoryMode = detectMode();
+            
+            // STORY MODE: Display episode information
+            // CHALLENGE MODE: Display level information
+            let splashLevelNumber, displayLevel;
+            if (isStoryMode) {
+                const episodeNum = data.level.replace('ep', '');
+                splashLevelNumber = `Episode ${episodeNum}`;
+                displayLevel = `Episode ${episodeNum}`;
+            } else {
+                splashLevelNumber = data.level.replace('lev', 'level');
+                displayLevel = splashLevelNumber;
+            }
             
             // Update splash screen
-            document.getElementById('splashLevel').textContent = splashLevelNumber || 'Unknown Level';
-            document.getElementById('splashDifficulty').textContent = data.difficulty || 'Unknown Difficulty';
+            if (isStoryMode) {
+                document.getElementById('splashLevel').textContent = "CHALLENGE TIME!" || 'Unknown Level';
+                document.getElementById('splashDifficulty').textContent = splashLevelNumber || 'Unknown Difficulty';
+            } else {
+                document.getElementById('splashLevel').textContent = splashLevelNumber || 'Unknown Level';
+                document.getElementById('splashDifficulty').textContent = data.difficulty || 'Unknown Difficulty';
+            }
             
             // Update verification panel
-            document.getElementById('selectedLevel').textContent = splashLevelNumber || 'Not available';
+            document.getElementById('selectedLevel').textContent = displayLevel || 'Not available';
             document.getElementById('selectedDifficulty').textContent = data.difficulty || 'Not available';
             
             if (data.timestamp) {
@@ -269,25 +322,80 @@ function loadSelectedChallengeData() {
             // Fetch and display current programming language
             fetchCurrentLanguage();
             
+            // Load tips for the current language (story mode specific, but safe for challenge mode too)
+            setTimeout(() => {
+                const selectedLanguageSpan = document.getElementById('selectedLanguage');
+                const currentLanguage = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
+                switchTips(currentLanguage);
+            }, 100);
+            
             console.log('Loaded challenge data:', data);
             
-            // Dynamically update the image source based on difficulty and level
+            // Dynamically update the image source based on mode
             const imgContainer = document.querySelector('.image-container img');
-            if (data.difficulty && data.level) {
-                // Map backend difficulty values back to frontend image names
-                const difficultyImageMapping = {
-                    'easy': 'EASY',
-                    'average': 'AVERAGE',
-                    'difficult': 'DIFFICULT'
-                };
+            if (data.level) {
+                // Check mode directly from data.level (more reliable than isStoryMode constant)
+                const isStoryModeCheck = data.level.startsWith('ep');
                 
-                const difficultyImageName = difficultyImageMapping[data.difficulty] || 'EASY';
-                const levelNumber = data.level.replace('lev', '');
-                console.log(data.level+" "+difficultyImageName+" "+levelNumber);
-                
-                imgContainer.src = `./assets/${levelNumber}/${difficultyImageName}.png`;
-                imgContainer.alt = `${data.level} - ${data.difficulty}`;
-                console.log(`Updated image to: assets/${levelNumber}/${difficultyImageName}.png`);
+                // STORY MODE: Use episode-specific bg.png from each episode folder
+                if (isStoryModeCheck) {
+                    const episodeNumber = data.level.replace('ep', '');
+                    
+                    // Determine language folder based on current language
+                    let currentLanguage = localStorage.getItem('selectedLanguage');
+                    if (!currentLanguage) {
+                        const selectedLanguageSpan = document.getElementById('selectedLanguage');
+                        currentLanguage = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
+                    } else {
+                        currentLanguage = currentLanguage.toLowerCase();
+                    }
+                    
+                    // Normalize language value (handle variations)
+                    if (currentLanguage === 'cpp' || currentLanguage === 'c++') {
+                        currentLanguage = 'c++';
+                    } else if (currentLanguage === 'csharp' || currentLanguage === 'c#' || currentLanguage === 'c #') {
+                        currentLanguage = 'c#';
+                    } else if (currentLanguage === 'java') {
+                        currentLanguage = 'java';
+                    }
+                    
+                    let languageFolder;
+                    switch(currentLanguage) {
+                        case 'c++':
+                        case 'cpp':
+                            languageFolder = '2cP';
+                            break;
+                        case 'c#':
+                        case 'csharp':
+                            languageFolder = '3cS';
+                            break;
+                        case 'java':
+                        default:
+                            languageFolder = '1j';
+                            break;
+                    }
+                    
+                    // STORY MODE: Use episode-specific image path
+                    imgContainer.src = `../1sm/${languageFolder}/ep${episodeNumber}/assets/bg.png`;
+                    imgContainer.alt = `${data.level} - ${data.difficulty}`;
+                    console.log(`Updated image to: ../1sm/${languageFolder}/ep${episodeNumber}/assets/bg.png (language: ${currentLanguage})`);
+                } 
+                // CHALLENGE MODE: Use difficulty-based image path
+                else if (data.level.startsWith('lev') && data.difficulty) {
+                    const difficultyImageMapping = {
+                        'easy': 'EASY',
+                        'average': 'AVERAGE',
+                        'difficult': 'DIFFICULT'
+                    };
+                    
+                    const difficultyImageName = difficultyImageMapping[data.difficulty] || 'EASY';
+                    const levelNumber = data.level.replace('lev', '');
+                    console.log(data.level+" "+difficultyImageName+" "+levelNumber);
+                    
+                    imgContainer.src = `./assets/${levelNumber}/${difficultyImageName}.png`;
+                    imgContainer.alt = `${data.level} - ${data.difficulty}`;
+                    console.log(`Updated image to: assets/${levelNumber}/${difficultyImageName}.png`);
+                }
             }
             
             // Start splash screen fade out after 2 seconds
@@ -340,8 +448,13 @@ function loadSelectedChallengeData() {
     }
 }
 
-// Add this function to handle dynamic script loading based on language
-function loadLevelScripts(level, language = 'java') {
+/**
+ * Add this function to handle dynamic script loading based on language
+ * 
+ * STORY MODE: Handles episode tokens (ep1, ep2, etc.) - loads from ../1sm/{languageFolder}/ep{N}/
+ * CHALLENGE MODE: Handles level tokens (lev1, lev2, etc.) - loads from {languageFolder}/lvl{N}/
+ */
+function loadLevelScripts(levelOrEpisodeToken, language = 'java') {
     // Note: removeExistingScripts() is called by the caller if needed
     
     // Determine the language folder
@@ -361,15 +474,27 @@ function loadLevelScripts(level, language = 'java') {
             break;
     }
     
+    // Determine if token is episode (epN) or level (levN)
+    const token = String(levelOrEpisodeToken || '').toLowerCase();
+    const isEpisode = /^ep\d+$/.test(token);
+    const number = parseInt(token.replace(/^(lev|ep)/, ''), 10) || 1;
+    
+    // STORY MODE: Load from story mode episode folders
+    // CHALLENGE MODE: Load from challenge mode level folders
+    const basePath = isEpisode
+        ? `../1sm/${languageFolder}/ep${number}`
+        : `${languageFolder}/lvl${number}`;
+    
     // Create and append new script elements with unique IDs
     const objectivesScript = document.createElement('script');
     const solutionsScript = document.createElement('script');
     
-    objectivesScript.id = `objectives-${languageFolder}-lvl${level}`;
-    solutionsScript.id = `solutions-${languageFolder}-lvl${level}`;
+    const idToken = isEpisode ? `ep${number}` : `lvl${number}`;
+    objectivesScript.id = `objectives-${languageFolder}-${idToken}`;
+    solutionsScript.id = `solutions-${languageFolder}-${idToken}`;
     
-    objectivesScript.src = `${languageFolder}/lvl${level}/objectives.js`;
-    solutionsScript.src = `${languageFolder}/lvl${level}/solutions.js`;
+    objectivesScript.src = `${basePath}/objectives.js`;
+    solutionsScript.src = `${basePath}/solutions.js`;
     
     objectivesScript.onload = () => {}; // Script loaded successfully
     objectivesScript.onerror = () => console.error(`Failed to load objectives script: ${objectivesScript.src}`);
@@ -383,14 +508,14 @@ function loadLevelScripts(level, language = 'java') {
 }
 
 function removeExistingScripts() {
-    // Remove all dynamically loaded level scripts by ID pattern
+    // Remove all dynamically loaded level/episode scripts by ID pattern
     const levelScripts = document.querySelectorAll('script[id*="objectives-"], script[id*="solutions-"]');
     levelScripts.forEach(script => {
         script.remove();
     });
     
-    // Also remove by src pattern as backup
-    const levelScriptsBySrc = document.querySelectorAll('script[src*="lvl"]');
+    // Also remove by src pattern as backup (handles both lvl and ep patterns)
+    const levelScriptsBySrc = document.querySelectorAll('script[src*="lvl"], script[src*="ep"]');
     levelScriptsBySrc.forEach(script => {
         if (!script.id || (!script.id.includes('objectives-') && !script.id.includes('solutions-'))) {
             script.remove();
@@ -515,61 +640,178 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
             
             // Save progress (upsert by higher score)
             try {
-                // Determine current level number from saved selection
-                const levelStr = (selectedData && selectedData.level) ? selectedData.level : 'lev1';
-                const levelNum = parseInt(levelStr.replace('lev', ''), 10) || 1;
+                // Determine current level/episode from saved selection
+                const levelStr = (selectedData && selectedData.level) ? selectedData.level : (detectMode() === 'story' ? 'ep1' : 'lev1');
                 const points = Math.round(result.scoring.totalScore);
+                const hasPassed = points >= 80;
                 
-                console.log('=== SAVING PROGRESS DEBUG ===');
-                console.log('Level string:', levelStr);
-                console.log('Level number:', levelNum);
-                console.log('Difficulty:', difficulty);
-                console.log('Points:', points);
-                console.log('Code length:', code.length);
+                // Check if this is story mode (episode) or challenge mode (level)
+                const isStoryMode = levelStr.startsWith('ep');
                 
-                fetch('../../../2be/save_challenge_progress.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `difficulty=${encodeURIComponent(difficulty)}&level=${encodeURIComponent(levelNum)}&points=${encodeURIComponent(points)}&code=${encodeURIComponent(code)}`
-                }).then(r => {
-                    console.log('Save progress response status:', r.status);
-                    return r.json();
-                }).then(data => {
-                    console.log('Save progress response data:', data);
+                if (isStoryMode) {
+                    // STORY MODE: Save story progress
+                    const episodeNum = parseInt(levelStr.replace('ep', ''), 10) || 1;
+                    const selectedLanguageSpan = document.getElementById('selectedLanguage');
+                    const currentLanguage = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
                     
-                    // Save performance data if progress was saved successfully
-                    if (data.success && data.progressId) {
-                        const performanceData = {
-                            progressId: data.progressId,
-                            accuracy: result.scoring.criteriaScores.accuracy || 0,
-                            efficiency: result.scoring.criteriaScores.efficiency || 0,
-                            readability: result.scoring.criteriaScores.readability || 0,
-                            timeTaken: result.scoring.criteriaScores.time || 0,
-                            success: points >= 80 ? 1 : 0, // 1 if passed (80+ points), 0 if failed
-                            failed: points < 80 ? 1 : 0   // 1 if failed (<80 points), 0 if passed
-                        };
-                        
-                        console.log('=== SAVING PERFORMANCE DEBUG ===');
-                        console.log('Performance data:', performanceData);
-                        
-                        fetch('../../../2be/save_performance.php', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                            body: `progressId=${encodeURIComponent(performanceData.progressId)}&accuracy=${encodeURIComponent(performanceData.accuracy)}&efficiency=${encodeURIComponent(performanceData.efficiency)}&readability=${encodeURIComponent(performanceData.readability)}&timeTaken=${encodeURIComponent(performanceData.timeTaken)}&success=${encodeURIComponent(performanceData.success)}&failed=${encodeURIComponent(performanceData.failed)}`
-                        }).then(perfResponse => {
-                            console.log('Save performance response status:', perfResponse.status);
-                            return perfResponse.json();
-                        }).then(perfData => {
-                            console.log('Save performance response data:', perfData);
-                        }).catch(perfErr => {
-                            console.error('Save performance network error:', perfErr);
+                    console.log('=== SAVING STORY PROGRESS DEBUG ===');
+                    console.log('Episode:', episodeNum);
+                    console.log('Language:', currentLanguage);
+                    console.log('Points:', points);
+                    console.log('Passed:', hasPassed);
+                    console.log('Code length:', code.length);
+                    
+                    const storyProgressData = {
+                        type: 'story',
+                        language: currentLanguage,
+                        chapter: 1, // Assuming chapter 1 for now
+                        episode: episodeNum,
+                        points: points,
+                        passed: hasPassed
+                    };
+                    
+                    fetch('../../../2be/save_story_progress.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `type=${encodeURIComponent(storyProgressData.type)}&language=${encodeURIComponent(storyProgressData.language)}&chapter=${encodeURIComponent(storyProgressData.chapter)}&episode=${encodeURIComponent(storyProgressData.episode)}&points=${encodeURIComponent(storyProgressData.points)}&passed=${encodeURIComponent(storyProgressData.passed)}`
+                    }).then(r => {
+                        console.log('Save story progress response status:', r.status);
+                        console.log('Save story progress response headers:', r.headers);
+                        return r.text().then(text => {
+                            console.log('Raw response text:', text);
+                            try {
+                                return JSON.parse(text);
+                            } catch (e) {
+                                console.error('Failed to parse JSON response:', e);
+                                console.error('Response text:', text);
+                                return { success: false, error: 'Invalid JSON response' };
+                            }
                         });
-                        console.log('=== END SAVING PERFORMANCE DEBUG ===');
-                    }
-                }).catch(err => {
-                    console.error('Save progress network error:', err);
-                });
-                console.log('=== END SAVING PROGRESS DEBUG ===');
+                    }).then(data => {
+                        console.log('Save story progress response data:', data);
+                        console.log('Story progress success:', data.success);
+                        console.log('Story progress ID:', data.progressId);
+                        
+                        // Save story performance data if progress was saved successfully
+                        if (data.success && data.progressId) {
+                            console.log('Proceeding to save story performance data...');
+                            const storyPerformanceData = {
+                                progressId: data.progressId,
+                                accuracy: hasPassed ? 40 : 0, // Simple accuracy based on pass/fail
+                                efficiency: hasPassed ? 10 : 0, // Simple efficiency based on pass/fail
+                                readability: hasPassed ? 30 : 0, // Simple readability based on pass/fail
+                                timeTaken: 0, // Story mode doesn't track time yet
+                                success: hasPassed ? 1 : 0,
+                                failed: hasPassed ? 0 : 1
+                            };
+                            
+                            console.log('=== SAVING STORY PERFORMANCE DEBUG ===');
+                            console.log('Story performance data:', storyPerformanceData);
+                            
+                            fetch('../../../2be/save_performance.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: `progressId=${encodeURIComponent(storyPerformanceData.progressId)}&accuracy=${encodeURIComponent(storyPerformanceData.accuracy)}&efficiency=${encodeURIComponent(storyPerformanceData.efficiency)}&readability=${encodeURIComponent(storyPerformanceData.readability)}&timeTaken=${encodeURIComponent(storyPerformanceData.timeTaken)}&success=${encodeURIComponent(storyPerformanceData.success)}&failed=${encodeURIComponent(storyPerformanceData.failed)}`
+                            }).then(perfResponse => {
+                                console.log('Save story performance response status:', perfResponse.status);
+                                return perfResponse.json();
+                            }).then(perfData => {
+                                console.log('Save story performance response data:', perfData);
+                                
+                                // STORY MODE: Award badge if user passed the episode challenge
+                                if (hasPassed) {
+                                    console.log('=== AWARDING BADGE FOR EPISODE ===');
+                                    console.log('Episode:', episodeNum);
+                                    console.log('Points:', points);
+                                    
+                                    // Award badge based on episode number
+                                    const badgeTier = `t${episodeNum}`;
+                                    const badgeName = `b${episodeNum}`;
+                                    
+                                    fetch('../../../2be/award_badge.php', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                        body: `tier=${encodeURIComponent(badgeTier)}&badgeName=${encodeURIComponent(badgeName)}`
+                                    }).then(badgeResponse => {
+                                        console.log('Award badge response status:', badgeResponse.status);
+                                        return badgeResponse.json();
+                                    }).then(badgeData => {
+                                        console.log('Award badge response data:', badgeData);
+                                        console.log('Badge awarded successfully for episode', episodeNum);
+                                        
+                                        // Display badge congratulations
+                                        displayBadgeCongratulations(episodeNum);
+                                    }).catch(badgeErr => {
+                                        console.error('Failed to award badge:', badgeErr);
+                                    });
+                                    console.log('=== END AWARDING BADGE FOR EPISODE ===');
+                                }
+                            }).catch(perfErr => {
+                                console.error('Save story performance network error:', perfErr);
+                            });
+                            console.log('=== END SAVING STORY PERFORMANCE DEBUG ===');
+                        } else {
+                            console.log('Story progress not saved successfully, skipping performance data save');
+                        }
+                    }).catch(err => {
+                        console.error('Save story progress network error:', err);
+                    });
+                    console.log('=== END SAVING STORY PROGRESS DEBUG ===');
+                } else {
+                    // CHALLENGE MODE: Save regular challenge progress
+                    const levelNum = parseInt(levelStr.replace('lev', ''), 10) || 1;
+                    
+                    console.log('=== SAVING CHALLENGE PROGRESS DEBUG ===');
+                    console.log('Level string:', levelStr);
+                    console.log('Level number:', levelNum);
+                    console.log('Difficulty:', difficulty);
+                    console.log('Points:', points);
+                    console.log('Code length:', code.length);
+                    
+                    fetch('../../../2be/save_challenge_progress.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `difficulty=${encodeURIComponent(difficulty)}&level=${encodeURIComponent(levelNum)}&points=${encodeURIComponent(points)}&code=${encodeURIComponent(code)}`
+                    }).then(r => {
+                        console.log('Save progress response status:', r.status);
+                        return r.json();
+                    }).then(data => {
+                        console.log('Save progress response data:', data);
+                        
+                        // Save performance data if progress was saved successfully
+                        if (data.success && data.progressId) {
+                            const performanceData = {
+                                progressId: data.progressId,
+                                accuracy: result.scoring.criteriaScores.accuracy || 0,
+                                efficiency: result.scoring.criteriaScores.efficiency || 0,
+                                readability: result.scoring.criteriaScores.readability || 0,
+                                timeTaken: result.scoring.criteriaScores.time || 0,
+                                success: points >= 80 ? 1 : 0, // 1 if passed (80+ points), 0 if failed
+                                failed: points < 80 ? 1 : 0   // 1 if failed (<80 points), 0 if passed
+                            };
+                            
+                            console.log('=== SAVING PERFORMANCE DEBUG ===');
+                            console.log('Performance data:', performanceData);
+                            
+                            fetch('../../../2be/save_performance.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: `progressId=${encodeURIComponent(performanceData.progressId)}&accuracy=${encodeURIComponent(performanceData.accuracy)}&efficiency=${encodeURIComponent(performanceData.efficiency)}&readability=${encodeURIComponent(performanceData.readability)}&timeTaken=${encodeURIComponent(performanceData.timeTaken)}&success=${encodeURIComponent(performanceData.success)}&failed=${encodeURIComponent(performanceData.failed)}`
+                            }).then(perfResponse => {
+                                console.log('Save performance response status:', perfResponse.status);
+                                return perfResponse.json();
+                            }).then(perfData => {
+                                console.log('Save performance response data:', perfData);
+                            }).catch(perfErr => {
+                                console.error('Save performance network error:', perfErr);
+                            });
+                            console.log('=== END SAVING PERFORMANCE DEBUG ===');
+                        }
+                    }).catch(err => {
+                        console.error('Save progress network error:', err);
+                    });
+                    console.log('=== END SAVING CHALLENGE PROGRESS DEBUG ===');
+                }
             } catch (e) {
                 console.error('Error saving progress:', e);
             }
@@ -581,30 +823,53 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
                 const apiError = typeof result === 'object' && result.apiError ? result.apiError : null;
                 const errors = typeof result === 'object' && result.errors ? result.errors : null;
                 
-                document.getElementById('geminiAiFeedback').textContent = feedback;
-                
-                // Show or hide error message
-                const errorDiv = document.getElementById('geminiApiError');
-                if (apiError) {
-                    let errorMessage = `⚠️ Gemini API Error. Using heuristic feedback.`;
-                    if (errors && errors.length > 0) {
-                        const triedModels = errors.map(e => e.model).join(', ');
-                        errorMessage += `\nTried models: ${triedModels}`;
-                        console.log('Models tried:', triedModels);
-                        console.log('Model errors:', errors);
-                    }
-                    errorDiv.textContent = errorMessage;
-                    console.log('API Error:', apiError);
-                    errorDiv.style.display = 'block';
+                // Update feedback display (exists in both story and challenge modes)
+                const feedbackDiv = document.getElementById('geminiAiFeedback');
+                if (feedbackDiv) {
+                    feedbackDiv.textContent = feedback;
                 } else {
-                    errorDiv.style.display = 'none';
+                    console.warn('geminiAiFeedback element not found');
+                }
+                
+                // Show or hide error message (only exists in challenge mode, optional in story mode)
+                const errorDiv = document.getElementById('geminiApiError');
+                if (errorDiv) {
+                    if (apiError) {
+                        let errorMessage = `⚠️ Gemini API Error. Using heuristic feedback.`;
+                        if (errors && errors.length > 0) {
+                            const triedModels = errors.map(e => e.model).join(', ');
+                            errorMessage += `\nTried models: ${triedModels}`;
+                            console.log('Models tried:', triedModels);
+                            console.log('Model errors:', errors);
+                        }
+                        errorDiv.textContent = errorMessage;
+                        console.log('API Error:', apiError);
+                        errorDiv.style.display = 'block';
+                    } else {
+                        errorDiv.style.display = 'none';
+                    }
+                } else if (apiError) {
+                    // Story mode: log error to console if error div doesn't exist
+                    console.warn('Gemini API Error (using heuristic feedback):', apiError);
+                    if (errors && errors.length > 0) {
+                        console.warn('Tried models:', errors.map(e => e.model).join(', '));
+                    }
                 }
             }).catch(error => {
                 console.error("Error getting Gemini feedback:", error);
-                document.getElementById('geminiAiFeedback').textContent = "Failed to load AI feedback.";
+                const feedbackDiv = document.getElementById('geminiAiFeedback');
+                if (feedbackDiv) {
+                    feedbackDiv.textContent = "Failed to load AI feedback.";
+                }
+                
                 const errorDiv = document.getElementById('geminiApiError');
-                errorDiv.textContent = `⚠️ Error: ${error.message || "Unknown error occurred"}`;
-                errorDiv.style.display = 'block';
+                if (errorDiv) {
+                    errorDiv.textContent = `⚠️ Error: ${error.message || "Unknown error occurred"}`;
+                    errorDiv.style.display = 'block';
+                } else {
+                    // Story mode: log error to console if error div doesn't exist
+                    console.error('Failed to load AI feedback:', error.message || "Unknown error occurred");
+                }
             });
         } else {
             // Handle cases where scoring might not be available
@@ -627,3 +892,38 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
         }
     }, 1500); // Simulate 1.5 seconds of analysis time
 });
+
+/**
+ * Function to display badge congratulations (STORY MODE ONLY)
+ * This function is called when a user passes an episode and earns a badge
+ * 
+ * @param {number} episodeNum - The episode number (1-7)
+ */
+function displayBadgeCongratulations(episodeNum) {
+    console.log('=== DISPLAYING BADGE CONGRATULATIONS ===');
+    console.log('Episode:', episodeNum);
+    
+    const badgeContainer = document.getElementById('badgeContainer');
+    const badgeImage = document.getElementById('badgeImage');
+    const badgeMessage = document.getElementById('badgeMessage');
+    
+    if (badgeContainer && badgeImage && badgeMessage) {
+        // Set badge image source
+        badgeImage.src = `../../assets/b${episodeNum}.png`;
+        badgeImage.alt = `Episode ${episodeNum} Badge`;
+        
+        // Set badge message
+        badgeMessage.textContent = `You've earned the Episode ${episodeNum} Badge!`;
+        
+        // Show badge container
+        badgeContainer.style.display = 'flex';
+        
+        console.log('Badge congratulations displayed for episode', episodeNum);
+    } else {
+        console.error('Badge display elements not found');
+    }
+    console.log('=== END DISPLAYING BADGE CONGRATULATIONS ===');
+}
+
+// Expose function to global scope (for story mode badge display)
+window.displayBadgeCongratulations = displayBadgeCongratulations;

@@ -13,6 +13,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const geminiAiFeedbackDiv = document.getElementById('geminiAiFeedback');
     const loadingAnimation = document.getElementById('loadingAnimation');
 
+    /**
+     * Detect if we're in Story Mode or Challenge Mode
+     * Story Mode: levels start with "ep" (ep1, ep2, etc.)
+     * Challenge Mode: levels start with "lev" (lev1, lev2, etc.)
+     * 
+     * This allows the same modalManager.js to work for both modes
+     */
+    function detectMode() {
+        try {
+            const selectedData = localStorage.getItem('selectedChallenge');
+            if (selectedData) {
+                const data = JSON.parse(selectedData);
+                if (data.level && data.level.startsWith('ep')) {
+                    return 'story';
+                }
+            }
+        } catch (e) {
+            console.warn('Could not detect mode, defaulting to challenge mode');
+        }
+        return 'challenge'; // Default to challenge mode
+    }
+
+    const isStoryMode = detectMode();
+
     const rubricsCriteria = {
         easy: {
             accuracy: {
@@ -86,7 +110,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get current difficulty from verification panel
         const difficultySpan = document.querySelector('#selectedDifficulty');
         const currentDifficulty = difficultySpan.textContent.toLowerCase();
-        const criteriaSet = rubricsCriteria[currentDifficulty];
+        
+        // STORY MODE: Force "easy" difficulty (episodes are always easy)
+        // CHALLENGE MODE: Use the actual difficulty from the panel
+        const effectiveDifficulty = isStoryMode ? 'easy' : currentDifficulty;
+        const criteriaSet = rubricsCriteria[effectiveDifficulty] || rubricsCriteria.easy;
 
         rubricsBody.innerHTML = '';
         Object.values(criteriaSet).forEach(item => {
@@ -116,12 +144,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update pass/fail status
         const passFailStatus = document.getElementById('passFailStatus');
         passFailStatus.className = `pass-fail-status ${hasPassed ? 'passed' : 'failed'}`;
-        passFailStatus.textContent = hasPassed ? 'PASSED!' : 'FAILED';
+        
+        // STORY MODE: Use emoji format (🎉 PASSED! / ❌ FAILED)
+        // CHALLENGE MODE: Use standard format (PASSED! / FAILED)
+        if (isStoryMode) {
+            passFailStatus.textContent = hasPassed ? 'PASSED!' : 'FAILED';
+        } else {
+            passFailStatus.textContent = hasPassed ? 'PASSED!' : 'FAILED';
+        }
         
         // Update criteria scores display
-        criteriaScoresDisplay.innerHTML = '';
         const currentDifficulty = document.querySelector('#selectedDifficulty')?.textContent.toLowerCase() || 'easy';
-        const currentRubrics = rubricsCriteria[currentDifficulty] || rubricsCriteria.easy;
+        
+        // STORY MODE: Always use "easy" difficulty for rubrics
+        // CHALLENGE MODE: Use the actual difficulty from the panel
+        const effectiveDifficulty = isStoryMode ? 'easy' : currentDifficulty;
+        const currentRubrics = rubricsCriteria[effectiveDifficulty] || rubricsCriteria.easy;
         
         for (const criterion in scoringData.criteriaScores) {
             const scoreItem = document.createElement('div');
@@ -183,7 +221,16 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = '../index.html';
     }
 
-    // Function to go to next level
+    /**
+     * Function to go to next level/episode
+     * 
+     * STORY MODE: Navigates to next episode page (ep1-ep7)
+     *   - Redirects to: ./{languageFolder}/{nextEpisode}/index.html
+     *   - Example: ./1j/ep2/index.html
+     * 
+     * CHALLENGE MODE: Reloads current page with next level (lev1-lev20)
+     *   - Updates localStorage and reloads page
+     */
     function goToNextLevel() {
         // Close the scoring modal
         scoringModal.style.display = 'none';
@@ -191,25 +238,76 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get current challenge data
         const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
         if (selectedData && selectedData.level) {
-            const currentLevelNumber = parseInt(selectedData.level.replace('lev', ''));
-            const nextLevelNumber = currentLevelNumber + 1;
-            const nextLevel = `lev${nextLevelNumber}`;
+            const currentLevel = selectedData.level;
             
-            // Check if next level exists (you might want to implement level validation)
-            // For now, we'll assume levels go up to a certain number
-            if (nextLevelNumber <= 10) { // Assuming max 10 levels, adjust as needed
-                // Update the selected challenge data
-                const updatedData = {
-                    ...selectedData,
-                    level: nextLevel
-                };
-                localStorage.setItem('selectedChallenge', JSON.stringify(updatedData));
+            // STORY MODE: Handle episode progression (ep1-ep7)
+            if (currentLevel.startsWith('ep')) {
+                const currentEpisodeNumber = parseInt(currentLevel.replace('ep', ''));
+                const nextEpisodeNumber = currentEpisodeNumber + 1;
+                const nextEpisode = `ep${nextEpisodeNumber}`;
                 
-                // Reload the page with the new level
-                window.location.reload();
+                // Check if next episode exists (episodes 1-7)
+                if (nextEpisodeNumber <= 7) {
+                    // Update the selected challenge data for next episode
+                    const updatedData = {
+                        ...selectedData,
+                        level: nextEpisode,
+                        timestamp: new Date().toISOString()
+                    };
+                    localStorage.setItem('selectedChallenge', JSON.stringify(updatedData));
+                    
+                    // Determine language folder dynamically
+                    const selectedLanguageSpan = document.getElementById('selectedLanguage');
+                    const currentLanguage = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
+                    let languageFolder;
+                    switch(currentLanguage.toLowerCase()) {
+                        case 'c++':
+                        case 'cpp':
+                            languageFolder = '2cP';
+                            break;
+                        case 'c#':
+                        case 'csharp':
+                            languageFolder = '3cS';
+                            break;
+                        case 'java':
+                        default:
+                            languageFolder = '1j';
+                            break;
+                    }
+                    
+                    // STORY MODE: Redirect to the next episode's story page
+                    window.location.href = `./${languageFolder}/${nextEpisode}/index.html`;
+                } else {
+                    // No more episodes, go to homepage
+                    alert('Congratulations! You have completed all available episodes!');
+                    window.location.href = '../index.html';
+                }
+            } 
+            // CHALLENGE MODE: Handle level progression (lev1-lev20)
+            else if (currentLevel.startsWith('lev')) {
+                const currentLevelNumber = parseInt(currentLevel.replace('lev', ''));
+                const nextLevelNumber = currentLevelNumber + 1;
+                const nextLevel = `lev${nextLevelNumber}`;
+                
+                // Check if next level exists (levels 1-20)
+                if (nextLevelNumber <= 20) { // Max 20 levels
+                    // Update the selected challenge data
+                    const updatedData = {
+                        ...selectedData,
+                        level: nextLevel
+                    };
+                    localStorage.setItem('selectedChallenge', JSON.stringify(updatedData));
+                    
+                    // CHALLENGE MODE: Reload the page with the new level
+                    window.location.reload();
+                } else {
+                    // No more levels, go to homepage
+                    alert('Congratulations! You have completed all available levels!');
+                    window.location.href = '../index.html';
+                }
             } else {
-                // No more levels, go to homepage
-                alert('Congratulations! You have completed all available levels!');
+                // Unknown level format, go to homepage
+                console.warn('Unknown level format:', currentLevel);
                 window.location.href = '../index.html';
             }
         } else {
@@ -218,13 +316,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Function to retry the current challenge
+    /**
+     * Function to retry the current challenge
+     * 
+     * STORY MODE: Uses iframe editor (setEditorCode)
+     * CHALLENGE MODE: Uses direct editor access (monacoEditor)
+     */
     function retryChallenge() {
         // Close the scoring modal
         scoringModal.style.display = 'none';
         
         // Clear the code editor content
-        if (window.monacoEditor) {
+        // STORY MODE: Uses iframe editor, so use setEditorCode
+        // CHALLENGE MODE: Uses direct editor access
+        if (isStoryMode && window.setEditorCode) {
+            // Story mode: iframe editor
+            window.setEditorCode('');
+        } else if (window.monacoEditor) {
+            // Challenge mode: direct editor
             window.monacoEditor.setValue('');
         }
         
@@ -300,7 +409,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const feedback = [];
         const analysis = scoringResult.analysis || {};
         const criteriaScores = scoringResult.criteriaScores || {};
-        const rubrics = rubricsCriteria[difficulty] || rubricsCriteria.easy;
+        
+        // STORY MODE: Always use "easy" rubrics
+        // CHALLENGE MODE: Use the actual difficulty
+        const effectiveDifficulty = isStoryMode ? 'easy' : difficulty;
+        const rubrics = rubricsCriteria[effectiveDifficulty] || rubricsCriteria.easy;
         
         // Analyze code patterns
         const hasComments = /\/\/|\/\*/.test(submittedCode);
@@ -501,8 +614,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return { feedback: heuristicFeedback, apiError: "Gemini API key not configured" };
         }
 
+        // STORY MODE: Always use "easy" difficulty in prompt
+        // CHALLENGE MODE: Use the actual difficulty
+        const effectiveDifficulty = isStoryMode ? 'easy' : difficulty;
+
         const prompt = `
-        You are an AI programming tutor. A student has submitted the following Java code for a '${difficulty}' level challenge:
+        You are an AI programming tutor. A student has submitted the following Java code for a '${effectiveDifficulty}' level challenge:
         
         Submitted Code:
         \`\`\`java
