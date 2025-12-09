@@ -7,6 +7,91 @@
     <link rel="stylesheet" href="../globalStyles/body.css">
     <link rel="stylesheet" href="../globalStyles/poly1-div.css">
     <link rel="stylesheet" href="../globalStyles/log-n-sign.css">
+    <style>
+        .password-guidelines {
+            display: none;
+            margin-top: 10px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 13px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .password-guidelines.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .guidelines-title {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .guidelines-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .guidelines-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.3s ease;
+        }
+
+        .guidelines-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .check-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            text-align: center;
+            line-height: 18px;
+            font-size: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .guidelines-list li.valid {
+            color: rgba(76, 175, 80, 0.9);
+        }
+
+        .guidelines-list li.valid .check-icon {
+            color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .guidelines-list li.invalid .check-icon {
+            color: #f44336;
+            background: rgba(244, 67, 54, 0.2);
+        }
+
+        .guidelines-list li.neutral .check-icon {
+            color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
 </head>
 <body>
     <img src="../assets/bg.png" class="bg-image-landscape" style="filter: blur(3px) brightness(0.3);">
@@ -43,6 +128,44 @@
                         <span class="show-password-toggle" onclick="togglePasswordVisibility('confirm-password')">👁️</span>
                     </div>
                     
+                    <div class="password-guidelines" id="passwordGuidelines">
+                        <p class="guidelines-title">Password Requirements:</p>
+                        <ul class="guidelines-list">
+                            <li id="guideline-length">
+                                <span class="check-icon">✗</span>
+                                <span>At least 4 characters</span>
+                            </li>
+                            <li id="guideline-uppercase">
+                                <span class="check-icon">✗</span>
+                                <span>Contains uppercase letter</span>
+                            </li>
+                            <li id="guideline-lowercase">
+                                <span class="check-icon">✗</span>
+                                <span>Contains lowercase letter</span>
+                            </li>
+                            <li id="guideline-number">
+                                <span class="check-icon">✗</span>
+                                <span>Contains number</span>
+                            </li>
+                            <li id="guideline-special">
+                                <span class="check-icon">✗</span>
+                                <span>Contains special character</span>
+                            </li>
+                            <li id="guideline-spaces">
+                                <span class="check-icon">✓</span>
+                                <span>No leading or trailing spaces</span>
+                            </li>
+                            <li id="guideline-weak">
+                                <span class="check-icon">✓</span>
+                                <span>Not a common password</span>
+                            </li>
+                            <li id="guideline-username">
+                                <span class="check-icon">✓</span>
+                                <span>Does not contain username</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
                     <div class="buttons">
                         <button type="submit" name="submit" value="signup" class="create-btn">
                             <!-- <img src="../assets/poly-button-black.png"> -->
@@ -61,6 +184,122 @@
     
     <script type="module">
         
+        // Password guidelines real-time checking
+        const passwordField = document.getElementById('password');
+        const confirmPasswordField = document.getElementById('confirm-password');
+        const usernameField = document.querySelector('input[name="username"]');
+        const guidelinesContainer = document.getElementById('passwordGuidelines');
+
+        // Show guidelines on focus of either password field
+        passwordField.addEventListener('focus', function() {
+            guidelinesContainer.classList.add('show');
+        });
+
+        confirmPasswordField.addEventListener('focus', function() {
+            guidelinesContainer.classList.add('show');
+        });
+
+        // Hide guidelines on blur (if both fields are empty)
+        passwordField.addEventListener('blur', function() {
+            // Keep guidelines visible if password has content or confirm password is focused
+            if (passwordField.value.length === 0 && document.activeElement !== confirmPasswordField) {
+                guidelinesContainer.classList.remove('show');
+            }
+        });
+
+        confirmPasswordField.addEventListener('blur', function() {
+            // Keep guidelines visible if password has content
+            if (passwordField.value.length === 0 && document.activeElement !== passwordField) {
+                guidelinesContainer.classList.remove('show');
+            }
+        });
+
+        // Real-time validation as user types in password field
+        passwordField.addEventListener('input', function() {
+            checkPasswordRequirements(passwordField.value, usernameField.value);
+        });
+
+        // Also check when username changes (for username-in-password check)
+        usernameField.addEventListener('input', function() {
+            if (passwordField.value.length > 0) {
+                checkPasswordRequirements(passwordField.value, usernameField.value);
+            }
+        });
+
+        function checkPasswordRequirements(password, username) {
+            // Check minimum length
+            const lengthValid = password.length >= 4;
+            updateGuideline('guideline-length', lengthValid);
+
+            // Check uppercase
+            const hasUppercase = /[A-Z]/.test(password);
+            updateGuideline('guideline-uppercase', hasUppercase);
+
+            // Check lowercase
+            const hasLowercase = /[a-z]/.test(password);
+            updateGuideline('guideline-lowercase', hasLowercase);
+
+            // Check number
+            const hasNumber = /\d/.test(password);
+            updateGuideline('guideline-number', hasNumber);
+
+            // Check special character
+            const hasSpecial = /[^A-Za-z0-9]/.test(password);
+            updateGuideline('guideline-special', hasSpecial);
+
+            // Check spaces (neutral if empty, valid if no leading/trailing spaces)
+            if (password.length === 0) {
+                updateGuideline('guideline-spaces', null);
+            } else {
+                const noSpaces = password === password.trim();
+                updateGuideline('guideline-spaces', noSpaces);
+            }
+
+            // Check weak passwords
+            if (password.length === 0) {
+                updateGuideline('guideline-weak', null);
+            } else {
+                const weakList = new Set([
+                    'password', 'password1', 'password123', 'passw0rd', 'admin', 'administrator',
+                    'letmein', 'qwerty', 'qwerty123', 'abc123', 'iloveyou', 'welcome', 'monkey',
+                    'dragon', 'football', 'baseball', '111111', '123456', '1234567', '12345678',
+                    '123456789', '1234567890', '000000', 'sunshine'
+                ]);
+                const lower = password.toLowerCase();
+                const isWeak = weakList.has(lower) || /password/.test(lower);
+                updateGuideline('guideline-weak', !isWeak);
+            }
+
+            // Check username in password
+            if (password.length === 0 || !username) {
+                updateGuideline('guideline-username', null);
+            } else {
+                const containsUsername = password.toLowerCase().includes(String(username).toLowerCase());
+                updateGuideline('guideline-username', !containsUsername);
+            }
+        }
+
+        function updateGuideline(guidelineId, isValid) {
+            const guideline = document.getElementById(guidelineId);
+            const icon = guideline.querySelector('.check-icon');
+            
+            // Remove all classes
+            guideline.classList.remove('valid', 'invalid', 'neutral');
+            
+            if (isValid === null) {
+                // Neutral state (empty or not applicable)
+                guideline.classList.add('neutral');
+                icon.textContent = '○';
+            } else if (isValid) {
+                // Valid state
+                guideline.classList.add('valid');
+                icon.textContent = '✓';
+            } else {
+                // Invalid state
+                guideline.classList.add('invalid');
+                icon.textContent = '✗';
+            }
+        }
 
         function validatePassword(password, username) {
             // Disallow leading or trailing spaces
