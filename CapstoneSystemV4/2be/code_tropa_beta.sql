@@ -56,7 +56,7 @@ INSERT INTO `assessments` (`id`, `user_id`, `test_type`, `language`, `answers`, 
 --
 
 CREATE TABLE `performance` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
   `progressId` int(11) NOT NULL,
   `accuracy` int(11) DEFAULT 0,
@@ -64,67 +64,104 @@ CREATE TABLE `performance` (
   `readability` int(11) DEFAULT 0,
   `timeTaken` int(11) DEFAULT 0,
   `success` int(11) DEFAULT 0,
-  `failed` int(11) DEFAULT 0
+  `failed` int(11) DEFAULT 0,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `performance`
 --
 
-INSERT INTO `performance` (`id`, `userId`, `progressId`, `accuracy`, `efficiency`, `readability`, `timeTaken`, `success`, `failed`) VALUES
-(1, 1, 1, 100, 100, 100, 0, 1, 0),
-(2, 2, 2, 88, 75, 80, 150, 1, 0),
-(3, 3, 3, 70, 65, 60, 200, 1, 1),
-(4, 4, 4, 85, 70, 75, 110, 1, 0),
-(5, 5, 5, 95, 90, 88, 95, 1, 0),
-(6, 1, 1, 100, 100, 100, 0, 1, 0),
-(7, 2, 2, 85, 75, 80, 140, 1, 0),
-(8, 3, 3, 88, 70, 78, 150, 1, 0),
-(9, 4, 4, 92, 85, 90, 100, 1, 0),
-(10, 5, 5, 80, 65, 70, 200, 1, 0),
-(13, 3, 8, 78, 66, 70, 190, 1, 0),
-(14, 4, 9, 88, 77, 80, 170, 1, 0),
-(15, 5, 10, 70, 55, 60, 220, 0, 1),
-(18, 8, 8, 70, 60, 65, 200, 0, 1),
-(19, 9, 9, 92, 88, 90, 110, 1, 0),
-(20, 10, 10, 78, 70, 72, 180, 1, 1),
-(21, 11, 11, 82, 77, 85, 160, 1, 0),
-(23, 13, 13, 80, 70, 75, 210, 1, 1),
-(24, 14, 14, 88, 85, 87, 130, 1, 0),
-(25, 15, 15, 90, 89, 88, 100, 1, 0),
-(26, 16, 27, 0, 0, 0, 0, 0, 0),
-(27, 16, 28, 0, 0, 0, 0, 0, 0),
-(32, 1, 36, 11, 10, 10, 20, 0, 1),
-(33, 1, 37, 0, 0, 0, 0, 0, 1),
-(46, 25, 50, 0, 0, 0, 0, 0, 0),
-(47, 25, 51, 0, 0, 0, 0, 0, 0),
-(48, 1, 52, 0, 0, 0, 15, 0, 1),
-(49, 1, 53, 0, 0, 0, 15, 0, 1),
-(50, 1, 54, 0, 0, 0, 15, 0, 1),
-(51, 1, 55, 40, 10, 14, 20, 1, 0),
-(52, 1, 56, 37, 10, 15, 20, 1, 0),
-(53, 1, 57, 0, 0, 0, 0, 0, 1),
-(54, 1, 58, 40, 10, 30, 0, 1, 0),
-(55, 1, 65, 0, 0, 0, 20, 0, 1),
-(56, 1, 66, 0, 0, 0, 20, 0, 1),
-(57, 26, 67, 0, 0, 0, 0, 0, 0),
-(58, 26, 68, 0, 0, 0, 0, 0, 0),
-(59, 26, 69, 5, 0, 0, 15, 0, 1),
-(60, 26, 70, 19, 0, 0, 20, 0, 1),
-(61, 1, 71, 0, 0, 0, 0, 0, 1),
-(62, 1, 72, 2, 10, 9, 20, 0, 1),
-(63, 1, 73, 2, 10, 9, 20, 0, 1),
-(64, 1, 74, 2, 25, 7, 20, 0, 1),
-(65, 1, 75, 2, 25, 7, 20, 0, 1),
-(66, 1, 76, 2, 25, 7, 20, 0, 1),
-(67, 1, 77, 2, 25, 7, 20, 0, 1),
-(68, 1, 78, 2, 25, 11, 20, 0, 1),
-(69, 1, 79, 5, 25, 7, 20, 0, 1),
-(70, 1, 80, 30, 25, 17, 20, 1, 0),
-(71, 1, 81, 0, 0, 0, 0, 0, 1),
-(72, 1, 82, 5, 25, 7, 20, 0, 1),
-(73, 1, 83, 5, 25, 7, 20, 0, 1),
-(74, 1, 84, 0, 0, 0, 0, 0, 1);
+ALTER TABLE `performance` AUTO_INCREMENT = 1;
+
+INSERT INTO `performance` (`userId`, `progressId`, `accuracy`, `efficiency`, `readability`, `timeTaken`, `success`, `failed`) VALUES
+-- User 1 (asd) - Java Story Mode Performance (Progress IDs 1-7)
+(1, 1, 95, 92, 98, 120, 1, 0),
+(1, 2, 88, 85, 91, 135, 1, 0),
+(1, 3, 92, 90, 94, 150, 1, 0),
+(1, 4, 85, 82, 88, 165, 1, 0),
+(1, 5, 90, 88, 92, 180, 1, 0),
+(1, 6, 87, 85, 89, 195, 1, 0),
+(1, 7, 93, 91, 95, 210, 1, 0),
+-- User 1 (asd) - C++ Story Mode Performance (Progress IDs 8-14)
+(1, 8, 95, 92, 98, 122, 1, 0),
+(1, 9, 88, 85, 91, 137, 1, 0),
+(1, 10, 92, 90, 94, 152, 1, 0),
+(1, 11, 85, 82, 88, 167, 1, 0),
+(1, 12, 90, 88, 92, 182, 1, 0),
+(1, 13, 87, 85, 89, 197, 1, 0),
+(1, 14, 93, 91, 95, 212, 1, 0),
+-- User 1 (asd) - C# Story Mode Performance (Progress IDs 15-21)
+(1, 15, 95, 92, 98, 124, 1, 0),
+(1, 16, 88, 85, 91, 139, 1, 0),
+(1, 17, 92, 90, 94, 154, 1, 0),
+(1, 18, 85, 82, 88, 169, 1, 0),
+(1, 19, 90, 88, 92, 184, 1, 0),
+(1, 20, 87, 85, 89, 199, 1, 0),
+(1, 21, 93, 91, 95, 214, 1, 0),
+-- User 1 (asd) - Java Challenge Mode Performance (Progress IDs 22-41)
+(1, 22, 95, 93, 97, 110, 1, 0),
+(1, 23, 88, 86, 90, 125, 1, 0),
+(1, 24, 92, 90, 94, 140, 1, 0),
+(1, 25, 85, 83, 87, 155, 1, 0),
+(1, 26, 90, 88, 92, 170, 1, 0),
+(1, 27, 87, 85, 89, 185, 1, 0),
+(1, 28, 89, 87, 91, 200, 1, 0),
+(1, 29, 86, 84, 88, 215, 1, 0),
+(1, 30, 91, 89, 93, 230, 1, 0),
+(1, 31, 84, 82, 86, 245, 1, 0),
+(1, 32, 88, 86, 90, 260, 1, 0),
+(1, 33, 90, 88, 92, 275, 1, 0),
+(1, 34, 85, 83, 87, 290, 1, 0),
+(1, 35, 87, 85, 89, 305, 1, 0),
+(1, 36, 89, 87, 91, 320, 1, 0),
+(1, 37, 86, 84, 88, 335, 1, 0),
+(1, 38, 92, 90, 94, 350, 1, 0),
+(1, 39, 88, 86, 90, 365, 1, 0),
+(1, 40, 90, 88, 92, 380, 1, 0),
+(1, 41, 93, 91, 95, 395, 1, 0),
+-- User 1 (asd) - C++ Challenge Mode Performance (Progress IDs 42-61)
+(1, 42, 95, 93, 97, 112, 1, 0),
+(1, 43, 88, 86, 90, 127, 1, 0),
+(1, 44, 92, 90, 94, 142, 1, 0),
+(1, 45, 85, 83, 87, 157, 1, 0),
+(1, 46, 90, 88, 92, 172, 1, 0),
+(1, 47, 87, 85, 89, 187, 1, 0),
+(1, 48, 89, 87, 91, 202, 1, 0),
+(1, 49, 86, 84, 88, 217, 1, 0),
+(1, 50, 91, 89, 93, 232, 1, 0),
+(1, 51, 84, 82, 86, 247, 1, 0),
+(1, 52, 88, 86, 90, 262, 1, 0),
+(1, 53, 90, 88, 92, 277, 1, 0),
+(1, 54, 85, 83, 87, 292, 1, 0),
+(1, 55, 87, 85, 89, 307, 1, 0),
+(1, 56, 89, 87, 91, 322, 1, 0),
+(1, 57, 86, 84, 88, 337, 1, 0),
+(1, 58, 92, 90, 94, 352, 1, 0),
+(1, 59, 88, 86, 90, 367, 1, 0),
+(1, 60, 90, 88, 92, 382, 1, 0),
+(1, 61, 93, 91, 95, 397, 1, 0),
+-- User 1 (asd) - C# Challenge Mode Performance (Progress IDs 62-81)
+(1, 62, 95, 93, 97, 114, 1, 0),
+(1, 63, 88, 86, 90, 129, 1, 0),
+(1, 64, 92, 90, 94, 144, 1, 0),
+(1, 65, 85, 83, 87, 159, 1, 0),
+(1, 66, 90, 88, 92, 174, 1, 0),
+(1, 67, 87, 85, 89, 189, 1, 0),
+(1, 68, 89, 87, 91, 204, 1, 0),
+(1, 69, 86, 84, 88, 219, 1, 0),
+(1, 70, 91, 89, 93, 234, 1, 0),
+(1, 71, 84, 82, 86, 249, 1, 0),
+(1, 72, 88, 86, 90, 264, 1, 0),
+(1, 73, 90, 88, 92, 279, 1, 0),
+(1, 74, 85, 83, 87, 294, 1, 0),
+(1, 75, 87, 85, 89, 309, 1, 0),
+(1, 76, 89, 87, 91, 324, 1, 0),
+(1, 77, 86, 84, 88, 339, 1, 0),
+(1, 78, 92, 90, 94, 354, 1, 0),
+(1, 79, 88, 86, 90, 369, 1, 0),
+(1, 80, 90, 88, 92, 384, 1, 0),
+(1, 81, 93, 91, 95, 399, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -133,7 +170,7 @@ INSERT INTO `performance` (`id`, `userId`, `progressId`, `accuracy`, `efficiency
 --
 
 CREATE TABLE `progress` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
   `type` enum('story','challenge') NOT NULL,
   `language` enum('java','c++','c#') NOT NULL,
@@ -142,12 +179,15 @@ CREATE TABLE `progress` (
   `difficulty` enum('easy','medium','hard') DEFAULT NULL,
   `level` int(11) DEFAULT NULL,
   `points` int(11) DEFAULT 0,
-  `code` text DEFAULT NULL
+  `code` text DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `progress`
 --
+
+ALTER TABLE `progress` AUTO_INCREMENT = 1;
 
 INSERT INTO `progress` (`userId`, `type`, `language`, `chapter`, `episode`, `difficulty`, `level`, `points`, `code`) VALUES
 -- User 1 (asd) - Java Story Mode: All 7 episodes completed
@@ -412,7 +452,6 @@ ALTER TABLE `assessments`
 -- Indexes for table `performance`
 --
 ALTER TABLE `performance`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `userId` (`userId`),
   ADD KEY `progressId` (`progressId`);
 
@@ -420,7 +459,6 @@ ALTER TABLE `performance`
 -- Indexes for table `progress`
 --
 ALTER TABLE `progress`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `userId` (`userId`);
 
 --
@@ -458,13 +496,13 @@ ALTER TABLE `assessments`
 -- AUTO_INCREMENT for table `performance`
 --
 ALTER TABLE `performance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT for table `progress`
 --
 ALTER TABLE `progress`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT for table `rewards`

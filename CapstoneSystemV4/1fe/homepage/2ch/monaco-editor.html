@@ -19,6 +19,47 @@
             width: 100%;
             height: 100%;
         }
+        .anti-cheat-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            max-width: 350px;
+            animation: slideIn 0.3s ease-out;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .anti-cheat-notification .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .anti-cheat-notification .notification-title::before {
+            content: "⚠️";
+            font-size: 18px;
+        }
+        .anti-cheat-notification .notification-message {
+            font-size: 13px;
+            opacity: 0.95;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
     </style>
     <!-- Monaco Editor script -->
     <script src="../../../../node_modules/monaco-editor/min/vs/loader.js"></script>
@@ -90,6 +131,542 @@
         let editor = null;
         let monacoInstance = null;
 
+        // ================================
+        // ANTI-CHEAT NOTIFICATION SYSTEM (Shared)
+        // ================================
+        const AntiCheatNotification = {
+            showNotification: function(title, message, type = 'warning') {
+                // Remove existing notification if any
+                const existing = document.querySelector('.anti-cheat-notification');
+                if (existing) {
+                    existing.remove();
+                }
+                
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = 'anti-cheat-notification';
+                notification.innerHTML = `
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideIn 0.3s ease-out reverse';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 5000);
+            },
+            
+            sendWarning: function(type, message, data = {}) {
+                window.parent.postMessage({
+                    type: 'anti-cheat-warning',
+                    warning: {
+                        type: type,
+                        message: message,
+                        timestamp: Date.now(),
+                        ...data
+                    }
+                }, '*');
+            }
+        };
+
+        // ================================
+        // COPY-PASTE DETECTION SYSTEM
+        // ================================
+        const CopyPasteDetector = {
+            config: {
+                // Conservative thresholds to minimize false positives
+                // Only detect very large code blocks (likely full solutions)
+                MIN_PASTE_SIZE: 200,       // Minimum characters (200 chars = ~40-50 lines of code)
+                MIN_LINES: 15,              // Minimum lines to consider as code block
+                INSTANT_PASTE_TIME: 50,    // If added in <50ms, definitely a paste
+                FAST_PASTE_TIME: 200,      // If added in <200ms, likely a paste
+                LARGE_PASTE_SIZE: 300,     // Very large paste threshold (300+ chars = substantial solution)
+                LARGE_PASTE_TIME: 500,     // Even large pastes should be fast
+                MAX_PASTES_BEFORE_WARNING: 1 // Allow 1 paste before warning (grace period)
+            },
+            
+            state: {
+                lastCharCount: 0,
+                lastChangeTime: null,
+                warnings: [],
+                pasteCount: 0,              // Track number of pastes (for grace period)
+                lastPasteTime: null         // Track when last paste occurred
+            },
+            
+            // Show notification (using shared system)
+            showNotification: function(message) {
+                AntiCheatNotification.showNotification('Copy-Paste Detected', message);
+            },
+            
+            // Count lines in text
+            countLines: function(text) {
+                if (!text) return 0;
+                return (text.match(/\n/g) || []).length + 1;
+            },
+            
+            // Check if text looks like a code block (has structure)
+            isCodeBlock: function(text) {
+                if (!text || text.length < this.config.MIN_PASTE_SIZE) return false;
+                
+                const lines = this.countLines(text);
+                const hasMultipleLines = lines >= this.config.MIN_LINES;
+                
+                // Check for code structure indicators
+                const hasClass = /(public|private|protected)?\s*(class|interface|enum)\s+\w+/.test(text);
+                const hasMethod = /(public|private|protected)?\s*(static)?\s*\w+\s+\w+\s*\(/.test(text);
+                const hasBrackets = (text.match(/[{}]/g) || []).length >= 2;
+                const hasSemicolons = (text.match(/;/g) || []).length >= 3;
+                
+                // Consider it a code block if it has structure AND multiple lines
+                return hasMultipleLines && (hasClass || hasMethod || (hasBrackets && hasSemicolons));
+            },
+            
+            // Detect copy-paste
+            detectPaste: function(currentCharCount, timeSinceLastChange, changeEvent, pasteKeyDetected) {
+                const charsAdded = currentCharCount - this.state.lastCharCount;
+                
+                // Only check for additions (not deletions)
+                if (charsAdded <= 0) {
+                    return false;
+                }
+                
+                // Get the pasted text to analyze
+                let pastedText = '';
+                if (changeEvent && changeEvent.changes && changeEvent.changes.length > 0) {
+                    pastedText = changeEvent.changes.map(c => c.text || '').join('');
+                }
+                
+                // If we don't have pasted text from change event, estimate from character count
+                // (We can't access editor here, so we'll use the change event data)
+                if (!pastedText && charsAdded > 0) {
+                    // Estimate: assume it's the added portion
+                    pastedText = 'x'.repeat(Math.min(charsAdded, 500)); // Placeholder for analysis
+                }
+                
+                // Check if it's a substantial code block
+                const isSubstantialBlock = charsAdded >= this.config.MIN_PASTE_SIZE;
+                const isCodeBlock = this.isCodeBlock(pastedText);
+                const lines = this.countLines(pastedText);
+                
+                // Method 0: Direct paste key detection - only for very large code blocks with structure
+                if (pasteKeyDetected && isSubstantialBlock) {
+                    // Check if it looks like a code block (not just random text)
+                    if (isCodeBlock || charsAdded >= this.config.LARGE_PASTE_SIZE) {
+                        // Grace period: allow first paste
+                        this.state.pasteCount++;
+                        if (this.state.pasteCount <= this.config.MAX_PASTES_BEFORE_WARNING) {
+                            console.log('[Copy-Paste Detector] Paste detected but within grace period:', this.state.pasteCount);
+                            this.state.lastPasteTime = Date.now();
+                            return false; // Don't warn yet
+                        }
+                        
+                        const reason = `Large code block paste detected (${charsAdded} characters, ${lines} lines)`;
+                        console.warn('[Copy-Paste Detector] ⚠️ CODE BLOCK PASTE DETECTED:', reason);
+                        this.showNotification(reason);
+                        AntiCheatNotification.sendWarning('copy-paste', reason, {
+                            charsAdded: charsAdded,
+                            lines: lines,
+                            timeTaken: timeSinceLastChange
+                        });
+                        return true;
+                    }
+                }
+                
+                // Check if this is a paste operation using Monaco's change event
+                // Monaco paste operations typically have multiple changes in a single event
+                let isLikelyPaste = false;
+                if (changeEvent && changeEvent.changes) {
+                    // If multiple changes in one event, it's likely a paste
+                    if (changeEvent.changes.length > 1) {
+                        isLikelyPaste = true;
+                    }
+                    // Or if a single change adds a lot of text
+                    else if (changeEvent.changes.length === 1) {
+                        const change = changeEvent.changes[0];
+                        const changeText = change.text || '';
+                        // If the change adds many lines or characters at once
+                        if (changeText.length >= this.config.MIN_PASTE_SIZE) {
+                            isLikelyPaste = true;
+                        }
+                    }
+                }
+                
+                // Log for debugging
+                console.log('[Copy-Paste Detector] Change detected:', {
+                    charsAdded: charsAdded,
+                    timeSinceLastChange: timeSinceLastChange + 'ms',
+                    currentCharCount: currentCharCount,
+                    changeCount: changeEvent?.changes?.length || 0,
+                    isLikelyPaste: isLikelyPaste
+                });
+                
+                // Detection logic
+                let isPaste = false;
+                let reason = '';
+                
+                // Method 1: Use Monaco's change event structure - only for substantial code blocks with structure
+                if (isLikelyPaste && isSubstantialBlock && (isCodeBlock || charsAdded >= this.config.LARGE_PASTE_SIZE)) {
+                    // Grace period check - allow first paste
+                    this.state.pasteCount++;
+                    if (this.state.pasteCount <= this.config.MAX_PASTES_BEFORE_WARNING) {
+                        console.log('[Copy-Paste Detector] Paste detected but within grace period:', this.state.pasteCount);
+                        this.state.lastPasteTime = Date.now();
+                        return false;
+                    }
+                    
+                    isPaste = true;
+                    reason = `Large code block paste detected (${charsAdded} characters, ${lines} lines)`;
+                }
+                // Method 2: Time-based detection (fallback) - only for very large blocks (300+ chars)
+                // Case 1: Instant paste - very large code block added instantly
+                else if (charsAdded >= this.config.LARGE_PASTE_SIZE && timeSinceLastChange < this.config.INSTANT_PASTE_TIME) {
+                    this.state.pasteCount++;
+                    if (this.state.pasteCount <= this.config.MAX_PASTES_BEFORE_WARNING) {
+                        console.log('[Copy-Paste Detector] Large paste detected but within grace period');
+                        return false;
+                    }
+                    isPaste = true;
+                    reason = `Very large code block paste detected (${charsAdded} characters added instantly)`;
+                }
+                // Case 2: Fast paste - very large code block added quickly
+                else if (charsAdded >= this.config.LARGE_PASTE_SIZE && timeSinceLastChange < this.config.FAST_PASTE_TIME) {
+                    this.state.pasteCount++;
+                    if (this.state.pasteCount <= this.config.MAX_PASTES_BEFORE_WARNING) {
+                        console.log('[Copy-Paste Detector] Large paste detected but within grace period');
+                        return false;
+                    }
+                    isPaste = true;
+                    reason = `Very large code block paste detected (${charsAdded} characters added very quickly)`;
+                }
+                
+                if (isPaste) {
+                    console.warn('[Copy-Paste Detector] ⚠️ PASTE DETECTED:', reason);
+                    this.showNotification(reason);
+                    AntiCheatNotification.sendWarning('copy-paste', reason, {
+                        charsAdded: charsAdded,
+                        timeTaken: timeSinceLastChange
+                    });
+                    return true;
+                }
+                
+                return false;
+            },
+            
+            // Reset detector
+            reset: function(initialCharCount) {
+                this.state.lastCharCount = initialCharCount || 0;
+                this.state.lastChangeTime = Date.now();
+                this.state.warnings = [];
+                this.state.pasteCount = 0;
+                this.state.lastPasteTime = null;
+                console.log('[Copy-Paste Detector] Reset with initial char count:', initialCharCount);
+            }
+        };
+
+        // ================================
+        // FAST SUBMISSION DETECTION SYSTEM
+        // ================================
+        const FastSubmissionDetector = {
+            config: {
+                // Minimum time thresholds (in milliseconds)
+                MIN_SUBMISSION_TIME_EASY: 30000,      // 30 seconds for easy challenges
+                MIN_SUBMISSION_TIME_MEDIUM: 60000,   // 60 seconds for medium challenges
+                MIN_SUBMISSION_TIME_HARD: 90000,      // 90 seconds for hard challenges
+                SUSPICIOUS_SUBMISSION_TIME: 15000,    // 15 seconds is always suspicious
+                VERY_SUSPICIOUS_TIME: 10000            // 10 seconds is very suspicious
+            },
+            
+            state: {
+                challengeStartTime: null,            // When challenge/coding session started
+                firstCodeChangeTime: null,            // When user first started coding
+                lastSubmissionTime: null,             // Last submission timestamp
+                submissionCount: 0,                   // Number of submissions
+                warnings: []
+            },
+            
+            // Initialize challenge timing
+            startChallenge: function() {
+                this.state.challengeStartTime = Date.now();
+                this.state.firstCodeChangeTime = null;
+                this.state.lastSubmissionTime = null;
+                this.state.submissionCount = 0;
+                console.log('[Fast Submission Detector] Challenge started at:', new Date(this.state.challengeStartTime));
+            },
+            
+            // Record first code change (when user actually starts coding)
+            recordFirstCodeChange: function() {
+                if (!this.state.firstCodeChangeTime) {
+                    this.state.firstCodeChangeTime = Date.now();
+                    console.log('[Fast Submission Detector] First code change at:', new Date(this.state.firstCodeChangeTime));
+                }
+            },
+            
+            // Check submission time and detect fast submissions
+            checkSubmission: function(difficulty = 'easy') {
+                const now = Date.now();
+                const timeSinceStart = this.state.challengeStartTime ? now - this.state.challengeStartTime : 0;
+                const timeSinceFirstCode = this.state.firstCodeChangeTime ? now - this.state.firstCodeChangeTime : timeSinceStart;
+                
+                // Normalize difficulty value (handle variations)
+                const normalizedDifficulty = difficulty ? difficulty.toLowerCase().trim() : 'easy';
+                
+                // Get minimum time based on difficulty
+                let minTime = this.config.MIN_SUBMISSION_TIME_EASY;
+                let difficultyLabel = 'easy';
+                
+                if (normalizedDifficulty === 'medium' || normalizedDifficulty === 'average') {
+                    minTime = this.config.MIN_SUBMISSION_TIME_MEDIUM;
+                    difficultyLabel = 'medium/average';
+                } else if (normalizedDifficulty === 'hard' || normalizedDifficulty === 'difficult') {
+                    minTime = this.config.MIN_SUBMISSION_TIME_HARD;
+                    difficultyLabel = 'hard/difficult';
+                } else {
+                    difficultyLabel = 'easy';
+                }
+                
+                this.state.submissionCount++;
+                this.state.lastSubmissionTime = now;
+                
+                console.log('[Fast Submission Detector] Submission check:', {
+                    timeSinceStart: Math.round(timeSinceStart / 1000) + 's',
+                    timeSinceFirstCode: Math.round(timeSinceFirstCode / 1000) + 's',
+                    minTime: Math.round(minTime / 1000) + 's',
+                    difficulty: normalizedDifficulty,
+                    difficultyLabel: difficultyLabel,
+                    originalDifficulty: difficulty,
+                    submissionCount: this.state.submissionCount
+                });
+                
+                let isSuspicious = false;
+                let reason = '';
+                let severity = 'warning';
+                
+                // Detection 1: Very suspicious - submitted in less than 10 seconds
+                if (timeSinceFirstCode < this.config.VERY_SUSPICIOUS_TIME && timeSinceFirstCode > 0) {
+                    isSuspicious = true;
+                    severity = 'severe';
+                    reason = `Solution submitted extremely quickly (${Math.round(timeSinceFirstCode / 1000)}s). This suggests copy-paste behavior.`;
+                }
+                // Detection 2: Suspicious - submitted in less than 15 seconds
+                else if (timeSinceFirstCode < this.config.SUSPICIOUS_SUBMISSION_TIME && timeSinceFirstCode > 0) {
+                    isSuspicious = true;
+                    severity = 'severe';
+                    reason = `Solution submitted very quickly (${Math.round(timeSinceFirstCode / 1000)}s). Minimum expected time: ${Math.round(minTime / 1000)}s`;
+                }
+                // Detection 3: Fast submission - submitted before minimum time
+                else if (timeSinceFirstCode < minTime && timeSinceFirstCode > 0) {
+                    isSuspicious = true;
+                    reason = `Solution submitted quickly (${Math.round(timeSinceFirstCode / 1000)}s). Expected minimum time: ${Math.round(minTime / 1000)}s for ${difficultyLabel} difficulty`;
+                }
+                // Detection 4: Submitted immediately after start (no coding time)
+                else if (timeSinceStart < 5000 && !this.state.firstCodeChangeTime) {
+                    isSuspicious = true;
+                    severity = 'severe';
+                    reason = `Solution submitted immediately (${Math.round(timeSinceStart / 1000)}s) without any coding activity detected`;
+                }
+                
+                if (isSuspicious) {
+                    // Check if we already warned recently (avoid spam)
+                    const recentWarning = this.state.warnings.find(w => 
+                        (Date.now() - w.timestamp) < 5000 // Within last 5 seconds
+                    );
+                    
+                    if (!recentWarning) {
+                        console.warn('[Fast Submission Detector] ⚠️ FAST SUBMISSION DETECTED:', reason);
+                        AntiCheatNotification.showNotification(
+                            severity === 'severe' ? 'Fast Submission Detected' : 'Fast Submission Warning',
+                            reason
+                        );
+                        AntiCheatNotification.sendWarning('fast-submission', reason, {
+                            timeSinceStart: timeSinceStart,
+                            timeSinceFirstCode: timeSinceFirstCode,
+                            minExpectedTime: minTime,
+                            difficulty: normalizedDifficulty,
+                            difficultyLabel: difficultyLabel,
+                            originalDifficulty: difficulty,
+                            submissionCount: this.state.submissionCount,
+                            severity: severity
+                        });
+                        
+                        this.state.warnings.push({
+                            type: 'fast-submission',
+                            message: reason,
+                            timestamp: Date.now(),
+                            severity: severity
+                        });
+                    }
+                    
+                    return {
+                        isSuspicious: true,
+                        reason: reason,
+                        severity: severity,
+                        timeSinceStart: timeSinceStart,
+                        timeSinceFirstCode: timeSinceFirstCode
+                    };
+                }
+                
+                return {
+                    isSuspicious: false,
+                    timeSinceStart: timeSinceStart,
+                    timeSinceFirstCode: timeSinceFirstCode
+                };
+            },
+            
+            // Reset detector
+            reset: function() {
+                this.state.challengeStartTime = Date.now();
+                this.state.firstCodeChangeTime = null;
+                this.state.lastSubmissionTime = null;
+                this.state.submissionCount = 0;
+                this.state.warnings = [];
+                console.log('[Fast Submission Detector] Reset - challenge started');
+            }
+        };
+
+        // ================================
+        // FAST TYPING DETECTION SYSTEM
+        // ================================
+        const FastTypingDetector = {
+            config: {
+                // Typing speed thresholds
+                MIN_KEY_INTERVAL: 15,          // Minimum time between keystrokes (15ms = ~67 keystrokes/sec, very fast)
+                SUSPICIOUS_INTERVAL: 25,        // Suspiciously fast (25ms = ~40 keystrokes/sec)
+                BURST_THRESHOLD: 5,             // Number of fast keystrokes in a row to trigger warning
+                SUSTAINED_SPEED_THRESHOLD: 8,  // Number of fast keystrokes in recent history
+                RECENT_HISTORY_SIZE: 15,        // Track last 15 keystrokes for analysis
+                MAX_HUMAN_SPEED: 12             // Maximum reasonable keystrokes per second (12 keys/sec = 720 WPM)
+            },
+            
+            state: {
+                keystrokeIntervals: [],         // Array of intervals between keystrokes
+                lastKeystrokeTime: null,       // Timestamp of last keystroke
+                fastKeystrokeCount: 0,         // Count of consecutive fast keystrokes
+                warnings: []
+            },
+            
+            // Record a keystroke interval
+            recordKeystroke: function(interval) {
+                if (interval <= 0) return; // Skip invalid intervals
+                
+                this.state.keystrokeIntervals.push(interval);
+                
+                // Keep only recent history
+                if (this.state.keystrokeIntervals.length > this.config.RECENT_HISTORY_SIZE) {
+                    this.state.keystrokeIntervals.shift();
+                }
+                
+                // Check if this is a fast keystroke
+                const isFast = interval < this.config.MIN_KEY_INTERVAL;
+                const isSuspicious = interval < this.config.SUSPICIOUS_INTERVAL;
+                
+                if (isFast) {
+                    this.state.fastKeystrokeCount++;
+                } else {
+                    // Reset counter if not fast (allows for occasional fast typing)
+                    if (this.state.fastKeystrokeCount > 0) {
+                        this.state.fastKeystrokeCount = Math.max(0, this.state.fastKeystrokeCount - 1);
+                    }
+                }
+                
+                // Log for debugging
+                console.log('[Fast Typing Detector] Keystroke recorded:', {
+                    interval: interval + 'ms',
+                    isFast: isFast,
+                    isSuspicious: isSuspicious,
+                    fastCount: this.state.fastKeystrokeCount,
+                    avgInterval: this.getAverageInterval(),
+                    speed: this.calculateTypingSpeed(interval)
+                });
+                
+                // Analyze for suspicious patterns
+                this.analyzeTypingPattern();
+            },
+            
+            // Calculate typing speed (keystrokes per second)
+            calculateTypingSpeed: function(interval) {
+                if (interval <= 0) return 0;
+                return Math.round(1000 / interval); // keystrokes per second
+            },
+            
+            // Get average interval from recent history
+            getAverageInterval: function() {
+                if (this.state.keystrokeIntervals.length === 0) return 0;
+                const sum = this.state.keystrokeIntervals.reduce((a, b) => a + b, 0);
+                return Math.round(sum / this.state.keystrokeIntervals.length);
+            },
+            
+            // Analyze typing patterns for suspicious behavior
+            analyzeTypingPattern: function() {
+                if (this.state.keystrokeIntervals.length < 3) return; // Need at least 3 keystrokes
+                
+                const recent = this.state.keystrokeIntervals.slice(-this.config.RECENT_HISTORY_SIZE);
+                const fastKeystrokes = recent.filter(interval => interval < this.config.MIN_KEY_INTERVAL);
+                const suspiciousKeystrokes = recent.filter(interval => interval < this.config.SUSPICIOUS_INTERVAL);
+                
+                let isSuspicious = false;
+                let reason = '';
+                
+                // Detection 1: Burst of extremely fast keystrokes
+                if (this.state.fastKeystrokeCount >= this.config.BURST_THRESHOLD) {
+                    isSuspicious = true;
+                    reason = `Burst of unnaturally fast typing detected (${this.state.fastKeystrokeCount} keystrokes < ${this.config.MIN_KEY_INTERVAL}ms each)`;
+                }
+                // Detection 2: Sustained high speed
+                else if (fastKeystrokes.length >= this.config.SUSTAINED_SPEED_THRESHOLD) {
+                    const avgInterval = this.getAverageInterval();
+                    const avgSpeed = this.calculateTypingSpeed(avgInterval);
+                    
+                    if (avgSpeed > this.config.MAX_HUMAN_SPEED) {
+                        isSuspicious = true;
+                        reason = `Sustained unnaturally fast typing speed (${avgSpeed} keystrokes/sec, average ${avgInterval}ms per keystroke)`;
+                    }
+                }
+                // Detection 3: Many suspicious intervals in recent history
+                else if (suspiciousKeystrokes.length >= 5) {
+                    isSuspicious = true;
+                    reason = `Multiple suspiciously fast keystrokes detected (${suspiciousKeystrokes.length} out of ${recent.length} recent keystrokes < ${this.config.SUSPICIOUS_INTERVAL}ms)`;
+                }
+                
+                if (isSuspicious) {
+                    // Check if we already warned recently (avoid spam)
+                    const recentWarning = this.state.warnings.find(w => 
+                        (Date.now() - w.timestamp) < 3000 // Within last 3 seconds
+                    );
+                    
+                    if (!recentWarning) {
+                        console.warn('[Fast Typing Detector] ⚠️ FAST TYPING DETECTED:', reason);
+                        AntiCheatNotification.showNotification('Fast Typing Detected', reason);
+                        AntiCheatNotification.sendWarning('fast-typing', reason, {
+                            fastKeystrokeCount: this.state.fastKeystrokeCount,
+                            avgInterval: this.getAverageInterval(),
+                            avgSpeed: this.calculateTypingSpeed(this.getAverageInterval()),
+                            recentIntervals: recent.slice(-5) // Last 5 intervals
+                        });
+                        
+                        this.state.warnings.push({
+                            type: 'fast-typing',
+                            message: reason,
+                            timestamp: Date.now()
+                        });
+                    }
+                }
+            },
+            
+            // Reset detector
+            reset: function() {
+                this.state.keystrokeIntervals = [];
+                this.state.lastKeystrokeTime = null;
+                this.state.fastKeystrokeCount = 0;
+                this.state.warnings = [];
+                console.log('[Fast Typing Detector] Reset');
+            }
+        };
+
         require(['vs/editor/editor.main'], function() {
             // Initialize with default language
             editor = monaco.editor.create(document.getElementById('monaco-container'), {
@@ -101,6 +678,76 @@
                 minimap: { enabled: false }
             });
             monacoInstance = monaco;
+
+            // Initialize detectors
+            CopyPasteDetector.reset(editor.getValue().length);
+            FastTypingDetector.reset();
+            FastSubmissionDetector.startChallenge();
+
+            // Track code changes for anti-cheat detection
+            let lastCharCount = editor.getValue().length;
+            let lastChangeTime = Date.now();
+            let pasteKeyPressed = false;
+            
+            // Detect paste keyboard shortcuts (Ctrl+V, Cmd+V)
+            editor.onKeyDown(function(e) {
+                // Check for Ctrl+V (Windows/Linux) or Cmd+V (Mac)
+                if ((e.ctrlKey || e.metaKey) && e.keyCode === 86) { // V key
+                    pasteKeyPressed = true;
+                    console.log('[Copy-Paste Detector] Paste keyboard shortcut detected (Ctrl/Cmd+V)');
+                    // Reset flag after a short delay
+                    setTimeout(() => {
+                        pasteKeyPressed = false;
+                    }, 1000);
+                }
+            });
+            
+            editor.onDidChangeModelContent(function(e) {
+                const now = Date.now();
+                const currentCharCount = editor.getValue().length;
+                
+                // Record first code change for submission timing
+                FastSubmissionDetector.recordFirstCodeChange();
+                
+                // Calculate time since last change (but handle first change specially)
+                let timeSinceLastChange = 0;
+                if (lastChangeTime && CopyPasteDetector.state.lastChangeTime) {
+                    timeSinceLastChange = now - lastChangeTime;
+                } else {
+                    // First change after reset - use a small value to allow detection
+                    timeSinceLastChange = 10; // Assume it's fast if it's the first change
+                }
+                
+                // Detect copy-paste (pass the change event and paste key detection)
+                const wasPasteKey = pasteKeyPressed;
+                CopyPasteDetector.detectPaste(currentCharCount, timeSinceLastChange, e, wasPasteKey);
+                
+                // Detect fast typing (only for single character additions, not pastes)
+                if (!wasPasteKey && currentCharCount > lastCharCount) {
+                    const charsAdded = currentCharCount - lastCharCount;
+                    // Only check for fast typing if it's a small addition (likely typing, not paste)
+                    if (charsAdded <= 5) {
+                        // Record keystroke interval for fast typing detection
+                        if (FastTypingDetector.state.lastKeystrokeTime) {
+                            const interval = now - FastTypingDetector.state.lastKeystrokeTime;
+                            FastTypingDetector.recordKeystroke(interval);
+                        }
+                        FastTypingDetector.state.lastKeystrokeTime = now;
+                    }
+                }
+                
+                // Update tracking
+                lastCharCount = currentCharCount;
+                lastChangeTime = now;
+                CopyPasteDetector.state.lastCharCount = currentCharCount;
+                CopyPasteDetector.state.lastChangeTime = now;
+                
+                // Notify parent of code change
+                window.parent.postMessage({
+                    type: 'code-changed',
+                    code: editor.getValue()
+                }, '*');
+            });
 
             // Notify parent that editor is ready
             window.parent.postMessage({ type: 'editor-ready' }, '*');
@@ -126,6 +773,13 @@
                     monacoInstance.editor.setModelLanguage(editor.getModel(), monacoLanguage);
                     editor.setValue(defaultCode);
                     
+                    // Reset detectors for new challenge
+                    CopyPasteDetector.reset(defaultCode.length);
+                    FastTypingDetector.reset();
+                    FastSubmissionDetector.startChallenge();
+                    lastCharCount = defaultCode.length;
+                    lastChangeTime = Date.now();
+                    
                     // Notify parent that language was switched
                     window.parent.postMessage({
                         type: 'language-switched',
@@ -134,16 +788,26 @@
                 } else if (event.data.type === 'set-code') {
                     // Set code directly
                     editor.setValue(event.data.code);
+                    
+                    // Reset detectors when code is set (new challenge)
+                    CopyPasteDetector.reset(event.data.code.length);
+                    FastTypingDetector.reset();
+                    FastSubmissionDetector.startChallenge();
+                    lastCharCount = event.data.code.length;
+                    lastChangeTime = Date.now();
+                } else if (event.data.type === 'check-submission') {
+                    // Parent is requesting to check submission time
+                    const difficulty = event.data.difficulty || 'easy';
+                    const result = FastSubmissionDetector.checkSubmission(difficulty);
+                    
+                    // Send submission check result to parent
+                    window.parent.postMessage({
+                        type: 'submission-check-result',
+                        result: result
+                    }, '*');
                 }
             });
 
-            // Listen for editor content changes and notify parent
-            editor.onDidChangeModelContent(function() {
-                window.parent.postMessage({
-                    type: 'code-changed',
-                    code: editor.getValue()
-                }, '*');
-            });
         });
     </script>
 </body>

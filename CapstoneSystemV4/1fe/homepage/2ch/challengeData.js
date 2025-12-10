@@ -558,6 +558,55 @@ document.getElementById('backButton').addEventListener('click', function() {
 });
 
 document.getElementById('submitCodeBtn').addEventListener('click', async function() {
+    // Check submission time before processing
+    const editorIframe = document.getElementById('monaco-editor-iframe');
+    const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
+    // Get difficulty - handle both localStorage and DOM element
+    let difficulty = 'easy';
+    if (selectedData && selectedData.difficulty) {
+        difficulty = selectedData.difficulty.toLowerCase().trim();
+    } else {
+        // Fallback: try to get from DOM
+        const selectedDifficultySpan = document.getElementById('selectedDifficulty');
+        if (selectedDifficultySpan) {
+            difficulty = selectedDifficultySpan.textContent.toLowerCase().trim();
+        }
+    }
+    
+    console.log('[Anti-Cheat] Checking submission for difficulty:', difficulty);
+    
+    // Request submission check from editor iframe
+    let submissionCheckResult = null;
+    if (editorIframe && editorIframe.contentWindow) {
+        // Send check request and wait for response
+        const checkPromise = new Promise((resolve) => {
+            const handler = function(event) {
+                if (event.data.type === 'submission-check-result') {
+                    window.removeEventListener('message', handler);
+                    resolve(event.data.result);
+                }
+            };
+            window.addEventListener('message', handler);
+            editorIframe.contentWindow.postMessage({ 
+                type: 'check-submission',
+                difficulty: difficulty
+            }, '*');
+            
+            // Timeout after 1 second
+            setTimeout(() => {
+                window.removeEventListener('message', handler);
+                resolve(null);
+            }, 1000);
+        });
+        
+        submissionCheckResult = await checkPromise;
+        
+        if (submissionCheckResult && submissionCheckResult.isSuspicious) {
+            console.warn('[Anti-Cheat] Fast submission detected:', submissionCheckResult.reason);
+            // Warning is already shown by the editor iframe
+        }
+    }
+    
     // Get code from iframe editor or fallback to direct access
     let code;
     if (window.getEditorCode) {
@@ -568,13 +617,11 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
         console.error('Editor not available');
         return;
     }
-    const selectedData = JSON.parse(localStorage.getItem('selectedChallenge'));
     
     console.log('=== DIFFICULTY DEBUG ===');
     console.log('Selected data from localStorage:', selectedData);
     console.log('Raw difficulty from selectedData:', selectedData ? selectedData.difficulty : 'null');
     
-    const difficulty = selectedData ? selectedData.difficulty.toLowerCase() : 'easy'; // Default to 'easy' if not found
     console.log('Final difficulty value:', difficulty);
     console.log('=== END DIFFICULTY DEBUG ===');
 

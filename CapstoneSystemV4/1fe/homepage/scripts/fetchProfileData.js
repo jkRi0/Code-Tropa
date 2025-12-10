@@ -44,8 +44,6 @@ export function fetchPerformanceData() {
                 const efficiency = Math.min(100, Math.max(0, parseFloat(data.efficiency) || 0));
                 const readability = Math.min(100, Math.max(0, parseFloat(data.readability) || 0));
                 const timeTaken = Math.min(100, Math.max(0, parseFloat(data.timeTaken) || 0));
-                const success = Math.min(100, Math.max(0, parseFloat(data.success) || 0));
-                const failed = Math.min(100, Math.max(0, parseFloat(data.failed) || 0));
 
                 // Update bar heights and percentages
                 document.querySelector('.bar-accuracy').style.height = `${accuracy}%`;
@@ -60,12 +58,6 @@ export function fetchPerformanceData() {
                 // The issue was with 'time', now it's 'timeTaken' and it should be a percentage if displayed as a bar
                 document.querySelector('.bar-time').style.height = `${timeTaken}%`;
                 document.querySelector('.bar-time .bar-percentage-label').textContent = `${timeTaken.toFixed(0)}%`;
-
-                document.querySelector('.bar-success').style.height = `${success}%`;
-                document.querySelector('.bar-success .bar-percentage-label').textContent = `${success.toFixed(0)}%`;
-
-                document.querySelector('.bar-failed').style.height = `${failed}%`;
-                document.querySelector('.bar-failed .bar-percentage-label').textContent = `${failed.toFixed(0)}%`;
 
             } else {
                 console.error('Error: No performance data received.');

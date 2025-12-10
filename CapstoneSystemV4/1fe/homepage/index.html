@@ -1051,23 +1051,16 @@
                                     <div class="bar-wrapper">
                                         <div class="bar bar-time"><span class="bar-percentage-label">%</span></div>
                                     </div>
-                                    <div class="bar-wrapper">
-                                        <div class="bar bar-success"><span class="bar-percentage-label">%</span></div>
-                                    </div>
-                                    <div class="bar-wrapper">
-                                        <div class="bar bar-failed"><span class="bar-percentage-label">%</span></div>
-                                    </div>
                                 </div>
                                 <div class="chart-legends">
                                     <p><span class="legend-color legend-color-accuracy"></span> Accuracy</p>
                                     <p><span class="legend-color legend-color-efficiency"></span> Efficiency</p>
                                     <p><span class="legend-color legend-color-readability"></span> Readability</p>
                                     <p><span class="legend-color legend-color-time"></span> Time</p>
-                                    <p><span class="legend-color legend-color-success"></span> Success</p>
-                                    <p><span class="legend-color legend-color-failed"></span> Failed</p>
                                 </div>
                             </div>
                             <div class="profile-actions">
+                                <button class="view-recommendations-btn" onclick="showRecommendationsModal()">View Code Performance Recommendations</button>
                                 <button class="edit-account-btn">Edit Account</button>
                                 <button class="delete-account-btn">Delete Account</button>
                             </div>
@@ -1185,6 +1178,21 @@
         </div>
     </div>
 
+    <!-- Recommendations Modal -->
+    <div class="recommendations-modal-back" id="recommendationsModal">
+        <div class="recommendations-modal-content">
+            <div class="recommendations-modal-header">
+                <h2>Personalized Code Performance Recommendations</h2>
+                <button class="recommendations-modal-close" onclick="hideRecommendationsModal()">&times;</button>
+            </div>
+            <div class="recommendations-modal-body">
+                <div class="recommendations-container" id="recommendationsContainer">
+                    <p class="loading-recommendations">Analyzing your coding performance...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <style>
         .bottom-right-info-container {
             position: fixed;
@@ -1267,6 +1275,243 @@
 
         .view-progress-btn:active {
             transform: scale(0.98);
+        }
+
+        /* Profile Recommendations Styles */
+        .profile-recommendations {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
+            border: 2px solid #d4a574;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(139, 90, 43, 0.4);
+        }
+
+        .profile-recommendations h3 {
+            color: #f4d4a0;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            border-bottom: 2px solid #d4a574;
+            padding-bottom: 15px;
+        }
+
+        .recommendations-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .recommendations-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .recommendations-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .recommendations-container::-webkit-scrollbar-thumb {
+            background: #d4a574;
+            border-radius: 4px;
+        }
+
+        .recommendation-item {
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid;
+            background: rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .recommendation-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .recommendation-item.priority-high {
+            border-left-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.15);
+        }
+
+        .recommendation-item.priority-medium {
+            border-left-color: #ffa94d;
+            background: rgba(255, 169, 77, 0.15);
+        }
+
+        .recommendation-item.priority-low {
+            border-left-color: #51cf66;
+            background: rgba(81, 207, 102, 0.15);
+        }
+
+        .recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .recommendation-category {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: rgba(212, 165, 116, 0.3);
+            color: #f4d4a0;
+        }
+
+        .recommendation-title {
+            color: #f5e6d3;
+            font-size: 1.8rem;
+            margin: 0;
+            flex: 1;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+        }
+
+        .recommendation-priority {
+            padding: 5px 14px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .recommendation-priority.priority-high {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .recommendation-priority.priority-medium {
+            background: #ffa94d;
+            color: #fff;
+        }
+
+        .recommendation-priority.priority-low {
+            background: #51cf66;
+            color: #fff;
+        }
+
+        .recommendation-description {
+            color: #e9ecef;
+            font-size: 1.4rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-family: Arial, sans-serif;
+        }
+
+        .recommendation-section {
+            margin-top: 15px;
+        }
+
+        .recommendation-section-title {
+            color: #d4a574;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: Arial, sans-serif;
+        }
+
+        .recommendation-section-title::before {
+            content: '📚';
+            font-size: 1.8rem;
+        }
+
+        .recommendation-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .recommendation-list li {
+            color: #e9ecef;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            font-family: Arial, sans-serif;
+        }
+
+        .recommendation-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #d4a574;
+            font-weight: bold;
+        }
+
+        .recommendation-list.exercises li::before {
+            content: '💪';
+        }
+
+        .recommendation-list.hints li::before {
+            content: '💡';
+        }
+
+        .recommendation-list.study li::before {
+            content: '📖';
+        }
+
+        .loading-recommendations,
+        .no-recommendations,
+        .error-recommendations {
+            color: #f5e6d3;
+            font-size: 1.6rem;
+            text-align: center;
+            padding: 30px;
+            font-style: italic;
+        }
+
+        .error-recommendations {
+            color: #ff6b6b;
+        }
+
+        /* Responsive adjustments for recommendations */
+        @media (max-width: 768px) {
+            .profile-recommendations {
+                padding: 15px;
+                margin-top: 20px;
+            }
+
+            .profile-recommendations h3 {
+                font-size: 1.8rem;
+            }
+
+            .recommendation-item {
+                padding: 15px;
+            }
+
+            .recommendation-title {
+                font-size: 1.5rem;
+            }
+
+            .recommendation-description {
+                font-size: 1.2rem;
+            }
+
+            .recommendation-list li {
+                font-size: 1.1rem;
+            }
+
+            .recommendation-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .recommendation-priority {
+                align-self: flex-start;
+            }
         }
 
         .new-tab-btn {
@@ -1562,6 +1807,312 @@
                 font-size: 1.1rem;
             }
         }
+
+        /* Recommendations Button Styles */
+        .view-recommendations-btn {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: #f4d4a0;
+            border: 2px solid #5aa3f0;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.6rem;
+            margin: 10px 0;
+            box-shadow: 0 3px 8px rgba(74, 144, 226, 0.4);
+            width: 100%;
+        }
+
+        .view-recommendations-btn:hover {
+            transform: scale(1.02);
+            background: linear-gradient(135deg, #5aa3f0, #4a90e2);
+            box-shadow: 0 5px 15px rgba(90, 163, 240, 0.6);
+        }
+
+        .view-recommendations-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Recommendations Modal Styles */
+        .recommendations-modal-back {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            backdrop-filter: blur(5px);
+        }
+
+        .recommendations-modal-back.show {
+            display: flex;
+        }
+
+        .recommendations-modal-content {
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.98), rgba(30, 30, 30, 0.98));
+            border: 2px solid #4a90e2;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .recommendations-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid #4a90e2;
+        }
+
+        .recommendations-modal-header h2 {
+            color: #f5e6d3;
+            font-size: 2.5rem;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .recommendations-modal-close {
+            background: transparent;
+            border: 1px solid #4a90e2;
+            color: #f5e6d3;
+            font-size: 3rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            line-height: 1;
+        }
+
+        .recommendations-modal-close:hover {
+            background: rgba(74, 144, 226, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .recommendations-modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Profile Recommendations Styles (now inside modal) */
+        .recommendations-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .recommendation-item {
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid;
+            background: rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .recommendation-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .recommendation-item.priority-high {
+            border-left-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.15);
+        }
+
+        .recommendation-item.priority-medium {
+            border-left-color: #ffa94d;
+            background: rgba(255, 169, 77, 0.15);
+        }
+
+        .recommendation-item.priority-low {
+            border-left-color: #51cf66;
+            background: rgba(81, 207, 102, 0.15);
+        }
+
+        .recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .recommendation-category {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: rgba(74, 144, 226, 0.3);
+            color: #f4d4a0;
+        }
+
+        .recommendation-title {
+            color: #f5e6d3;
+            font-size: 1.8rem;
+            margin: 0;
+            flex: 1;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+        }
+
+        .recommendation-priority {
+            padding: 5px 14px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .recommendation-priority.priority-high {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .recommendation-priority.priority-medium {
+            background: #ffa94d;
+            color: #fff;
+        }
+
+        .recommendation-priority.priority-low {
+            background: #51cf66;
+            color: #fff;
+        }
+
+        .recommendation-description {
+            color: #e9ecef;
+            font-size: 1.4rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-family: Arial, sans-serif;
+        }
+
+        .recommendation-section {
+            margin-top: 15px;
+        }
+
+        .recommendation-section-title {
+            color: #5aa3f0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: Arial, sans-serif;
+        }
+
+        .recommendation-section-title::before {
+            content: '📚';
+            font-size: 1.8rem;
+        }
+
+        .recommendation-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .recommendation-list li {
+            color: #e9ecef;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            font-family: Arial, sans-serif;
+        }
+
+        .recommendation-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #5aa3f0;
+            font-weight: bold;
+        }
+
+        .recommendation-list.exercises li::before {
+            content: '💪';
+        }
+
+        .recommendation-list.hints li::before {
+            content: '💡';
+        }
+
+        .recommendation-list.study li::before {
+            content: '📖';
+        }
+
+        .loading-recommendations,
+        .no-recommendations,
+        .error-recommendations {
+            color: #f5e6d3;
+            font-size: 1.6rem;
+            text-align: center;
+            padding: 30px;
+            font-style: italic;
+        }
+
+        .error-recommendations {
+            color: #ff6b6b;
+        }
+
+        /* Responsive adjustments for recommendations modal */
+        @media (max-width: 768px) {
+            .recommendations-modal-content {
+                width: 95%;
+                max-height: 90vh;
+            }
+
+            .recommendations-modal-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .recommendation-item {
+                padding: 15px;
+            }
+
+            .recommendation-title {
+                font-size: 1.5rem;
+            }
+
+            .recommendation-description {
+                font-size: 1.2rem;
+            }
+
+            .recommendation-list li {
+                font-size: 1.1rem;
+            }
+
+            .recommendation-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .recommendation-priority {
+                align-self: flex-start;
+            }
+
+            .view-recommendations-btn {
+                font-size: 1.3rem;
+                padding: 10px 15px;
+            }
+        }
     </style>
 
     <script>
@@ -1590,6 +2141,23 @@
 
         function hideProgressModal() {
             const modal = document.getElementById('progressModal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        // Recommendations Modal Functions
+        function showRecommendationsModal() {
+            const modal = document.getElementById('recommendationsModal');
+            if (modal) {
+                modal.classList.add('show');
+                // Load recommendations when modal is opened
+                loadCodingRecommendations();
+            }
+        }
+
+        function hideRecommendationsModal() {
+            const modal = document.getElementById('recommendationsModal');
             if (modal) {
                 modal.classList.remove('show');
             }
@@ -1647,6 +2215,77 @@
         
         // Update info periodically to catch changes
         setInterval(updatePlayerInfo, 1000);
+
+        // Load and display coding recommendations
+        function loadCodingRecommendations() {
+            const container = document.getElementById('recommendationsContainer');
+            if (!container) return;
+
+            fetch('../../2be/get_coding_recommendations.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.recommendations && data.recommendations.length > 0) {
+                        displayRecommendations(data.recommendations);
+                    } else {
+                        container.innerHTML = '<p class="no-recommendations">Complete some challenges to get personalized recommendations based on your coding performance!</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading recommendations:', error);
+                    container.innerHTML = '<p class="error-recommendations">Unable to load recommendations. Please try again later.</p>';
+                });
+        }
+
+        function displayRecommendations(recommendations) {
+            const container = document.getElementById('recommendationsContainer');
+            if (!container) return;
+
+            container.innerHTML = recommendations.map(rec => `
+                <div class="recommendation-item priority-${rec.priority}">
+                    <div class="recommendation-header">
+                        <span class="recommendation-category">${rec.category}</span>
+                        <h4 class="recommendation-title">${rec.title}</h4>
+                        <span class="recommendation-priority priority-${rec.priority}">${rec.priority.toUpperCase()}</span>
+                    </div>
+                    <p class="recommendation-description">${rec.description}</p>
+                    
+                    ${rec.exercises && rec.exercises.length > 0 ? `
+                        <div class="recommendation-section">
+                            <div class="recommendation-section-title">Exercises</div>
+                            <ul class="recommendation-list exercises">
+                                ${rec.exercises.map(ex => `<li>${ex}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    
+                    ${rec.hints && rec.hints.length > 0 ? `
+                        <div class="recommendation-section">
+                            <div class="recommendation-section-title">Hints & Tips</div>
+                            <ul class="recommendation-list hints">
+                                ${rec.hints.map(hint => `<li>${hint}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    
+                    ${rec.studyMaterials && rec.studyMaterials.length > 0 ? `
+                        <div class="recommendation-section">
+                            <div class="recommendation-section-title">Study Materials</div>
+                            <ul class="recommendation-list study">
+                                ${rec.studyMaterials.map(material => `<li>${material}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Close recommendations modal when clicking outside
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('recommendationsModal');
+            if (modal && e.target === modal) {
+                hideRecommendationsModal();
+            }
+        });
     </script>
 
     <!-- Service Worker Registration - Needed to serve cached videos -->
