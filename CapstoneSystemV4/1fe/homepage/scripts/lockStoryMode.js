@@ -1,6 +1,18 @@
 // This script fetches unlocked story mode chapters/episodes for the current user/language
 // and disables click/hover for locked story mode items on the homepage.
 
+// Helper function to convert chapter + local episode to global episode number (1-7)
+function chapterEpisodeToGlobal(chapter, localEpisode) {
+    if (chapter === 1) {
+        return localEpisode; // 1, 2, 3
+    } else if (chapter === 2) {
+        return 3 + localEpisode; // 4, 5
+    } else if (chapter === 3) {
+        return 5 + localEpisode; // 6, 7
+    }
+    return 0;
+}
+
 function setLockedStylesForStoryButton(buttonElement, isLocked) {
     const inner = buttonElement.querySelector('.inner1-3');
     if (isLocked) {
@@ -86,20 +98,33 @@ export function applyStoryModeLocks() {
                 const parentDiv = buttonEl.closest('.epi-option');
                 if (!parentDiv) return;
                 
+                // Find which chapter this episode belongs to
+                let chapterNum = 1;
+                const chap1Section = parentDiv.closest('.chap1');
+                const chap2Section = parentDiv.closest('.chap2');
+                const chap3Section = parentDiv.closest('.chap3');
+                
+                if (chap2Section) chapterNum = 2;
+                else if (chap3Section) chapterNum = 3;
+                else if (chap1Section) chapterNum = 1;
+                
                 const titleEl = parentDiv.querySelector('.epi-title h2');
                 if (!titleEl) return;
                 
                 const text = (titleEl.textContent || '').trim().toLowerCase();
                 const episodeMatch = text.match(/episode\s+(\d+)/i);
                 if (episodeMatch) {
-                    const episodeNum = parseInt(episodeMatch[1], 10);
-                    if (Number.isNaN(episodeNum)) return;
+                    const localEpisodeNum = parseInt(episodeMatch[1], 10);
+                    if (Number.isNaN(localEpisodeNum)) return;
                     
-                    if (episodeNum === 1) {
-                        // Episode 1 is always unlocked
+                    // Convert to global episode number
+                    const globalEpisodeNum = chapterEpisodeToGlobal(chapterNum, localEpisodeNum);
+                    
+                    if (globalEpisodeNum === 1) {
+                        // Global Episode 1 is always unlocked
                         setLockedStylesForEpisodeButton(buttonEl, false);
                     } else {
-                        const isUnlocked = unlockedEpisodesSet.has(episodeNum);
+                        const isUnlocked = unlockedEpisodesSet.has(globalEpisodeNum);
                         setLockedStylesForEpisodeButton(buttonEl, !isUnlocked);
                     }
                 }
@@ -122,14 +147,26 @@ export function applyStoryModeLocks() {
             document.querySelectorAll('.epi-option button').forEach(buttonEl => {
                 const parentDiv = buttonEl.closest('.epi-option');
                 if (!parentDiv) return;
+                
+                // Find which chapter this episode belongs to
+                let chapterNum = 1;
+                const chap1Section = parentDiv.closest('.chap1');
+                const chap2Section = parentDiv.closest('.chap2');
+                const chap3Section = parentDiv.closest('.chap3');
+                
+                if (chap2Section) chapterNum = 2;
+                else if (chap3Section) chapterNum = 3;
+                else if (chap1Section) chapterNum = 1;
+                
                 const titleEl = parentDiv.querySelector('.epi-title h2');
                 if (!titleEl) return;
                 const text = (titleEl.textContent || '').trim().toLowerCase();
                 const episodeMatch = text.match(/episode\s+(\d+)/i);
                 if (episodeMatch) {
-                    const episodeNum = parseInt(episodeMatch[1], 10);
-                    if (!Number.isNaN(episodeNum)) {
-                        setLockedStylesForEpisodeButton(buttonEl, episodeNum !== 1);
+                    const localEpisodeNum = parseInt(episodeMatch[1], 10);
+                    if (!Number.isNaN(localEpisodeNum)) {
+                        const globalEpisodeNum = chapterEpisodeToGlobal(chapterNum, localEpisodeNum);
+                        setLockedStylesForEpisodeButton(buttonEl, globalEpisodeNum !== 1);
                     }
                 }
             });

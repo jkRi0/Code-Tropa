@@ -48,43 +48,81 @@ if ($stmt = $conn->prepare($sql)) {
             }
         }
         
-        // Determine unlocked chapters and episodes
-        $unlockedChapters = [1]; // Chapter 1 is always unlocked
-        $unlockedEpisodes = [1]; // Episode 1 is always unlocked
-        
-        // Check which chapters are unlocked
-        // Chapter N+1 is unlocked if Chapter N's last episode is completed
-        $chapter1Completed = false;
-        $chapter2Completed = false;
-        $chapter3Completed = false;
-        
-        foreach ($completedEpisodes as $ep) {
-            if ($ep['chapter'] == 1 && $ep['episode'] == 3) { // Chapter 1 has 3 episodes
-                $chapter1Completed = true;
-                $unlockedChapters[] = 2;
+        // Helper function to convert chapter/episode to global episode number (1-7)
+        // Chapter 1: ep1=1, ep2=2, ep3=3
+        // Chapter 2: ep1=4, ep2=5
+        // Chapter 3: ep1=6, ep2=7
+        function chapterEpisodeToGlobal($chapter, $episode) {
+            if ($chapter == 1) {
+                return $episode; // 1, 2, 3
+            } elseif ($chapter == 2) {
+                return 3 + $episode; // 4, 5
+            } elseif ($chapter == 3) {
+                return 5 + $episode; // 6, 7
             }
-            if ($ep['chapter'] == 2 && $ep['episode'] == 2) { // Chapter 2 has 2 episodes
-                $chapter2Completed = true;
-                $unlockedChapters[] = 3;
+            return 0;
+        }
+        
+        // Helper function to convert global episode number to chapter/episode
+        function globalToChapterEpisode($globalEp) {
+            if ($globalEp <= 3) {
+                return ['chapter' => 1, 'episode' => $globalEp];
+            } elseif ($globalEp <= 5) {
+                return ['chapter' => 2, 'episode' => $globalEp - 3];
+            } else {
+                return ['chapter' => 3, 'episode' => $globalEp - 5];
             }
         }
         
-        // Check which episodes are unlocked within each chapter
-        // Episode N+1 is unlocked if Episode N is completed
+        // Convert completed chapter/episode pairs to global episode numbers
+        $completedGlobalEpisodes = [];
         foreach ($completedEpisodes as $ep) {
-            $nextEpisode = $ep['episode'] + 1;
-            $unlockedEpisodes[] = $nextEpisode;
+            $globalEp = chapterEpisodeToGlobal($ep['chapter'], $ep['episode']);
+            if ($globalEp > 0 && $globalEp <= 7) {
+                $completedGlobalEpisodes[] = $globalEp;
+            }
+        }
+        
+        // Determine unlocked chapters and episodes
+        $unlockedChapters = [1]; // Chapter 1 is always unlocked
+        $unlockedGlobalEpisodes = [1]; // Global Episode 1 is always unlocked
+        
+        // Check which chapters are unlocked
+        // Chapter 2 is unlocked if global episode 3 is completed
+        // Chapter 3 is unlocked if global episode 5 is completed
+        if (in_array(3, $completedGlobalEpisodes)) {
+            $unlockedChapters[] = 2;
+        }
+        if (in_array(5, $completedGlobalEpisodes)) {
+            $unlockedChapters[] = 3;
+        }
+        
+        // Check which global episodes are unlocked sequentially
+        // Episode N+1 is unlocked if Episode N is completed (sequential, not per chapter)
+        foreach ($completedGlobalEpisodes as $globalEp) {
+            if ($globalEp < 7) { // Don't unlock beyond episode 7
+                $nextGlobalEp = $globalEp + 1;
+                $unlockedGlobalEpisodes[] = $nextGlobalEp;
+            }
         }
         
         // Remove duplicates and sort
         $unlockedChapters = array_unique($unlockedChapters);
-        $unlockedEpisodes = array_unique($unlockedEpisodes);
+        $unlockedGlobalEpisodes = array_unique($unlockedGlobalEpisodes);
         sort($unlockedChapters);
-        sort($unlockedEpisodes);
+        sort($unlockedGlobalEpisodes);
+        
+        // Convert completed global episodes back to chapter/episode format for response
+        $completedEpisodesFormatted = [];
+        foreach ($completedGlobalEpisodes as $globalEp) {
+            $ce = globalToChapterEpisode($globalEp);
+            $completedEpisodesFormatted[] = $ce;
+        }
         
         $response['unlockedChapters'] = $unlockedChapters;
-        $response['unlockedEpisodes'] = $unlockedEpisodes;
-        $response['completedEpisodes'] = $completedEpisodes; // For debugging
+        $response['unlockedEpisodes'] = $unlockedGlobalEpisodes; // Now returns global episode numbers (1-7)
+        $response['completedEpisodes'] = $completedGlobalEpisodes; // Returns global episode numbers (1-7) for frontend
+        $response['completedEpisodesDetailed'] = $completedEpisodesFormatted; // Chapter/episode pairs for debugging
         $response['success'] = true;
         $response['message'] = 'OK';
     } else {

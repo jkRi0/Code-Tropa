@@ -654,8 +654,26 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
                     const selectedLanguageSpan = document.getElementById('selectedLanguage');
                     const currentLanguage = selectedLanguageSpan ? selectedLanguageSpan.textContent.toLowerCase() : 'java';
                     
+                    // Convert global episode number to chapter and local episode
+                    // Episodes 1-3 → Chapter 1 (episodes 1, 2, 3)
+                    // Episodes 4-5 → Chapter 2 (episodes 1, 2)
+                    // Episodes 6-7 → Chapter 3 (episodes 1, 2)
+                    let chapter, localEpisode;
+                    if (episodeNum <= 3) {
+                        chapter = 1;
+                        localEpisode = episodeNum;
+                    } else if (episodeNum <= 5) {
+                        chapter = 2;
+                        localEpisode = episodeNum - 3;
+                    } else {
+                        chapter = 3;
+                        localEpisode = episodeNum - 5;
+                    }
+                    
                     console.log('=== SAVING STORY PROGRESS DEBUG ===');
-                    console.log('Episode:', episodeNum);
+                    console.log('Global Episode:', episodeNum);
+                    console.log('Chapter:', chapter);
+                    console.log('Local Episode:', localEpisode);
                     console.log('Language:', currentLanguage);
                     console.log('Points:', points);
                     console.log('Passed:', hasPassed);
@@ -664,8 +682,8 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
                     const storyProgressData = {
                         type: 'story',
                         language: currentLanguage,
-                        chapter: 1, // Assuming chapter 1 for now
-                        episode: episodeNum,
+                        chapter: chapter,
+                        episode: localEpisode,
                         points: points,
                         passed: hasPassed
                     };

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 23, 2025 at 06:42 PM
+-- Generation Time: Dec 10, 2025 at 12:30 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -72,12 +72,12 @@ CREATE TABLE `performance` (
 --
 
 INSERT INTO `performance` (`id`, `userId`, `progressId`, `accuracy`, `efficiency`, `readability`, `timeTaken`, `success`, `failed`) VALUES
-(1, 1, 1, 0, 0, 0, 0, 0, 1),
+(1, 1, 1, 100, 100, 100, 0, 1, 0),
 (2, 2, 2, 88, 75, 80, 150, 1, 0),
 (3, 3, 3, 70, 65, 60, 200, 1, 1),
 (4, 4, 4, 85, 70, 75, 110, 1, 0),
 (5, 5, 5, 95, 90, 88, 95, 1, 0),
-(6, 1, 1, 0, 0, 0, 0, 0, 1),
+(6, 1, 1, 100, 100, 100, 0, 1, 0),
 (7, 2, 2, 85, 75, 80, 140, 1, 0),
 (8, 3, 3, 88, 70, 78, 150, 1, 0),
 (9, 4, 4, 92, 85, 90, 100, 1, 0),
@@ -94,16 +94,16 @@ INSERT INTO `performance` (`id`, `userId`, `progressId`, `accuracy`, `efficiency
 (25, 15, 15, 90, 89, 88, 100, 1, 0),
 (26, 16, 27, 0, 0, 0, 0, 0, 0),
 (27, 16, 28, 0, 0, 0, 0, 0, 0),
-(32, 1, 36, 7, 0, 0, 20, 0, 1),
+(32, 1, 36, 11, 10, 10, 20, 0, 1),
 (33, 1, 37, 0, 0, 0, 0, 0, 1),
 (46, 25, 50, 0, 0, 0, 0, 0, 0),
 (47, 25, 51, 0, 0, 0, 0, 0, 0),
 (48, 1, 52, 0, 0, 0, 15, 0, 1),
 (49, 1, 53, 0, 0, 0, 15, 0, 1),
 (50, 1, 54, 0, 0, 0, 15, 0, 1),
-(51, 1, 55, 40, 10, 30, 20, 1, 0),
-(52, 1, 56, 40, 10, 30, 20, 1, 0),
-(53, 1, 57, 40, 10, 30, 0, 1, 0),
+(51, 1, 55, 40, 10, 14, 20, 1, 0),
+(52, 1, 56, 37, 10, 15, 20, 1, 0),
+(53, 1, 57, 0, 0, 0, 0, 0, 1),
 (54, 1, 58, 40, 10, 30, 0, 1, 0),
 (55, 1, 65, 0, 0, 0, 20, 0, 1),
 (56, 1, 66, 0, 0, 0, 20, 0, 1),
@@ -112,7 +112,19 @@ INSERT INTO `performance` (`id`, `userId`, `progressId`, `accuracy`, `efficiency
 (59, 26, 69, 5, 0, 0, 15, 0, 1),
 (60, 26, 70, 19, 0, 0, 20, 0, 1),
 (61, 1, 71, 0, 0, 0, 0, 0, 1),
-(62, 1, 72, 38, 10, 21, 20, 1, 0);
+(62, 1, 72, 2, 10, 9, 20, 0, 1),
+(63, 1, 73, 2, 10, 9, 20, 0, 1),
+(64, 1, 74, 2, 25, 7, 20, 0, 1),
+(65, 1, 75, 2, 25, 7, 20, 0, 1),
+(66, 1, 76, 2, 25, 7, 20, 0, 1),
+(67, 1, 77, 2, 25, 7, 20, 0, 1),
+(68, 1, 78, 2, 25, 11, 20, 0, 1),
+(69, 1, 79, 5, 25, 7, 20, 0, 1),
+(70, 1, 80, 30, 25, 17, 20, 1, 0),
+(71, 1, 81, 0, 0, 0, 0, 0, 1),
+(72, 1, 82, 5, 25, 7, 20, 0, 1),
+(73, 1, 83, 5, 25, 7, 20, 0, 1),
+(74, 1, 84, 0, 0, 0, 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -137,57 +149,94 @@ CREATE TABLE `progress` (
 -- Dumping data for table `progress`
 --
 
-INSERT INTO `progress` (`id`, `userId`, `type`, `language`, `chapter`, `episode`, `difficulty`, `level`, `points`, `code`) VALUES
-(1, 1, 'story', 'java', 1, 1, NULL, NULL, 100, NULL),
-(2, 2, 'story', 'c++', 1, 2, NULL, NULL, 90, '#include<iostream>\nusing namespace std;\nint main(){ cout<<\"Sari-Sari\"; }'),
-(3, 3, 'story', 'c#', 1, 1, NULL, NULL, 70, 'Console.WriteLine(\"Barangay Announcement\");'),
-(4, 4, 'challenge', 'java', NULL, NULL, 'easy', 2, 60, 'int a=5; int b=3; Console.WriteLine(a+b);'),
-(5, 5, 'challenge', 'c++', NULL, NULL, 'medium', 4, 95, 'for(int i=0;i<5;i++){ cout<<i; }'),
-(8, 2, 'story', 'c++', 2, 1, NULL, NULL, 70, '#include <iostream>'),
-(9, 3, 'story', 'c#', 1, 2, NULL, NULL, 60, 'Console.WriteLine(\"Pedro\");'),
-(10, 4, 'story', 'java', 2, 1, NULL, NULL, 90, 'int x = 10;'),
-(11, 5, 'story', 'c++', 3, 1, NULL, NULL, 85, 'for(int i=0;i<5;i++){}'),
-(13, 2, 'challenge', 'c++', NULL, NULL, 'medium', 2, 40, 'if(a>b){}'),
-(14, 3, 'challenge', 'c#', NULL, NULL, 'hard', 3, 25, 'for(int i=0;i<10;i++){}'),
-(15, 4, 'challenge', 'java', NULL, NULL, 'easy', 2, 35, 'System.out.println(\"ok\");'),
-(16, 5, 'challenge', 'c++', NULL, NULL, 'medium', 3, 50, 'switch(x){}'),
-(17, 6, 'story', 'java', 1, 1, NULL, NULL, 50, 'System.out.println(\"Hello Ana\");'),
-(18, 7, 'story', 'c#', 2, 1, NULL, NULL, 60, 'Console.WriteLine(\"Hi Rico\");'),
-(19, 8, 'challenge', 'c++', NULL, NULL, 'easy', 1, 40, '#include <iostream>'),
-(20, 9, 'story', 'java', 2, 2, NULL, NULL, 70, 'System.out.println(\"Tom here\");'),
-(21, 10, 'challenge', 'c#', NULL, NULL, 'medium', 3, 65, 'Console.WriteLine(\"Ivy code\");'),
-(22, 11, 'story', 'java', 1, 3, NULL, NULL, 45, 'System.out.println(\"Mark story\");'),
-(23, 12, 'challenge', 'c++', NULL, NULL, 'hard', 5, 80, 'cout << \"Ella\";'),
-(24, 13, 'story', 'c#', 2, 2, NULL, NULL, 55, 'Console.WriteLine(\"DanSharp\");'),
-(25, 14, 'challenge', 'java', NULL, NULL, 'medium', 4, 75, 'System.out.println(\"Lea challenge\");'),
-(26, 15, 'story', 'c++', 3, 1, NULL, NULL, 90, 'cout << \"Oscar scene\";'),
-(27, 16, 'story', 'java', 0, 0, NULL, NULL, 0, ''),
-(28, 16, 'challenge', 'java', NULL, NULL, '', 0, 0, ''),
-(36, 1, 'challenge', 'java', NULL, NULL, 'easy', 1, 100, 'public class TahoVendor {\n    public static void main(String[] args) {\n        System.out.println(\"Tahooo!\");\n        System.out.println(\"Taho: ₱15\");\n        System.out.println(\"Syrup: ₱5\");\n    }\n}'),
-(37, 1, 'story', 'java', 1, 2, NULL, NULL, 100, NULL),
-(50, 25, 'story', 'java', 0, 0, NULL, NULL, 0, ''),
-(51, 25, 'challenge', 'java', NULL, NULL, '', 0, 0, ''),
-(52, 1, 'challenge', 'java', NULL, NULL, '', 2, 15, 'import java.util.Scanner;\n\npublic class SariSariStore {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        \n        // Product names\n        String suka = \"Vinegar\";\n        String itlog = \"Eggs\";\n        String tinapay = \"Bread\";\n        \n        // Prices\n        double sukaPrice = 25.50;\n        double itlogPrice = 8.00;\n        double tinapayPrice = 35.00;\n        \n        // Get new stock levels from user\n        System.out.print(\"Enter new stock for \" + suka + \": \");\n        int sukaStock = scanner.nextInt();\n        \n        System.out.print(\"Enter new stock for \" + itlog + \": \");\n        int itlogStock = scanner.nextInt();\n        \n        System.out.print(\"Enter new stock for \" + tinapay + \": \");\n        int tinapayStock = scanner.nextInt();\n        \n        // Calculate values\n        double sukaValue = sukaPrice * sukaStock;\n        double itlogValue = itlogPrice * itlogStock;\n        double tinapayValue = tinapayPrice * tinapayStock;\n        \n        // Display updated inventory\n        System.out.println(\"\\nUpdated Inventory:\");\n        System.out.printf(\"%s: %d units @ ₱%.2f = ₱%.2f%n\", suka, sukaStock, sukaPrice, sukaValue);\n        System.out.printf(\"%s: %d units @ ₱%.2f = ₱%.2f%n\", itlog, itlogStock, itlogPrice, itlogValue);\n        System.out.printf(\"%s: %d units @ ₱%.2f = ₱%.2f%n\", tinapay, tinapayStock, tinapayPrice, tinapayValue);\n        \n        // Check for restock alerts (threshold = 20)\n        int threshold = 20;\n        System.out.println();\n        \n        if (sukaStock < threshold) {\n            System.out.println(\"⚠️ RESTOCK ALERT: \" + suka + \" is below threshold (\" + sukaStock + \" < \" + threshold + \")\");\n        }\n        if (itlogStock < threshold) {\n            System.out.println(\"⚠️ RESTOCK ALERT: \" + itlog + \" is below threshold (\" + itlogStock + \" < \" + threshold + \")\");\n        }\n        if (tinapayStock < threshold) {\n            System.out.println(\"⚠️ RESTOCK ALERT: \" + tinapay + \" is below threshold (\" + tinapayStock + \" < \" + threshold + \")\");\n        }\n        \n        scanner.close();\n    }\n}'),
-(53, 1, 'challenge', 'java', NULL, NULL, '', 2, 15, 'import java.util.Scanner;\n\npublic class SariSariStore {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        \n        // Product names\n        String suka = \"Vinegar\";\n        String itlog = \"Eggs\";\n        String tinapay = \"Bread\";\n        \n        // Prices\n        double sukaPrice = 25.50;\n        double itlogPrice = 8.00;\n        double tinapayPrice = 35.00;\n        \n        // Get new stock levels from user\n        System.out.print(\"Enter new stock for \" + suka + \": \");\n        int sukaStock = scanner.nextInt();\n        \n        System.out.print(\"Enter new stock for \" + itlog + \": \");\n        int itlogStock = scanner.nextInt();\n        \n        System.out.print(\"Enter new stock for \" + tinapay + \": \");\n        int tinapayStock = scanner.nextInt();\n        \n        // Calculate values\n        double sukaValue = sukaPrice * sukaStock;\n        double itlogValue = itlogPrice * itlogStock;\n        double tinapayValue = tinapayPrice * tinapayStock;\n        \n        // Display updated inventory\n        System.out.println(\"\\nUpdated Inventory:\");\n        System.out.printf(\"%s: %d units @ ₱%.2f = ₱%.2f%n\", suka, sukaStock, sukaPrice, sukaValue);\n        System.out.printf(\"%s: %d units @ ₱%.2f = ₱%.2f%n\", itlog, itlogStock, itlogPrice, itlogValue);\n        System.out.printf(\"%s: %d units @ ₱%.2f = ₱%.2f%n\", tinapay, tinapayStock, tinapayPrice, tinapayValue);\n        \n        // Check for restock alerts (threshold = 20)\n        int threshold = 20;\n        System.out.println();\n        \n        if (sukaStock < threshold) {\n            System.out.println(\"⚠️ RESTOCK ALERT: \" + suka + \" is below threshold (\" + sukaStock + \" < \" + threshold + \")\");\n        }\n        if (itlogStock < threshold) {\n            System.out.println(\"⚠️ RESTOCK ALERT: \" + itlog + \" is below threshold (\" + itlogStock + \" < \" + threshold + \")\");\n        }\n        if (tinapayStock < threshold) {\n            System.out.println(\"⚠️ RESTOCK ALERT: \" + tinapay + \" is below threshold (\" + tinapayStock + \" < \" + threshold + \")\");\n        }\n        \n        scanner.close();\n    }\n}'),
-(54, 1, 'challenge', 'java', NULL, NULL, '', 2, 15, 'import java.util.Scanner;\n\npublic class SariSariStore {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        \n        // Product names\n        String suka = \"Vinegar\";\n        String itlog = \"Eggs\";\n        String tinapay = \"Bread\";\n        \n        // Prices\n        double sukaPrice = 25.50;\n        double itlogPrice = 8.00;\n        double tinapayPrice = 35.00;\n        \n        // Get new stock levels from user\n        System.out.print(\"Enter new stock for \" + suka + \": \");\n        int sukaStock = scanner.nextInt();\n        \n        System.out.print(\"Enter new stock for \" + itlog + \": \");\n        int itlogStock = scanner.nextInt();\n        \n        System.out.print(\"Enter new stock for \" + tinapay + \": \");\n        int tinapayStock = scanner.nextInt();\n        \n        // Calculate values\n        double sukaValue = sukaPrice * sukaStock;\n        double itlogValue = itlogPrice * itlogStock;\n        double tinapayValue = tinapayPrice * tinapayStock;\n        \n        // Display updated inventory\n        System.out.println(\"\\nUpdated Inventory:\");\n        System.out.printf(\"%s: %d units @ ₱%.2f = ₱%.2f%n\", suka, sukaStock, sukaPrice, sukaValue);\n        System.out.printf(\"%s: %d units @ ₱%.2f = ₱%.2f%n\", itlog, itlogStock, itlogPrice, itlogValue);\n        System.out.printf(\"%s: %d units @ ₱%.2f = ₱%.2f%n\", tinapay, tinapayStock, tinapayPrice, tinapayValue);\n        \n        // Check for restock alerts (threshold = 20)\n        int threshold = 20;\n        System.out.println();\n        \n        if (sukaStock < threshold) {\n            System.out.println(\"⚠️ RESTOCK ALERT: \" + suka + \" is below threshold (\" + sukaStock + \" < \" + threshold + \")\");\n        }\n        if (itlogStock < threshold) {\n            System.out.println(\"⚠️ RESTOCK ALERT: \" + itlog + \" is below threshold (\" + itlogStock + \" < \" + threshold + \")\");\n        }\n        if (tinapayStock < threshold) {\n            System.out.println(\"⚠️ RESTOCK ALERT: \" + tinapay + \" is below threshold (\" + tinapayStock + \" < \" + threshold + \")\");\n        }\n        \n        scanner.close();\n    }\n}'),
-(55, 1, 'challenge', 'java', NULL, NULL, 'easy', 2, 100, 'public class SariSariStore {\n    public static void main(String[] args) {\n        // Declare three product variables with correct data types\n        String suka = \"Vinegar\";\n        String itlog = \"Eggs\";\n        String tinapay = \"Bread\";\n        \n        // Print each product name\n        System.out.println(suka);\n        System.out.println(itlog);\n        System.out.println(tinapay);\n    }\n}'),
-(56, 1, 'challenge', 'java', NULL, NULL, 'easy', 3, 100, 'public class FiestaPlanner {\n    public static void main(String[] args) {\n        // Fixed items for the fiesta\n        int banderitas = 500;\n        int lechon = 3000;\n        int soundSystem = 2000;\n        \n        // Calculate total cost\n        int totalCost = banderitas + lechon + soundSystem;\n        \n        // Display budget breakdown\n        System.out.println(\"Fiesta Budget Calculator\");\n        System.out.println(\"=======================\");\n        System.out.println(\"Banderitas: ₱\" + banderitas);\n        System.out.println(\"Lechon: ₱\" + lechon);\n        System.out.println(\"Sound System: ₱\" + soundSystem);\n        System.out.println(\"=======================\");\n        System.out.println(\"Total Cost: ₱\" + totalCost);\n    }\n}'),
-(57, 1, 'story', 'java', 1, 3, NULL, NULL, 100, NULL),
-(58, 1, 'story', 'java', 2, 2, NULL, NULL, 100, NULL),
-(59, 1, 'story', 'c++', 1, 3, NULL, NULL, 100, '[value-10]'),
-(60, 1, 'story', 'c++', 2, 2, NULL, NULL, 100, '[value-10]'),
-(61, 1, 'story', 'c++', 3, 1, NULL, NULL, 100, '[value-10]'),
-(62, 1, 'story', 'c#', 1, 3, NULL, NULL, 100, '[value-10]'),
-(63, 1, 'story', 'c#', 2, 2, NULL, NULL, 100, '[value-10]'),
-(64, 1, 'story', 'c#', 3, 1, NULL, NULL, 100, '[value-10]'),
-(65, 1, 'challenge', 'java', NULL, NULL, '', 1, 20, 'public class MyClass {\n    public static void main(String[] args) {\n        System.out.println(\"Hello Java!\");\n    }\n}'),
-(66, 1, 'challenge', 'java', NULL, NULL, '', 1, 20, 'public class MyClass {\n    public static void main(String[] args) {\n        System.out.println(\"Hello Java!\");\n    }\n}'),
-(67, 26, 'story', 'java', 0, 0, NULL, NULL, 0, ''),
-(68, 26, 'challenge', 'java', NULL, NULL, '', 0, 0, ''),
-(69, 26, 'challenge', 'c++', NULL, NULL, '', 1, 20, '#include <iostream>\n\nint main() {\n    std::cout << \"Hello C++!\" << std::endl;\n    return 0;\n}'),
-(70, 26, 'challenge', 'c++', NULL, NULL, 'easy', 1, 39, '#include <iostream>\n\nint main() {\n    std::cout << \"Hello C++!\" << std::endl;\n    return 0;\n}'),
-(71, 1, 'story', 'java', 1, 7, NULL, NULL, 20, NULL),
-(72, 1, 'challenge', 'c#', NULL, NULL, 'easy', 1, 89, 'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine(\"Tahooo!\");\n        Console.WriteLine(\"Taho: 15\");\n        Console.WriteLine(\"Syrup: 5\");\n    }\n}');
+INSERT INTO `progress` (`userId`, `type`, `language`, `chapter`, `episode`, `difficulty`, `level`, `points`, `code`) VALUES
+-- User 1 (asd) - Java Story Mode: All 7 episodes completed
+(1, 'story', 'java', 1, 1, NULL, NULL, 95, NULL),
+(1, 'story', 'java', 1, 2, NULL, NULL, 88, NULL),
+(1, 'story', 'java', 1, 3, NULL, NULL, 92, NULL),
+(1, 'story', 'java', 2, 1, NULL, NULL, 85, NULL),
+(1, 'story', 'java', 2, 2, NULL, NULL, 90, NULL),
+(1, 'story', 'java', 3, 1, NULL, NULL, 87, NULL),
+(1, 'story', 'java', 3, 2, NULL, NULL, 93, NULL),
+-- User 1 (asd) - C++ Story Mode: All 7 episodes completed
+(1, 'story', 'c++', 1, 1, NULL, NULL, 95, NULL),
+(1, 'story', 'c++', 1, 2, NULL, NULL, 88, NULL),
+(1, 'story', 'c++', 1, 3, NULL, NULL, 92, NULL),
+(1, 'story', 'c++', 2, 1, NULL, NULL, 85, NULL),
+(1, 'story', 'c++', 2, 2, NULL, NULL, 90, NULL),
+(1, 'story', 'c++', 3, 1, NULL, NULL, 87, NULL),
+(1, 'story', 'c++', 3, 2, NULL, NULL, 93, NULL),
+-- User 1 (asd) - C# Story Mode: All 7 episodes completed
+(1, 'story', 'c#', 1, 1, NULL, NULL, 95, NULL),
+(1, 'story', 'c#', 1, 2, NULL, NULL, 88, NULL),
+(1, 'story', 'c#', 1, 3, NULL, NULL, 92, NULL),
+(1, 'story', 'c#', 2, 1, NULL, NULL, 85, NULL),
+(1, 'story', 'c#', 2, 2, NULL, NULL, 90, NULL),
+(1, 'story', 'c#', 3, 1, NULL, NULL, 87, NULL),
+(1, 'story', 'c#', 3, 2, NULL, NULL, 93, NULL),
+-- User 1 (asd) - Java Challenge Mode: All 20 levels completed
+(1, 'challenge', 'java', NULL, NULL, 'easy', 1, 95, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 2, 88, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 3, 92, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 4, 85, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 5, 90, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 6, 87, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 7, 89, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 8, 86, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 9, 91, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 10, 84, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 11, 88, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 12, 90, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 13, 85, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 14, 87, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 15, 89, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 16, 86, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 17, 92, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 18, 88, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 19, 90, NULL),
+(1, 'challenge', 'java', NULL, NULL, 'easy', 20, 93, NULL),
+-- User 1 (asd) - C++ Challenge Mode: All 20 levels completed
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 1, 95, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 2, 88, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 3, 92, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 4, 85, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 5, 90, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 6, 87, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 7, 89, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 8, 86, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 9, 91, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 10, 84, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 11, 88, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 12, 90, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 13, 85, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 14, 87, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 15, 89, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 16, 86, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 17, 92, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 18, 88, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 19, 90, NULL),
+(1, 'challenge', 'c++', NULL, NULL, 'easy', 20, 93, NULL),
+-- User 1 (asd) - C# Challenge Mode: All 20 levels completed
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 1, 95, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 2, 88, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 3, 92, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 4, 85, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 5, 90, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 6, 87, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 7, 89, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 8, 86, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 9, 91, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 10, 84, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 11, 88, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 12, 90, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 13, 85, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 14, 87, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 15, 89, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 16, 86, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 17, 92, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 18, 88, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 19, 90, NULL),
+(1, 'challenge', 'c#', NULL, NULL, 'easy', 20, 93, NULL);
 
 -- --------------------------------------------------------
 
@@ -325,7 +374,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `programmingLanguage`, `created_at`, `has_taken_pretest`, `pretest_language`) VALUES
-(1, 'asd', '$2y$10$gyHq.5few4MiSbL5edWEuOVw..vryZnZVq1pKvyLzbVeYkJgD8tUW', 'java', '2025-10-03 10:00:01', 0, NULL),
+(1, 'asd', '$2y$10$gyHq.5few4MiSbL5edWEuOVw..vryZnZVq1pKvyLzbVeYkJgD8tUW', 'c#', '2025-10-03 10:00:01', 0, NULL),
 (2, 'mariaDev', '$2b$12$hl9o.jr4SlZbN7.qwGIp6OGU3gTx//7cacAwCZEnVbeVGN/Elst22', 'c++', '2025-10-03 10:00:01', 0, NULL),
 (3, 'pedroCode', '$2b$12$PyEvbHMcr6DdAG1tMXM0S./chwu5N86AUMRrPSutv7FGun43b3U/y', 'c#', '2025-10-03 10:00:01', 0, NULL),
 (4, 'luzCoder', '$2b$12$9bEXHygLkPoM/kt7bqXEP.Yt1S2ueqxXmXKTM1N.9wW72e0e76XVa', 'java', '2025-10-03 10:00:01', 0, NULL),
@@ -409,13 +458,13 @@ ALTER TABLE `assessments`
 -- AUTO_INCREMENT for table `performance`
 --
 ALTER TABLE `performance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT for table `progress`
 --
 ALTER TABLE `progress`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
 
 --
 -- AUTO_INCREMENT for table `rewards`
