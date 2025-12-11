@@ -33,6 +33,12 @@ export function submitLanguageSelection() {
                 localStorage.setItem('selectedLanguage', currentSelectedLanguage.toLowerCase());
                 console.log('Language saved to localStorage:', currentSelectedLanguage);
                 
+                // Update the display element immediately
+                const languageElement = document.getElementById('currentLanguageDisplay');
+                if (languageElement) {
+                    languageElement.textContent = currentSelectedLanguage.toUpperCase();
+                }
+                
                 alert(data.message);
                 hideModal(); // Hide modal after successful submission
                 // Refresh UI components that depend on the programming language

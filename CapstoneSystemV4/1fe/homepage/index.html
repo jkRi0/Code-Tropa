@@ -2207,14 +2207,19 @@
             const selectedLanguage = localStorage.getItem('selectedLanguage');
             if (selectedLanguage) {
                 languageElement.textContent = selectedLanguage.toUpperCase();
+            } else {
+                // If not in localStorage, show "Not Selected"
+                languageElement.textContent = 'Not Selected';
             }
         }
 
         // Update info on page load
-        document.addEventListener('DOMContentLoaded', updatePlayerInfo);
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePlayerInfo();
+        });
         
         // Update info periodically to catch changes
-        setInterval(updatePlayerInfo, 1000);
+        setInterval(updatePlayerInfo, 2000);
 
         // Load and display coding recommendations
         function loadCodingRecommendations() {

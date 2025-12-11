@@ -130,7 +130,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'samesite' => 'Strict',
             ]);
         
-            echo "<script>alert('Logged in successfully'); window.location.href='../1fe/homepage/index.html'; </script>";
+            // Set programming language in localStorage before redirecting
+            $lang = $programmingLanguage ?? 'java'; // Default to 'java' if not set
+            $langLower = strtolower($lang);
+            echo "<script>
+                // Set language in localStorage before redirecting
+                if (typeof(Storage) !== 'undefined') {
+                    localStorage.setItem('selectedLanguage', '" . $langLower . "');
+                }
+                alert('Logged in successfully'); 
+                window.location.href='../1fe/homepage/index.html'; 
+            </script>";
         } else {
             echo "<script>alert('Invalid password'); window.location.href='../1fe/login/'; </script>";
         }
