@@ -297,52 +297,85 @@ CREATE TABLE `rewards` (
 --
 
 INSERT INTO `rewards` (`id`, `userId`, `language`, `tier`, `badgeName`) VALUES
-(1, 1, 'java', 't1', 'b1'),
-(2, 1, 'java', 't3', 'b2'),
-(3, 1, 'java', 't2', 'b3'),
-(4, 2, 'c++', 't1', 'b1'),
-(5, 2, 'c++', 't2', 'b2'),
-(6, 2, 'c++', 't2', 'b3'),
-(7, 2, 'c++', 't3', 'b4'),
-(8, 3, 'c#', 't1', 'b1'),
-(9, 3, 'c#', 't2', 'b5'),
-(10, 1, 'java', 't3', 'b11'),
-(11, 1, 'java', 't3', 'b7'),
-(12, 5, 'c++', 't2', 'b8'),
-(13, 5, 'c++', 't2', 'b9'),
-(14, 5, 'c++', 't3', 'b10'),
-(15, 5, 'c++', 't3', 'b11'),
-(16, 1, 'java', 't3', 'b13'),
-(17, 1, 'java', 't4', 'b12'),
-(18, 6, 'java', 't1', 'b1'),
-(19, 6, 'java', 't2', 'b2'),
-(20, 6, 'java', 't3', 'b3'),
-(21, 7, 'c#', 't1', 'b1'),
-(22, 7, 'c#', 't2', 'b4'),
-(23, 8, 'c++', 't1', 'b2'),
-(24, 8, 'c++', 't3', 'b6'),
-(25, 9, 'java', 't2', 'b3'),
-(26, 9, 'java', 't3', 'b7'),
-(27, 9, 'java', 't4', 'b8'),
-(28, 10, 'c#', 't1', 'b1'),
-(29, 10, 'c#', 't2', 'b5'),
-(30, 10, 'c#', 't3', 'b9'),
-(31, 11, 'java', 't1', 'b1'),
-(32, 11, 'java', 't2', 'b2'),
-(33, 12, 'c++', 't1', 'b2'),
-(34, 12, 'c++', 't2', 'b3'),
-(35, 12, 'c++', 't3', 'b4'),
-(36, 13, 'c#', 't1', 'b5'),
-(37, 13, 'c#', 't2', 'b6'),
-(38, 14, 'java', 't2', 'b7'),
-(39, 14, 'java', 't3', 'b8'),
-(40, 15, 'c++', 't1', 'b9'),
-(41, 15, 'c++', 't2', 'b10'),
-(42, 15, 'c++', 't3', 'b11'),
-(43, 16, 'java', 't1', 'b1'),
-(46, 1, 'java', 't2', 'b2'),
-(47, 1, 'java', 't3', 'b3'),
-(48, 1, 'java', 't5', 'b5');
+-- User 1 (asd) - Java Story Mode Episode Badges
+(1, 1, 'java', 't1', 'b1'),   -- ep1
+(2, 1, 'java', 't2', 'b2'),   -- ep2
+(3, 1, 'java', 't2', 'b3'),   -- ep3
+(4, 1, 'java', 't2', 'b4'),   -- ep4
+(5, 1, 'java', 't3', 'b5'),   -- ep6
+(6, 1, 'java', 't3', 'b6'),   -- ep7
+-- User 1 (asd) - Java Points Badges
+-- Story Mode: 95+88+92+85+90+87+93 = 630 points (max 700)
+-- Challenge Mode: 95+88+92+85+90+87+89+86+91+84+88+90+85+87+89+86+92+88+90+93 = 1780 points (max 2000)
+-- Total: 630 + 1780 = 2410 points (qualifies for b7: 1000pts milestone)
+(7, 1, 'java', 't3', 'b7'),   -- 1000pts milestone
+-- User 1 (asd) - Java Language Mastery (all 7 episodes completed)
+(8, 1, 'java', 't4', 'b11'),  -- Java Mastery
+-- User 1 (asd) - C++ Story Mode Episode Badges
+(9, 1, 'c++', 't1', 'b1'),    -- ep1
+(10, 1, 'c++', 't2', 'b2'),   -- ep2
+(11, 1, 'c++', 't2', 'b3'),   -- ep3
+(12, 1, 'c++', 't2', 'b4'),   -- ep4
+(13, 1, 'c++', 't3', 'b5'),   -- ep6
+(14, 1, 'c++', 't3', 'b6'),   -- ep7
+-- User 1 (asd) - C++ Points Badges
+-- Story Mode: 95+88+92+85+90+87+93 = 630 points (max 700)
+-- Challenge Mode: 95+88+92+85+90+87+89+86+91+84+88+90+85+87+89+86+92+88+90+93 = 1780 points (max 2000)
+-- Total: 630 + 1780 = 2410 points (qualifies for b7: 1000pts milestone)
+(15, 1, 'c++', 't3', 'b7'),   -- 1000pts milestone
+-- User 1 (asd) - C++ Language Mastery (all 7 episodes completed)
+(16, 1, 'c++', 't4', 'b12'),  -- C++ Mastery
+-- User 1 (asd) - C# Story Mode Episode Badges
+(17, 1, 'c#', 't1', 'b1'),    -- ep1
+(18, 1, 'c#', 't2', 'b2'),    -- ep2
+(19, 1, 'c#', 't2', 'b3'),    -- ep3
+(20, 1, 'c#', 't2', 'b4'),    -- ep4
+(21, 1, 'c#', 't3', 'b5'),    -- ep6
+(22, 1, 'c#', 't3', 'b6'),    -- ep7
+-- User 1 (asd) - C# Points Badges
+-- Story Mode: 95+88+92+85+90+87+93 = 630 points (max 700)
+-- Challenge Mode: 95+88+92+85+90+87+89+86+91+84+88+90+85+87+89+86+92+88+90+93 = 1780 points (max 2000)
+-- Total: 630 + 1780 = 2410 points (qualifies for b7: 1000pts milestone)
+(23, 1, 'c#', 't3', 'b7'),    -- 1000pts milestone
+-- User 1 (asd) - C# Language Mastery (all 7 episodes completed)
+(24, 1, 'c#', 't4', 'b13'),   -- C# Mastery
+-- Other users' badges
+(25, 2, 'c++', 't1', 'b1'),
+(26, 2, 'c++', 't2', 'b2'),
+(27, 2, 'c++', 't2', 'b3'),
+(28, 2, 'c++', 't3', 'b4'),
+(29, 3, 'c#', 't1', 'b1'),
+(30, 3, 'c#', 't2', 'b5'),
+(31, 5, 'c++', 't2', 'b8'),
+(32, 5, 'c++', 't2', 'b9'),
+(33, 5, 'c++', 't3', 'b10'),
+(34, 5, 'c++', 't3', 'b11'),
+(35, 6, 'java', 't1', 'b1'),
+(36, 6, 'java', 't2', 'b2'),
+(37, 6, 'java', 't3', 'b3'),
+(38, 7, 'c#', 't1', 'b1'),
+(39, 7, 'c#', 't2', 'b4'),
+(40, 8, 'c++', 't1', 'b2'),
+(41, 8, 'c++', 't3', 'b6'),
+(42, 9, 'java', 't2', 'b3'),
+(43, 9, 'java', 't3', 'b7'),
+(44, 9, 'java', 't4', 'b8'),
+(45, 10, 'c#', 't1', 'b1'),
+(46, 10, 'c#', 't2', 'b5'),
+(47, 10, 'c#', 't3', 'b9'),
+(48, 11, 'java', 't1', 'b1'),
+(49, 11, 'java', 't2', 'b2'),
+(50, 12, 'c++', 't1', 'b2'),
+(51, 12, 'c++', 't2', 'b3'),
+(52, 12, 'c++', 't3', 'b4'),
+(53, 13, 'c#', 't1', 'b5'),
+(54, 13, 'c#', 't2', 'b6'),
+(55, 14, 'java', 't2', 'b7'),
+(56, 14, 'java', 't3', 'b8'),
+(57, 15, 'c++', 't1', 'b9'),
+(58, 15, 'c++', 't2', 'b10'),
+(59, 15, 'c++', 't3', 'b11'),
+(60, 16, 'java', 't1', 'b1');
 
 -- --------------------------------------------------------
 
@@ -508,7 +541,7 @@ ALTER TABLE `progress`
 -- AUTO_INCREMENT for table `rewards`
 --
 ALTER TABLE `rewards`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `saving`
