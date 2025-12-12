@@ -553,8 +553,146 @@ function removeExistingScripts() {
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', loadSelectedChallengeData);
 
+// Pause menu functionality
+let pauseMenuOpen = false;
+const pauseMenu = document.createElement('iframe');
+pauseMenu.src = 'pause.html';
+pauseMenu.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 10000; display: none; background: rgba(0,0,0,0.85); pointer-events: auto;';
+document.body.appendChild(pauseMenu);
+
+// Listen for messages from pause menu
+window.addEventListener('message', async (event) => {
+    if (event.data.type === 'resume') {
+        pauseMenu.style.display = 'none';
+        pauseMenuOpen = false;
+    } else if (event.data.type === 'quit') {
+        // Save game before quitting
+        await saveGameState();
+        window.location.href = '../index.html';
+    } else if (event.data.type === 'saveGame') {
+        await saveGameState();
+        // Notify pause menu that save is complete
+        if (pauseMenu.contentWindow) {
+            pauseMenu.contentWindow.postMessage({ type: 'gameSaved' }, '*');
+        }
+    }
+});
+
+// Function to save game state
+async function saveGameState() {
+    try {
+        const selectedData = localStorage.getItem('selectedChallenge');
+        if (selectedData) {
+            const data = JSON.parse(selectedData);
+            
+            // Get code from Monaco editor iframe using the async function
+            let code = '';
+            try {
+                if (window.getEditorCode) {
+                    code = await window.getEditorCode();
+                    console.log('Code retrieved for save:', code ? 'Yes' : 'No');
+                } else {
+                    // Fallback: try direct access
+                    const editorIframe = document.getElementById('monaco-editor-iframe');
+                    if (editorIframe && editorIframe.contentWindow) {
+                        code = editorIframe.contentWindow.getEditorValue ? editorIframe.contentWindow.getEditorValue() : '';
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not get code from editor:', e);
+            }
+            
+            // Update existing selectedChallenge with code and timestamp
+            data.code = code || '';
+            data.timestamp = new Date().toISOString();
+            data.saved = true;
+            
+            localStorage.setItem('selectedChallenge', JSON.stringify(data));
+            console.log('✅ Game saved to selectedChallenge, Code length:', code ? code.length : 0);
+        } else {
+            console.warn('⚠️ No selectedChallenge found in localStorage');
+        }
+    } catch (e) {
+        console.error('❌ Error saving game:', e);
+    }
+}
+
+// Function to load saved game state
+function loadSavedGame() {
+    try {
+        const selectedData = localStorage.getItem('selectedChallenge');
+        if (selectedData) {
+            const data = JSON.parse(selectedData);
+            const level = data.level || 'unknown';
+            const continueFlag = localStorage.getItem(`continueGame_${level}`);
+            
+            console.log('🔍 Checking for continue flag:', `continueGame_${level}`, continueFlag);
+            
+            if (continueFlag === 'true') {
+                localStorage.removeItem(`continueGame_${level}`); // Clear flag
+                
+                console.log('📦 Loading saved game from selectedChallenge');
+                
+                // Load saved code from selectedChallenge
+                if (data.code && data.saved) {
+                    // Wait for editor to be ready, then set code
+                    const tryLoadCode = setInterval(() => {
+                        if (window.setEditorCode) {
+                            // Check if editor is ready by checking if the function exists
+                            const editorIframe = document.getElementById('monaco-editor-iframe');
+                            if (editorIframe && editorIframe.contentWindow) {
+                                clearInterval(tryLoadCode);
+                                window.setEditorCode(data.code);
+                                console.log('✅ Loaded saved code into editor, length:', data.code.length);
+                            }
+                        }
+                    }, 100);
+                    
+                    // Timeout after 5 seconds
+                    setTimeout(() => {
+                        clearInterval(tryLoadCode);
+                    }, 5000);
+                    
+                    return true;
+                } else {
+                    console.warn('⚠️ No saved code found in selectedChallenge');
+                }
+            }
+        }
+        return false;
+    } catch (e) {
+        console.error('❌ Error loading saved game:', e);
+        return false;
+    }
+}
+
+// Load saved game on page load
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        loadSavedGame();
+    }, 500);
+});
+
+// Back button - show pause menu
 document.getElementById('backButton').addEventListener('click', function() {
-    window.location.href = '../index.html'; // Redirects to homepage
+    if (!pauseMenuOpen) {
+        pauseMenu.style.display = 'block';
+        pauseMenuOpen = true;
+    }
+});
+
+// ESC key - show pause menu
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' || e.keyCode === 27) {
+        if (!pauseMenuOpen) {
+            pauseMenu.style.display = 'block';
+            pauseMenuOpen = true;
+        } else {
+            // If already open, close it
+            pauseMenu.style.display = 'none';
+            pauseMenuOpen = false;
+        }
+    }
 });
 
 document.getElementById('submitCodeBtn').addEventListener('click', async function() {

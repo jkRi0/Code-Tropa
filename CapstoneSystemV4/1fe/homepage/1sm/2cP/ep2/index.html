@@ -783,6 +783,7 @@
             },
         ];
         let currentSceneIndex = 0;
+        window.currentSceneIndex = 0; // Make globally accessible for save game
         let currentSubtitleIndex = 0; // New: to track current subtitle sentence
         let typingInterval = null; // For typing animation
         let subtitleTimeout = null; // For timed subtitle changes
@@ -867,6 +868,7 @@
                         sceneContainer.onclick = null; // Remove this handler
                         document.removeEventListener('keydown', keyHandler); // Remove key handler
                         currentSceneIndex++;
+                        window.currentSceneIndex = currentSceneIndex; // Update global
                         showScene(currentSceneIndex);
                     };
                     
@@ -887,6 +889,7 @@
                 } else {
                     // No response, just proceed
                     currentSceneIndex++;
+                    window.currentSceneIndex = currentSceneIndex; // Update global
                     showScene(currentSceneIndex);
                 }
             }, 500);
@@ -1041,6 +1044,48 @@
         }
         document.addEventListener('keydown', handlePauseHotkey, true);
 
+        // Function to save game state (similar to challenge mode)
+        function saveGameState() {
+            console.log('🔵 saveGameState() called');
+            try {
+                // Get current episode from URL
+                const currentPath = window.location.pathname;
+                const episodeMatch = currentPath.match(/ep(\d+)/);
+                const episode = episodeMatch ? `ep${episodeMatch[1]}` : 'ep2';
+                
+                // Get current scene - prioritize window.currentSceneIndex which should be updated
+                const currentScene = window.currentSceneIndex !== undefined ? window.currentSceneIndex : (typeof currentSceneIndex !== 'undefined' ? currentSceneIndex : 0);
+                
+                console.log('💾 Saving game - Episode:', episode, 'Scene:', currentScene);
+                console.log('📊 currentSceneIndex variable:', typeof currentSceneIndex !== 'undefined' ? currentSceneIndex : 'undefined');
+                console.log('📊 window.currentSceneIndex:', window.currentSceneIndex);
+                
+                // Save the game
+                const gameState = {
+                    episode: episode,
+                    currentScene: currentScene,
+                    timestamp: new Date().toISOString()
+                };
+                const saveKey = `savedGame_${episode}`;
+                localStorage.setItem(saveKey, JSON.stringify(gameState));
+                console.log('✅ Game saved successfully:', saveKey);
+                console.log('💾 Saved game state:', gameState);
+                
+                // Verify it was saved
+                const verify = localStorage.getItem(saveKey);
+                if (verify) {
+                    console.log('✅ Verification passed - Data in localStorage:', JSON.parse(verify));
+                    return true;
+                } else {
+                    console.error('❌ Verification failed - Data not found in localStorage!');
+                    return false;
+                }
+            } catch (e) {
+                console.error('❌ Error saving game:', e);
+                return false;
+            }
+        }
+
         // Listen for messages from pause iframe
         window.addEventListener('message', (event) => {
             // Only accept messages from same origin for security
@@ -1062,7 +1107,24 @@
                     localStorage.setItem('voiceoverVolume', voiceoverVolume);
                     updateVoiceAudioVolume();
                 }
+            } else if (data.type === 'saveGame') {
+                console.log('💾 Save game message received!');
+                // Save game state
+                const saved = saveGameState();
+                console.log('💾 Save result:', saved);
+                // Notify pause menu that save is complete
+                const pausePage = document.getElementById('pausePage');
+                console.log('📄 Pause page element:', pausePage);
+                if (pausePage && pausePage.contentWindow) {
+                    console.log('📤 Sending gameSaved message to pause menu');
+                    pausePage.contentWindow.postMessage({ type: 'gameSaved' }, '*');
+                } else {
+                    console.error('❌ Cannot send message - pausePage not found or no contentWindow');
+                }
             } else if (data.type === 'quit') {
+                console.log('🚪 Quit message received');
+                // Save game before quitting
+                saveGameState();
                 // Redirect to homepage
                 window.location.href = '../../../index.html';
             }
@@ -1212,6 +1274,9 @@
         }
 
         function showScene(index) {
+            // Update global scene index for save game
+            currentSceneIndex = index;
+            window.currentSceneIndex = index;
             if (index < scenes.length) {
                 const scene = scenes[index];
 
@@ -1429,6 +1494,7 @@
                     sceneNextText.classList.remove('show'); // Hide text on click
                     sceneNextText.classList.remove('highlight'); // Remove highlight on click
                     currentSceneIndex++;
+                    window.currentSceneIndex = currentSceneIndex; // Update global
                     showScene(currentSceneIndex);
                 };
 
@@ -1438,6 +1504,7 @@
                         // Auto-advance if no subtitle
                         sceneVideo.onended = () => {
                             currentSceneIndex++;
+                            window.currentSceneIndex = currentSceneIndex; // Update global
                             showScene(currentSceneIndex);
                         };
                     } else {
@@ -1460,7 +1527,58 @@
         }
 
         // Start directly with chapter intro
-        document.addEventListener('DOMContentLoaded', showChapterIntro);
+        // Check for continue game on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if should continue from saved game
+            const currentPath = window.location.pathname;
+            const episodeMatch = currentPath.match(/ep(\d+)/);
+            const episode = episodeMatch ? `ep${episodeMatch[1]}` : 'ep2';
+            const continueFlag = localStorage.getItem(`continueGame_${episode}`);
+            
+            if (continueFlag === 'true') {
+                localStorage.removeItem(`continueGame_${episode}`); // Clear flag
+                
+                const saveKey = `savedGame_${episode}`;
+                const savedGame = localStorage.getItem(saveKey);
+                
+                if (savedGame) {
+                    try {
+                        const gameData = JSON.parse(savedGame);
+                        if (gameData.currentScene !== undefined && gameData.currentScene >= 0) {
+                            // Jump to saved scene - skip intro
+                            currentSceneIndex = gameData.currentScene;
+                            window.currentSceneIndex = gameData.currentScene;
+                            
+                            // Hide intro screens
+                            const introScreen = document.getElementById('introScreen');
+                            const chapterIntroScreen = document.getElementById('chapterIntroScreen');
+                            if (introScreen) introScreen.style.display = 'none';
+                            if (chapterIntroScreen) chapterIntroScreen.style.display = 'none';
+                            
+                            // Show scene container and jump to saved scene
+                            const sceneContainer = document.getElementById('sceneContainer');
+                            if (sceneContainer) {
+                                sceneContainer.style.visibility = 'visible';
+                                sceneContainer.style.opacity = '1';
+                            }
+                            
+                            // Load saved scene
+                            setTimeout(() => {
+                                console.log('📖 Loading saved scene:', currentSceneIndex);
+                                showScene(currentSceneIndex);
+                            }, 100);
+                            console.log('✅ Saved game loaded, jumping to scene:', currentSceneIndex);
+                            return; // Don't proceed with normal initialization
+                        }
+                    } catch (e) {
+                        console.error('Error loading saved game:', e);
+                    }
+                }
+            }
+            
+            // Normal initialization - start with chapter intro
+            showChapterIntro();
+        });
 
         // Challenge functions
         function showChallenge() {

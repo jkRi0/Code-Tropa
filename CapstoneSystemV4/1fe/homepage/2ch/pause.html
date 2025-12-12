@@ -101,6 +101,11 @@
             transform: translateY(0);
         }
 
+        .pause-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .volume-controls {
             display: none;
             margin-top: 15px;
@@ -217,23 +222,23 @@
         </div>
 
         <div class="volume-controls" id="volumeControls">
-                    <div class="volume-setting">
-                        <p><strong>Background Music:</strong></p>
-                        <input type="range" id="bgMusicVolume" min="0" max="100" value="50" class="volume-slider">
+            <div class="volume-setting">
+                <p><strong>Background Music:</strong></p>
+                <input type="range" id="bgMusicVolume" min="0" max="100" value="50" class="volume-slider">
                 <span class="volume-value" id="bgMusicValue">50%</span>
-                    </div>
-                    <div class="volume-setting">
-                        <p><strong>Sound Effects:</strong></p>
-                        <input type="range" id="sfxVolume" min="0" max="100" value="75" class="volume-slider">
+            </div>
+            <div class="volume-setting">
+                <p><strong>Sound Effects:</strong></p>
+                <input type="range" id="sfxVolume" min="0" max="100" value="75" class="volume-slider">
                 <span class="volume-value" id="sfxValue">75%</span>
-                    </div>
+            </div>
             <div class="volume-setting">
                 <p><strong>Voiceover:</strong></p>
                 <input type="range" id="voiceoverVolume" min="0" max="100" value="100" class="volume-slider">
                 <span class="volume-value" id="voiceoverValue">100%</span>
             </div>
-                    </div>
-                </div>
+        </div>
+    </div>
 
     <script>
         // Get elements
@@ -294,15 +299,9 @@
 
         // Save Game button
         saveBtn.addEventListener('click', () => {
-            console.log('🔵 Save Game button clicked in pause menu');
-            console.log('🔵 window.parent:', window.parent);
-            console.log('🔵 window.parent === window:', window.parent === window);
-            
-            if (window.parent && window.parent !== window) {
-                console.log('📤 Sending saveGame message to parent');
+            if (window.parent) {
                 // Request game state from parent
                 window.parent.postMessage({ type: 'saveGame' }, '*');
-                console.log('✅ Message sent');
                 
                 // Mark as saved
                 gameSavedThisSession = true;
@@ -319,8 +318,6 @@
                         saveBtn.disabled = false;
                     }, 1500);
                 }, 500);
-            } else {
-                console.error('❌ Cannot send message - window.parent is not available or same as window');
             }
         });
 
@@ -388,3 +385,4 @@
     </script>
 </body>
 </html>
+
