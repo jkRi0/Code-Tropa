@@ -85,5 +85,5 @@ export function getLanguageBasedPath(episode) {
 // Function to redirect to episode based on selected language
 export function redirectToEpisode(episode) {
     const path = getLanguageBasedPath(episode);
-    window.location.href = path;
+    window.location.href = path + '/index.html';
 }
