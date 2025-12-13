@@ -184,8 +184,7 @@
     <script type="module" src="./scripts/entryScript.js"></script>
 
     <!-- Service Worker Registration - Needed to serve cached videos -->
-    <script src="scripts/registerSW.js"></script>
-
+    <!-- <script src="scripts/registerSW.js"></script>
     <script>
         
         // Check if videos are already cached before redirecting
@@ -206,6 +205,59 @@
         } else {
             // Service worker not supported, redirect to preload
             window.location.href = './preload.html';
+        }
+        
+    </script> -->
+    <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('../../service-worker.js')
+              .then(registration => {
+                console.log('Main ServiceWorker registration successful with scope: ', registration.scope);
+              })
+              .catch(error => {
+                console.error('Main ServiceWorker registration failed: ', error);
+              });
+          });
+        }
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('../../service-worker-storymode-1j.js')
+              .then(registration => {
+                console.log('Storymode 1j ServiceWorker registration successful with scope: ', registration.scope);
+              })
+              .catch(error => {
+                console.error('Storymode 1j ServiceWorker registration failed: ', error);
+              });
+          });
+        }
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+            navigator.serviceWorker.register('../../service-worker-storymode-2cP.js')
+                .then(registration => {
+                console.log('Storymode 2cP ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch(error => {
+                console.error('Storymode 2cP ServiceWorker registration failed: ', error);
+                });
+            });
+        }
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('../../service-worker-storymode-3cS.js')
+              .then(registration => {
+                console.log('Storymode 3cS ServiceWorker registration successful with scope: ', registration.scope);
+              })
+              .catch(error => {
+                console.error('Storymode 3cS ServiceWorker registration failed: ', error);
+              });
+          });
         }
     </script>
 </body>
