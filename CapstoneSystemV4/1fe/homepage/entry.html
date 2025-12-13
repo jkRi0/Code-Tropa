@@ -167,9 +167,55 @@
             opacity: 0.5;
             pointer-events: none;
         }
+
+        /* Loading Screen */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #F8E1B7;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 18px;
+            color: #F8E1B7;
+        }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Caching game files...</div>
+        </div>
+    </div>
     <div class="options-container">
         <a href="#" class="tile-button" id="play-as-guest">
             <h2>Play as Guest</h2>
@@ -183,82 +229,100 @@
     
     <script type="module" src="./scripts/entryScript.js"></script>
 
-    <!-- Service Worker Registration - Needed to serve cached videos -->
-    <!-- <script src="scripts/registerSW.js"></script>
+    <!-- Service Worker Registration and Loading Screen -->
     <script>
-        
-        // Check if videos are already cached before redirecting
-        if ('caches' in window) {
-            caches.open('code-tropa-videos-v1')
-                .then(cache => cache.keys())
-                .then(keys => {
-                    if (keys.length < 5) {
-                        // Not enough videos cached, redirect to preload
-                        window.location.href = './preload.html';
+        const workersCompleted = {
+            main: false,
+            java: false,
+            cpp: false,
+            csharp: false
+        };
+
+        function checkAllComplete() {
+            const allDone = Object.values(workersCompleted).every(done => done === true);
+            if (allDone) {
+                setTimeout(() => {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                }, 500);
+            }
+        }
+
+        function trackWorker(workerName, registration) {
+            if (registration.installing) {
+                registration.installing.addEventListener('statechange', function() {
+                    if (this.state === 'installed' || this.state === 'activated') {
+                        workersCompleted[workerName] = true;
+                        checkAllComplete();
                     }
-                    // If enough videos are cached, stay on this page
-                })
-                .catch(() => {
-                    // Cache not available, redirect to preload
-                    window.location.href = './preload.html';
                 });
-        } else {
-            // Service worker not supported, redirect to preload
-            window.location.href = './preload.html';
+            } else if (registration.waiting) {
+                workersCompleted[workerName] = true;
+                checkAllComplete();
+            } else if (registration.active) {
+                workersCompleted[workerName] = true;
+                checkAllComplete();
+            }
         }
-        
-    </script> -->
-    <script>
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
-            navigator.serviceWorker.register('../../service-worker.js')
-              .then(registration => {
-                console.log('Main ServiceWorker registration successful with scope: ', registration.scope);
-              })
-              .catch(error => {
-                console.error('Main ServiceWorker registration failed: ', error);
-              });
-          });
-        }
-    </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
-            navigator.serviceWorker.register('../../service-worker-storymode-1j.js')
-              .then(registration => {
-                console.log('Storymode 1j ServiceWorker registration successful with scope: ', registration.scope);
-              })
-              .catch(error => {
-                console.error('Storymode 1j ServiceWorker registration failed: ', error);
-              });
-          });
-        }
-    </script>
-    <script>
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-            navigator.serviceWorker.register('../../service-worker-storymode-2cP.js')
-                .then(registration => {
-                console.log('Storymode 2cP ServiceWorker registration successful with scope: ', registration.scope);
-                })
-                .catch(error => {
-                console.error('Storymode 2cP ServiceWorker registration failed: ', error);
-                });
+                // Register Main Service Worker
+                navigator.serviceWorker.register('../../service-worker.js')
+                    .then(registration => {
+                        console.log('Main ServiceWorker registered');
+                        trackWorker('main', registration);
+                    })
+                    .catch(error => {
+                        console.error('Main ServiceWorker failed:', error);
+                        workersCompleted.main = true;
+                        checkAllComplete();
+                    });
+
+                // Register Java Story Mode Service Worker
+                navigator.serviceWorker.register('../../service-worker-storymode-1j.js')
+                    .then(registration => {
+                        console.log('Java StoryMode ServiceWorker registered');
+                        trackWorker('java', registration);
+                    })
+                    .catch(error => {
+                        console.error('Java StoryMode ServiceWorker failed:', error);
+                        workersCompleted.java = true;
+                        checkAllComplete();
+                    });
+
+                // Register C++ Story Mode Service Worker
+                navigator.serviceWorker.register('../../service-worker-storymode-2cP.js')
+                    .then(registration => {
+                        console.log('C++ StoryMode ServiceWorker registered');
+                        trackWorker('cpp', registration);
+                    })
+                    .catch(error => {
+                        console.error('C++ StoryMode ServiceWorker failed:', error);
+                        workersCompleted.cpp = true;
+                        checkAllComplete();
+                    });
+
+                // Register C# Story Mode Service Worker
+                navigator.serviceWorker.register('../../service-worker-storymode-3cS.js')
+                    .then(registration => {
+                        console.log('C# StoryMode ServiceWorker registered');
+                        trackWorker('csharp', registration);
+                    })
+                    .catch(error => {
+                        console.error('C# StoryMode ServiceWorker failed:', error);
+                        workersCompleted.csharp = true;
+                        checkAllComplete();
+                    });
             });
+        } else {
+            // No service worker support, hide loading immediately
+            document.getElementById('loadingOverlay').style.display = 'none';
         }
-    </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
-            navigator.serviceWorker.register('../../service-worker-storymode-3cS.js')
-              .then(registration => {
-                console.log('Storymode 3cS ServiceWorker registration successful with scope: ', registration.scope);
-              })
-              .catch(error => {
-                console.error('Storymode 3cS ServiceWorker registration failed: ', error);
-              });
-          });
-        }
+
+        // Safety timeout - hide after 30 seconds max
+        setTimeout(() => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }, 30000);
     </script>
 </body>
 </html>
