@@ -212,6 +212,75 @@
             color: #F8E1B7;
         }
 
+        .loading-progress {
+            margin-top: 20px;
+            max-width: 600px;
+            width: 90vw;
+        }
+
+        .loading-progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .loading-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #F8E1B7, #CBA35C);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .loading-stats {
+            font-size: 12px;
+            color: rgba(248, 225, 183, 0.7);
+            margin-bottom: 10px;
+        }
+
+        .loading-current-file {
+            font-size: 11px;
+            color: #4CAF50;
+            word-break: break-all;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .worker-status {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .worker-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(248, 225, 183, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .worker-badge.active {
+            background: rgba(255, 193, 7, 0.3);
+            color: #FFC107;
+        }
+
+        .worker-badge.complete {
+            background: rgba(76, 175, 80, 0.3);
+            color: #4CAF50;
+        }
+
         /* PWA Install Button */
         .pwa-install-container {
             position: fixed;
@@ -381,6 +450,19 @@
         <div class="loading-content">
             <div class="loading-spinner"></div>
             <div class="loading-text">Caching game files...</div>
+            <div class="loading-progress">
+                <div class="loading-progress-bar">
+                    <div class="loading-progress-fill" id="progressFill"></div>
+                </div>
+                <div class="loading-stats" id="loadingStats">Initializing...</div>
+                <div class="worker-status">
+                    <span class="worker-badge" id="badge-main">Main</span>
+                    <span class="worker-badge" id="badge-java">Java Story</span>
+                    <span class="worker-badge" id="badge-cpp">C++ Story</span>
+                    <span class="worker-badge" id="badge-csharp">C# Story</span>
+                </div>
+                <div class="loading-current-file" id="currentFileList"></div>
+            </div>
         </div>
     </div>
     <!-- PWA Install/Uninstall Buttons -->
@@ -423,20 +505,6 @@
     <script type="module" src="./scripts/entryScript.js"></script>
     <script src="./scripts/pwa-install.js"></script>
     
-    <!-- Listen for sync messages from service worker -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.addEventListener('message', event => {
-                if (event.data && event.data.type === 'SYNC_QUEUE') {
-                    // Trigger sync
-                    if (window.syncManager && window.syncManager.triggerSync) {
-                        window.syncManager.triggerSync();
-                    }
-                }
-            });
-        }
-    </script>
-
     <!-- Service Worker Registration and Loading Screen -->
     <script>
         const workersCompleted = {
@@ -446,30 +514,115 @@
             csharp: false
         };
 
+        const workerProgress = {
+            main: { current: 0, total: 0, currentFile: '' },
+            java: { current: 0, total: 0, currentFile: '' },
+            cpp: { current: 0, total: 0, currentFile: '' },
+            csharp: { current: 0, total: 0, currentFile: '' }
+        };
+
+        let lastCachedFile = '';
+
+        function updateProgressUI() {
+            // Calculate overall progress
+            let totalFiles = 0;
+            let cachedFiles = 0;
+            
+            Object.values(workerProgress).forEach(wp => {
+                totalFiles += wp.total;
+                cachedFiles += wp.current;
+            });
+
+            const percentage = totalFiles > 0 ? Math.round((cachedFiles / totalFiles) * 100) : 0;
+            
+            // Update progress bar
+            document.getElementById('progressFill').style.width = percentage + '%';
+            
+            // Update stats
+            document.getElementById('loadingStats').textContent = 
+                `Cached ${cachedFiles} of ${totalFiles} files (${percentage}%)`;
+
+            // Show current file being cached (single line)
+            // Hide solution files for security
+            const fileListEl = document.getElementById('currentFileList');
+            if (lastCachedFile.toLowerCase().includes('solution')) {
+                fileListEl.textContent = '✓ ...';
+            } else {
+                const shortPath = lastCachedFile.replace('./1fe/', '').replace('./node_modules/', 'node_modules/');
+                fileListEl.textContent = '✓ ' + shortPath;
+            }
+        }
+
+        function updateWorkerBadge(workerName, status) {
+            const badge = document.getElementById('badge-' + workerName);
+            if (badge) {
+                badge.classList.remove('active', 'complete');
+                if (status === 'active') {
+                    badge.classList.add('active');
+                } else if (status === 'complete') {
+                    badge.classList.add('complete');
+                }
+            }
+        }
+
         function checkAllComplete() {
             const allDone = Object.values(workersCompleted).every(done => done === true);
             if (allDone) {
+                document.getElementById('loadingStats').textContent = 'All files cached! Starting app...';
                 setTimeout(() => {
                     document.getElementById('loadingOverlay').style.display = 'none';
-                }, 500);
+                }, 800);
             }
         }
 
         function trackWorker(workerName, registration) {
+            updateWorkerBadge(workerName, 'active');
+            
             if (registration.installing) {
                 registration.installing.addEventListener('statechange', function() {
                     if (this.state === 'installed' || this.state === 'activated') {
                         workersCompleted[workerName] = true;
+                        updateWorkerBadge(workerName, 'complete');
                         checkAllComplete();
                     }
                 });
             } else if (registration.waiting) {
                 workersCompleted[workerName] = true;
+                updateWorkerBadge(workerName, 'complete');
                 checkAllComplete();
             } else if (registration.active) {
                 workersCompleted[workerName] = true;
+                updateWorkerBadge(workerName, 'complete');
                 checkAllComplete();
             }
+        }
+
+        // Listen for caching progress messages from service workers
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', event => {
+                if (event.data && event.data.type === 'CACHE_PROGRESS') {
+                    const { worker, file, current, total } = event.data;
+                    
+                    if (workerProgress[worker]) {
+                        workerProgress[worker].current = current;
+                        workerProgress[worker].total = total;
+                        lastCachedFile = file;
+                        updateProgressUI();
+                    }
+                } else if (event.data && event.data.type === 'CACHE_COMPLETE') {
+                    const { worker, total } = event.data;
+                    if (workerProgress[worker]) {
+                        workerProgress[worker].current = total;
+                        workerProgress[worker].total = total;
+                        updateProgressUI();
+                    }
+                } else if (event.data && event.data.type === 'SYNC_QUEUE') {
+                    // Trigger sync
+                    if (window.syncManager && window.syncManager.triggerSync) {
+                        window.syncManager.triggerSync();
+                    }
+                }
+            });
         }
 
         if ('serviceWorker' in navigator) {
@@ -483,6 +636,7 @@
                     .catch(error => {
                         console.error('Main ServiceWorker failed:', error);
                         workersCompleted.main = true;
+                        updateWorkerBadge('main', 'complete');
                         checkAllComplete();
                     });
 
@@ -495,6 +649,7 @@
                     .catch(error => {
                         console.error('Java StoryMode ServiceWorker failed:', error);
                         workersCompleted.java = true;
+                        updateWorkerBadge('java', 'complete');
                         checkAllComplete();
                     });
 
@@ -507,6 +662,7 @@
                     .catch(error => {
                         console.error('C++ StoryMode ServiceWorker failed:', error);
                         workersCompleted.cpp = true;
+                        updateWorkerBadge('cpp', 'complete');
                         checkAllComplete();
                     });
 
@@ -519,6 +675,7 @@
                     .catch(error => {
                         console.error('C# StoryMode ServiceWorker failed:', error);
                         workersCompleted.csharp = true;
+                        updateWorkerBadge('csharp', 'complete');
                         checkAllComplete();
                     });
             });
@@ -527,10 +684,10 @@
             document.getElementById('loadingOverlay').style.display = 'none';
         }
 
-        // Safety timeout - hide after 30 seconds max
+        // Safety timeout - hide after 60 seconds max (increased for large caches)
         setTimeout(() => {
             document.getElementById('loadingOverlay').style.display = 'none';
-        }, 30000);
+        }, 60000);
     </script>
 </body>
 </html>

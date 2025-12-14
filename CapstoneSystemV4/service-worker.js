@@ -500,17 +500,48 @@ const FILES_TO_CACHE = [
   './1fe/homepage/2ch/3cS/lvl20/solutions.js'
 ];
 
-// Install Service Worker and cache files
+// Helper function to notify clients about caching progress
+async function notifyClients(message) {
+  const clients = await self.clients.matchAll({ includeUncontrolled: true });
+  clients.forEach(client => client.postMessage(message));
+}
+
+// Install Service Worker and cache files with progress reporting
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(FILES_TO_CACHE);
-      })
-      .catch(error => {
-        console.error('Cache failed:', error);
-      })
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      console.log('Opened cache: main');
+      
+      const total = FILES_TO_CACHE.length;
+      let current = 0;
+      
+      // Cache files one by one and report progress
+      for (const file of FILES_TO_CACHE) {
+        try {
+          await cache.add(file);
+          current++;
+          await notifyClients({
+            type: 'CACHE_PROGRESS',
+            worker: 'main',
+            file: file,
+            current: current,
+            total: total
+          });
+        } catch (error) {
+          console.warn(`Failed to cache: ${file}`, error);
+          current++;
+        }
+      }
+      
+      await notifyClients({
+        type: 'CACHE_COMPLETE',
+        worker: 'main',
+        total: total
+      });
+      
+      console.log('Main cache complete');
+    })()
   );
   self.skipWaiting();
 });

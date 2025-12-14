@@ -10,7 +10,7 @@ const FILES_TO_CACHE = [
     './1fe/homepage/1sm/2cP/ep1/solutions.js',
     './1fe/homepage/1sm/2cP/ep1/assets/1.mkv',
     './1fe/homepage/1sm/2cP/ep1/assets/1.mp4',
-    './1fe/homepage/1sm/2cP/ep1/assets/1.PNG',
+    './1fe/homepage/1sm/2cP/ep1/assets/1.png',
     './1fe/homepage/1sm/2cP/ep1/assets/2.mp4',
     './1fe/homepage/1sm/2cP/ep1/assets/3.mp4',
     './1fe/homepage/1sm/2cP/ep1/assets/4.mp4',
@@ -28,7 +28,7 @@ const FILES_TO_CACHE = [
     './1fe/homepage/1sm/2cP/ep2/objectives.js',
     './1fe/homepage/1sm/2cP/ep2/solutions.js',
     './1fe/homepage/1sm/2cP/ep2/assets/1.mp4',
-    './1fe/homepage/1sm/2cP/ep2/assets/1.PNG',
+    './1fe/homepage/1sm/2cP/ep2/assets/1.png',
     './1fe/homepage/1sm/2cP/ep2/assets/2.mp4',
     './1fe/homepage/1sm/2cP/ep2/assets/3.mp4',
     './1fe/homepage/1sm/2cP/ep2/assets/4.mp4',
@@ -43,11 +43,11 @@ const FILES_TO_CACHE = [
     './1fe/homepage/1sm/2cP/ep3/objectives.js',
     './1fe/homepage/1sm/2cP/ep3/solutions.js',
     './1fe/homepage/1sm/2cP/ep3/assets/1.mp4',
-    './1fe/homepage/1sm/2cP/ep3/assets/1.PNG',
+    './1fe/homepage/1sm/2cP/ep3/assets/1.png',
     './1fe/homepage/1sm/2cP/ep3/assets/2.mp4',
-    './1fe/homepage/1sm/2cP/ep3/assets/2.PNG',
+    './1fe/homepage/1sm/2cP/ep3/assets/2.png',
     './1fe/homepage/1sm/2cP/ep3/assets/3.mp4',
-    './1fe/homepage/1sm/2cP/ep3/assets/3.PNG',
+    './1fe/homepage/1sm/2cP/ep3/assets/3.png',
     './1fe/homepage/1sm/2cP/ep3/assets/4.mp4',
     './1fe/homepage/1sm/2cP/ep3/assets/5.mp4',
     './1fe/homepage/1sm/2cP/ep3/assets/6.png',
@@ -61,9 +61,9 @@ const FILES_TO_CACHE = [
     './1fe/homepage/1sm/2cP/ep4/objectives.js',
     './1fe/homepage/1sm/2cP/ep4/solutions.js',
     './1fe/homepage/1sm/2cP/ep4/assets/1.mp4',
-    './1fe/homepage/1sm/2cP/ep4/assets/1.PNG',
+    './1fe/homepage/1sm/2cP/ep4/assets/1.png',
     './1fe/homepage/1sm/2cP/ep4/assets/2.mp4',
-    './1fe/homepage/1sm/2cP/ep4/assets/2.PNG',
+    './1fe/homepage/1sm/2cP/ep4/assets/2.png',
     './1fe/homepage/1sm/2cP/ep4/assets/3.mp4',
     './1fe/homepage/1sm/2cP/ep4/assets/4.mp4',
     './1fe/homepage/1sm/2cP/ep4/assets/5.mp4',
@@ -81,7 +81,7 @@ const FILES_TO_CACHE = [
     './1fe/homepage/1sm/2cP/ep5/assets/2.mkv',
     './1fe/homepage/1sm/2cP/ep5/assets/2.mp4',
     './1fe/homepage/1sm/2cP/ep5/assets/3.mp4',
-    './1fe/homepage/1sm/2cP/ep5/assets/3.PNG',
+    './1fe/homepage/1sm/2cP/ep5/assets/3.png',
     './1fe/homepage/1sm/2cP/ep5/assets/4.mkv',
     './1fe/homepage/1sm/2cP/ep5/assets/4.png',
     './1fe/homepage/1sm/2cP/ep5/assets/bg.png',
@@ -93,11 +93,11 @@ const FILES_TO_CACHE = [
     './1fe/homepage/1sm/2cP/ep6/objectives.js',
     './1fe/homepage/1sm/2cP/ep6/solutions.js',
     './1fe/homepage/1sm/2cP/ep6/assets/1.mp4',
-    './1fe/homepage/1sm/2cP/ep6/assets/1.PNG',
+    './1fe/homepage/1sm/2cP/ep6/assets/1.png',
     './1fe/homepage/1sm/2cP/ep6/assets/2.mp4',
-    './1fe/homepage/1sm/2cP/ep6/assets/2.PNG',
+    './1fe/homepage/1sm/2cP/ep6/assets/2.png',
     './1fe/homepage/1sm/2cP/ep6/assets/3.mp4',
-    './1fe/homepage/1sm/2cP/ep6/assets/3.PNG',
+    './1fe/homepage/1sm/2cP/ep6/assets/3.png',
     './1fe/homepage/1sm/2cP/ep6/assets/4.mp4',
     './1fe/homepage/1sm/2cP/ep6/assets/bg.png',
     './1fe/homepage/1sm/2cP/ep6/assets/ica.png',
@@ -108,32 +108,63 @@ const FILES_TO_CACHE = [
     './1fe/homepage/1sm/2cP/ep7/objectives.js',
     './1fe/homepage/1sm/2cP/ep7/solutions.js',
     './1fe/homepage/1sm/2cP/ep7/assets/1.mp4',
-    './1fe/homepage/1sm/2cP/ep7/assets/1.PNG',
+    './1fe/homepage/1sm/2cP/ep7/assets/1.png',
     './1fe/homepage/1sm/2cP/ep7/assets/2.mp4',
-    './1fe/homepage/1sm/2cP/ep7/assets/2.PNG',
+    './1fe/homepage/1sm/2cP/ep7/assets/2.png',
     './1fe/homepage/1sm/2cP/ep7/assets/3.mp4',
-    './1fe/homepage/1sm/2cP/ep7/assets/3.PNG',
+    './1fe/homepage/1sm/2cP/ep7/assets/3.png',
     './1fe/homepage/1sm/2cP/ep7/assets/4.mp4',
-    './1fe/homepage/1sm/2cP/ep7/assets/4.PNG',
+    './1fe/homepage/1sm/2cP/ep7/assets/4.png',
     './1fe/homepage/1sm/2cP/ep7/assets/5.mp4',
-    './1fe/homepage/1sm/2cP/ep7/assets/5.PNG',
+    './1fe/homepage/1sm/2cP/ep7/assets/5.png',
     './1fe/homepage/1sm/2cP/ep7/assets/6_.mp4',
     './1fe/homepage/1sm/2cP/ep7/assets/albolaryo.png',
     './1fe/homepage/1sm/2cP/ep7/assets/bg.png',
     './1fe/homepage/1sm/2cP/ep7/assets/ica.png',
 ];
 
-// Install Service Worker and cache files
+// Helper function to notify clients about caching progress
+async function notifyClients(message) {
+  const clients = await self.clients.matchAll({ includeUncontrolled: true });
+  clients.forEach(client => client.postMessage(message));
+}
+
+// Install Service Worker and cache files with progress reporting
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(FILES_TO_CACHE);
-      })
-      .catch(error => {
-        console.error('Cache failed:', error);
-      })
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      console.log('Opened cache: cpp (2cP)');
+      
+      const total = FILES_TO_CACHE.length;
+      let current = 0;
+      
+      // Cache files one by one and report progress
+      for (const file of FILES_TO_CACHE) {
+        try {
+          await cache.add(file);
+          current++;
+          await notifyClients({
+            type: 'CACHE_PROGRESS',
+            worker: 'cpp',
+            file: file,
+            current: current,
+            total: total
+          });
+        } catch (error) {
+          console.warn(`Failed to cache: ${file}`, error);
+          current++;
+        }
+      }
+      
+      await notifyClients({
+        type: 'CACHE_COMPLETE',
+        worker: 'cpp',
+        total: total
+      });
+      
+      console.log('C++ storymode cache complete');
+    })()
   );
 });
 

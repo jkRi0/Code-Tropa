@@ -109,17 +109,48 @@ const FILES_TO_CACHE = [
     './1fe/homepage/1sm/3cS/ep7/assets/lando.png',
 ];
 
-// Install Service Worker and cache files
+// Helper function to notify clients about caching progress
+async function notifyClients(message) {
+  const clients = await self.clients.matchAll({ includeUncontrolled: true });
+  clients.forEach(client => client.postMessage(message));
+}
+
+// Install Service Worker and cache files with progress reporting
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(FILES_TO_CACHE);
-      })
-      .catch(error => {
-        console.error('Cache failed:', error);
-      })
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      console.log('Opened cache: csharp (3cS)');
+      
+      const total = FILES_TO_CACHE.length;
+      let current = 0;
+      
+      // Cache files one by one and report progress
+      for (const file of FILES_TO_CACHE) {
+        try {
+          await cache.add(file);
+          current++;
+          await notifyClients({
+            type: 'CACHE_PROGRESS',
+            worker: 'csharp',
+            file: file,
+            current: current,
+            total: total
+          });
+        } catch (error) {
+          console.warn(`Failed to cache: ${file}`, error);
+          current++;
+        }
+      }
+      
+      await notifyClients({
+        type: 'CACHE_COMPLETE',
+        worker: 'csharp',
+        total: total
+      });
+      
+      console.log('C# storymode cache complete');
+    })()
   );
 });
 
