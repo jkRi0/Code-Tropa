@@ -3255,6 +3255,20 @@
             }).then(r => r.json()).then(data => {
                 console.log('Story progress saved:', data);
                 
+                // Invalidate unlock cache after saving story progress
+                if (data.success || data.queued) {
+                    if (window.invalidateAndRefreshUnlocks) {
+                        window.invalidateAndRefreshUnlocks();
+                    } else {
+                        // Try to import and call
+                        import('../../../../scripts/invalidateUnlockCache.js').then(module => {
+                            if (module.invalidateAndRefreshUnlocks) {
+                                module.invalidateAndRefreshUnlocks();
+                            }
+                        }).catch(() => {});
+                    }
+                }
+                
                 // Save performance data if progress was saved successfully
                 if (data.success && data.progressId) {
                     const performanceData = {

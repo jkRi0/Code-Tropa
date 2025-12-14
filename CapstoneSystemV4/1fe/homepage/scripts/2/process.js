@@ -202,16 +202,29 @@ export function process(clickedDiv, type) {
             plSelection.style.opacity = '1';
 
             // Fetch and highlight the currently saved language (green highlight)
+            // First check localStorage, then fetch from server
+            let currentLanguage = localStorage.getItem('selectedLanguage') || 'java';
+            
             fetch('../../2be/get_current_language.php')
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    // Even if response is not ok, try to parse JSON (might be cached/queued response)
                     return response.json();
                 })
                 .then(data => {
-                    const currentLanguage = data.currentLanguage.toLowerCase();
-                    console.log('Current Language from session (process.js):', currentLanguage); // Debug log
+                    // Use server value if available, otherwise keep localStorage value
+                    if (data && data.currentLanguage) {
+                        currentLanguage = data.currentLanguage.toLowerCase();
+                        // Update localStorage to match server
+                        localStorage.setItem('selectedLanguage', currentLanguage);
+                    } else if (data && data.queued) {
+                        // Request was queued, use cached/localStorage value (already set above)
+                        console.log('Language request queued, using localStorage:', currentLanguage);
+                    } else {
+                        // Fallback to localStorage (already set above)
+                        console.log('Using localStorage language:', currentLanguage);
+                    }
+                    
+                    console.log('Current Language (process.js):', currentLanguage);
                     
                     // Set the global language variable
                     setCurrentSelectedLanguage(currentLanguage);
@@ -226,14 +239,26 @@ export function process(clickedDiv, type) {
                         div.classList.remove('active-language'); // Remove persistent highlight
                         div.classList.remove('temporary-selected'); // Remove temporary highlight
                         const langText = div.querySelector('.inner1-2').textContent.trim().toLowerCase();
-                        // console.log('Comparing ', langText, ' with ', currentLanguage); // Debug log
                         if (langText === currentLanguage) {
                             div.classList.add('active-language'); // Add persistent green highlight
-                            console.log('Added active-language to:', langText); // Debug log
+                            console.log('Added active-language to:', langText);
                         }
                     });
                 })
-                .catch(error => console.error('Error fetching current language:', error));
+                .catch(error => {
+                    console.error('Error fetching current language:', error);
+                    // Fallback to localStorage
+                    const fallbackLang = localStorage.getItem('selectedLanguage') || 'java';
+                    setCurrentSelectedLanguage(fallbackLang);
+                    document.querySelectorAll('.outer2-2').forEach(div => {
+                        div.classList.remove('active-language');
+                        div.classList.remove('temporary-selected');
+                        const langText = div.querySelector('.inner1-2').textContent.trim().toLowerCase();
+                        if (langText === fallbackLang) {
+                            div.classList.add('active-language');
+                        }
+                    });
+                });
         }
     }else if(type === 'storyMode'){
         console.log('🔵 Story Mode button clicked');

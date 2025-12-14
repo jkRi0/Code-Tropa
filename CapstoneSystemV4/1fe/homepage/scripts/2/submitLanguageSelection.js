@@ -28,8 +28,11 @@ export function submitLanguageSelection() {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.status === 'success') {
-                // Store the selected language in localStorage
+            // Handle both success and queued responses
+            const isSuccess = data.status === 'success' || data.queued === true;
+            
+            if (isSuccess) {
+                // Store the selected language in localStorage immediately (optimistic update)
                 localStorage.setItem('selectedLanguage', currentSelectedLanguage.toLowerCase());
                 console.log('Language saved to localStorage:', currentSelectedLanguage);
                 
@@ -39,8 +42,32 @@ export function submitLanguageSelection() {
                     languageElement.textContent = currentSelectedLanguage.toUpperCase();
                 }
                 
-                alert(data.message);
+                // Update profile cache and invalidate language cache
+                import('../dbManager.js').then(({ getProfile, saveProfile, deleteData, STORES, getAllData }) => {
+                    getProfile().then(profile => {
+                        if (profile) {
+                            profile.programmingLanguage = currentSelectedLanguage;
+                            saveProfile(profile);
+                        }
+                    });
+                    // Invalidate all cached language responses (they might have different URL formats)
+                    getAllData(STORES.CACHE).then(cachedItems => {
+                        cachedItems.forEach(item => {
+                            if (item.url && item.url.includes('get_current_language.php')) {
+                                deleteData(STORES.CACHE, item.url).catch(() => {});
+                            }
+                        });
+                    }).catch(() => {});
+                }).catch(() => {});
+                
+                if (data.queued) {
+                    alert('Language change queued for sync when online');
+                } else {
+                    alert(data.message || 'Language updated successfully');
+                }
+                
                 hideModal(); // Hide modal after successful submission
+                
                 // Refresh UI components that depend on the programming language
                 initializeDomContent(); // Re-run DOM content initialization to refresh performance graphs
                 if (typeof refreshBadges === 'function') {
@@ -58,10 +85,15 @@ export function submitLanguageSelection() {
                     applyLevelLocks(); // Refresh unlocked challenge levels based on new language
                 }
             } else {
-                alert(`Error: ${data.message}`);
+                alert(`Error: ${data.message || 'Failed to update language'}`);
             }
         })
-        .catch(error => console.error('Error updating language:', error));
+        .catch(error => {
+            console.error('Error updating language:', error);
+            // Even on error, update localStorage optimistically
+            localStorage.setItem('selectedLanguage', currentSelectedLanguage.toLowerCase());
+            alert('Language change will be synced when online');
+        });
 
     } else {
         alert('Please select a programming language.'); // Or provide other feedback

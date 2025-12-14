@@ -895,6 +895,20 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
                         console.log('Story progress success:', data.success);
                         console.log('Story progress ID:', data.progressId);
                         
+                        // Invalidate unlock cache after saving story progress
+                        if (data.success || data.queued) {
+                            if (window.invalidateAndRefreshUnlocks) {
+                                window.invalidateAndRefreshUnlocks();
+                            } else {
+                                // Try to import and call
+                                import('../../scripts/invalidateUnlockCache.js').then(module => {
+                                    if (module.invalidateAndRefreshUnlocks) {
+                                        module.invalidateAndRefreshUnlocks();
+                                    }
+                                }).catch(() => {});
+                            }
+                        }
+                        
                         // Save story performance data if progress was saved successfully
                         if (data.success && data.progressId) {
                             console.log('Proceeding to save story performance data...');
@@ -980,6 +994,20 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
                         return r.json();
                     }).then(data => {
                         console.log('Save progress response data:', data);
+                        
+                        // Invalidate unlock cache after saving challenge progress
+                        if (data.success || data.queued) {
+                            if (window.invalidateAndRefreshUnlocks) {
+                                window.invalidateAndRefreshUnlocks();
+                            } else {
+                                // Try to import and call
+                                import('../../scripts/invalidateUnlockCache.js').then(module => {
+                                    if (module.invalidateAndRefreshUnlocks) {
+                                        module.invalidateAndRefreshUnlocks();
+                                    }
+                                }).catch(() => {});
+                            }
+                        }
                         
                         // Save performance data if progress was saved successfully
                         if (data.success && data.progressId) {

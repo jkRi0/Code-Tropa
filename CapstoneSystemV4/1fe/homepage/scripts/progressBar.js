@@ -308,7 +308,14 @@ function navigateToItem(number, mode) {
 
 // Expose functions globally for inline handlers
 window.initProgressBar = initProgressBar;
-window.switchProgressMode = switchProgressMode;
+// Store data update function with a specific name
+window.switchProgressModeData = switchProgressMode;
+
+// Only set window.switchProgressMode if it doesn't already exist (to avoid overwriting UI wrapper)
+// The UI wrapper in index.html will call window.switchProgressModeData
+if (!window.switchProgressMode) {
+    window.switchProgressMode = switchProgressMode;
+}
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {

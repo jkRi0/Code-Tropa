@@ -2,8 +2,31 @@ document.addEventListener("DOMContentLoaded", function() {
     fetchProfileData();
 });
 
-export function fetchProfileData() {
+export async function fetchProfileData() {
     console.log('Fetching profile data...');
+    
+    // Try to get cached profile data first
+    try {
+        const { getProfile } = await import('./dbManager.js');
+        const cachedProfile = await getProfile();
+        if (cachedProfile && cachedProfile.username) {
+            console.log('Using cached profile data:', cachedProfile);
+            document.getElementById('playerName').textContent = cachedProfile.username;
+            document.getElementById('currentPoints').textContent = cachedProfile.totalPoints || '0';
+            document.getElementById('currentTier').innerHTML = cachedProfile.tier || 'N/A';
+            window.currentUser = cachedProfile.username;
+            
+            // Also update the welcome display
+            const playerNameDisplay = document.getElementById('playerNameDisplay');
+            if (playerNameDisplay) {
+                playerNameDisplay.textContent = cachedProfile.username;
+            }
+        }
+    } catch (err) {
+        console.log('No cached profile data available');
+    }
+    
+    // Then try to fetch from server
     fetch('../../2be/get_profile_data.php')
         .then(response => response.json())
         .then(data => {
@@ -13,20 +36,44 @@ export function fetchProfileData() {
                 document.getElementById('currentPoints').textContent = data.totalPoints;
                 document.getElementById('currentTier').innerHTML = data.tier;
                 window.currentUser = data.username; // Store current username globally
+                
+                // Also update the welcome display
+                const playerNameDisplay = document.getElementById('playerNameDisplay');
+                if (playerNameDisplay) {
+                    playerNameDisplay.textContent = data.username;
+                }
             } else {
                 console.error('Error fetching profile data:', data.message);
-                document.getElementById('playerName').textContent = 'Guest';
-                document.getElementById('currentPoints').textContent = 'N/A';
-                document.getElementById('currentTier').textContent = 'N/A';
-                window.currentUser = null; // No user logged in
+                // Only set to Guest if we don't have cached data
+                const playerNameEl = document.getElementById('playerName');
+                if (playerNameEl && (!playerNameEl.textContent || playerNameEl.textContent === 'Loading...' || playerNameEl.textContent === 'Error')) {
+                    playerNameEl.textContent = 'Guest';
+                    document.getElementById('currentPoints').textContent = 'N/A';
+                    document.getElementById('currentTier').textContent = 'N/A';
+                    window.currentUser = null;
+                    
+                    const playerNameDisplay = document.getElementById('playerNameDisplay');
+                    if (playerNameDisplay) {
+                        playerNameDisplay.textContent = 'Guest';
+                    }
+                }
             }
         })
         .catch(error => {
             console.error('Network error or server issue:', error);
-            document.getElementById('playerName').textContent = 'Error';
-            document.getElementById('currentPoints').textContent = 'Error';
-            document.getElementById('currentTier').textContent = 'Error';
-            window.currentUser = null; // Error, no user logged in
+            // Only set to Error if we don't have cached data
+            const playerNameEl = document.getElementById('playerName');
+            if (playerNameEl && (!playerNameEl.textContent || playerNameEl.textContent === 'Loading...')) {
+                playerNameEl.textContent = 'Error';
+                document.getElementById('currentPoints').textContent = 'Error';
+                document.getElementById('currentTier').textContent = 'Error';
+                window.currentUser = null;
+                
+                const playerNameDisplay = document.getElementById('playerNameDisplay');
+                if (playerNameDisplay) {
+                    playerNameDisplay.textContent = 'Error';
+                }
+            }
         });
 
     fetchPerformanceData(); // Call this function after fetching profile data

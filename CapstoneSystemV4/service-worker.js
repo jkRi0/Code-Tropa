@@ -107,6 +107,12 @@ const FILES_TO_CACHE = [
   './1fe/homepage/scripts/serverAuth.js',
   './1fe/homepage/scripts/testCache.js',
   './1fe/homepage/scripts/videoPreloadManager.js',
+  './1fe/homepage/scripts/dbManager.js',
+  './1fe/homepage/scripts/apiClient.js',
+  './1fe/homepage/scripts/syncManager.js',
+  './1fe/homepage/scripts/fetchWrapper.js',
+  './1fe/homepage/scripts/offlineIndicator.js',
+  './1fe/homepage/scripts/pwa-install.js',
 
   // 1fe/homepage/scripts/2
   './1fe/homepage/scripts/2/backgroundMusicVolume.js',
@@ -506,10 +512,86 @@ self.addEventListener('install', event => {
         console.error('Cache failed:', error);
       })
   );
+  self.skipWaiting();
+});
+
+// Background Sync event handler
+self.addEventListener('sync', event => {
+  if (event.tag === 'sync-queue') {
+    event.waitUntil(
+      // Notify clients to trigger sync
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({ type: 'SYNC_QUEUE' });
+        });
+        return Promise.resolve();
+      })
+    );
+  }
+});
+
+// Message handler for sync requests
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SYNC_REQUEST') {
+    // Forward sync request to clients
+    self.clients.matchAll().then(clients => {
+      clients.forEach(client => {
+        client.postMessage({ type: 'SYNC_QUEUE' });
+      });
+    });
+  }
+});
+
+// Activate event - clean up old caches
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  return self.clients.claim();
 });
 
 // Fetch cached files if available
+// Check if request is an API call
+function isAPIRequest(url) {
+  return url.includes('/2be/') && url.endsWith('.php');
+}
+
 self.addEventListener('fetch', event => {
+  const request = event.request;
+  const url = new URL(request.url);
+
+  // Handle API requests differently
+  if (isAPIRequest(url.pathname)) {
+    // For API requests, try network first, don't cache in service worker
+    // The apiClient.js will handle caching in IndexedDB
+    event.respondWith(
+      fetch(request)
+        .catch(error => {
+          console.log('API request failed (offline):', url.pathname);
+          // Return error response - apiClient will handle offline logic
+          return new Response(JSON.stringify({
+            success: false,
+            message: 'Network error - request will be queued for sync',
+            offline: true
+          }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        })
+    );
+    return;
+  }
+
+  // For static assets, use cache-first strategy
   event.respondWith(
     caches.match(event.request)
       .then(response => {

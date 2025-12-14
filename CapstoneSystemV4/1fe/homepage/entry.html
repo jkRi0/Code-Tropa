@@ -412,8 +412,30 @@
         </a>
     </div>
     
+    <!-- Offline Infrastructure - Load first -->
+    <script type="module" src="./scripts/dbManager.js"></script>
+    <script type="module" src="./scripts/apiClient.js"></script>
+    <script type="module" src="./scripts/syncManager.js"></script>
+    <script type="module" src="./scripts/fetchWrapper.js"></script>
+    <script type="module" src="./scripts/offlineIndicator.js"></script>
+    
+    <!-- Application Scripts -->
     <script type="module" src="./scripts/entryScript.js"></script>
     <script src="./scripts/pwa-install.js"></script>
+    
+    <!-- Listen for sync messages from service worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', event => {
+                if (event.data && event.data.type === 'SYNC_QUEUE') {
+                    // Trigger sync
+                    if (window.syncManager && window.syncManager.triggerSync) {
+                        window.syncManager.triggerSync();
+                    }
+                }
+            });
+        }
+    </script>
 
     <!-- Service Worker Registration and Loading Screen -->
     <script>
