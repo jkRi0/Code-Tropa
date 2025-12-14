@@ -392,7 +392,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1002; /* Above everything */
+            z-index: 1002;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.5s ease-in-out;
@@ -404,14 +404,12 @@
         }
 
         .challenge-paper {
-            /* background-image: url('assets/paper.png'); */
+            background-image: url('assets/paper.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
             width: 100vw;
             height: 100vh;
-            /* max-width: 100%;
-            max-height: 100%; */
             position: relative;
             display: flex;
             flex-direction: column;
@@ -419,65 +417,88 @@
             justify-content: flex-start;
             padding: 60px 80px 40px 80px;
             box-sizing: border-box;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .challenge-title {
             font-size: 3.5em;
-            color: #333;
+            color: #ffffff; /* Light text for dark background */
             margin-bottom: 30px;
             text-align: center;
             font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .challenge-subtitle {
             font-size: 1.8em;
-            color: #666;
+            color: #f0f0f0; /* Light text for dark background */
             margin-bottom: 40px;
             text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        #questionsContainer {
+            width: 50%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .question-container {
             width: 100%;
+            max-width: 100%;
             margin-bottom: 30px;
+            box-sizing: border-box;
         }
 
         .question-number {
             font-size: 1.8em;
-            color: #333;
+            color: #ffffff; /* Light text for dark background */
             font-weight: bold;
             margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .question-text {
             font-size: 1.5em;
-            color: #333;
+            color: #f0f0f0; /* Light text for dark background */
             margin-bottom: 20px;
             line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .options-container {
             display: flex;
             flex-direction: column;
             gap: 10px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .option {
             display: flex;
             align-items: center;
             padding: 15px 20px;
-            background-color: rgba(255, 255, 255, 0.7);
-            border: 2px solid transparent;
+            background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent white for dark background */
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 1.3em;
-            color: #333;
+            color: #ffffff; /* Light text for dark background */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            min-width: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .option:hover {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-color: #4CAF50;
+            background-color: rgba(255, 255, 255, 0.25); /* Lighter on hover */
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
 
         .option.selected {
@@ -503,7 +524,7 @@
             margin-right: 15px;
             min-width: 25px;
             font-size: 1.1em;
-            color: #4CAF50;
+            color: #90EE90; /* Light green for dark background */
         }
 
         .challenge-buttons {
@@ -548,6 +569,176 @@
         .results-container {
             text-align: center;
             margin-top: 20px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Results Modal Styles */
+        .results-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .results-modal.show {
+            display: flex;
+        }
+
+        .results-modal-content {
+            background-color: #fff;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .results-modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .results-modal-header h2 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .results-modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 2em;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .results-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .results-modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background-color: #f8f9fa;
+        }
+
+        .results-modal-body::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .results-modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .results-modal-body::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        .results-modal-body::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .view-results-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .view-results-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Scoring actions styling */
+        .scoring-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .scoring-actions button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .scoring-actions .btn-exit {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .scoring-actions .btn-exit:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .scoring-actions .btn-retry {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .scoring-actions .btn-retry:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .scoring-actions .btn-next-level {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .scoring-actions .btn-next-level:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
         .score-display {
@@ -559,85 +750,242 @@
 
         .points-earned {
             font-size: 2em;
-            color: #333;
+            color: #f0f0f0; /* Light text for dark background */
             margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
-        .end-episode-btn {
-            background-color: #FF9800;
-            color: white;
-            padding: 18px 45px;
-            font-size: 1.6em;
+        /* Badge display styling */
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            padding: 20px;
         }
 
-        .end-episode-btn:hover {
-            background-color: #F57C00;
+        .badge-display {
+            background: linear-gradient(135deg, #dfe5ff 0%, #b5a7c3 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
         }
 
-        /* Responsive font sizes for mobile */
-        @media (max-width: 768px) {
+        .badge-image {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+            animation: badgeGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes badgeGlow {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .badge-text h3 {
+            color: #000000;
+            font-size: 1.8em;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .badge-text p {
+            color: #000000;
+            font-size: 1.2em;
+            margin: 0 0 20px 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1400px) {
             .challenge-paper {
-                overflow-y: auto;
-                overflow-x: hidden;
+                padding: 35px 45px 25px 45px;
             }
             
             .challenge-title {
                 font-size: 2.5em;
+                margin-bottom: 18px;
             }
             
             .challenge-subtitle {
-                font-size: 1.2em;
+                font-size: 1.4em;
+                margin-bottom: 25px;
             }
             
             .question-number {
-                font-size: 1.3em;
+                font-size: 1.4em;
+                margin-bottom: 10px;
             }
             
             .question-text {
-                font-size: 1.1em;
+                font-size: 1.2em;
+                margin-bottom: 15px;
             }
             
             .option {
-                font-size: 1em;
-                padding: 10px 15px;
+                font-size: 1.1em;
+                padding: 11px 15px;
+            }
+            
+            .score-display {
+                font-size: 2.2em;
+            }
+            
+            .points-earned {
+                font-size: 1.6em;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .challenge-paper {
+                padding: 40px 40px 25px 40px;
+            }
+            
+            .challenge-title {
+                font-size: 2.5em;
+                margin-bottom: 20px;
+            }
+            
+            .challenge-subtitle {
+                font-size: 1.3em;
+                margin-bottom: 30px;
+            }
+            
+            .question-number {
+                font-size: 1.4em;
+                margin-bottom: 12px;
+            }
+            
+            .question-text {
+                font-size: 1.15em;
+                margin-bottom: 18px;
+            }
+            
+            .option {
+                font-size: 1.05em;
+                padding: 12px 15px;
+            }
+            
+            .challenge-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
             }
             
             .challenge-btn {
                 font-size: 1.1em;
-                padding: 12px 30px;
+                padding: 12px 28px;
             }
             
             .score-display {
-                font-size: 2em;
+                font-size: 2.2em;
             }
             
             .points-earned {
-                font-size: 1.5em;
+                font-size: 1.6em;
             }
             
-            .end-episode-btn {
+            .scoring-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .scoring-actions button {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .challenge-paper {
+                padding: 25px 15px 15px 15px;
+            }
+            
+            .challenge-title {
+                font-size: 1.8em;
+            }
+            
+            .challenge-subtitle {
+                font-size: 1em;
+            }
+            
+            .question-number {
+                font-size: 1.1em;
+            }
+            
+            .question-text {
+                font-size: 0.9em;
+            }
+            
+            .option {
+                font-size: 0.85em;
+                padding: 8px 10px;
+            }
+            
+            .score-display {
+                font-size: 1.6em;
+            }
+            
+            .points-earned {
                 font-size: 1.2em;
-                padding: 15px 40px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- <div class="main-bg"><img src="assets/12.png" alt="Background Image"></div> -->
+    <div class="main-bg"><img src="assets/1.png" alt="Background Image"></div>
     <div class="challenge-container" id="challengeContainer">
         <div class="challenge-paper">
             <h2 class="challenge-title">Challenge Time!</h2>
-            <p class="challenge-subtitle">Coding Challenge - Coming Soon</p>
             
-            <div id="challengeContent">
-                <!-- Coding challenge will be implemented here -->
-                <p style="text-align: center; font-size: 1.5em; color: #666; margin-top: 50px;">
-                    Coding challenge implementation in progress...
-                </p>
+            <div id="questionsContainer">
+                <!-- Questions will be dynamically generated here -->
             </div>
             
             <div class="challenge-buttons">
-                <button class="challenge-btn end-episode-btn" id="endEpisodeBtn">END EPISODE 3</button>
+                <button class="challenge-btn submit-btn" id="submitBtn" disabled>Submit Answer</button>
+                <button class="challenge-btn next-btn" id="nextBtn" style="display: none;">Next Question</button>
+            </div>
+            
+            <div class="results-container" id="resultsContainer" style="display: none;">
+                <div class="score-display" id="scoreDisplay"></div>
+                <div class="points-earned" id="pointsEarned"></div>
+                
+                <!-- View Results Button -->
+                <button class="view-results-btn" id="viewResultsBtn">View Detailed Results</button>
+                
+                <!-- Badge display for passed challenges -->
+                <div class="badge-container" id="badgeContainer" style="display: none;">
+                    <div class="badge-display">
+                        <img src="../../../../assets/b1.png" alt="Episode 1 Badge" class="badge-image">
+                        <div class="badge-text">
+                            <h3>CONGRATULATIONS!</h3>
+                            <p>You've earned the Episode 1 Badge!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Scoring actions container -->
+                <div class="scoring-actions" id="scoringActions">
+                    <!-- Buttons will be dynamically created here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Results Modal -->
+    <div class="results-modal" id="resultsModal">
+        <div class="results-modal-content">
+            <div class="results-modal-header">
+                <h2>Quiz Results</h2>
+                <button class="results-modal-close" id="closeResultsModal">&times;</button>
+            </div>
+            <div class="results-modal-body" id="resultsModalBody">
+                <!-- Detailed results will be displayed here -->
             </div>
             </div>
     </div>
@@ -1494,10 +1842,10 @@
                 // Don't show "Click to Next" for dialogue scenes (player must choose)
                 if (scene.type !== 'dialogue') {
                     if (index < scenes.length - 1 && (scene.type !== 'video' || hasSubtitle)) {
-                        sceneNextText.textContent = "Click to Next";
+                        sceneNextText.textContent = "Press any key or click to continue";
                         sceneNextText.classList.add('show');
                     } else if (index === scenes.length - 1) {
-                        sceneNextText.textContent = "Click to Start"; // Last scene
+                        sceneNextText.textContent = "Press any key or click to start challenge"; // Last scene
                         sceneNextText.classList.add('show');
                     }
                 }
@@ -1605,29 +1953,464 @@
             showChapterIntro();
         });
 
-        // Challenge functions
-        function showChallenge() {
-            // Save storymode selection context for episode 3 with easy difficulty
-            localStorage.setItem('selectedChallenge', JSON.stringify({
-                level: 'ep1',
-                difficulty: 'easy',
-                timestamp: new Date().toISOString()
-            }));
-            // Redirect to storymode challenge interface root
-            window.location.href = '../../index.html';
+        // Challenge variables
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let totalScore = 0;
+        let challengeStarted = false;
+
+        // Quiz data - C# basics questions based on episode content
+        const quizQuestions = [
+            {
+                question: "What is the correct way to print a message in C#?",
+                options: [
+                    "Console.log(\"Hello!\");",
+                    "Console.WriteLine(\"Hello!\");",
+                    "print(\"Hello!\");",
+                    "System.out.println(\"Hello!\");"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which method is the entry point of a C# program?",
+                options: [
+                    "start()",
+                    "Main()",
+                    "init()",
+                    "begin()"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which symbol is used to end a statement in C#?",
+                options: [
+                    ":",
+                    ";",
+                    ".",
+                    ","
+                ],
+                correct: 1
+            },
+            {
+                question: "What are braces {} used for in C#?",
+                options: [
+                    "To group code blocks and define scope",
+                    "To make the code look prettier",
+                    "To separate different files",
+                    "To indicate comments"
+                ],
+                correct: 0
+            },
+            {
+                question: "How do you write a single-line comment in C#?",
+                options: [
+                    "<!-- comment -->",
+                    "# comment",
+                    "// comment",
+                    "** comment **"
+                ],
+                correct: 2
+            }
+        ];
+
+        // Shuffle functions for randomizing quiz
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
         }
 
-        function endEpisode() {
-            // Hide background before redirecting
+        function shuffleQuestions(questions) {
+            return shuffleArray(questions);
+        }
+
+        function shuffleQuestionOptions(question) {
+            const shuffledQuestion = {
+                question: question.question,
+                options: [...question.options],
+                correct: question.correct
+            };
+            
+            const correctAnswerText = shuffledQuestion.options[shuffledQuestion.correct];
+            const shuffledOptions = shuffleArray(shuffledQuestion.options);
+            const newCorrectIndex = shuffledOptions.findIndex(option => option === correctAnswerText);
+            
+            shuffledQuestion.options = shuffledOptions;
+            shuffledQuestion.correct = newCorrectIndex;
+            
+            return shuffledQuestion;
+        }
+
+        // Shuffled quiz questions (initialized when challenge starts)
+        let shuffledQuizQuestions = [];
+
+        // Challenge functions
+        function showChallenge() {
+            const challengeContainer = document.getElementById('challengeContainer');
+            const mainBg = document.querySelector('.main-bg');
+            challengeContainer.classList.add('show');
+            mainBg.classList.add('show');
+            
+            // Shuffle questions and options before displaying
+            const shuffledQuestions = shuffleQuestions(quizQuestions);
+            shuffledQuizQuestions = shuffledQuestions.map(question => shuffleQuestionOptions(question));
+            
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            totalScore = 0;
+            
+            displayQuestion(0);
+        }
+
+        function displayQuestion(questionIndex) {
+            const questionsContainer = document.getElementById('questionsContainer');
+            const question = shuffledQuizQuestions[questionIndex];
+            const isLastQuestion = questionIndex === shuffledQuizQuestions.length - 1;
+            
+            questionsContainer.innerHTML = `
+                <div class="question-container">
+                    <div class="question-number">Question ${questionIndex + 1}:</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options-container">
+                        ${question.options.map((option, index) => `
+                            <div class="option" data-index="${index}">
+                                <span class="option-letter">${String.fromCharCode(65 + index)}.</span>
+                                <span>${option}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Add click listeners to options
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    const submitBtn = document.getElementById('submitBtn');
+                    submitBtn.disabled = false;
+                });
+            });
+
+            // Reset buttons
+            const submitBtn = document.getElementById('submitBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            submitBtn.disabled = true;
+            
+            if (isLastQuestion) {
+                submitBtn.textContent = 'Submit';
+                submitBtn.style.display = 'inline-block';
+                nextBtn.style.display = 'none';
+            } else {
+                submitBtn.textContent = 'Next';
+                submitBtn.style.display = 'inline-block';
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        function submitAnswer() {
+            const selectedOption = document.querySelector('.option.selected');
+            if (!selectedOption) return;
+
+            const selectedIndex = parseInt(selectedOption.dataset.index);
+            userAnswers[currentQuestionIndex] = selectedIndex;
+
+            const isLastQuestion = currentQuestionIndex === shuffledQuizQuestions.length - 1;
+            
+            if (isLastQuestion) {
+                evaluateAllAnswers();
+                showResults();
+            } else {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+            }
+        }
+
+        function evaluateAllAnswers() {
+            totalScore = 0;
+            
+            shuffledQuizQuestions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                if (userAnswer !== undefined && userAnswer === question.correct) {
+                    totalScore += 20;
+                }
+            });
+        }
+
+        function showResults() {
+            const questionsContainer = document.getElementById('questionsContainer');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const pointsEarned = document.getElementById('pointsEarned');
+
+            questionsContainer.style.display = 'none';
+            document.querySelector('.challenge-buttons').style.display = 'none';
+            resultsContainer.style.display = 'block';
+
+            const displayScore = Math.round(totalScore / 20);
+            const maxDisplayScore = 5;
+            const passThreshold = 4;
+            
+            const hasPassed = totalScore >= 80;
+            
+            if (hasPassed) {
+                scoreDisplay.textContent = `PASSED! Score: ${displayScore}/${maxDisplayScore}`;
+                scoreDisplay.style.color = '#4CAF50';
+                pointsEarned.textContent = `You earned ${displayScore} out of ${maxDisplayScore} points!`;
+                
+                document.getElementById('badgeContainer').style.display = 'flex';
+
+                // Award badge in database (tier=t1, badgeName=b1 for Episode 1)
+                fetch('../../../../../2be/award_badge.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `tier=${encodeURIComponent('t1')}&badgeName=${encodeURIComponent('b1')}`
+                })
+                .then(r => r.json())
+                .then(data => {
+                    console.log('Award badge response:', data);
+                })
+                .catch(err => {
+                    console.error('Failed to award badge:', err);
+                });
+            } else {
+                scoreDisplay.textContent = `❌ FAILED! Score: ${displayScore}/${maxDisplayScore}`;
+                scoreDisplay.style.color = '#f44336';
+                pointsEarned.textContent = `You need ${passThreshold}+ points to pass. Try again!`;
+                
+                document.getElementById('badgeContainer').style.display = 'none';
+            }
+
+            updateScoringActions(hasPassed);
+            saveStoryProgress(totalScore, hasPassed);
+        }
+        
+        function showResultsModal() {
+            const resultsModal = document.getElementById('resultsModal');
+            const resultsModalBody = document.getElementById('resultsModalBody');
+            
+            const displayScore = Math.round(totalScore / 20);
+            const maxDisplayScore = 5;
+            const correctCount = shuffledQuizQuestions.filter((q, i) => userAnswers[i] !== undefined && userAnswers[i] === q.correct).length;
+            
+            const resultsHTML = `
+                <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px;">
+                    <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 10px;">
+                        Score: ${displayScore}/${maxDisplayScore}
+                    </div>
+                    <div style="font-size: 1.2em; opacity: 0.9;">
+                        ${correctCount} out of ${shuffledQuizQuestions.length} questions correct
+                    </div>
+                </div>
+            ` + shuffledQuizQuestions.map((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer !== undefined && userAnswer === question.correct;
+                const answerStatus = isCorrect ? '✓ Correct' : '✗ Incorrect';
+                
+                return `
+                    <div class="question-container" style="margin-bottom: 30px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div class="question-number">Question ${index + 1}:</div>
+                            <div style="font-size: 1.2em; font-weight: bold; color: ${isCorrect ? '#4CAF50' : '#f44336'};">
+                                ${answerStatus}
+                            </div>
+                        </div>
+                        <div class="question-text" style="margin-bottom: 20px;">${question.question}</div>
+                        <div class="options-container">
+                            ${question.options.map((option, optIndex) => {
+                                let optionClass = 'option';
+                                let optionStyle = '';
+                                
+                                if (optIndex === question.correct) {
+                                    optionClass += ' correct';
+                                    optionStyle = 'background-color: #4CAF50; color: white; border-color: #45a049;';
+                                } else if (optIndex === userAnswer && !isCorrect) {
+                                    optionClass += ' incorrect';
+                                    optionStyle = 'background-color: #f44336; color: white; border-color: #da190b;';
+                                }
+                                
+                                return `
+                                    <div class="${optionClass}" data-index="${optIndex}" style="${optionStyle}">
+                                        <span class="option-letter">${String.fromCharCode(65 + optIndex)}.</span>
+                                        <span>${option}</span>
+                                        ${optIndex === question.correct ? '<span style="margin-left: 10px; font-weight: bold;">✓ Correct Answer</span>' : ''}
+                                        ${optIndex === userAnswer && !isCorrect ? '<span style="margin-left: 10px; font-weight: bold;">✗ Your Answer</span>' : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            resultsModalBody.innerHTML = resultsHTML;
+            resultsModal.classList.add('show');
+        }
+        
+        function closeResultsModal() {
+            const resultsModal = document.getElementById('resultsModal');
+            resultsModal.classList.remove('show');
+        }
+
+        function updateScoringActions(hasPassed) {
+            const scoringActions = document.getElementById('scoringActions');
+            scoringActions.innerHTML = '';
+            
+            if (hasPassed) {
+                const exitBtn = document.createElement('button');
+                exitBtn.className = 'btn-exit';
+                exitBtn.textContent = 'Exit';
+                exitBtn.onclick = exitToHomepage;
+                
+                const nextEpisodeBtn = document.createElement('button');
+                nextEpisodeBtn.className = 'btn-next-level';
+                nextEpisodeBtn.textContent = 'Next Episode';
+                nextEpisodeBtn.onclick = goToNextEpisode;
+                
+                scoringActions.appendChild(exitBtn);
+                scoringActions.appendChild(nextEpisodeBtn);
+            } else {
+                const exitBtn = document.createElement('button');
+                exitBtn.className = 'btn-exit';
+                exitBtn.textContent = 'Exit';
+                exitBtn.onclick = exitToHomepage;
+                
+                const retryBtn = document.createElement('button');
+                retryBtn.className = 'btn-retry';
+                retryBtn.textContent = 'Retry Episode';
+                retryBtn.onclick = retryEpisode;
+                
+                scoringActions.appendChild(exitBtn);
+                scoringActions.appendChild(retryBtn);
+            }
+        }
+
+        function retryEpisode() {
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            totalScore = 0;
+            challengeStarted = false;
+
+            const shuffledQuestions = shuffleQuestions(quizQuestions);
+            shuffledQuizQuestions = shuffledQuestions.map(question => shuffleQuestionOptions(question));
+
+            const questionsContainer = document.getElementById('questionsContainer');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            questionsContainer.style.display = 'block';
+            resultsContainer.style.display = 'none';
+            document.querySelector('.challenge-buttons').style.display = 'flex';
+            
+            document.getElementById('badgeContainer').style.display = 'none';
+            
+            const resultsModal = document.getElementById('resultsModal');
+            if (resultsModal) {
+                resultsModal.classList.remove('show');
+            }
+            
+            displayQuestion(0);
+        }
+
+        function saveStoryProgress(score, hasPassed) {
+            const progressData = {
+                type: 'story',
+                language: 'csharp',
+                chapter: 1,
+                episode: 1,
+                points: score,
+                passed: hasPassed
+            };
+
+            fetch('../../../../../2be/save_story_progress.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `type=${encodeURIComponent(progressData.type)}&language=${encodeURIComponent(progressData.language)}&chapter=${encodeURIComponent(progressData.chapter)}&episode=${encodeURIComponent(progressData.episode)}&points=${encodeURIComponent(progressData.points)}&passed=${encodeURIComponent(progressData.passed)}`
+            }).then(r => r.json()).then(data => {
+                console.log('Story progress saved:', data);
+                
+                if (data.success || data.queued) {
+                    if (window.invalidateAndRefreshUnlocks) {
+                        window.invalidateAndRefreshUnlocks();
+                    } else {
+                        import('../../../../scripts/invalidateUnlockCache.js').then(module => {
+                            if (module.invalidateAndRefreshUnlocks) {
+                                module.invalidateAndRefreshUnlocks();
+                            }
+                        }).catch(() => {});
+                    }
+                }
+                
+                if (data.success && data.progressId) {
+                    const performanceData = {
+                        progressId: data.progressId,
+                        accuracy: score >= 80 ? 100 : 0,
+                        efficiency: score >= 80 ? 100 : 0,
+                        readability: score >= 80 ? 100 : 0,
+                        timeTaken: 0,
+                        success: hasPassed ? 1 : 0,
+                        failed: hasPassed ? 0 : 1
+                    };
+                    
+                    fetch('../../../../../2be/save_performance.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `progressId=${encodeURIComponent(performanceData.progressId)}&accuracy=${encodeURIComponent(performanceData.accuracy)}&efficiency=${encodeURIComponent(performanceData.efficiency)}&readability=${encodeURIComponent(performanceData.readability)}&timeTaken=${encodeURIComponent(performanceData.timeTaken)}&success=${encodeURIComponent(performanceData.success)}&failed=${encodeURIComponent(performanceData.failed)}`
+                    }).then(perfResponse => perfResponse.json())
+                    .then(perfData => {
+                        console.log('Save story performance response:', perfData);
+                    }).catch(perfErr => {
+                        console.error('Save story performance error:', perfErr);
+                    });
+                }
+            }).catch(err => {
+                console.error('Error saving story progress:', err);
+            });
+        }
+
+        function exitToHomepage() {
             const mainBg = document.querySelector('.main-bg');
             mainBg.classList.remove('show');
-            // Redirect back to episodes hub or next episode
-            window.location.href = '../../../index.html';
+            window.location.href = '../../../../../index.html';
+        }
+
+        function goToNextEpisode() {
+            window.location.href = '../ep2/index.html';
         }
 
         // Add event listeners for challenge buttons
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('endEpisodeBtn').addEventListener('click', endEpisode);
+            document.getElementById('submitBtn').addEventListener('click', submitAnswer);
+            
+            // Results modal event listeners
+            const viewResultsBtn = document.getElementById('viewResultsBtn');
+            if (viewResultsBtn) {
+                viewResultsBtn.addEventListener('click', showResultsModal);
+            }
+            
+            const closeResultsModalBtn = document.getElementById('closeResultsModal');
+            if (closeResultsModalBtn) {
+                closeResultsModalBtn.addEventListener('click', closeResultsModal);
+            }
+            
+            const resultsModal = document.getElementById('resultsModal');
+            if (resultsModal) {
+                resultsModal.addEventListener('click', function(e) {
+                    if (e.target === resultsModal) {
+                        closeResultsModal();
+                    }
+                });
+                
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && resultsModal.classList.contains('show')) {
+                        closeResultsModal();
+                    }
+                });
+            }
         });
 
     </script>
