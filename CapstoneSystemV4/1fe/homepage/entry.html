@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choose Play Option</title>
+    <meta name="theme-color" content="#8B5A2B">
+    <meta name="description" content="Code-Tropa - A gamified programming education platform with Filipino culture integration">
+    <title>Choose Play Option - Code-Tropa</title>
+    <link rel="manifest" href="../../manifest.json">
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    <link rel="apple-touch-icon" href="../assets/favicon.png">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -206,6 +211,168 @@
             font-size: 18px;
             color: #F8E1B7;
         }
+
+        /* PWA Install Button */
+        .pwa-install-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        #pwa-install-btn {
+            display: none;
+            background: linear-gradient(135deg, #8B5A2B, #A0522D);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #pwa-install-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(135deg, #A0522D, #8B5A2B);
+        }
+
+        #pwa-install-btn:active {
+            transform: translateY(0);
+        }
+
+        #pwa-install-status {
+            display: none;
+            margin-top: 8px;
+            font-size: 12px;
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        /* PWA Uninstall Button */
+        #pwa-uninstall-btn {
+            display: none;
+            background: linear-gradient(135deg, #d32f2f, #c62828);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-top: 10px;
+        }
+
+        #pwa-uninstall-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(135deg, #c62828, #d32f2f);
+        }
+
+        #pwa-uninstall-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Uninstall Modal */
+        .uninstall-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .uninstall-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .uninstall-modal-content h3 {
+            margin-top: 0;
+            color: #8B5A2B;
+            font-size: 1.5em;
+        }
+
+        .uninstall-instructions {
+            margin: 20px 0;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .uninstall-instructions ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .uninstall-instructions li {
+            margin: 8px 0;
+        }
+
+        .uninstall-instructions p {
+            margin: 15px 0;
+        }
+
+        .uninstall-instructions em {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .uninstall-close-btn {
+            background: linear-gradient(135deg, #8B5A2B, #A0522D);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 20px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .uninstall-close-btn:hover {
+            background: linear-gradient(135deg, #A0522D, #8B5A2B);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .pwa-install-container {
+                top: 10px;
+                right: 10px;
+            }
+
+            #pwa-install-btn,
+            #pwa-uninstall-btn {
+                padding: 10px 20px;
+                font-size: 12px;
+            }
+
+            .uninstall-modal-content {
+                padding: 20px;
+                max-width: 95%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -216,6 +383,24 @@
             <div class="loading-text">Caching game files...</div>
         </div>
     </div>
+    <!-- PWA Install/Uninstall Buttons -->
+    <div class="pwa-install-container">
+        <button id="pwa-install-btn" onclick="window.pwaInstall.install()">
+            📱 Install App
+        </button>
+        <button id="pwa-uninstall-btn" onclick="window.pwaInstall.uninstall()">
+            🗑️ Uninstall App
+        </button>
+        <div id="pwa-install-status"></div>
+    </div>
+
+    <!-- Uninstall Modal -->
+    <div id="pwa-uninstall-modal" class="uninstall-modal">
+        <div class="uninstall-modal-content">
+            <!-- Content will be dynamically inserted -->
+        </div>
+    </div>
+
     <div class="options-container">
         <a href="#" class="tile-button" id="play-as-guest">
             <h2>Play as Guest</h2>
@@ -228,6 +413,7 @@
     </div>
     
     <script type="module" src="./scripts/entryScript.js"></script>
+    <script src="./scripts/pwa-install.js"></script>
 
     <!-- Service Worker Registration and Loading Screen -->
     <script>

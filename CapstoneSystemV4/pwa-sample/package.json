@@ -1,0 +1,13 @@
+{
+  "name": "pwa-sample-app",
+  "version": "1.0.0",
+  "description": "A simple Progressive Web App",
+  "scripts": {
+    "start": "http-server -p 8000 -c-1",
+    "generate-icons": "node generate-icons.js"
+  },
+  "keywords": ["pwa", "progressive-web-app"],
+  "author": "",
+  "license": "MIT"
+}
+

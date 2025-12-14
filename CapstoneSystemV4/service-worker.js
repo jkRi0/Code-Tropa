@@ -6,7 +6,6 @@ const FILES_TO_CACHE = [
   './service-worker-storymode-1j.js',
   './service-worker-storymode-2cP.js',
   './service-worker-storymode-3cS.js',
-  './sw.js',
   
   // Monaco Editor core files
   '../node_modules/monaco-editor/min/vs/loader.js',
