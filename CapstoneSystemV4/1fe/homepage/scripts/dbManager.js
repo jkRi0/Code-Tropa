@@ -5,7 +5,7 @@ const DB_NAME = 'CodeTropaDB';
 const DB_VERSION = 1;
 
 // Store names
-const STORES = {
+export const STORES = {
     PROFILE: 'profile',
     PROGRESS: 'progress',
     BADGES: 'badges',
@@ -256,17 +256,22 @@ export async function saveBadges(badges) {
     for (const badge of existing) {
         await deleteData(STORES.BADGES, badge.id);
     }
+    // Convert badge strings to objects for IndexedDB
+    // Badges come as array of strings like ["b1", "b2"], but IndexedDB needs objects
     for (const badge of badges) {
-        await saveData(STORES.BADGES, badge);
+        // If badge is already an object, use it; otherwise create an object
+        const badgeObj = typeof badge === 'string' 
+            ? { badgeName: badge } 
+            : (badge.badgeName ? badge : { badgeName: badge });
+        await saveData(STORES.BADGES, badgeObj);
     }
 }
 
 export async function getBadges(userId = null) {
     const allBadges = await getAllData(STORES.BADGES);
-    if (userId) {
-        return allBadges.filter(b => b.userId === userId);
-    }
-    return allBadges;
+    let filtered = userId ? allBadges.filter(b => b.userId === userId) : allBadges;
+    // Extract badge names from objects (return as strings for compatibility)
+    return filtered.map(b => b.badgeName || b.name || b);
 }
 
 // Unlocked levels operations
