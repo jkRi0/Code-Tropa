@@ -3,65 +3,401 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Icon Generator</title>
+    <title>Code-Tropa Icon Generator</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
             margin: 50px auto;
             padding: 20px;
             text-align: center;
+            background: linear-gradient(to bottom, #F8E1B7, #CBA35C);
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #8B5A2B;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
         }
         canvas {
-            border: 1px solid #ccc;
+            border: 3px solid #8B5A2B;
+            border-radius: 15px;
             margin: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         button {
-            padding: 10px 20px;
+            padding: 12px 24px;
             margin: 10px;
             font-size: 16px;
             cursor: pointer;
-            background: #2196F3;
+            background: linear-gradient(135deg, #8B5A2B, #A0522D);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
         }
         button:hover {
-            background: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(135deg, #A0522D, #8B5A2B);
+        }
+        button:active {
+            transform: translateY(0);
         }
     </style>
 </head>
 <body>
-    <h1>PWA Icon Generator</h1>
-    <p>Click the buttons below to generate and download the icons.</p>
+    <div class="container">
+        <h1>🎨 Code-Tropa Icon Generator</h1>
+        <p>Generate PWA icons from an image with brown theme matching Code-Tropa's design</p>
+        
+        <div style="margin: 20px 0;">
+            <label for="imageInput" style="display: block; margin-bottom: 10px; font-weight: 600; color: #8B5A2B;">
+                📷 Upload Image:
+            </label>
+            <input type="file" id="imageInput" accept="image/*" style="display: block; margin: 0 auto; padding: 8px; border: 2px solid #8B5A2B; border-radius: 8px; cursor: pointer;">
+            <p style="font-size: 0.9em; color: #666; margin-top: 8px;">Select an image file (PNG, JPG, etc.)</p>
+        </div>
     
+        <div class="canvas-container">
     <div>
         <canvas id="icon192" width="192" height="192"></canvas>
+                <p style="margin-top: 10px; font-weight: 600; color: #8B5A2B;">192x192</p>
+            </div>
+            <div>
         <canvas id="icon512" width="512" height="512"></canvas>
+                <p style="margin-top: 10px; font-weight: 600; color: #8B5A2B;">512x512</p>
+            </div>
     </div>
     
     <div>
-        <button onclick="generateAndDownload(192)">Generate & Download 192x192</button>
-        <button onclick="generateAndDownload(512)">Generate & Download 512x512</button>
+            <button onclick="generateAndDownload(192)">📥 Download 192x192</button>
+            <button onclick="generateAndDownload(512)">📥 Download 512x512</button>
+        </div>
     </div>
 
     <script>
+        // Helper function for rounded rectangles (polyfill for older browsers)
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius) {
+                this.beginPath();
+                this.moveTo(x + radius, y);
+                this.lineTo(x + width - radius, y);
+                this.quadraticCurveTo(x + width, y, x + width, y + radius);
+                this.lineTo(x + width, y + height - radius);
+                this.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                this.lineTo(x + radius, y + height);
+                this.quadraticCurveTo(x, y + height, x, y + height - radius);
+                this.lineTo(x, y + radius);
+                this.quadraticCurveTo(x, y, x + radius, y);
+                this.closePath();
+            };
+        }
+        
+        let sourceImage = null;
+        
+        // Handle image upload
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        sourceImage = img;
+                        // Regenerate icons with the new image
+                        drawIcon(document.getElementById('icon192'), 192);
+                        drawIcon(document.getElementById('icon512'), 512);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
         function drawIcon(canvas, size) {
             const ctx = canvas.getContext('2d');
             
-            // Gradient background
-            const gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#667eea');
-            gradient.addColorStop(1, '#764ba2');
-            ctx.fillStyle = gradient;
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Brown gradient background (matching Code-Tropa theme)
+            const bgGradient = ctx.createLinearGradient(0, 0, size, size);
+            bgGradient.addColorStop(0, '#F8E1B7'); // Light beige
+            bgGradient.addColorStop(0.5, '#CBA35C'); // Medium brown
+            bgGradient.addColorStop(1, '#8B5A2B'); // Dark brown
+            ctx.fillStyle = bgGradient;
             ctx.fillRect(0, 0, size, size);
             
-            // Draw a simple rocket icon
-            ctx.fillStyle = 'white';
-            ctx.font = `bold ${size * 0.4}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('🚀', size / 2, size / 2);
+            // Add subtle texture pattern
+            ctx.fillStyle = 'rgba(139, 90, 43, 0.08)';
+            for (let i = 0; i < size; i += 10) {
+                for (let j = 0; j < size; j += 10) {
+                    if ((i + j) % 20 === 0) {
+                        ctx.fillRect(i, j, 3, 3);
+                    }
+                }
+            }
+            
+            // Add decorative border frame
+            ctx.strokeStyle = 'rgba(139, 90, 43, 0.6)';
+            ctx.lineWidth = size * 0.015;
+            ctx.strokeRect(size * 0.03, size * 0.03, size * 0.94, size * 0.94);
+            
+            // Add inner decorative border
+            ctx.strokeStyle = 'rgba(244, 212, 160, 0.4)';
+            ctx.lineWidth = size * 0.008;
+            ctx.strokeRect(size * 0.05, size * 0.05, size * 0.9, size * 0.9);
+            
+            // Add corner decorative elements (Filipino-inspired geometric patterns)
+            const cornerSize = size * 0.12;
+            ctx.fillStyle = 'rgba(244, 212, 160, 0.3)';
+            
+            // Top-left corner pattern
+            ctx.save();
+            ctx.translate(size * 0.1, size * 0.1);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(cornerSize * 0.5, 0);
+            ctx.lineTo(0, cornerSize * 0.5);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+            
+            // Top-right corner pattern
+            ctx.save();
+            ctx.translate(size * 0.9, size * 0.1);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(-cornerSize * 0.5, 0);
+            ctx.lineTo(0, cornerSize * 0.5);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+            
+            // Bottom-left corner pattern
+            ctx.save();
+            ctx.translate(size * 0.1, size * 0.9);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(cornerSize * 0.5, 0);
+            ctx.lineTo(0, -cornerSize * 0.5);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+            
+            // Bottom-right corner pattern
+            ctx.save();
+            ctx.translate(size * 0.9, size * 0.9);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(-cornerSize * 0.5, 0);
+            ctx.lineTo(0, -cornerSize * 0.5);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+            
+            // Add decorative dots pattern around corners
+            ctx.fillStyle = 'rgba(139, 90, 43, 0.5)';
+            const dotRadius = size * 0.008;
+            const dotPositions = [
+                [size * 0.15, size * 0.15],
+                [size * 0.85, size * 0.15],
+                [size * 0.15, size * 0.85],
+                [size * 0.85, size * 0.85],
+                [size * 0.25, size * 0.2],
+                [size * 0.75, size * 0.2],
+                [size * 0.25, size * 0.8],
+                [size * 0.75, size * 0.8],
+                [size * 0.2, size * 0.25],
+                [size * 0.8, size * 0.25],
+                [size * 0.2, size * 0.75],
+                [size * 0.8, size * 0.75]
+            ];
+            
+            dotPositions.forEach(([x, y]) => {
+                ctx.beginPath();
+                ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // Draw the uploaded image to fill the entire square if available
+            if (sourceImage) {
+                // Calculate image scaling to fill entire square (cover mode)
+                const imgAspect = sourceImage.width / sourceImage.height;
+                const squareAspect = 1; // Square icon
+                
+                let drawWidth, drawHeight, drawX, drawY;
+                
+                if (imgAspect > squareAspect) {
+                    // Image is wider - fit to height, crop width
+                    drawHeight = size;
+                    drawWidth = size * imgAspect;
+                    drawX = (size - drawWidth) / 2;
+                    drawY = 0;
+                } else {
+                    // Image is taller - fit to width, crop height
+                    drawWidth = size;
+                    drawHeight = size / imgAspect;
+                    drawX = 0;
+                    drawY = (size - drawHeight) / 2;
+                }
+                
+                // Draw the image to fill the entire square
+                ctx.drawImage(sourceImage, drawX, drawY, drawWidth, drawHeight);
+            } else {
+                // Show placeholder if no image - use the brown gradient background
+                // (already drawn above, so just add text)
+                ctx.fillStyle = 'rgba(244, 212, 160, 0.7)';
+                ctx.font = `bold ${size * 0.12}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Upload Image', size / 2, size / 2);
+            }
+            
+            // Add subtle overlay gradient for depth (on top of image)
+            const overlayGradient = ctx.createRadialGradient(size / 2, size / 2, size * 0.3, size / 2, size / 2, size * 0.7);
+            overlayGradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            overlayGradient.addColorStop(0.5, 'rgba(0, 0, 0, 0)');
+            overlayGradient.addColorStop(1, 'rgba(0, 0, 0, 0.15)');
+            ctx.fillStyle = overlayGradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Add decorative border frame on top of image
+            ctx.strokeStyle = 'rgba(244, 212, 160, 0.6)';
+            ctx.lineWidth = size * 0.015;
+            ctx.strokeRect(size * 0.03, size * 0.03, size * 0.94, size * 0.94);
+            
+            // Add inner decorative border
+            ctx.strokeStyle = 'rgba(139, 90, 43, 0.5)';
+            ctx.lineWidth = size * 0.008;
+            ctx.strokeRect(size * 0.05, size * 0.05, size * 0.9, size * 0.9);
+            
+            // Add decorative geometric patterns around edges (on top of image)
+            ctx.strokeStyle = 'rgba(244, 212, 160, 0.4)';
+            ctx.lineWidth = size * 0.006;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // Top decorative elements
+            const topY = size * 0.1;
+            const bottomY = size * 0.9;
+            
+            // Top center decorative line
+            ctx.beginPath();
+            ctx.moveTo(size * 0.35, topY);
+            ctx.lineTo(size * 0.4, topY);
+            ctx.moveTo(size * 0.6, topY);
+            ctx.lineTo(size * 0.65, topY);
+            ctx.stroke();
+            
+            // Bottom center decorative line
+            ctx.beginPath();
+            ctx.moveTo(size * 0.35, bottomY);
+            ctx.lineTo(size * 0.4, bottomY);
+            ctx.moveTo(size * 0.6, bottomY);
+            ctx.lineTo(size * 0.65, bottomY);
+            ctx.stroke();
+            
+            // Side decorative elements
+            const leftX = size * 0.1;
+            const rightX = size * 0.9;
+            
+            // Left side decorative lines
+            ctx.beginPath();
+            ctx.moveTo(leftX, size * 0.4);
+            ctx.lineTo(leftX, size * 0.45);
+            ctx.moveTo(leftX, size * 0.55);
+            ctx.lineTo(leftX, size * 0.6);
+            ctx.stroke();
+            
+            // Right side decorative lines
+            ctx.beginPath();
+            ctx.moveTo(rightX, size * 0.4);
+            ctx.lineTo(rightX, size * 0.45);
+            ctx.moveTo(rightX, size * 0.55);
+            ctx.lineTo(rightX, size * 0.6);
+            ctx.stroke();
+            
+            // Add corner accent dots (on top of image)
+            ctx.fillStyle = 'rgba(244, 212, 160, 0.5)';
+            const accentDotSize = size * 0.012;
+            const accentOffset = size * 0.08;
+            ctx.beginPath();
+            ctx.arc(accentOffset, accentOffset, accentDotSize, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(size - accentOffset, accentOffset, accentDotSize, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(accentOffset, size - accentOffset, accentDotSize, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(size - accentOffset, size - accentOffset, accentDotSize, 0, Math.PI * 2);
+            ctx.fill();
+            
+            
+            // Add decorative corner brackets (more elaborate)
+            ctx.strokeStyle = 'rgba(244, 212, 160, 0.5)';
+            ctx.lineWidth = size * 0.008;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            const bracketSize = size * 0.08;
+            
+            // Top-left bracket
+            ctx.beginPath();
+            ctx.moveTo(size * 0.12, size * 0.15);
+            ctx.lineTo(size * 0.12, size * 0.12);
+            ctx.lineTo(size * 0.15, size * 0.12);
+            ctx.stroke();
+            
+            // Top-right bracket
+            ctx.beginPath();
+            ctx.moveTo(size * 0.88, size * 0.15);
+            ctx.lineTo(size * 0.88, size * 0.12);
+            ctx.lineTo(size * 0.85, size * 0.12);
+            ctx.stroke();
+            
+            // Bottom-left bracket
+            ctx.beginPath();
+            ctx.moveTo(size * 0.12, size * 0.85);
+            ctx.lineTo(size * 0.12, size * 0.88);
+            ctx.lineTo(size * 0.15, size * 0.88);
+            ctx.stroke();
+            
+            // Bottom-right bracket
+            ctx.beginPath();
+            ctx.moveTo(size * 0.88, size * 0.85);
+            ctx.lineTo(size * 0.88, size * 0.88);
+            ctx.lineTo(size * 0.85, size * 0.88);
+            ctx.stroke();
+            
+            // Add subtle radial gradient overlay for depth
+            const radialGradient = ctx.createRadialGradient(size / 2, size / 2, size * 0.3, size / 2, size / 2, size * 0.7);
+            radialGradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+            radialGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
+            radialGradient.addColorStop(1, 'rgba(0, 0, 0, 0.1)');
+            ctx.fillStyle = radialGradient;
+            ctx.fillRect(0, 0, size, size);
         }
         
         function generateAndDownload(size) {
@@ -77,10 +413,10 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-            });
+            }, 'image/png');
         }
         
-        // Generate icons on load
+        // Generate icons on load (will show placeholder until image is uploaded)
         window.addEventListener('load', () => {
             drawIcon(document.getElementById('icon192'), 192);
             drawIcon(document.getElementById('icon512'), 512);
