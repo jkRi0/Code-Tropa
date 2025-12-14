@@ -70,7 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (typeof(Storage) !== 'undefined') {
                     localStorage.setItem('selectedLanguage', '" . $langLower . "');
                 }
-                alert('Logged in successfully'); 
                 window.location.href='../1fe/homepage/index.html'; 
             </script>";
         } else {

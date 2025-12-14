@@ -3,10 +3,6 @@
 // Database connection
 include 'db.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hid1 = $_POST['hid1'] ?? '';
     $hid2 = $_POST['hid2'] ?? '';
@@ -39,73 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (mysqli_stmt_execute($stmt)) {
             // Get the ID of the newly inserted user
             $newUserId = mysqli_insert_id($conn);
-
-            // Insert default values into rewards table
-            $languages = ['java', 'c++', 'c#'];
             
-            // // Default reward values
-            // $defaultTier = 't1';
-            // $defaultBadgeName = 'b1';
+            session_start();
 
-            // // Insert a default reward for the user's chosen programming language
-            // $stmtRewards = mysqli_prepare($conn, "INSERT INTO rewards (userId, language, tier, badgeName) VALUES (?, ?, ?, ?)");
-            // mysqli_stmt_bind_param($stmtRewards, "isss", $newUserId, $programmingLanguage, $defaultTier, $defaultBadgeName);
-            // mysqli_stmt_execute($stmtRewards);
-            // mysqli_stmt_close($stmtRewards);
-
-            // SAVING table insertion (only for the chosen language)
-            $stmtSaving = mysqli_prepare($conn, "INSERT INTO saving (userId, language, chapter, episode, scene) VALUES (?, ?, ?, ?, ?)");
-            $defaultChapter = 0;
-            $defaultEpisode = 0;
-            $defaultScene = 0;
-            mysqli_stmt_bind_param($stmtSaving, "isiii", $newUserId, $programmingLanguage, $defaultChapter, $defaultEpisode, $defaultScene);
-            mysqli_stmt_execute($stmtSaving);
-            mysqli_stmt_close($stmtSaving);
-
-            // PROGRESS table insertion for story mode
-            $stmtProgressStorymode = mysqli_prepare($conn, "INSERT INTO progress (userId, type, language, chapter, episode, points, code) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $progressTypeStory = 'story';
-            $defaultChapterStory = 0;
-            $defaultEpisodeStory = 0;
-            $defaultPoints = 0;
-            $defaultCode = '';
-            mysqli_stmt_bind_param($stmtProgressStorymode, "issiiis", $newUserId, $progressTypeStory, $programmingLanguage, $defaultChapterStory, $defaultEpisodeStory, $defaultPoints, $defaultCode);
-            mysqli_stmt_execute($stmtProgressStorymode);
-            $storyProgressId = mysqli_insert_id($conn); // Get the ID of the newly inserted story progress
-            mysqli_stmt_close($stmtProgressStorymode);
-
-            // PROGRESS table insertion for challenge mode
-            $stmtProgressChallenge = mysqli_prepare($conn, "INSERT INTO progress (userId, type, language, difficulty, level, points, code) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $progressTypeChallenge = 'challenge';
-            $defaultDifficulty = 'easy';
-            $defaultLevel = 0;
-            mysqli_stmt_bind_param($stmtProgressChallenge, "issiiis", $newUserId, $progressTypeChallenge, $programmingLanguage, $defaultDifficulty, $defaultLevel, $defaultPoints, $defaultCode);
-            mysqli_stmt_execute($stmtProgressChallenge);
-            $challengeProgressId = mysqli_insert_id($conn); // Get the ID of the newly inserted challenge progress
-            mysqli_stmt_close($stmtProgressChallenge);
-
-            // PERFORMANCE table insertion for story mode
-            $stmtPerformanceStory = mysqli_prepare($conn, "INSERT INTO performance (userId, progressId, accuracy, efficiency, readability, timeTaken, success, failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $defaultAccuracy = 0;
-            $defaultEfficiency = 0;
-            $defaultReadability = 0;
-            $defaultTimeTaken = 0;
-            $defaultSuccess = 0;
-            $defaultFailed = 0;
-            mysqli_stmt_bind_param($stmtPerformanceStory, "iiiiiiii", $newUserId, $storyProgressId, $defaultAccuracy, $defaultEfficiency, $defaultReadability, $defaultTimeTaken, $defaultSuccess, $defaultFailed);
-            mysqli_stmt_execute($stmtPerformanceStory);
-            mysqli_stmt_close($stmtPerformanceStory);
-
-            // PERFORMANCE table insertion for challenge mode
-            $stmtPerformanceChallenge = mysqli_prepare($conn, "INSERT INTO performance (userId, progressId, accuracy, efficiency, readability, timeTaken, success, failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            mysqli_stmt_bind_param($stmtPerformanceChallenge, "iiiiiiii", $newUserId, $challengeProgressId, $defaultAccuracy, $defaultEfficiency, $defaultReadability, $defaultTimeTaken, $defaultSuccess, $defaultFailed);
-            mysqli_stmt_execute($stmtPerformanceChallenge);
-            mysqli_stmt_close($stmtPerformanceChallenge);
-            
             // Fetch only essential user data for session storage
             $userData = [];
-
-            // Fetch user details (only essential data)
             $stmtUser = mysqli_prepare($conn, "SELECT username, programmingLanguage FROM users WHERE id = ?");
             mysqli_stmt_bind_param($stmtUser, "i", $newUserId);
             mysqli_stmt_execute($stmtUser);
@@ -118,10 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
             mysqli_stmt_close($stmtUser);
 
-            // Note: REWARDS, SAVING, PROGRESS, and PERFORMANCE are fetched on-demand when needed
-            // This reduces initial session load time
+            // Note: REWARDS, SAVING, PROGRESS, and PERFORMANCE are created/fetched on-demand when needed
+            // This reduces initial signup time and session load
 
-            $_SESSION['userData'] = $userData; // Store essential user data in session
+            $_SESSION['userData'] = $userData;
             $_SESSION['user_id'] = $newUserId;
             $_SESSION['username'] = $hid1;
             
