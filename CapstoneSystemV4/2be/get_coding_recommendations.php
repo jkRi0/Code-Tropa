@@ -227,25 +227,28 @@ $recommendations = [];
 $accuracyTrend = 'stable';
 $efficiencyTrend = 'stable';
 $readabilityTrend = 'stable';
-$timeTrend = 'stable';
 
 if ($totalAttempts >= 10 && $recentAccuracy > 0) {
     $accuracyDiff = $recentAccuracy - $accuracy;
-    if ($accuracyDiff > 5) $accuracyTrend = 'improving';
-    else if ($accuracyDiff < -5) $accuracyTrend = 'declining';
+    if ($accuracyDiff > 5) {
+        $accuracyTrend = 'improving';
+    } else if ($accuracyDiff < -5) {
+        $accuracyTrend = 'declining';
+    }
     
     $efficiencyDiff = $recentEfficiency - $efficiency;
-    if ($efficiencyDiff > 5) $efficiencyTrend = 'improving';
-    else if ($efficiencyDiff < -5) $efficiencyTrend = 'declining';
+    if ($efficiencyDiff > 5) {
+        $efficiencyTrend = 'improving';
+    } else if ($efficiencyDiff < -5) {
+        $efficiencyTrend = 'declining';
+    }
     
     $readabilityDiff = $recentReadability - $readability;
-    if ($readabilityDiff > 5) $readabilityTrend = 'improving';
-    else if ($readabilityDiff < -5) $readabilityTrend = 'declining';
-    
-    // For time, lower is better, so reverse the logic
-    $timeDiff = $recentTimeTaken - $timeTaken;
-    if ($timeDiff < -10) $timeTrend = 'improving'; // Getting faster
-    else if ($timeDiff > 10) $timeTrend = 'declining'; // Getting slower
+    if ($readabilityDiff > 5) {
+        $readabilityTrend = 'improving';
+    } else if ($readabilityDiff < -5) {
+        $readabilityTrend = 'declining';
+    }
 }
 
 // Calculate consistency (low std dev = consistent, high = inconsistent)
@@ -483,95 +486,6 @@ if ($readability < 70) {
     ];
 }
 
-// Analyze Time Taken with context (normalize by difficulty)
-// Expected times: Easy ~60s, Medium ~120s, Hard ~180s
-$expectedTimeByDifficulty = ['easy' => 60, 'medium' => 120, 'hard' => 180];
-$timeAnalysis = [];
-$slowDifficulties = [];
-
-if (!empty($difficultyPerformance)) {
-    foreach ($difficultyPerformance as $diff => $perf) {
-        if (isset($expectedTimeByDifficulty[$diff]) && $perf['attempts'] >= 2) {
-            $expectedTime = $expectedTimeByDifficulty[$diff];
-            $actualTime = $perf['timeTaken'];
-            $timeRatio = $actualTime / $expectedTime;
-            
-            if ($timeRatio > 1.5) { // 50% slower than expected
-                $slowDifficulties[] = $diff;
-                $timeAnalysis[] = "You take " . round($timeRatio * 100) . "% longer than expected on {$diff} challenges.";
-            }
-        }
-    }
-}
-
-$timeDescription = '';
-if ($timeTaken > 120) { // More than 2 minutes average
-    $trendNote = '';
-    if ($timeTrend === 'improving') {
-        $trendNote = ' Good news: You\'re getting faster!';
-    } else if ($timeTrend === 'declining') {
-        $trendNote = ' Warning: You\'re taking longer on recent challenges.';
-    }
-    
-    $difficultyNote = '';
-    if (!empty($slowDifficulties)) {
-        $difficultyNote = ' You particularly struggle with speed on ' . implode(' and ', $slowDifficulties) . ' challenges.';
-    }
-    
-    $timeDescription = 'Your average time per challenge is ' . round($timeTaken) . ' seconds, which is above the recommended threshold.' . $trendNote . $difficultyNote;
-    if (!empty($timeAnalysis)) {
-        $timeDescription .= ' ' . implode(' ', array_slice($timeAnalysis, 0, 2));
-    }
-    $timeDescription .= ' Practice more to build speed while maintaining quality.';
-    
-    $recommendations[] = [
-        'category' => 'Speed',
-        'priority' => 'medium',
-        'title' => 'Improve Coding Speed',
-        'description' => $timeDescription,
-        'exercises' => [
-            'Practice with time-boxed coding sessions (30 minutes per challenge)',
-            'Re-attempt challenges you\'ve completed to improve speed',
-            'Focus on "Quick Problem Solving" exercises',
-            'Practice typing and code completion exercises'
-        ],
-        'hints' => [
-            'Plan your solution on paper before coding',
-            'Start with a simple solution, then optimize',
-            'Practice keyboard shortcuts for your IDE',
-            'Don\'t overthink - start coding and iterate'
-        ],
-        'studyMaterials' => [
-            'Time Management for Programmers',
-            'Rapid Prototyping Techniques',
-            'Keyboard Shortcuts Guide',
-            'Problem-Solving Speed Training'
-        ]
-    ];
-} else if ($timeTaken > 90 && $timeTrend === 'declining') {
-    // User is getting slower
-    $recommendations[] = [
-        'category' => 'Speed',
-        'priority' => 'low',
-        'title' => 'Maintain Coding Speed',
-        'description' => 'Your coding speed has been decreasing recently. Focus on maintaining efficiency while solving problems.',
-        'exercises' => [
-            'Re-attempt previous challenges to improve speed',
-            'Practice time-boxed problem solving',
-            'Focus on quick problem analysis'
-        ],
-        'hints' => [
-            'Don\'t overthink - start coding sooner',
-            'Use familiar patterns and techniques',
-            'Practice keyboard shortcuts'
-        ],
-        'studyMaterials' => [
-            'Maintaining Coding Speed',
-            'Efficient Problem-Solving Workflows'
-        ]
-    ];
-}
-
 // Analyze performance patterns and correlations
 $patternAnalysis = [];
 $correlationInsights = [];
@@ -616,11 +530,6 @@ if ($totalAttempts >= 5) {
     // Low readability affects other metrics
     if ($readability < 60 && ($accuracy < 75 || $efficiency < 75)) {
         $correlationInsights[] = 'Poor code readability may be affecting your accuracy and efficiency. Clean code is easier to debug and optimize.';
-    }
-    
-    // High time but good metrics = perfectionist, needs speed
-    if ($timeTaken > 150 && $accuracy >= 80 && $efficiency >= 75) {
-        $correlationInsights[] = 'You produce high-quality code but take too long. Focus on faster problem-solving techniques.';
     }
 }
 
@@ -838,4 +747,3 @@ $conn->close();
 echo json_encode($response);
 ini_set('display_errors', $prevDisplayErrors);
 ?>
-

@@ -786,6 +786,110 @@ function convertArrayInstantiations(source) {
     );
 }
 
+function addTrackingHooks(transformed) {
+    // Track variable assignments using comma operator (non-intrusive)
+    // Pattern: let varName = value;
+    transformed = transformed.replace(
+        /let\s+([A-Za-z_]\w*)\s*=\s*([^;]+);/g,
+        (match, varName, value) => {
+            // Skip if already has tracking or is array wrapper
+            if (match.includes('__track') || match.includes('__wrapArray')) return match;
+            const cleanValue = value.trim();
+            return `let ${varName} = (__trackVariable("${varName}", ${cleanValue}), ${cleanValue});`;
+        }
+    );
+    
+    // Track variable reassignments (varName = value;)
+    transformed = transformed.replace(
+        /([A-Za-z_]\w*)\s*=\s*([^;]+);/g,
+        (match, varName, value) => {
+            // Skip if in for loop, already tracked, or part of declaration
+            if (match.includes('__track') || match.includes('for (') || 
+                match.includes('let ') || match.includes('const ')) return match;
+            const cleanValue = value.trim();
+            return `${varName} = (__trackVariable("${varName}", ${cleanValue}), ${cleanValue});`;
+        }
+    );
+    
+    // Track arrays - look for let varName = __wrapArray(...)
+    transformed = transformed.replace(
+        /let\s+([A-Za-z_]\w*)\s*=\s*__wrapArray\(([^,]+),\s*"([^"]+)"\)/g,
+        (match, varName, arrayValue, type) => {
+            return `let ${varName} = (__trackArray("${varName}", ${arrayValue}, "${type}"), __wrapArray(${arrayValue}, "${type}"));`;
+        }
+    );
+    
+    // Track if conditions
+    transformed = transformed.replace(
+        /if\s*\(([^)]+)\)\s*\{/g,
+        (match, condition) => {
+            if (match.includes('__trackCondition')) return match;
+            return `if ((__trackCondition(${condition}, ${condition}, 'if'), ${condition})) {`;
+        }
+    );
+    
+    // Track else if conditions
+    transformed = transformed.replace(
+        /else\s+if\s*\(([^)]+)\)\s*\{/g,
+        (match, condition) => {
+            if (match.includes('__trackCondition')) return match;
+            return `else if ((__trackCondition(${condition}, ${condition}, 'else-if'), ${condition})) {`;
+        }
+    );
+    
+    // Track while loops
+    transformed = transformed.replace(
+        /while\s*\(([^)]+)\)\s*\{/g,
+        (match, condition) => {
+            if (match.includes('__trackCondition')) return match;
+            return `while ((__trackCondition(${condition}, ${condition}, 'while'), ${condition})) {`;
+        }
+    );
+    
+    // Track for loops
+    transformed = transformed.replace(
+        /for\s*\(([^;]+);\s*([^;]+);\s*([^)]+)\)\s*\{/g,
+        (match, init, condition, increment) => {
+            if (match.includes('__trackCondition')) return match;
+            // Extract variable name from initialization
+            const initMatch = init.match(/(?:let\s+)?([A-Za-z_]\w*)\s*=/);
+            const initVar = initMatch ? initMatch[1] : 'unknown';
+            const cleanInit = init.trim();
+            const cleanCondition = condition.trim();
+            const cleanIncrement = increment.trim();
+            return `for (${cleanInit}; (__trackCondition(${cleanCondition}, ${cleanCondition}, 'for'), 
+                __trackForLoop("${initVar}", "${cleanCondition}", [true, false]), ${cleanCondition}); ${cleanIncrement}) {`;
+        }
+    );
+    
+    // Track method calls (standalone calls ending with ;)
+    transformed = transformed.replace(
+        /([A-Za-z_]\w*)\s*\(([^)]*)\)\s*;/g,
+        (match, methodName, args) => {
+            // Skip if already tracked, built-in functions, or system calls
+            if (match.includes('__track') || match.includes('__print') || 
+                match.includes('__println') || match.includes('System.') || 
+                match.includes('console.') || match.includes('__wrapArray') ||
+                match.includes('__createArray') || match.includes('__validateMethodReturn')) {
+                return match;
+            }
+            // Skip if it's part of an assignment (will be tracked via variable assignment)
+            const beforeMatch = transformed.substring(0, transformed.indexOf(match));
+            if (beforeMatch.match(/(let|const|var)\s+[^=]*=\s*$/)) {
+                return match;
+            }
+            
+            const argList = args ? args.split(',').map(a => a.trim()).filter(Boolean) : [];
+            const argObj = argList.length > 0 
+                ? `{${argList.map((a, i) => `"arg${i}": ${a}`).join(', ')}}`
+                : '{}';
+            return `((__methodCallResult = ${methodName}(${args})), __trackMethod("${methodName}", ${argObj}, __methodCallResult), __methodCallResult);`;
+        }
+    );
+    
+    return transformed;
+}
+
 function transformJavaBodyToJs(body) {
     let transformed = body;
     transformed = convertMultiDimArrayDeclarations(transformed);
@@ -811,6 +915,8 @@ function transformJavaBodyToJs(body) {
     transformed = transformed.replace(/(\d+)[lL]\b/g, "$1");
     transformed = transformed.replace(/(\d+(?:\.\d+)?)[fF]\b/g, "$1");
     transformed = escapeNewlinesInStringLiterals(transformed);
+    // Add tracking hooks (non-intrusive)
+    transformed = addTrackingHooks(transformed);
     return transformed;
 }
 
@@ -979,7 +1085,28 @@ function convertMethodsToJs(src, sourceLabel) {
             const { body, errors } = wrapMethodReturnStatements(transformedBody, method, sourceLabel);
             conversionErrors.push(...errors);
             const indentedBody = body ? indentLines(body) : "";
-            return `function ${method.name}(${paramsJs}) {\n${indentedBody}\n}\n`;
+            
+            // Wrap method to track calls and returns
+            const paramNames = paramsJs.split(',').map(p => p.trim()).filter(Boolean);
+            const paramObj = paramNames.length > 0 
+                ? `{${paramNames.map((p) => `"${p}": ${p}`).join(', ')}}`
+                : '{}';
+            
+            if (method.returnType === 'void') {
+                return `function ${method.name}(${paramsJs}) {
+${indentedBody}
+                __trackMethod("${method.name}", ${paramObj}, undefined);
+            }\n`;
+            } else {
+                // For non-void methods, wrap the return value
+                return `function ${method.name}(${paramsJs}) {
+                const __methodResult = (function() {
+${indentedBody}
+                })();
+                __trackMethod("${method.name}", ${paramObj}, __methodResult);
+                return __methodResult;
+            }\n`;
+            }
         })
         .join("\n");
 
@@ -1071,6 +1198,79 @@ function executeJavaMain(src, sourceLabel) {
             const outputs = [];
             let currentLine = "";
             const __sourceLabel = ${JSON.stringify(sourceLabel)};
+            
+            // ===== TRACKING INFRASTRUCTURE (Non-intrusive) =====
+            const __tracking = {
+                variables: [],
+                conditions: [],
+                forLoops: [],
+                methods: [],
+                arrays: []
+            };
+            let __methodCallResult = undefined;
+            
+            const __trackVariable = (name, value) => {
+                try {
+                    const valueStr = typeof value === 'object' && value !== null && Array.isArray(value) 
+                        ? JSON.stringify(value) 
+                        : String(value);
+                    const existing = __tracking.variables.find(v => v.name === name);
+                    if (existing) {
+                        existing.value = valueStr;
+                    } else {
+                        __tracking.variables.push({ name: name, value: valueStr });
+                    }
+                } catch(e) {}
+            };
+            
+            const __trackCondition = (condition, result, type = 'if') => {
+                try {
+                    __tracking.conditions.push({
+                        type: type,
+                        condition: String(condition),
+                        result: Boolean(result)
+                    });
+                } catch(e) {}
+            };
+            
+            const __trackForLoop = (initVar, condition, possibleResults) => {
+                try {
+                    __tracking.forLoops.push({
+                        initVariable: initVar,
+                        condition: String(condition),
+                        possibleResults: possibleResults
+                    });
+                } catch(e) {}
+            };
+            
+            const __trackMethod = (name, params, returnValue) => {
+                try {
+                    __tracking.methods.push({
+                        name: name,
+                        parameters: params,
+                        returnValue: returnValue !== undefined ? String(returnValue) : null
+                    });
+                } catch(e) {}
+            };
+            
+            const __trackArray = (name, array, type = null) => {
+                try {
+                    const arrayData = {
+                        name: name,
+                        type: type || 'array',
+                        length: Array.isArray(array) ? array.length : 0,
+                        values: Array.isArray(array) ? JSON.stringify(array) : '[]'
+                    };
+                    const existing = __tracking.arrays.find(a => a.name === name);
+                    if (existing) {
+                        Object.assign(existing, arrayData);
+                    } else {
+                        __tracking.arrays.push(arrayData);
+                    }
+                } catch(e) {}
+            };
+            // ===== END TRACKING INFRASTRUCTURE =====
+            
             const __print = (value = "") => {
                 currentLine += String(value ?? "");
             };
@@ -1271,14 +1471,24 @@ function executeJavaMain(src, sourceLabel) {
             if (currentLine) {
                 outputs.push(currentLine);
             }
-            return outputs;
+            // Print tracking data to console
+            console.log("=== TRACKING DATA ===");
+            console.log("Variables:", __tracking.variables);
+            console.log("Conditions:", __tracking.conditions);
+            console.log("For Loops:", __tracking.forLoops);
+            console.log("Methods:", __tracking.methods);
+            console.log("Arrays:", __tracking.arrays);
+            console.log("=== END TRACKING DATA ===");
+            return { outputs: outputs, tracking: __tracking };
         `;
         const runner = new Function(`${prefix}${methodConversion.code}\n${jsBody}${suffix}`);
+        const result = runner();
 
         return {
-            outputs: runner(),
+            outputs: result.outputs,
             methods: methodConversion.metadata,
             errors: [],
+            tracking: result.tracking
         };
     } catch (error) {
         // Preserve line numbers from original error if present

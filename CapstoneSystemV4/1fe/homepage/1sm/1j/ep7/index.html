@@ -713,16 +713,49 @@
         const scenes = [
             { 
                 type: 'video', 
+                src: 'assets/0.mp4', 
+                subtitle:" "
+            },
+            { 
+                type: 'video', 
                 src: 'assets/1.mp4', 
-                subtitle: 'Bakit nga ba ako pumayag dito? may extra WiFi daw doon.’  aka WiFi pala mga aswang!',
+                subtitle: 'Nasan ba ako? Bakit parang paulit-ulit ‘to…parang panaginip na naka-loop- wait don\'t tell me!',
                 speakerName: 'Axle',
                 speakerImage: 'assets/axle.png',
-                voice: 'assets/audio/1.wav'
+            },
+            {
+                type: 'video',
+                src: 'assets/2.mp4',
+                subtitle: [
+                    {
+                        text: "Alam mo ba si Aling Nena, may nakita raw kagabi. Parang aswang daw na gala na namamato ng buhangin, siguradong may masama mangyayari.",
+                        translation: "Do you know Aling Nena? She found something yesterday. Looks like a ghost has been burned by fire, and something bad is bound to happen.",
+                        time: 0,
+                        voice: 'assets/audio/2.wav'
+                    },
+                    {
+                        text: "Sigurado ka ba? Baka nanaginip lang sya?",
+                        translation: "Are you sure? Maybe she's just dreaming?",
+                        time: 8000,
+                        // voice: 'assets/audio/2-1.wav'
+                    },
+                    {
+                        text: "Nakakatakot naman ‘yan",
+                        translation: "That's scary.",
+                        time: 11000,
+                        // voice: 'assets/audio/2-2.wav'
+                    },
+                    // {
+                    //     text: "[Background chatter]",
+                    //     time: 6000,
+                    //     hideSpeaker: true
+                    // }
+                ]
             },
             { 
                 type: 'video', 
                 src: 'assets/3.mp4', 
-                subtitle: 'Axle. Handa ka na babang mag function?',
+                subtitle: 'HELLOO!',
                 speakerName: 'Manong Code',
                 speakerImage: 'assets/manong.png',
                 voice: 'assets/audio/3.wav'
@@ -730,7 +763,7 @@
             { 
                 type: 'video', 
                 src: 'assets/4.mp4', 
-                subtitle: 'YUNG ASWANGG !!', 
+                subtitle: 'YUNG ASWANG—teka… bakit parang déjà vu ‘to?', 
                 speakerName: 'Axle', 
                 speakerImage: 'assets/axle.png',
                 voice: 'assets/audio/4.wav',
@@ -738,11 +771,55 @@
             { 
                 type: 'video', 
                 src: 'assets/5.mp4', 
-                subtitle: 'OA, ha  interesado ka sa java diba. Turuan lng nmn kita', 
+                subtitle: 'TAMA! nasa panaginip ka. At sa panaginip, kapag inulit mo ang isang bagay—pareho ang resulta.', 
                 speakerName: 'Manong code', 
                 speakerImage: 'assets/manong.png',
                 voice: 'assets/audio/5.wav',
             },
+
+
+
+
+            { 
+                type: 'video', 
+                src: 'assets/5.mp4', 
+                subtitle: 'Ganyan ang functions sa Java.', 
+                speakerName: 'Manong code', 
+                speakerImage: 'assets/manong.png',
+            },
+            { 
+                type: 'video', 
+                src: 'assets/5.mp4', 
+                subtitle: 'Ang function ay parang eksena sa panaginip. Isusulat mo muna kung ano ang mangyayari—bago mo siya maranasan.', 
+                speakerName: 'Manong code', 
+                speakerImage: 'assets/manong.png',
+            },
+            { 
+                type: 'video', 
+                src: 'assets/5.mp4', 
+                subtitle: 'Axle, himayin natin ‘to. Ang function ay parang eksena sa panaginip—kailangan malinaw kung paano nagsisimula at paano nagtatapos.', 
+                speakerName: 'Manong code', 
+                speakerImage: 'assets/manong.png',
+            },
+            { 
+                type: 'video', 
+                src: 'assets/5.mp4', 
+                subtitle: '"transformToAswang"." Ito ang pangalan ng function. Dapat malinaw kung ano ang ginagawa niya. Kapag malinaw ang pangalan, malinaw ang panaginip.', 
+                speakerName: 'Manong code', 
+                speakerImage: 'assets/manong.png',
+            },
+            { 
+                type: 'video', 
+                src: 'assets/5.mp4', 
+                subtitle: 'String name. Ito ang parameter. Siya ang nagbabago sa eksena ng panaginip. Kung sino ang ipasok mo rito—siya ang maaapektuhan ng logic ng function.', 
+                speakerName: 'Manong code', 
+                speakerImage: 'assets/manong.png',
+            },
+
+
+
+            
+
             {
                 type: 'video', 
                 src: 'assets/1.mkv', 
@@ -1125,9 +1202,7 @@
                 }
             } else if (data.type === 'quit') {
                 console.log('🚪 Quit message received');
-                // Save game before quitting
-                saveGameState();
-                // Redirect to homepage
+                // Quit without saving - user was already warned
                 window.location.href = '../../../index.html';
             }
         });

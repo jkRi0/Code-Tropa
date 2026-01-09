@@ -356,21 +356,17 @@
 
         // Quit button
         quitBtn.addEventListener('click', () => {
-            // Only show confirmation if game hasn't been saved
-            if (!gameSavedThisSession) {
-                if (confirm('Are you sure you want to quit? Your progress will be saved.')) {
-                    // Auto-save before quitting if not saved
-                    if (window.parent) {
-                        window.parent.postMessage({ type: 'saveGame' }, '*');
-                        setTimeout(() => {
-                            window.parent.postMessage({ type: 'quit' }, '*');
-                        }, 300);
-                    }
-                }
-            } else {
-                // Game already saved, quit directly
+            // If game was saved this session, quit directly
+            if (gameSavedThisSession) {
                 if (window.parent) {
                     window.parent.postMessage({ type: 'quit' }, '*');
+                }
+            } else {
+                // Show warning that progress will NOT be saved
+                if (confirm('Are you sure you want to quit?\n\nYour progress will NOT be saved.')) {
+                    if (window.parent) {
+                        window.parent.postMessage({ type: 'quit' }, '*');
+                    }
                 }
             }
         });

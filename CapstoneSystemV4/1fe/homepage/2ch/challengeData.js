@@ -290,17 +290,18 @@ function loadSelectedChallengeData() {
             // STORY MODE: Display episode information
             // CHALLENGE MODE: Display level information
             let splashLevelNumber, displayLevel;
-            if (isStoryMode) {
+            if (isStoryMode === 'story') {
                 const episodeNum = data.level.replace('ep', '');
                 splashLevelNumber = `Episode ${episodeNum}`;
                 displayLevel = `Episode ${episodeNum}`;
             } else {
-                splashLevelNumber = data.level.replace('lev', 'level');
+                const levelNum = data.level.replace('lev', '');
+                splashLevelNumber = `Level ${levelNum}`;
                 displayLevel = splashLevelNumber;
             }
             
             // Update splash screen
-            if (isStoryMode) {
+            if (isStoryMode === 'story') {
                 document.getElementById('splashLevel').textContent = "CHALLENGE TIME!" || 'Unknown Level';
                 document.getElementById('splashDifficulty').textContent = splashLevelNumber || 'Unknown Difficulty';
             } else {
@@ -566,8 +567,7 @@ window.addEventListener('message', async (event) => {
         pauseMenu.style.display = 'none';
         pauseMenuOpen = false;
     } else if (event.data.type === 'quit') {
-        // Save game before quitting
-        await saveGameState();
+        // Quit without saving - saved games are stored per-level so previous saves are preserved
         window.location.href = '../index.html';
     } else if (event.data.type === 'saveGame') {
         await saveGameState();
@@ -608,7 +608,11 @@ async function saveGameState() {
             data.saved = true;
             
             localStorage.setItem('selectedChallenge', JSON.stringify(data));
-            console.log('✅ Game saved to selectedChallenge, Code length:', code ? code.length : 0);
+            
+            // Also save to level-specific key so it persists across different level plays
+            const savedGameKey = `savedGame_${data.level}`;
+            localStorage.setItem(savedGameKey, JSON.stringify(data));
+            console.log('✅ Game saved to selectedChallenge AND', savedGameKey, ', Code length:', code ? code.length : 0);
         } else {
             console.warn('⚠️ No selectedChallenge found in localStorage');
         }
@@ -631,31 +635,39 @@ function loadSavedGame() {
             if (continueFlag === 'true') {
                 localStorage.removeItem(`continueGame_${level}`); // Clear flag
                 
-                console.log('📦 Loading saved game from selectedChallenge');
+                // Load from level-specific saved game key
+                const savedGameKey = `savedGame_${level}`;
+                const savedGameData = localStorage.getItem(savedGameKey);
                 
-                // Load saved code from selectedChallenge
-                if (data.code && data.saved) {
-                    // Wait for editor to be ready, then set code
-                    const tryLoadCode = setInterval(() => {
-                        if (window.setEditorCode) {
-                            // Check if editor is ready by checking if the function exists
-                            const editorIframe = document.getElementById('monaco-editor-iframe');
-                            if (editorIframe && editorIframe.contentWindow) {
-                                clearInterval(tryLoadCode);
-                                window.setEditorCode(data.code);
-                                console.log('✅ Loaded saved code into editor, length:', data.code.length);
+                if (savedGameData) {
+                    const savedData = JSON.parse(savedGameData);
+                    console.log('📦 Loading saved game from', savedGameKey);
+                    
+                    if (savedData.code && savedData.saved) {
+                        // Wait for editor to be ready, then set code
+                        const tryLoadCode = setInterval(() => {
+                            if (window.setEditorCode) {
+                                // Check if editor is ready by checking if the function exists
+                                const editorIframe = document.getElementById('monaco-editor-iframe');
+                                if (editorIframe && editorIframe.contentWindow) {
+                                    clearInterval(tryLoadCode);
+                                    window.setEditorCode(savedData.code);
+                                    console.log('✅ Loaded saved code into editor, length:', savedData.code.length);
+                                }
                             }
-                        }
-                    }, 100);
-                    
-                    // Timeout after 5 seconds
-                    setTimeout(() => {
-                        clearInterval(tryLoadCode);
-                    }, 5000);
-                    
-                    return true;
+                        }, 100);
+                        
+                        // Timeout after 5 seconds
+                        setTimeout(() => {
+                            clearInterval(tryLoadCode);
+                        }, 5000);
+                        
+                        return true;
+                    } else {
+                        console.warn('⚠️ No saved code found in', savedGameKey);
+                    }
                 } else {
-                    console.warn('⚠️ No saved code found in selectedChallenge');
+                    console.warn('⚠️ No saved game found for', level);
                 }
             }
         }
@@ -1066,16 +1078,27 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
                 const errorDiv = document.getElementById('geminiApiError');
                 if (errorDiv) {
                     if (apiError) {
-                        let errorMessage = `⚠️ Gemini API Error. Using heuristic feedback.`;
-                        if (errors && errors.length > 0) {
-                            const triedModels = errors.map(e => e.model).join(', ');
-                            errorMessage += `\nTried models: ${triedModels}`;
-                            console.log('Models tried:', triedModels);
-                            console.log('Model errors:', errors);
+                        // Only show error if it's a real API issue, not just "key not configured"
+                        const isRealApiError = apiError !== "Gemini API key not configured";
+                        
+                        if (isRealApiError) {
+                            let errorMessage = `⚠️ Gemini API Error. Using heuristic feedback.`;
+                            if (errors && errors.length > 0) {
+                                const triedModels = errors.map(e => e.model).join(', ');
+                                const firstError = errors[0]?.error || 'Unknown error';
+                                errorMessage += `\nTried models: ${triedModels}`;
+                                errorMessage += `\nError: ${firstError}`;
+                                console.log('Models tried:', triedModels);
+                                console.log('Model errors:', errors);
+                                console.log('First error details:', firstError);
+                            }
+                            errorDiv.textContent = errorMessage;
+                            console.log('API Error:', apiError);
+                            errorDiv.style.display = 'block';
+                        } else {
+                            // API key not configured - hide error div (user should configure it)
+                            errorDiv.style.display = 'none';
                         }
-                        errorDiv.textContent = errorMessage;
-                        console.log('API Error:', apiError);
-                        errorDiv.style.display = 'block';
                     } else {
                         errorDiv.style.display = 'none';
                     }
@@ -1084,6 +1107,7 @@ document.getElementById('submitCodeBtn').addEventListener('click', async functio
                     console.warn('Gemini API Error (using heuristic feedback):', apiError);
                     if (errors && errors.length > 0) {
                         console.warn('Tried models:', errors.map(e => e.model).join(', '));
+                        console.warn('First error:', errors[0]?.error);
                     }
                 }
             }).catch(error => {

@@ -154,6 +154,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Update criteria scores display
+        // Clear existing content first to prevent duplication
+        criteriaScoresDisplay.innerHTML = '';
+        
         const currentDifficulty = document.querySelector('#selectedDifficulty')?.textContent.toLowerCase() || 'easy';
         
         // STORY MODE: Always use "easy" difficulty for rubrics
@@ -436,22 +439,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (accuracyPercent === 100) {
             feedback.push("**Accuracy (100%)**: Excellent! Your code produces the correct output and matches the expected solution.");
-            if (objectivesMet !== null && objectivesMet === 100) {
-                feedback.push("   - All objectives met! Your code fulfills all requirements.");
-            }
         } else if (accuracyPercent >= 80) {
             feedback.push(`**Accuracy (${accuracyPercent}%)**: Your code is mostly correct but has some differences.`);
-            if (objectivesCompliance && objectivesCompliance.totalObjectives > 0) {
-                if (objectivesMet >= 80) {
-                    feedback.push(`   - Objectives compliance: ${objectivesMet}% (${objectivesCompliance.metCount}/${objectivesCompliance.totalObjectives} objectives met)`);
-                } else {
-                    feedback.push(`   - Objectives compliance: ${objectivesMet}% (${objectivesCompliance.metCount}/${objectivesCompliance.totalObjectives} objectives met)`);
-                    if (objectivesCompliance.missedObjectives.length > 0) {
-                        const topMissed = objectivesCompliance.missedObjectives.slice(0, 2);
-                        feedback.push(`   - Missing objectives: ${topMissed.map(o => o.objective.substring(0, 50) + '...').join(', ')}`);
-                    }
-                }
-            }
             if (analysis.accuracy) {
                 if (analysis.accuracy.outputSimilarity !== null && analysis.accuracy.outputSimilarity < 1.0) {
                     const similarity = Math.round(analysis.accuracy.outputSimilarity * 100);
@@ -463,16 +452,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else if (accuracyPercent >= 50) {
             feedback.push(`**Accuracy (${accuracyPercent}%)**: Your code has significant differences from the expected solution.`);
-            if (objectivesCompliance && objectivesCompliance.totalObjectives > 0) {
-                feedback.push(`   - Objectives compliance: ${objectivesMet}% (${objectivesCompliance.metCount}/${objectivesCompliance.totalObjectives} objectives met)`);
-                if (objectivesCompliance.missedObjectives.length > 0) {
-                    const topMissed = objectivesCompliance.missedObjectives.slice(0, 3);
-                    feedback.push(`   - Missing objectives:`);
-                    topMissed.forEach(obj => {
-                        feedback.push(`     • ${obj.objective.substring(0, 60)}${obj.objective.length > 60 ? '...' : ''}`);
-                    });
-                }
-            }
             if (analysis.accuracy) {
                 if (analysis.accuracy.outputSimilarity !== null) {
                     feedback.push(`   - Output match: ${Math.round(analysis.accuracy.outputSimilarity * 100)}%`);
@@ -482,15 +461,6 @@ document.addEventListener('DOMContentLoaded', function() {
             feedback.push("   - Review the solution code and objectives to understand the correct approach.");
         } else {
             feedback.push(`**Accuracy (${accuracyPercent}%)**: Your code doesn't match the expected solution.`);
-            if (objectivesCompliance && objectivesCompliance.totalObjectives > 0) {
-                feedback.push(`   - Objectives compliance: ${objectivesMet}% (${objectivesCompliance.metCount}/${objectivesCompliance.totalObjectives} objectives met)`);
-                if (objectivesCompliance.missedObjectives.length > 0) {
-                    feedback.push(`   - Please review these objectives:`);
-                    objectivesCompliance.missedObjectives.slice(0, 3).forEach(obj => {
-                        feedback.push(`     • ${obj.objective.substring(0, 60)}${obj.objective.length > 60 ? '...' : ''}`);
-                    });
-                }
-            }
             feedback.push("   - Please review the requirements and objectives of the challenge.");
         }
         
@@ -599,15 +569,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function getGeminiFeedback(submittedCode, solutionCode, difficulty, scoringResult) {
         // List of Gemini models to try in order (most capable first)
+        // Using more reliable and commonly available models
         const GEMINI_MODELS = [
-            'gemini-2.5-flash',
-            'gemini-2.5-pro',
-            'gemini-2.0-flash',
+            // 'gemini-2.0-flash-lite-001',
+            // 'gemini-2.0-flash-lite',
             'gemini-2.0-flash-001',
-            'gemini-2.0-flash-lite'
+
         ];
 
         // Check if API key is configured
+        console.log("Checking Gemini API key...", GEMINI_API_KEY ? "Key found (length: " + GEMINI_API_KEY.length + ")" : "No key found");
         if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE" || GEMINI_API_KEY.trim() === "") {
             console.warn("Gemini API key not set. Falling back to heuristic feedback.");
             const heuristicFeedback = generateHeuristicFeedback(submittedCode, solutionCode, difficulty, scoringResult);
@@ -651,7 +622,11 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 console.log(`Attempting to call Gemini API with model: ${model} (${i + 1}/${GEMINI_MODELS.length})`);
                 
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, {
+                // const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+                console.log(`Calling Gemini API: ${model} at ${apiUrl.substring(0, 80)}...`);
+                
+                const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

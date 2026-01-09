@@ -11,7 +11,9 @@ $response = [
     'success' => false,
     'message' => 'Unable to fetch unlocked levels.',
     'language' => null,
-    'unlockedLevels' => []
+    'unlockedLevels' => [],
+    'levelPoints' => [], // Map of level number to max points
+    'levelPerformance' => [] // Map of level number to performance metrics
 ];
 
 if (!isset($_SESSION['user_id'])) {
@@ -31,18 +33,44 @@ $response['language'] = $language;
 // - A level N (>1) is considered unlocked if the previous level (N-1) has been completed with 80+ points
 //   in the 'progress' table for the current user, type 'challenge', current language
 
-$sql = "SELECT level, MAX(points) as maxPoints FROM progress WHERE userId = ? AND type = 'challenge' AND language = ? AND level IS NOT NULL GROUP BY level";
+$sql = "SELECT p.level, MAX(p.points) as maxPoints,
+        AVG(perf.accuracy) as avgAccuracy,
+        AVG(perf.efficiency) as avgEfficiency,
+        AVG(perf.readability) as avgReadability
+        FROM progress p
+        LEFT JOIN performance perf ON p.id = perf.progressId
+        WHERE p.userId = ? AND p.type = 'challenge' AND p.language = ? AND p.level IS NOT NULL
+        GROUP BY p.level";
 
 if ($stmt = $conn->prepare($sql)) {
     $stmt->bind_param('is', $userId, $language);
     if ($stmt->execute()) {
         $result = $stmt->get_result();
         $completedLevels = [];
+        $levelPointsMap = []; // Store points for all levels (not just completed)
+        $levelPerformanceMap = []; // Store performance metrics for all levels
         while ($row = $result->fetch_assoc()) {
             $lvl = intval($row['level']);
             $maxPoints = intval($row['maxPoints']);
-            if ($lvl > 0 && $maxPoints >= 80) {
-                $completedLevels[] = $lvl;
+            $avgAccuracy = $row['avgAccuracy'] ? round(floatval($row['avgAccuracy']), 0) : 0;
+            $avgEfficiency = $row['avgEfficiency'] ? round(floatval($row['avgEfficiency']), 0) : 0;
+            $avgReadability = $row['avgReadability'] ? round(floatval($row['avgReadability']), 0) : 0;
+            
+            if ($lvl > 0) {
+                // Store points for all levels
+                $levelPointsMap[$lvl] = $maxPoints;
+                // Store performance metrics if available
+                if ($avgAccuracy > 0 || $avgEfficiency > 0 || $avgReadability > 0) {
+                    $levelPerformanceMap[$lvl] = [
+                        'accuracy' => $avgAccuracy,
+                        'efficiency' => $avgEfficiency,
+                        'readability' => $avgReadability
+                    ];
+                }
+                // Only add to completed if >= 80
+                if ($maxPoints >= 80) {
+                    $completedLevels[] = $lvl;
+                }
             }
         }
         
@@ -60,6 +88,8 @@ if ($stmt = $conn->prepare($sql)) {
         sort($unlockedLevels);
         $response['unlockedLevels'] = $unlockedLevels;
         $response['completedLevels'] = $completedLevels; // For debugging
+        $response['levelPoints'] = $levelPointsMap; // Map of level (1-20) to max points
+        $response['levelPerformance'] = $levelPerformanceMap; // Map of level (1-20) to performance metrics
         $response['success'] = true;
         $response['message'] = 'OK';
     } else {

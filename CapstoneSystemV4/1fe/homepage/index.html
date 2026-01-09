@@ -270,80 +270,115 @@
                         <!-- CHAPTER 1 EPISODE SELECTION -->
                         <div class="forScroll">
                             <div class="epi-selection chap1">
-                                <div class="epi-option">
+                                <div class="epi-option" data-episode="ep1" data-global-ep="1">
                                     <div class="epi-title">
                                         <h2>Episode 1</h2>
+                                        
                                     </div>
                                     <div class="epi-desc">
                                         <p>Basic Syntax, Code Structure, and Comments</p>
                                     </div>
-                                    <button onclick="redirectToEpisode('ep1')">Play</button>
+                                    <div class="epi-footer">
+                                        <span class="epi-progress" data-ep="1"></span>
+                                        <div class="epi-performance" data-ep="1"></div>
+                                        <button onclick="redirectToEpisode('ep1')">Play</button>
+                                    </div>
                                 </div>
                                 
-                                <div class="epi-option">
+                                <div class="epi-option" data-episode="ep2" data-global-ep="2">
                                     <div class="epi-title">
                                         <h2>Episode 2</h2>
+                                        
                                     </div>
                                     <div class="epi-desc">
                                         <p>Variables and Data Types</p>
                                     </div>
-                                    <button onclick="redirectToEpisode('ep2')">Play</button>
+                                    <div class="epi-footer">
+                                        <span class="epi-progress" data-ep="2"></span>
+                                        <div class="epi-performance" data-ep="2"></div>
+                                        <button onclick="redirectToEpisode('ep2')">Play</button>
+                                    </div>
                                 </div>
     
-                                <div class="epi-option">
+                                <div class="epi-option" data-episode="ep3" data-global-ep="3">
                                     <div class="epi-title">
                                         <h2>Episode 3</h2>
+                                        
                                     </div>
                                     <div class="epi-desc">
                                         <p>Operators and Expressions</p>
                                     </div>
-                                    <button onclick="redirectToEpisode('ep3')">Play</button>
+                                    <div class="epi-footer">
+                                        <span class="epi-progress" data-ep="3"></span>
+                                        <div class="epi-performance" data-ep="3"></div>
+                                        <button onclick="redirectToEpisode('ep3')">Play</button>
+                                    </div>
                                 </div>
                             </div>
     
                             <!-- CHAPTER 2 EPISODE SELECTION -->
                             <div class="epi-selection chap2">
-                                <div class="epi-option">
+                                <div class="epi-option" data-episode="ep4" data-global-ep="4">
                                     <div class="epi-title">
                                         <h2>Episode 1</h2>
+                                        
                                     </div>
                                     <div class="epi-desc">
                                         <p>Control Flow (if-else, switch, and loops)</p>
                                     </div>
-                                    <button onclick="redirectToEpisode('ep4')">Play</button>
+                                    <div class="epi-footer">
+                                        <span class="epi-progress" data-ep="4"></span>
+                                        <div class="epi-performance" data-ep="4"></div>
+                                        <button onclick="redirectToEpisode('ep4')">Play</button>
+                                    </div>
                                 </div>
                                 
-                                <div class="epi-option">
+                                <div class="epi-option" data-episode="ep5" data-global-ep="5">
                                     <div class="epi-title">
                                         <h2>Episode 2</h2>
+                                        
                                     </div>
                                     <div class="epi-desc">
                                         <p>String Operations</p>
                                     </div>
-                                    <button onclick="redirectToEpisode('ep5')">Play</button>
+                                    <div class="epi-footer">
+                                        <span class="epi-progress" data-ep="5"></span>
+                                        <div class="epi-performance" data-ep="5"></div>
+                                        <button onclick="redirectToEpisode('ep5')">Play</button>
+                                    </div>
                                 </div>
                             </div>
     
                             <!-- CHAPTER 3 EPISODE SELECTION -->
                             <div class="epi-selection chap3">
-                                <div class="epi-option">
+                                <div class="epi-option" data-episode="ep6" data-global-ep="6">
                                     <div class="epi-title">
                                         <h2>Episode 1</h2>
+                                        
                                     </div>
                                     <div class="epi-desc">
                                         <p>Arrays</p>
                                     </div>
-                                    <button onclick="redirectToEpisode('ep6')">Play</button>
+                                    <div class="epi-footer">
+                                        <span class="epi-progress" data-ep="6"></span>
+                                        <div class="epi-performance" data-ep="6"></div>
+                                        <button onclick="redirectToEpisode('ep6')">Play</button>
+                                    </div>
                                 </div>
                                 
-                                <div class="epi-option">
+                                <div class="epi-option" data-episode="ep7" data-global-ep="7">
                                     <div class="epi-title">
                                         <h2>Episode 2</h2>
+                                        
                                     </div>
                                     <div class="epi-desc">
                                         <p>Methods / Functions</p>
                                     </div>
-                                    <button onclick="redirectToEpisode('ep7')">Play</button>
+                                    <div class="epi-footer">
+                                        <span class="epi-progress" data-ep="7"></span>
+                                        <div class="epi-performance" data-ep="7"></div>
+                                        <button onclick="redirectToEpisode('ep7')">Play</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -550,7 +585,7 @@
 
                         <!-- LEVEL DESCRIPTION -->
                         <div class="epi-selection lev1">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="1">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/1/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -563,11 +598,15 @@
                                         <br>Filipino Cultural Context: Morning taho vendor making daily rounds.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="1"></span>
+                                    <div class="epi-performance" data-level="1"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev2">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="2">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/2/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -580,11 +619,15 @@
                                         <br>Filipino Cultural Context: Managing inventory in a small community sari-sari store.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="2"></span>
+                                    <div class="epi-performance" data-level="2"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev3">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="3">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/3/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -597,11 +640,15 @@
                                         <br> Planning expenses for an upcoming barangay fiesta.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="3"></span>
+                                    <div class="epi-performance" data-level="3"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev4">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="4">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/4/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -614,11 +661,15 @@
                                         <br>Filipino Cultural Context: Barangay tanod enforcing curfew at night.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="4"></span>
+                                    <div class="epi-performance" data-level="4"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev5">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="5">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/5/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -631,11 +682,15 @@
                                         <br>Filipino Cultural Context: Organizing community help for house relocation.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="5"></span>
+                                    <div class="epi-performance" data-level="5"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev6">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="6">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/6/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -648,11 +703,15 @@
                                         <br>Filipino Cultural Context: Estimating jeepney fares for common routes.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="6"></span>
+                                    <div class="epi-performance" data-level="6"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev7">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="7">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/7/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -665,11 +724,15 @@
                                         <br>Filipino Cultural Context: Coordinating a traditional marriage proposal visit.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="7"></span>
+                                    <div class="epi-performance" data-level="7"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev8">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="8">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/8/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -682,11 +745,15 @@
                                         <br>Filipino Cultural Context:Escaping from a mythical Tikbalang in an enchanted forest.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="8"></span>
+                                    <div class="epi-performance" data-level="8"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev9">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="9">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/9/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -699,11 +766,15 @@
                                         <br>Filipino Cultural Context: Designing a town festival promotional poster.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="9"></span>
+                                    <div class="epi-performance" data-level="9"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev10">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="10">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/10/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -716,11 +787,15 @@
                                         <br>Filipino Cultural Context: Tracking scores in street games like Tumbang Preso.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="10"></span>
+                                    <div class="epi-performance" data-level="10"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev11">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="11">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/11/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -733,11 +808,15 @@
                                         <br>Filipino Cultural Context: Analyzing population data from household surveys.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="11"></span>
+                                    <div class="epi-performance" data-level="11"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev12">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="12">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/12/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -750,11 +829,15 @@
                                         <br>Filipino Cultural Context: Logging attendance during 9-day dawn masses.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="12"></span>
+                                    <div class="epi-performance" data-level="12"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev13">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="13">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/13/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -767,11 +850,15 @@
                                         <br>Filipino Cultural Context: Preparing meals for a Filipino family gathering.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="13"></span>
+                                    <div class="epi-performance" data-level="13"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev14">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="14">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/14/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -784,11 +871,15 @@
                                         <br>Filipino Cultural Context: Analyzing common Filipino first names.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="14"></span>
+                                    <div class="epi-performance" data-level="14"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev15">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="15">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/15/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -801,11 +892,15 @@
                                         <br>Filipino Cultural Context: Assigning drivers and passengers to tricycle routes.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="15"></span>
+                                    <div class="epi-performance" data-level="15"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev16">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="16">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/16/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -818,11 +913,15 @@
                                         <br>Filipino Cultural Context: Logging potion recipes of a traditional healer.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="16"></span>
+                                    <div class="epi-performance" data-level="16"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev17">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="17">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/17/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -835,11 +934,15 @@
                                         <br>Filipino Cultural Context: Tallying sports medals during a local competition.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="17"></span>
+                                    <div class="epi-performance" data-level="17"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev18">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="18">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/18/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -852,11 +955,15 @@
                                         <br>Filipino Cultural Context: Tabulating scores for a local beauty pageant.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="18"></span>
+                                    <div class="epi-performance" data-level="18"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev19">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="19">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/19/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -869,11 +976,15 @@
                                         <br>Filipino Cultural Context: Monitoring barangay reports of mythical creature sightings.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="19"></span>
+                                    <div class="epi-performance" data-level="19"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
                         <div class="epi-selection lev20">
-                            <div class="epi-option">
+                            <div class="epi-option" data-level="20">
                                 <picture>
                                     <source srcset="../assets/samplebg-small.jpg" media="(max-width: 600px)">
                                     <img src="./2ch/assets/20/EASY.png" alt="Episode Background" class="responsive-episode-image">
@@ -886,7 +997,11 @@
                                         <br>Filipino Cultural Context: Computing public jeepney fares for various routes.
                                     </p>
                                 </div>
-                                <button onclick="difActions('play')">Play</button>
+                                <div class="epi-footer">
+                                    <span class="epi-progress" data-level="20"></span>
+                                    <div class="epi-performance" data-level="20"></div>
+                                    <button onclick="difActions('play')">Play</button>
+                                </div>
                             </div>
                         </div>
 
@@ -2022,7 +2137,7 @@
         }
 
         .recommendation-section-title::before {
-            content: '📚';
+            content: '';
             font-size: 1.8rem;
         }
 
@@ -2051,15 +2166,15 @@
         }
 
         .recommendation-list.exercises li::before {
-            content: '💪';
+            content: '-';
         }
 
         .recommendation-list.hints li::before {
-            content: '💡';
+            content: '-';
         }
 
         .recommendation-list.study li::before {
-            content: '📖';
+            content: '-';
         }
 
         .loading-recommendations,
@@ -2341,6 +2456,174 @@
                 hideRecommendationsModal();
             }
         });
+
+        // Load and display episode progress
+        function loadEpisodeProgress() {
+            fetch('../../2be/get_unlocked_story_progress.php', { cache: 'no-store' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.success && data.episodePoints) {
+                        const episodePoints = data.episodePoints;
+                        const episodePerformance = data.episodePerformance || {};
+                        
+                        // Update progress for each episode (1-7)
+                        for (let epNum = 1; epNum <= 7; epNum++) {
+                            const progressElement = document.querySelector(`.epi-progress[data-ep="${epNum}"]`);
+                            const performanceElement = document.querySelector(`.epi-performance[data-ep="${epNum}"]`);
+                            
+                            if (progressElement) {
+                                const points = episodePoints[epNum] || 0;
+                                if (points > 0) {
+                                    if (points >= 80) {
+                                        progressElement.textContent = `${points} points`;
+                                        progressElement.className = 'epi-progress completed';
+                                    } else {
+                                        progressElement.textContent = `${points} current points`;
+                                        progressElement.className = 'epi-progress in-progress';
+                                    }
+                                } else {
+                                    progressElement.textContent = '';
+                                    progressElement.className = 'epi-progress';
+                                }
+                            }
+                            
+                            // Display performance metrics if available
+                            if (performanceElement) {
+                                const perf = episodePerformance[epNum];
+                                if (perf && (perf.accuracy > 0 || perf.efficiency > 0 || perf.readability > 0)) {
+                                    performanceElement.innerHTML = `
+                                        <div class="perf-box perf-accuracy">
+                                            <span class="perf-label">Accuracy</span>
+                                            <span class="perf-value">${perf.accuracy}%</span>
+                                        </div>
+                                        <div class="perf-box perf-efficiency">
+                                            <span class="perf-label">Efficiency</span>
+                                            <span class="perf-value">${perf.efficiency}%</span>
+                                        </div>
+                                        <div class="perf-box perf-readability">
+                                            <span class="perf-label">Readability</span>
+                                            <span class="perf-value">${perf.readability}%</span>
+                                        </div>
+                                    `;
+                                    performanceElement.style.display = 'flex';
+                                } else {
+                                    performanceElement.innerHTML = '';
+                                    performanceElement.style.display = 'none';
+                                }
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading episode progress:', error);
+                });
+        }
+
+        // Load progress when story mode modal is shown
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load progress initially
+            loadEpisodeProgress();
+            
+            // Reload progress when story mode button is clicked
+            const storyModeButtons = document.querySelectorAll('.outer2[onclick*="storyMode"]');
+            storyModeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setTimeout(loadEpisodeProgress, 300);
+                });
+            });
+        });
+
+        // Also reload progress periodically when modal is visible
+        setInterval(() => {
+            const storyModal = document.querySelector('.sm-back1');
+            if (storyModal && storyModal.style.display !== 'none') {
+                loadEpisodeProgress();
+            }
+        }, 5000);
+
+        // Load and display challenge level progress
+        function loadChallengeProgress() {
+            fetch('../../2be/get_unlocked_levels.php', { cache: 'no-store' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.success && data.levelPoints) {
+                        const levelPoints = data.levelPoints;
+                        const levelPerformance = data.levelPerformance || {};
+                        
+                        // Update progress for each level (1-20)
+                        for (let levelNum = 1; levelNum <= 20; levelNum++) {
+                            const progressElement = document.querySelector(`.epi-progress[data-level="${levelNum}"]`);
+                            const performanceElement = document.querySelector(`.epi-performance[data-level="${levelNum}"]`);
+                            
+                            if (progressElement) {
+                                const points = levelPoints[levelNum] || 0;
+                                if (points > 0) {
+                                    if (points >= 80) {
+                                        progressElement.textContent = `${points} points`;
+                                        progressElement.className = 'epi-progress completed';
+                                    } else {
+                                        progressElement.textContent = `${points} current points`;
+                                        progressElement.className = 'epi-progress in-progress';
+                                    }
+                                } else {
+                                    progressElement.textContent = '';
+                                    progressElement.className = 'epi-progress';
+                                }
+                            }
+                            
+                            // Display performance metrics if available
+                            if (performanceElement) {
+                                const perf = levelPerformance[levelNum];
+                                if (perf && (perf.accuracy > 0 || perf.efficiency > 0 || perf.readability > 0)) {
+                                    performanceElement.innerHTML = `
+                                        <div class="perf-box perf-accuracy">
+                                            <span class="perf-label">Accuracy</span>
+                                            <span class="perf-value">${perf.accuracy}%</span>
+                                        </div>
+                                        <div class="perf-box perf-efficiency">
+                                            <span class="perf-label">Efficiency</span>
+                                            <span class="perf-value">${perf.efficiency}%</span>
+                                        </div>
+                                        <div class="perf-box perf-readability">
+                                            <span class="perf-label">Readability</span>
+                                            <span class="perf-value">${perf.readability}%</span>
+                                        </div>
+                                    `;
+                                    performanceElement.style.display = 'flex';
+                                } else {
+                                    performanceElement.innerHTML = '';
+                                    performanceElement.style.display = 'none';
+                                }
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading challenge progress:', error);
+                });
+        }
+
+        // Load challenge progress when challenges modal is shown
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load challenge progress initially
+            loadChallengeProgress();
+            
+            // Reload progress when challenges button is clicked
+            const challengeButtons = document.querySelectorAll('.outer2[onclick*="challenges"]');
+            challengeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setTimeout(loadChallengeProgress, 300);
+                });
+            });
+        });
+
+        // Also reload challenge progress periodically when modal is visible
+        setInterval(() => {
+            const challengeModal = document.querySelector('.ch-back1');
+            if (challengeModal && challengeModal.style.display !== 'none') {
+                loadChallengeProgress();
+            }
+        }, 5000);
     </script>
 
     <!-- Service Worker Registration - Needed to serve cached videos -->

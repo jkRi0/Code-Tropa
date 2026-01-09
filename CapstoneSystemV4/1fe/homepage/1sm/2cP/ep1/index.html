@@ -1023,6 +1023,7 @@
         </div>
     </div>
 
+    <script src="quizQuestions.js"></script>
     <script>
         const chapterIntroScreen = document.getElementById('chapterIntroScreen');
         const episodeSubText = document.getElementById('episodeSubText');
@@ -1503,9 +1504,7 @@
                 }
             } else if (data.type === 'quit') {
                 console.log('🚪 Quit message received');
-                // Save game before quitting
-                saveGameState();
-                // Redirect to homepage
+                // Quit without saving - user was already warned
                 window.location.href = '../../../index.html';
             }
         });
@@ -1966,59 +1965,7 @@
         let totalScore = 0;
         let challengeStarted = false;
 
-        // Quiz data - C++ basics questions based on episode content
-        const quizQuestions = [
-            {
-                question: "What is the correct way to print a message in C++?",
-                options: [
-                    "Console.log(\"Hello!\");",
-                    "cout << \"Hello!\";",
-                    "print(\"Hello!\");",
-                    "System.out.println(\"Hello!\");"
-                ],
-                correct: 1
-            },
-            {
-                question: "Which function is the entry point of a C++ program?",
-                options: [
-                    "start()",
-                    "main()",
-                    "init()",
-                    "begin()"
-                ],
-                correct: 1
-            },
-            {
-                question: "What does #include <iostream> do in C++?",
-                options: [
-                    "It defines the main function",
-                    "It includes the library for input/output operations",
-                    "It starts the program execution",
-                    "It creates a new class"
-                ],
-                correct: 1
-            },
-            {
-                question: "How do you write a single-line comment in C++?",
-                options: [
-                    "<!-- comment -->",
-                    "# comment",
-                    "// comment",
-                    "** comment **"
-                ],
-                correct: 2
-            },
-            {
-                question: "Which symbol is used to end a statement in C++?",
-                options: [
-                    ":",
-                    ";",
-                    ".",
-                    ","
-                ],
-                correct: 1
-            }
-        ];
+        // Quiz data is loaded from quizQuestions.js
 
         // Shuffle functions for randomizing quiz
         function shuffleArray(array) {
@@ -2061,9 +2008,10 @@
             challengeContainer.classList.add('show');
             mainBg.classList.add('show');
             
-            // Shuffle questions and options before displaying
+            // Shuffle questions and options before displaying, then select only 10 random questions
             const shuffledQuestions = shuffleQuestions(quizQuestions);
-            shuffledQuizQuestions = shuffledQuestions.map(question => shuffleQuestionOptions(question));
+            const selectedQuestions = shuffledQuestions.slice(0, 10); // Select only 10 questions
+            shuffledQuizQuestions = selectedQuestions.map(question => shuffleQuestionOptions(question));
             
             // Reset quiz state
             currentQuestionIndex = 0;
@@ -2144,7 +2092,7 @@
             shuffledQuizQuestions.forEach((question, index) => {
                 const userAnswer = userAnswers[index];
                 if (userAnswer !== undefined && userAnswer === question.correct) {
-                    totalScore += 20;
+                    totalScore += 10;
                 }
             });
         }
@@ -2159,11 +2107,11 @@
             document.querySelector('.challenge-buttons').style.display = 'none';
             resultsContainer.style.display = 'block';
 
-            const displayScore = Math.round(totalScore / 20);
-            const maxDisplayScore = 5;
-            const passThreshold = 4;
+            const displayScore = Math.round(totalScore / 10);
+            const maxDisplayScore = 10;
+            const passThreshold = 7;
             
-            const hasPassed = totalScore >= 80;
+            const hasPassed = totalScore >= 70;
             
             if (hasPassed) {
                 scoreDisplay.textContent = `PASSED! Score: ${displayScore}/${maxDisplayScore}`;
@@ -2201,8 +2149,8 @@
             const resultsModal = document.getElementById('resultsModal');
             const resultsModalBody = document.getElementById('resultsModalBody');
             
-            const displayScore = Math.round(totalScore / 20);
-            const maxDisplayScore = 5;
+            const displayScore = Math.round(totalScore / 10);
+            const maxDisplayScore = 10;
             const correctCount = shuffledQuizQuestions.filter((q, i) => userAnswers[i] !== undefined && userAnswers[i] === q.correct).length;
             
             const resultsHTML = `

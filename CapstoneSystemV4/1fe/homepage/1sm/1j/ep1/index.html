@@ -1640,6 +1640,7 @@
         </div>
     </div>
 
+    <script src="quizQuestions.js"></script>
     <script>
         const introScreen = document.getElementById('introScreen');
         const introMainText = document.getElementById('introMainText');
@@ -1980,9 +1981,7 @@
                 }
             } else if (data.type === 'quit') {
                 console.log('🚪 Quit message received');
-                // Save game before quitting
-                saveGameState();
-                // Redirect to homepage
+                // Quit without saving - user was already warned
                 window.location.href = '../../../index.html';
             } else {
                 console.log('❓ Unknown message type:', data.type);
@@ -2311,59 +2310,7 @@
         let totalScore = 0;
         let challengeStarted = false;
 
-        // Quiz data
-        const quizQuestions = [
-            {
-                question: "What is the correct way to print a message in Java?",
-                options: [
-                    "Console.log(\"Hello!\");",
-                    "System.out.println(\"Hello!\");",
-                    "print(\"Hello!\");",
-                    "Write(\"Hello!\");"
-                ],
-                correct: 1
-            },
-            {
-                question: "Which method is the entry point of a Java program?",
-                options: [
-                    "start()",
-                    "main()",
-                    "init()",
-                    "launch()"
-                ],
-                correct: 1
-            },
-            {
-                question: "Which symbol is used to end a statement in Java?",
-                options: [
-                    ":",
-                    ";",
-                    ".",
-                    "#"
-                ],
-                correct: 1
-            },
-            {
-                question: "What is the correct class declaration syntax in Java?",
-                options: [
-                    "function HelloWorld {}",
-                    "public HelloWorld class {}",
-                    "class HelloWorld {}",
-                    "HelloWorld class()"
-                ],
-                correct: 2
-            },
-            {
-                question: "How do you start a comment in Java?",
-                options: [
-                    "##",
-                    "<!-- -->",
-                    "//",
-                    "**"
-                ],
-                correct: 2
-            }
-        ];
+        // Quiz data is loaded from quizQuestions.js
 
         // Shuffle functions for randomizing quiz
         function shuffleArray(array) {
@@ -2921,8 +2868,11 @@
             // First shuffle the order of questions
             const shuffledQuestions = shuffleQuestions(quizQuestions);
             
+            // Select only 10 random questions from the shuffled array
+            const selectedQuestions = shuffledQuestions.slice(0, 10);
+            
             // Then shuffle the options for each question
-            shuffledQuizQuestions = shuffledQuestions.map(question => shuffleQuestionOptions(question));
+            shuffledQuizQuestions = selectedQuestions.map(question => shuffleQuestionOptions(question));
             
             // Reset quiz state
             currentQuestionIndex = 0;
@@ -3035,13 +2985,13 @@
             document.querySelector('.challenge-buttons').style.display = 'none';
             resultsContainer.style.display = 'block';
 
-            // Internal calculation: 20 points per question (100 total for 5 questions)
-            // Display: 1 point per question (5 total) - convert by dividing by 20
+            // Internal calculation: 20 points per question (200 total for 10 questions)
+            // Display: 1 point per question (10 total) - convert by dividing by 20
             const displayScore = Math.round(totalScore / 20);
-            const maxDisplayScore = 5;
-            const passThreshold = 4; // 80/100 = 4/5
+            const maxDisplayScore = 10;
+            const passThreshold = 8; // 160/200 = 8/10 (80%)
             
-            const hasPassed = totalScore >= 80;
+            const hasPassed = totalScore >= 160;
             
             if (hasPassed) {
                 scoreDisplay.textContent = `PASSED! Score: ${displayScore}/${maxDisplayScore}`;
@@ -3084,9 +3034,9 @@
             const resultsModal = document.getElementById('resultsModal');
             const resultsModalBody = document.getElementById('resultsModalBody');
             
-            // Calculate display score (convert from 100-point scale to 5-point scale)
+            // Calculate display score (convert from 200-point scale to 10-point scale)
             const displayScore = Math.round(totalScore / 20);
-            const maxDisplayScore = 5;
+            const maxDisplayScore = 10;
             const correctCount = shuffledQuizQuestions.filter((q, i) => userAnswers[i] !== undefined && userAnswers[i] === q.correct).length;
             
             // Generate detailed results HTML with score summary at top
@@ -3187,7 +3137,7 @@
         }
 
         function endEpisode() {
-            const hasPassed = totalScore >= 80;
+            const hasPassed = totalScore >= 160;
             
             if (hasPassed) {
                 // Go to next episode (Episode 2)
@@ -3207,7 +3157,11 @@
 
             // Reshuffle questions and options for retry
             const shuffledQuestions = shuffleQuestions(quizQuestions);
-            shuffledQuizQuestions = shuffledQuestions.map(question => shuffleQuestionOptions(question));
+            
+            // Select only 10 random questions from the shuffled array
+            const selectedQuestions = shuffledQuestions.slice(0, 10);
+            
+            shuffledQuizQuestions = selectedQuestions.map(question => shuffleQuestionOptions(question));
 
             // Hide results and show challenge again
             const questionsContainer = document.getElementById('questionsContainer');

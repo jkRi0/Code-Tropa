@@ -1223,9 +1223,7 @@
                 }
             } else if (data.type === 'quit') {
                 console.log('🚪 Quit message received');
-                // Save game before quitting
-                saveGameState();
-                // Redirect to homepage
+                // Quit without saving - user was already warned
                 window.location.href = '../../../index.html';
             }
         });

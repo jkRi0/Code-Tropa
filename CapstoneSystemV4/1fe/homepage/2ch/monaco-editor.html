@@ -19,44 +19,151 @@
             width: 100%;
             height: 100%;
         }
-        .anti-cheat-notification {
+        /* Full-page overlay/dim */
+        .anti-cheat-overlay {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* Character notification container (bottom right) */
+        .anti-cheat-character-notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 15px;
+            animation: slideUp 0.4s ease-out;
+        }
+        
+        /* Message bubble (above character) */
+        .anti-cheat-message {
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
             color: white;
             padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 10000;
-            max-width: 350px;
-            animation: slideIn 0.3s ease-out;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            max-width: 320px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             font-size: 14px;
             line-height: 1.5;
+            position: relative;
+            animation: popIn 0.3s ease-out 0.2s both;
         }
-        .anti-cheat-notification .notification-title {
+        
+        /* Speech bubble tail pointing down */
+        .anti-cheat-message::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 30px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #ee5a6f;
+        }
+        
+        .anti-cheat-message .message-title {
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .anti-cheat-notification .notification-title::before {
+        
+        .anti-cheat-message .message-title::before {
             content: "⚠️";
             font-size: 18px;
         }
-        .anti-cheat-notification .notification-message {
+        
+        .anti-cheat-message .message-text {
             font-size: 13px;
             opacity: 0.95;
         }
-        @keyframes slideIn {
+        
+        /* Character image container */
+        .anti-cheat-character {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: bounceIn 0.5s ease-out 0.3s both;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .anti-cheat-character img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Fallback if no image - show emoji character */
+        .anti-cheat-character::before {
+            content: "👮";
+            font-size: 60px;
+            display: block;
+            position: absolute;
+            z-index: 1;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
             from {
-                transform: translateX(400px);
                 opacity: 0;
             }
             to {
-                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
                 opacity: 1;
             }
         }
@@ -135,30 +242,87 @@
         // ANTI-CHEAT NOTIFICATION SYSTEM (Shared)
         // ================================
         const AntiCheatNotification = {
-            showNotification: function(title, message, type = 'warning') {
+            showNotification: function(title, message, type = 'warning', showOverlay = true) {
+                console.log('[Anti-Cheat Notification] Showing new notification:', title, message, 'overlay:', showOverlay);
+                
                 // Remove existing notification if any
-                const existing = document.querySelector('.anti-cheat-notification');
-                if (existing) {
-                    existing.remove();
+                const existingOverlay = document.querySelector('.anti-cheat-overlay');
+                const existingNotification = document.querySelector('.anti-cheat-character-notification');
+                if (existingOverlay) {
+                    console.log('[Anti-Cheat Notification] Removing existing overlay');
+                    existingOverlay.remove();
+                }
+                if (existingNotification) {
+                    console.log('[Anti-Cheat Notification] Removing existing notification');
+                    existingNotification.remove();
                 }
                 
-                // Create notification element
-                const notification = document.createElement('div');
-                notification.className = 'anti-cheat-notification';
-                notification.innerHTML = `
-                    <div class="notification-title">${title}</div>
-                    <div class="notification-message">${message}</div>
+                // Create full-page overlay (only if showOverlay is true)
+                let overlay = null;
+                if (showOverlay) {
+                    overlay = document.createElement('div');
+                    overlay.className = 'anti-cheat-overlay';
+                }
+                
+                // Create character notification container
+                const characterNotification = document.createElement('div');
+                characterNotification.className = 'anti-cheat-character-notification';
+                
+                // Create message bubble
+                const messageBubble = document.createElement('div');
+                messageBubble.className = 'anti-cheat-message';
+                messageBubble.innerHTML = `
+                    <div class="message-title">${title}</div>
+                    <div class="message-text">${message}</div>
                 `;
                 
-                document.body.appendChild(notification);
+                // Create character image container
+                const characterDiv = document.createElement('div');
+                characterDiv.className = 'anti-cheat-character';
                 
-                // Auto-remove after 5 seconds
+                // You can add an image here if you have one:
+                // Uncomment and set the path to your character image:
+                // const characterImg = document.createElement('img');
+                // characterImg.src = 'path/to/character-image.png';
+                // characterImg.alt = 'Security Character';
+                // characterDiv.appendChild(characterImg);
+                
+                // If no image is added, the CSS ::before will show the emoji character
+                
+                // Assemble the notification
+                characterNotification.appendChild(messageBubble);
+                characterNotification.appendChild(characterDiv);
+                
+                // Add to document
+                if (overlay) {
+                    document.body.appendChild(overlay);
+                }
+                document.body.appendChild(characterNotification);
+                
+                console.log('[Anti-Cheat Notification] Notification elements added to DOM');
+                
+                // Auto-remove after at least 3 seconds (using 3000ms)
                 setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.style.animation = 'slideIn 0.3s ease-out reverse';
-                        setTimeout(() => notification.remove(), 300);
+                    if (overlay && overlay.parentNode) {
+                        overlay.style.opacity = '0';
+                        overlay.style.transition = 'opacity 0.3s ease-out';
                     }
-                }, 5000);
+                    if (characterNotification.parentNode) {
+                        characterNotification.style.opacity = '0';
+                        characterNotification.style.transform = 'translateY(50px)';
+                        characterNotification.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                    }
+                    
+                    // Remove elements after animation
+                    setTimeout(() => {
+                        if (overlay && overlay.parentNode) {
+                            overlay.remove();
+                        }
+                        if (characterNotification && characterNotification.parentNode) {
+                            characterNotification.remove();
+                        }
+                    }, 300);
+                }, 5000); // Minimum 3 seconds display time
             },
             
             sendWarning: function(type, message, data = {}) {
@@ -667,6 +831,98 @@
             }
         };
 
+        // ================================
+        // ALT-TAB DETECTION SYSTEM
+        // ================================
+        const AltTabDetector = {
+            config: {
+                ALT_TAB_THRESHOLD: 3,           // Number of alt-tabs to trigger warning
+                TIME_WINDOW: 60000,             // 1 minute in milliseconds
+                WARNING_COOLDOWN: 10000         // 10 seconds cooldown between warnings
+            },
+            
+            state: {
+                altTabTimestamps: [],           // Array of timestamps when alt-tab occurred
+                lastWarningTime: null,          // Last time a warning was shown
+                isTracking: true                // Whether tracking is enabled
+            },
+            
+            // Record an alt-tab event (window blur)
+            recordAltTab: function() {
+                if (!this.state.isTracking) return;
+                
+                const now = Date.now();
+                
+                // Add current timestamp
+                this.state.altTabTimestamps.push(now);
+                
+                // Remove timestamps older than 1 minute
+                const oneMinuteAgo = now - this.config.TIME_WINDOW;
+                this.state.altTabTimestamps = this.state.altTabTimestamps.filter(
+                    timestamp => timestamp > oneMinuteAgo
+                );
+                
+                console.log('[Alt-Tab Detector] Alt-tab recorded. Count in last minute:', this.state.altTabTimestamps.length);
+                
+                // Check if threshold is reached
+                if (this.state.altTabTimestamps.length >= this.config.ALT_TAB_THRESHOLD) {
+                    this.checkAndWarn();
+                }
+            },
+            
+            // Check if warning should be shown and trigger it
+            checkAndWarn: function() {
+                const now = Date.now();
+                
+                // Check cooldown period
+                if (this.state.lastWarningTime && 
+                    (now - this.state.lastWarningTime) < this.config.WARNING_COOLDOWN) {
+                    console.log('[Alt-Tab Detector] Warning on cooldown, skipping');
+                    return;
+                }
+                
+                // Count alt-tabs in the last minute
+                const oneMinuteAgo = now - this.config.TIME_WINDOW;
+                const recentAltTabs = this.state.altTabTimestamps.filter(
+                    timestamp => timestamp > oneMinuteAgo
+                );
+                
+                if (recentAltTabs.length >= this.config.ALT_TAB_THRESHOLD) {
+                    const reason = `Multiple alt-tabs detected (${recentAltTabs.length} times in the last minute)`;
+                    console.warn('[Alt-Tab Detector] ⚠️ ALT-TAB DETECTED:', reason);
+                    
+                    // Show notification WITHOUT overlay (no dimming)
+                    AntiCheatNotification.showNotification(
+                        'Suspicious Activity Detected',
+                        'whoa, that looks suspicious',
+                        'warning',
+                        false // showOverlay = false (no dimming)
+                    );
+                    
+                    AntiCheatNotification.sendWarning('alt-tab', reason, {
+                        altTabCount: recentAltTabs.length,
+                        timeWindow: this.config.TIME_WINDOW
+                    });
+                    
+                    this.state.lastWarningTime = now;
+                }
+            },
+            
+            // Reset detector
+            reset: function() {
+                this.state.altTabTimestamps = [];
+                this.state.lastWarningTime = null;
+                this.state.isTracking = true;
+                console.log('[Alt-Tab Detector] Reset');
+            },
+            
+            // Enable/disable tracking
+            setTracking: function(enabled) {
+                this.state.isTracking = enabled;
+                console.log('[Alt-Tab Detector] Tracking', enabled ? 'enabled' : 'disabled');
+            }
+        };
+
         require(['vs/editor/editor.main'], function() {
             // Initialize with default language
             editor = monaco.editor.create(document.getElementById('monaco-container'), {
@@ -683,6 +939,20 @@
             CopyPasteDetector.reset(editor.getValue().length);
             FastTypingDetector.reset();
             FastSubmissionDetector.startChallenge();
+            AltTabDetector.reset();
+            
+            // Add window blur/focus event listeners for alt-tab detection
+            window.addEventListener('blur', function() {
+                // Window lost focus (user alt-tabbed away)
+                AltTabDetector.recordAltTab();
+            });
+            
+            // Optional: Also track when window regains focus (for better tracking)
+            window.addEventListener('focus', function() {
+                // Window regained focus (user came back)
+                // This helps distinguish between alt-tabs and other window events
+                console.log('[Alt-Tab Detector] Window regained focus');
+            });
 
             // Track code changes for anti-cheat detection
             let lastCharCount = editor.getValue().length;
@@ -777,6 +1047,7 @@
                     CopyPasteDetector.reset(defaultCode.length);
                     FastTypingDetector.reset();
                     FastSubmissionDetector.startChallenge();
+                    AltTabDetector.reset();
                     lastCharCount = defaultCode.length;
                     lastChangeTime = Date.now();
                     
@@ -793,6 +1064,7 @@
                     CopyPasteDetector.reset(event.data.code.length);
                     FastTypingDetector.reset();
                     FastSubmissionDetector.startChallenge();
+                    AltTabDetector.reset();
                     lastCharCount = event.data.code.length;
                     lastChangeTime = Date.now();
                 } else if (event.data.type === 'check-submission') {

@@ -1025,6 +1025,7 @@
         </div>
     </div>
 
+    <script src="quizQuestions.js"></script>
     <script>
         const chapterIntroScreen = document.getElementById('chapterIntroScreen');
         const episodeSubText = document.getElementById('episodeSubText');
@@ -1496,9 +1497,7 @@
                 }
             } else if (data.type === 'quit') {
                 console.log('🚪 Quit message received');
-                // Save game before quitting
-                saveGameState();
-                // Redirect to homepage
+                // Quit without saving - user was already warned
                 window.location.href = '../../../index.html';
             }
         });
@@ -1959,59 +1958,7 @@
         let totalScore = 0;
         let challengeStarted = false;
 
-        // Quiz data - C# basics questions based on episode content
-        const quizQuestions = [
-            {
-                question: "What is the correct way to print a message in C#?",
-                options: [
-                    "Console.log(\"Hello!\");",
-                    "Console.WriteLine(\"Hello!\");",
-                    "print(\"Hello!\");",
-                    "System.out.println(\"Hello!\");"
-                ],
-                correct: 1
-            },
-            {
-                question: "Which method is the entry point of a C# program?",
-                options: [
-                    "start()",
-                    "Main()",
-                    "init()",
-                    "begin()"
-                ],
-                correct: 1
-            },
-            {
-                question: "Which symbol is used to end a statement in C#?",
-                options: [
-                    ":",
-                    ";",
-                    ".",
-                    ","
-                ],
-                correct: 1
-            },
-            {
-                question: "What are braces {} used for in C#?",
-                options: [
-                    "To group code blocks and define scope",
-                    "To make the code look prettier",
-                    "To separate different files",
-                    "To indicate comments"
-                ],
-                correct: 0
-            },
-            {
-                question: "How do you write a single-line comment in C#?",
-                options: [
-                    "<!-- comment -->",
-                    "# comment",
-                    "// comment",
-                    "** comment **"
-                ],
-                correct: 2
-            }
-        ];
+        // Quiz data is loaded from quizQuestions.js
 
         // Shuffle functions for randomizing quiz
         function shuffleArray(array) {
@@ -2056,7 +2003,11 @@
             
             // Shuffle questions and options before displaying
             const shuffledQuestions = shuffleQuestions(quizQuestions);
-            shuffledQuizQuestions = shuffledQuestions.map(question => shuffleQuestionOptions(question));
+            
+            // Select only 10 random questions from the shuffled array
+            const selectedQuestions = shuffledQuestions.slice(0, 10);
+            
+            shuffledQuizQuestions = selectedQuestions.map(question => shuffleQuestionOptions(question));
             
             // Reset quiz state
             currentQuestionIndex = 0;
@@ -2152,11 +2103,13 @@
             document.querySelector('.challenge-buttons').style.display = 'none';
             resultsContainer.style.display = 'block';
 
+            // Internal calculation: 20 points per question (200 total for 10 questions)
+            // Display: 1 point per question (10 total) - convert by dividing by 20
             const displayScore = Math.round(totalScore / 20);
-            const maxDisplayScore = 5;
-            const passThreshold = 4;
+            const maxDisplayScore = 10;
+            const passThreshold = 8; // 160/200 = 8/10 (80%)
             
-            const hasPassed = totalScore >= 80;
+            const hasPassed = totalScore >= 160;
             
             if (hasPassed) {
                 scoreDisplay.textContent = `PASSED! Score: ${displayScore}/${maxDisplayScore}`;
@@ -2194,8 +2147,9 @@
             const resultsModal = document.getElementById('resultsModal');
             const resultsModalBody = document.getElementById('resultsModalBody');
             
+            // Calculate display score (convert from 200-point scale to 10-point scale)
             const displayScore = Math.round(totalScore / 20);
-            const maxDisplayScore = 5;
+            const maxDisplayScore = 10;
             const correctCount = shuffledQuizQuestions.filter((q, i) => userAnswers[i] !== undefined && userAnswers[i] === q.correct).length;
             
             const resultsHTML = `
@@ -2297,7 +2251,11 @@
             challengeStarted = false;
 
             const shuffledQuestions = shuffleQuestions(quizQuestions);
-            shuffledQuizQuestions = shuffledQuestions.map(question => shuffleQuestionOptions(question));
+            
+            // Select only 10 random questions from the shuffled array
+            const selectedQuestions = shuffledQuestions.slice(0, 10);
+            
+            shuffledQuizQuestions = selectedQuestions.map(question => shuffleQuestionOptions(question));
 
             const questionsContainer = document.getElementById('questionsContainer');
             const resultsContainer = document.getElementById('resultsContainer');

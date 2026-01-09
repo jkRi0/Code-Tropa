@@ -711,6 +711,11 @@
         const scenes = [
             { 
                 type: 'video', 
+                src: 'assets/0.mp4', 
+                subtitle:" "
+            },
+            { 
+                type: 'video', 
                 src: 'assets/1.mp4', 
                 subtitle:" "
             },
@@ -722,7 +727,7 @@
             { 
                 type: 'video', 
                 src: 'assets/3.mp4', 
-                subtitle: 'Uy Axle! Sakto ka, kulang kami ng taga-track ng scores dito sa mini-games!',
+                subtitle: 'Axle, kita mo ‘to? Ang daming bata, paikot-ikot ang turn, tapos iba-iba pa ang score. Nakakalito kapag mano-mano lang.',
                 speakerName: 'Kuya Caloy',
                 speakerImage: 'assets/caloy.png',
                 voice: 'assets/audio/3.wav'
@@ -730,7 +735,7 @@
             { 
                 type: 'video', 
                 src: 'assets/4.mp4', 
-                subtitle: 'Ay, hindi ako pang-athlete, kuya. Pang-code lang ako!', 
+                subtitle: 'Oo nga, kuya. Parang sabay-sabay lahat.', 
                 speakerName: 'Axle', 
                 speakerImage: 'assets/axle.png',
                 voice: 'assets/audio/4.wav',
@@ -738,7 +743,7 @@
             { 
                 type: 'video', 
                 src: 'assets/5.mp4', 
-                subtitle: 'Eh ‘di ayos! Puwede mong gamitan ng Java skills mo ‘to. Tara, turuan kita gumamit ng Arrays para dito.', 
+                subtitle: 'Ay sakto similar sa Java, may solusyon diyan. Kagaya ng arrays — parang listahan na nakaayos.', 
                 speakerName: 'Kuya Caloy', 
                 speakerImage: 'assets/caloy.png',
                 voice: 'assets/audio/5.wav',
@@ -1184,9 +1189,7 @@
                 }
             } else if (data.type === 'quit') {
                 console.log('🚪 Quit message received');
-                // Save game before quitting
-                saveGameState();
-                // Redirect to homepage
+                // Quit without saving - user was already warned
                 window.location.href = '../../../index.html';
             }
         });
