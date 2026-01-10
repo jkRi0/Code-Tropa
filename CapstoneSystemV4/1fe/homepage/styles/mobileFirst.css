@@ -1038,7 +1038,59 @@ section{
     background-color: #d32f2f;
 }
 
+/* Feedback Section */
+.feedback-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: linear-gradient(135deg, #C4A574 0%, #A68B5B 100%);
+    border-radius: 8px;
+    text-align: center;
+    border: 2px solid #D4B896;
+}
 
+.feedback-description {
+    color: #3D2914;
+    font-size: 0.85em;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.feedback-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 600;
+    background-color: #3D2914;
+    color: #F5EDE0;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.feedback-btn:hover {
+    background-color: #5C3D1E;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* View Recommendations Button - Brown Theme */
+.view-recommendations-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+    color: white;
+    width: 100%;
+    background-color: #8B5A2B;
+}
+
+.view-recommendations-btn:hover {
+    background-color: #6B4423;
+}
 
 .mobile-hide-controls-modal-item {
     display: none !important;

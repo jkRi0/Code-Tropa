@@ -168,7 +168,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const scoreItem = document.createElement('div');
             const rawScore = scoringData.criteriaScores[criterion];
             const weight = currentRubrics[criterion]?.weight || 0;
-            const percentage = weight > 0 ? Math.round((rawScore / weight) * 100) : 0;
+            // Cap percentage at 100% to handle any scoring/display mismatches
+            const percentage = weight > 0 ? Math.min(100, Math.round((rawScore / weight) * 100)) : 0;
             scoreItem.innerHTML = `<strong>${criterion.charAt(0).toUpperCase() + criterion.slice(1)}:</strong> ${percentage}% `;
             criteriaScoresDisplay.appendChild(scoreItem);
         }

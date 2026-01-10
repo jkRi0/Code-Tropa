@@ -585,13 +585,30 @@ function checkObjectivesCompliance(code, difficulty, language = 'java') {
 // ================================
 
 function calculateScore(submittedCode, solutionCode, difficulty, submittedOutput, solutionOutput) {
-    const rubrics = window.rubricsCriteria[difficulty];
+    // Detect if we're in Story Mode (episodes) vs Challenge Mode (levels)
+    // Story Mode always uses "easy" difficulty for consistency
+    let effectiveDifficulty = difficulty;
+    try {
+        const selectedData = localStorage.getItem('selectedChallenge');
+        if (selectedData) {
+            const data = JSON.parse(selectedData);
+            if (data.level && data.level.startsWith('ep')) {
+                effectiveDifficulty = 'easy'; // Story mode always uses easy
+            }
+        }
+    } catch (e) {
+        console.warn('Could not detect mode for scoring, using provided difficulty');
+    }
+    
+    const rubrics = window.rubricsCriteria[effectiveDifficulty] || window.rubricsCriteria['easy'];
     let score = 0;
     let criteriaScores = {};
 
     // Debug logging
     console.log('=== SCORING DEBUG ===');
-    console.log('Difficulty:', difficulty);
+    console.log('Requested Difficulty:', difficulty);
+    console.log('Effective Difficulty:', effectiveDifficulty);
+    console.log('Rubrics weights - Accuracy:', rubrics?.accuracy?.weight, 'Efficiency:', rubrics?.efficiency?.weight, 'Readability:', rubrics?.readability?.weight, 'Time:', rubrics?.time?.weight);
     console.log('Submitted code:', submittedCode);
     console.log('Solution code:', solutionCode);
     console.log('Submitted output:', submittedOutput);
